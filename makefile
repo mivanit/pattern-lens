@@ -256,7 +256,7 @@ default: help
 .PHONY: write-proj-version
 write-proj-version:
 	@mkdir -p $(VERSIONS_DIR)
-	@python -c "$$GET_VERSION_SCRIPT" > $(VERSION_FILE)
+	@$(PYTHON) -c "$$GET_VERSION_SCRIPT" > $(VERSION_FILE)
 
 # gets version info from $(PYPROJECT), last version from $(LAST_VERSION_FILE), and python version
 # uses just `python` for everything except getting the python version. no echo here, because this is "private"
@@ -270,7 +270,7 @@ gen-version-info: write-proj-version
 # getting commit log since the tag specified in $(LAST_VERSION_FILE)
 # will write to $(COMMIT_LOG_FILE)
 # when publishing, the contents of $(COMMIT_LOG_FILE) will be used as the tag description (but can be edited during the process)
-# uses just `python`. no echo here, because this is "private"
+# no echo here, because this is "private"
 .PHONY: gen-commit-log
 gen-commit-log: gen-version-info
 	@if [ "$(LAST_VERSION)" = "NULL" ]; then \
@@ -279,7 +279,7 @@ gen-commit-log: gen-version-info
 		exit 1; \
 	fi
 	@mkdir -p $(LOCAL_DIR)
-	@python -c "$$GET_COMMIT_LOG_SCRIPT" "$(LAST_VERSION)"
+	@$(PYTHON) -c "$$GET_COMMIT_LOG_SCRIPT" "$(LAST_VERSION)"
 
 
 # force the version info to be read, printing it out
@@ -313,14 +313,14 @@ dep:
 	@echo "Exporting dependencies as per $(PYPROJECT) section 'tool.uv-exports.exports'"
 	uv sync --all-extras
 	mkdir -p $(REQ_LOCATION)
-	python -c "$$EXPORT_SCRIPT" $(PYPROJECT) $(REQ_LOCATION) | sh -x
+	$(PYTHON) -c "$$EXPORT_SCRIPT" $(PYPROJECT) $(REQ_LOCATION) | sh -x
 
 .PHONY: dep-check
 dep-check:
 	@echo "Checking that exported requirements are up to date"
 	uv sync --all-extras
 	mkdir -p $(REQ_LOCATION)-TEMP
-	python -c "$$EXPORT_SCRIPT" $(PYPROJECT) $(REQ_LOCATION)-TEMP | sh -x
+	$(PYTHON) -c "$$EXPORT_SCRIPT" $(PYPROJECT) $(REQ_LOCATION)-TEMP | sh -x
 	diff -r $(REQ_LOCATION)-TEMP $(REQ_LOCATION)
 	rm -rf $(REQ_LOCATION)-TEMP
 
