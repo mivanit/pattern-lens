@@ -34,3 +34,15 @@ build-backend = "hatchling.build"
 [tool.hatch.build.targets.wheel]
 packages = ["pattern_lens"]
 
+# Custom export configurations
+[tool.uv-exports]
+args = [
+	"--no-hashes"
+]
+exports = [
+	# no groups, no extras, just the base dependencies
+    { name = "base", groups = false, extras = false },
+	# all groups and extras
+    { name = "all", filename="requirements.txt", groups = true, extras=true },
+	{ name = "all", groups = true, options = ["--all-extras"] },
+]
