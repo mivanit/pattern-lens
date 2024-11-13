@@ -36,9 +36,15 @@ LOCAL_DIR := .github/local
 # will print this token when publishing. make sure not to commit this file!!!
 PYPI_TOKEN_FILE := $(LOCAL_DIR)/.pypi-token
 
+# version files
+VERSIONS_DIR := .github/versions
+
 # the last version that was auto-uploaded. will use this to create a commit log for version tag
 # see `gen-commit-log` target
-LAST_VERSION_FILE := .github/.lastversion
+LAST_VERSION_FILE := $(VERSIONS_DIR)/.lastversion
+
+# current version (writing to file needed due to shell escaping issues)
+VERSION_FILE := $(VERSIONS_DIR)/.version
 
 # base python to use. Will add `uv run` in front of this if `RUN_GLOBAL` is not set to 1
 PYTHON_BASE := python
@@ -144,7 +150,6 @@ export EXPORT_SCRIPT
 
 # get the version from `pyproject.toml:project.version`
 define GET_VERSION_SCRIPT
-import re
 import sys
 
 try:
@@ -158,9 +163,9 @@ try:
 	with open(pyproject_path, 'rb') as f:
 		pyproject_data = tomllib.load(f)
 
-	print('v' + pyproject_data['project']['version'])
+	print('v' + pyproject_data['project']['version'], end='')
 except Exception as e:
-	print('NULL')
+	print('NULL', end='')
 	sys.exit(1)
 endef
 
@@ -243,12 +248,22 @@ default: help
 # we do this in a separate target because it takes a bit of time
 # ==================================================
 
+# this recipe is weird. we need it because:
+# - a one liner for getting the version with toml is unwieldy, and using regex is fragile
+# - using $$GET_VERSION_SCRIPT within $(shell ...) doesn't work because of escaping issues
+# - trying to write to the file inside the `gen-version-info` recipe doesn't work, 
+# 	shell eval happens before our `python -c ...` gets run and `cat` doesn't see the new file
+.PHONY: write-proj-version
+write-proj-version:
+	@mkdir -p $(VERSIONS_DIR)
+	@python -c "$$GET_VERSION_SCRIPT" > $(VERSION_FILE)
+
 # gets version info from $(PYPROJECT), last version from $(LAST_VERSION_FILE), and python version
 # uses just `python` for everything except getting the python version. no echo here, because this is "private"
 .PHONY: gen-version-info
-gen-version-info:
+gen-version-info: write-proj-version
 	@mkdir -p $(LOCAL_DIR)
-	$(eval VERSION := $(shell python -c "$$GET_VERSION_SCRIPT"))
+	$(eval VERSION := $(shell cat $(VERSION_FILE)) )
 	$(eval LAST_VERSION := $(shell [ -f $(LAST_VERSION_FILE) ] && cat $(LAST_VERSION_FILE) || echo NULL) )
 	$(eval PYTHON_VERSION := $(shell $(PYTHON) -c "import sys; print(f'{sys.version_info.major}.{sys.version_info.minor}.{sys.version_info.micro}')") )
 
