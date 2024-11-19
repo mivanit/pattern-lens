@@ -65,6 +65,15 @@ LAST_VERSION := NULL
 # get the python version, now that we have picked the python command
 PYTHON_VERSION := NULL
 
+# cuda version
+# --------------------------------------------------
+# 0 or 1
+CUDA_PRESENT :=
+# a version like "12.4" or "NULL"
+CUDA_VERSION := NULL
+# a version like "124" or "NULL"
+CUDA_VERSION_SHORT := NULL
+
 
 # python scripts we want to use inside the makefile
 # --------------------------------------------------
@@ -197,6 +206,68 @@ endef
 
 export GET_COMMIT_LOG_SCRIPT
 
+# get cuda information and whether torch sees it
+define CHECK_TORCH_SCRIPT
+import os
+import sys
+print(f'python version: {sys.version}')
+print(f"\tpython executable path: {str(sys.executable)}")
+print(f"\tsys_platform: {sys.platform}")
+print(f'\tcurrent working directory: {os.getcwd()}')
+print(f'\tHost name: {os.name}')
+print(f'\tCPU count: {os.cpu_count()}')
+print()
+
+try:
+	import torch
+except Exception as e:
+	print('ERROR: error importing torch, terminating        ')
+	print('-'*50)
+	raise e
+	sys.exit(1)
+
+print(f'torch version: {torch.__version__}')
+
+print(f'\t{torch.cuda.is_available() = }')
+
+if torch.cuda.is_available():
+	# print('\tCUDA is available on torch')
+	print(f'\tCUDA version via torch: {torch.version.cuda}')
+
+	if torch.cuda.device_count() > 0:
+		print(f"\tcurrent device: {torch.cuda.current_device() = }\n")
+		n_devices: int = torch.cuda.device_count()
+		print(f"detected {n_devices = }")
+		for current_device in range(n_devices):
+			try:
+				# print(f'checking current device {current_device} of {torch.cuda.device_count()} devices')
+				print(f'\tdevice {current_device}')
+				dev_prop = torch.cuda.get_device_properties(torch.device(0))
+				print(f'\t    name:                   {dev_prop.name}')
+				print(f'\t    version:                {dev_prop.major}.{dev_prop.minor}')
+				print(f'\t    total_memory:           {dev_prop.total_memory} ({dev_prop.total_memory:.1e})')
+				print(f'\t    multi_processor_count:  {dev_prop.multi_processor_count}')
+				print(f'\t    is_integrated:          {dev_prop.is_integrated}')
+				print(f'\t    is_multi_gpu_board:     {dev_prop.is_multi_gpu_board}')
+				print(f'\t')
+			except Exception as e:
+				print(f'Exception when trying to get properties of device {current_device}')
+				raise e
+		sys.exit(0)
+	else:
+		print(f'ERROR: {torch.cuda.device_count()} devices detected, invalid')
+		print('-'*50)
+		sys.exit(1)
+
+else:
+	print('ERROR: CUDA is NOT available, terminating')
+	print('-'*50)
+	sys.exit(1)
+endef
+
+export CHECK_TORCH_SCRIPT
+
+
 # ==================================================
 # reading command line options
 # ==================================================
@@ -301,24 +372,34 @@ version: gen-commit-log
 # dependencies and setup
 # ==================================================
 
-.PHONY: setup
-setup: dep-check
-	@echo "install and update via uv"
-	@echo "To activate the virtual environment, run one of:"
-	@echo "  source .venv/bin/activate"
-	@echo "  source .venv/Scripts/activate"
+.PHONY: get-cuda-info
+get-cuda-info:
+	$(eval CUDA_PRESENT := $(shell if command -v nvcc > /dev/null 2>&1; then echo 1; else echo 0; fi))
+	$(eval CUDA_VERSION := $(if $(filter $(CUDA_PRESENT),1),$(shell nvcc --version 2>/dev/null | grep "release" | awk '{print $$5}' | sed 's/,//'),NULL))
+	$(eval CUDA_VERSION_SHORT := $(if $(filter $(CUDA_PRESENT),1),$(shell echo $(CUDA_VERSION) | sed 's/\.//'),NULL))
+
+.PHONY: dep-check-torch
+dep-check-torch:
+	@echo "see if torch is installed, and which CUDA version and devices it sees"
+	$(PYTHON) -c "$$CHECK_TORCH_SCRIPT"
 
 .PHONY: dep
-dep:
+dep: get-cuda-info
 	@echo "Exporting dependencies as per $(PYPROJECT) section 'tool.uv-exports.exports'"
-	uv sync --all-extras
+	uv sync --all-extras $(UV_EXTRA_INDEX)
 	mkdir -p $(REQ_LOCATION)
 	$(PYTHON) -c "$$EXPORT_SCRIPT" $(PYPROJECT) $(REQ_LOCATION) | sh -x
+	
+	@if [ "$(CUDA_PRESENT)" = "1" ]; then \
+		echo "CUDA is present, installing torch with CUDA $(CUDA_VERSION)"; \
+		uv pip install torch --upgrade --index https://download.pytorch.org/whl/cu$(CUDA_VERSION_SHORT); \
+	fi
+	
 
 .PHONY: dep-check
 dep-check:
 	@echo "Checking that exported requirements are up to date"
-	uv sync --all-extras
+	uv sync --all-extras $(UV_EXTRA_INDEX)
 	mkdir -p $(REQ_LOCATION)-TEMP
 	$(PYTHON) -c "$$EXPORT_SCRIPT" $(PYPROJECT) $(REQ_LOCATION)-TEMP | sh -x
 	diff -r $(REQ_LOCATION)-TEMP $(REQ_LOCATION)
@@ -534,7 +615,7 @@ help-targets:
 
 
 .PHONY: info
-info: gen-version-info
+info: gen-version-info get-cuda-info
 	@echo "# makefile variables"
 	@echo "    PYTHON = $(PYTHON)"
 	@echo "    PYTHON_VERSION = $(PYTHON_VERSION)"
@@ -542,6 +623,11 @@ info: gen-version-info
 	@echo "    VERSION = $(VERSION)"
 	@echo "    LAST_VERSION = $(LAST_VERSION)"
 	@echo "    PYTEST_OPTIONS = $(PYTEST_OPTIONS)"
+	@echo "    CUDA_PRESENT = $(CUDA_PRESENT)"
+	@if [ "$(CUDA_PRESENT)" = "1" ]; then \
+		echo "    CUDA_VERSION = $(CUDA_VERSION)"; \
+		echo "    CUDA_VERSION_SHORT = $(CUDA_VERSION_SHORT)"; \
+	fi
 
 .PHONY: info-long
 info-long: info
