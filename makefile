@@ -372,6 +372,13 @@ version: gen-commit-log
 # dependencies and setup
 # ==================================================
 
+.PHONY: setup
+setup: dep-check
+	@echo "install and update via uv"
+	@echo "To activate the virtual environment, run one of:"
+	@echo "  source .venv/bin/activate"
+	@echo "  source .venv/Scripts/activate"
+
 .PHONY: get-cuda-info
 get-cuda-info:
 	$(eval CUDA_PRESENT := $(shell if command -v nvcc > /dev/null 2>&1; then echo 1; else echo 0; fi))
@@ -515,6 +522,8 @@ docs-clean:
 	rm $(DOCS_DIR)/$(PACKAGE_NAME).html
 	rm $(DOCS_DIR)/index.html
 	rm $(DOCS_DIR)/search.js
+	rm $(DOCS_DIR)/package_map.dot
+	rm $(DOCS_DIR)/package_map.html
 
 
 # ==================================================
@@ -663,3 +672,22 @@ help: help-targets info
 # custom targets
 # ==================================================
 # (put them down here, or delimit with ~~~~~)
+
+
+DEMO_MODEL ?= pythia-14m
+DEMO_PROMPTS ?= data/pile_1k.jsonl
+DEMO_N_SAMPLES ?= 100
+DEMO_ARGS ?= --min-chars 128 --max-chars 256
+
+
+.PHONY: demo-activations
+demo-activations:
+	$(PYTHON) -m pattern_lens.activations --model $(DEMO_MODEL) --prompts $(DEMO_PROMPTS) --save_path docs/demo --n_samples $(DEMO_N_SAMPLES) $(DEMO_ARGS)
+
+.PHONY: demo-figures
+demo-figures:
+	$(PYTHON) -m pattern_lens.figures --model $(DEMO_MODEL)
+
+.PHONY: demo
+demo: demo-activations demo-figures
+	@echo "generate demo"
