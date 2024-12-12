@@ -1,9 +1,9 @@
 import argparse
 import functools
+import importlib.resources
 import json
 from dataclasses import asdict
 from pathlib import Path
-import importlib.resources
 
 import numpy as np
 import torch
@@ -129,7 +129,6 @@ def get_activations(
 
 
 def main():
-
     arg_parser: argparse.ArgumentParser = argparse.ArgumentParser()
     # input and output
     arg_parser.add_argument(
@@ -248,7 +247,11 @@ def main():
 
     # write index.html
     if not args.no_index_html:
-        html_index: str = importlib.resources.files(pattern_lens).joinpath("frontend/index.html").read_text(encoding="utf-8")
+        html_index: str = (
+            importlib.resources.files(pattern_lens)
+            .joinpath("frontend/index.html")
+            .read_text(encoding="utf-8")
+        )
         with open(save_path / "index.html", "w") as f:
             f.write(html_index)
 

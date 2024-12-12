@@ -1,9 +1,3 @@
-import argparse
-import base64
-import hashlib
-import json
-from pathlib import Path
-
 def main():
     import http.server
     import socketserver

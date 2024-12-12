@@ -4,18 +4,22 @@ import itertools
 import json
 import multiprocessing as mp
 import warnings
-from dataclasses import asdict
 from pathlib import Path
 
 import matplotlib.pyplot as plt
 import tqdm
 from muutils.json_serialize import json_serialize
-# from transformer_lens import HookedTransformer, HookedTransformerConfig
 
 from pattern_lens.attn_figure_funcs import ATTENTION_MATRIX_FIGURE_FUNCS
 from pattern_lens.consts import DATA_DIR, FIGURE_FMT, AttentionMatrix
-from pattern_lens.indexes import generate_functions_jsonl, generate_models_jsonl, generate_prompts_jsonl
+from pattern_lens.indexes import (
+    generate_functions_jsonl,
+    generate_models_jsonl,
+    generate_prompts_jsonl,
+)
 from pattern_lens.load_activations import load_activations
+
+# from transformer_lens import HookedTransformer, HookedTransformerConfig
 
 
 class HTConfigMock:
@@ -28,7 +32,7 @@ class HTConfigMock:
     def serialize(self):
         return json_serialize(self.__dict__)
 
-    @classmethod    
+    @classmethod
     def load(cls, data: dict):
         return cls(**data)
 
@@ -61,7 +65,7 @@ def process_single_head(
 
 
 def compute_and_save_figures(
-    model_cfg: "HookedTransformerConfig|HTConfigMock",
+    model_cfg: "HookedTransformerConfig|HTConfigMock",  # noqa: F821
     activations_path: Path,
     cache: dict,
     save_path: Path = Path(DATA_DIR),
@@ -76,7 +80,7 @@ def compute_and_save_figures(
         attn_pattern: AttentionMatrix = (
             cache[f"blocks.{layer_idx}.attn.hook_pattern"][0, head_idx].cpu().numpy()
         )
-        save_dir: Path = prompt_dir / f"L{layer_idx}"/ f"H{head_idx}"
+        save_dir: Path = prompt_dir / f"L{layer_idx}" / f"H{head_idx}"
         save_dir.mkdir(parents=True, exist_ok=True)
         process_single_head(
             layer_idx=layer_idx,
@@ -91,7 +95,7 @@ def compute_and_save_figures(
 
 def process_prompt(
     prompt: dict,
-    model_cfg: "HookedTransformerConfig|HTConfigMock",
+    model_cfg: "HookedTransformerConfig|HTConfigMock",  # noqa: F821
     save_path: Path,
     force_overwrite: bool = False,
 ) -> None:
@@ -111,7 +115,6 @@ def process_prompt(
 
 
 def main():
-
     arg_parser: argparse.ArgumentParser = argparse.ArgumentParser()
     # input and output
     arg_parser.add_argument(
@@ -159,7 +162,7 @@ def main():
     save_path: Path = Path(args.save_path)
     model_path: Path = save_path / model_name
     with open(model_path / "model_cfg.json", "r") as f:
-        model_cfg = HTConfigMock.load(json.load(f))        
+        model_cfg = HTConfigMock.load(json.load(f))
 
     # load prompts
     with open(model_path / "prompts.jsonl", "r") as f:
@@ -187,6 +190,7 @@ def main():
 
     generate_models_jsonl(save_path)
     generate_functions_jsonl(save_path)
+
 
 if __name__ == "__main__":
     main()

@@ -9,7 +9,6 @@ def load_text_data(
     max_chars: int | None = None,
     shuffle: bool = False,
 ) -> list[dict]:
-
     # read raw data
     with open(fname, "r") as f:
         data_raw: list[dict] = [json.loads(d) for d in f.readlines()]

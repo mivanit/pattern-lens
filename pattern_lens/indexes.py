@@ -22,6 +22,7 @@ def generate_prompts_jsonl(model_dir: Path):
             f.write(json.dumps(prompt))
             f.write("\n")
 
+
 def generate_models_jsonl(path: Path):
     """creates a `models.jsonl` file with all the models"""
     models: list[dict] = list()
