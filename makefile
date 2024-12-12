@@ -682,7 +682,7 @@ DEMO_ARGS ?= --min-chars 128 --max-chars 256
 
 .PHONY: demo-activations
 demo-activations:
-	$(PYTHON) -m pattern_lens.activations --model $(DEMO_MODEL) --prompts $(DEMO_PROMPTS) --save_path docs/demo --n_samples $(DEMO_N_SAMPLES) $(DEMO_ARGS)
+	$(PYTHON) -m pattern_lens.activations --model $(DEMO_MODEL) --prompts $(DEMO_PROMPTS) --raw-prompts --save-path docs/demo --n-samples $(DEMO_N_SAMPLES) $(DEMO_ARGS)
 
 .PHONY: demo-figures
 demo-figures:

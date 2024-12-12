@@ -3,6 +3,7 @@ import functools
 import json
 from dataclasses import asdict
 from pathlib import Path
+import importlib.resources
 
 import numpy as np
 import torch
@@ -10,6 +11,7 @@ import tqdm
 from muutils.json_serialize import json_serialize
 from transformer_lens import HookedTransformer, HookedTransformerConfig
 
+import pattern_lens
 from pattern_lens.consts import ATTN_PATTERN_REGEX, DATA_DIR, AttentionCache
 from pattern_lens.indexes import generate_models_jsonl, generate_prompts_jsonl
 from pattern_lens.load_activations import (
@@ -148,14 +150,7 @@ def main():
     )
 
     arg_parser.add_argument(
-        "--not-raw-prompts",
-        "-r",
-        action="store_true",
-        help="If passed, prompts will be treated as pre-processed (truncated, hashed, etc) and not raw text",
-    )
-
-    arg_parser.add_argument(
-        "--save_path",
+        "--save-path",
         "-s",
         type=str,
         required=False,
@@ -165,14 +160,14 @@ def main():
 
     # min and max prompt lengths
     arg_parser.add_argument(
-        "--min_chars",
+        "--min-chars",
         type=int,
         required=False,
         help="The minimum number of characters for a prompt",
         default=100,
     )
     arg_parser.add_argument(
-        "--max_chars",
+        "--max-chars",
         type=int,
         required=False,
         help="The maximum number of characters for a prompt",
@@ -181,7 +176,7 @@ def main():
 
     # number of samples
     arg_parser.add_argument(
-        "--n_samples",
+        "--n-samples",
         "-n",
         type=int,
         required=False,
@@ -195,6 +190,21 @@ def main():
         "-f",
         action="store_true",
         help="If passed, will overwrite existing files",
+    )
+
+    # no index html
+    arg_parser.add_argument(
+        "--no-index-html",
+        action="store_true",
+        help="If passed, will not write an index.html file for the model",
+    )
+
+    # raw prompts
+    arg_parser.add_argument(
+        "--raw-prompts",
+        "-r",
+        action="store_true",
+        help="pass if the prompts have not been split and tokenized (still needs keys 'text' and 'meta' for each item)",
     )
 
     args: argparse.Namespace = arg_parser.parse_args()
@@ -220,21 +230,27 @@ def main():
 
     # load prompts
     prompts: list[dict]
-    if args.not_raw_prompts:
-        with open(model_path / "prompts.jsonl", "r") as f:
-            prompts = [json.loads(line) for line in f.readlines()]
-    else:
+    if args.raw_prompts:
         prompts = load_text_data(
             Path(args.prompts),
             min_chars=args.min_chars,
             max_chars=args.max_chars,
             shuffle=True,
         )
+    else:
+        with open(model_path / "prompts.jsonl", "r") as f:
+            prompts = [json.loads(line) for line in f.readlines()]
     # truncate to n_samples
     prompts = prompts[: args.n_samples]
     print(f"{len(prompts)} prompts loaded")
 
     save_path: Path = Path(args.save_path)
+
+    # write index.html
+    if not args.no_index_html:
+        html_index: str = importlib.resources.files(pattern_lens).joinpath("frontend/index.html").read_text(encoding="utf-8")
+        with open(save_path / "index.html", "w") as f:
+            f.write(html_index)
 
     # get activations
     list(
