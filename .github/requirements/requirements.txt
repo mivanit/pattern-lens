@@ -110,6 +110,7 @@ traitlets==5.14.3
 transformer-lens==2.9.0
 transformers==4.46.3
 triton==3.1.0 ; python_full_version == '3.12.*' and platform_machine == 'x86_64' and platform_system == 'Linux'
+typeguard==4.4.1
 typing-extensions==4.12.2
 tzdata==2024.2
 urllib3==2.2.3

@@ -1124,6 +1124,7 @@ dependencies = [
     { name = "torch" },
     { name = "tqdm" },
     { name = "transformer-lens" },
+    { name = "typeguard" },
     { name = "zanj" },
 ]
 
@@ -1140,6 +1141,7 @@ requires-dist = [
     { name = "torch", specifier = ">=2.5.1" },
     { name = "tqdm", specifier = ">=4.66.5" },
     { name = "transformer-lens", specifier = ">=2.0.0" },
+    { name = "typeguard", specifier = ">=4.4.1" },
     { name = "zanj", specifier = ">=0.3.1" },
 ]
 
@@ -1863,6 +1865,18 @@ dependencies = [
 ]
 wheels = [
     { url = "https://files.pythonhosted.org/packages/78/eb/65f5ba83c2a123f6498a3097746607e5b2f16add29e36765305e4ac7fdd8/triton-3.1.0-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:c8182f42fd8080a7d39d666814fa36c5e30cc00ea7eeeb1a2983dbb4c99a0fdc", size = 209551444 },
+]
+
+[[package]]
+name = "typeguard"
+version = "4.4.1"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "typing-extensions" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/62/c3/400917dd37d7b8c07e9723f3046818530423e1e759a56a22133362adab00/typeguard-4.4.1.tar.gz", hash = "sha256:0d22a89d00b453b47c49875f42b6601b961757541a2e1e0ef517b6e24213c21b", size = 74959 }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/f2/53/9465dedf2d69fe26008e7732cf6e0a385e387c240869e7d54eed49782a3c/typeguard-4.4.1-py3-none-any.whl", hash = "sha256:9324ec07a27ec67fc54a9c063020ca4c0ae6abad5e9f0f9804ca59aee68c6e21", size = 35635 },
 ]
 
 [[package]]

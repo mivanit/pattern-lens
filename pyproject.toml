@@ -20,8 +20,10 @@ dependencies = [
     # custom utils
     "muutils>=0.6.12",
 	"zanj>=0.3.1",
-    # transformer lens
+    # TL
     "transformer-lens>=2.0.0",
+    # this TL dep not listed? is this in an extra?
+    "typeguard>=4.4.1",
 ]
 
 [tool.uv]
