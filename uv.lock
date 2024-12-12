@@ -1261,11 +1261,9 @@ dev = [
     { name = "coverage-badge" },
     { name = "mypy" },
     { name = "pdoc" },
+    { name = "pycln" },
     { name = "pytest" },
     { name = "pytest-cov" },
-]
-lint = [
-    { name = "pycln" },
     { name = "ruff" },
 ]
 
@@ -1291,13 +1289,11 @@ dev = [
     { name = "coverage-badge", specifier = ">=1.1.0" },
     { name = "mypy", specifier = ">=1.0.1" },
     { name = "pdoc", specifier = ">=14.6.0" },
+    { name = "pycln", specifier = ">=2.1.3" },
     { name = "pytest", specifier = ">=8.2.2" },
     { name = "pytest-cov", specifier = ">=4.1.0" },
-    { name = "tomli", marker = "python_full_version < '3.11'", specifier = ">=2.1.0" },
-]
-lint = [
-    { name = "pycln", specifier = ">=2.1.3" },
     { name = "ruff", specifier = ">=0.4.8" },
+    { name = "tomli", marker = "python_full_version < '3.11'", specifier = ">=2.1.0" },
 ]
 
 [[package]]
