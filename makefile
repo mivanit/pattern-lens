@@ -676,18 +676,27 @@ help: help-targets info
 
 DEMO_MODEL ?= pythia-14m
 DEMO_PROMPTS ?= data/pile_1k.jsonl
-DEMO_N_SAMPLES ?= 100
+DEMO_N_SAMPLES ?= 10
 DEMO_ARGS ?= --min-chars 128 --max-chars 256
+DEMO_DATA ?= docs/demo
 
+
+.PHONY: demo-clean
+demo-clean:
+	rm -rf $(DEMO_DATA)
 
 .PHONY: demo-activations
 demo-activations:
-	$(PYTHON) -m pattern_lens.activations --model $(DEMO_MODEL) --prompts $(DEMO_PROMPTS) --raw-prompts --save-path docs/demo --n-samples $(DEMO_N_SAMPLES) $(DEMO_ARGS)
+	$(PYTHON) -m pattern_lens.activations --model $(DEMO_MODEL) --prompts $(DEMO_PROMPTS) --raw-prompts --save-path $(DEMO_DATA) --n-samples $(DEMO_N_SAMPLES) $(DEMO_ARGS)
 
 .PHONY: demo-figures
 demo-figures:
-	$(PYTHON) -m pattern_lens.figures --model $(DEMO_MODEL)
+	$(PYTHON) -m pattern_lens.figures --model $(DEMO_MODEL) --save-path $(DEMO_DATA)
+
+.PHONY: demo-server
+demo-server:
+	$(PYTHON) -m pattern_lens.server --path $(DEMO_DATA)
 
 .PHONY: demo
-demo: demo-activations demo-figures
+demo: demo-clean demo-activations demo-figures demo-server
 	@echo "generate demo"
