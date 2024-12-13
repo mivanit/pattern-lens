@@ -148,6 +148,95 @@ def get_activations(
     )
 
 
+def activations_main(
+    model_name: str,
+    save_path: str,
+    prompts_path: str,
+    raw_prompts: bool,
+    min_chars: int,
+    max_chars: int,
+    force: bool,
+    n_samples: int,
+    no_index_html: bool,
+) -> None:
+    with SpinnerContext(message="loading model", **SPINNER_KWARGS):
+        model: HookedTransformer = HookedTransformer.from_pretrained(model_name)
+        model.model_name = model_name
+        model.cfg.model_name = model_name
+        n_params: int = sum(p.numel() for p in model.parameters())
+    print(
+        f"loaded {model_name} with {shorten_numerical_to_str(n_params)} ({n_params}) parameters"
+    )
+
+    save_path: Path = Path(save_path)
+    save_path.mkdir(parents=True, exist_ok=True)
+    model_path: Path = save_path / model_name
+    with SpinnerContext(
+        message=f"saving model info to {model_path.as_posix()}", **SPINNER_KWARGS
+    ):
+        model_cfg: HookedTransformerConfig
+        model_cfg = model.cfg
+        model_path.mkdir(parents=True, exist_ok=True)
+        with open(model_path / "model_cfg.json", "w") as f:
+            json.dump(json_serialize(asdict(model_cfg)), f)
+
+    # load prompts
+    with SpinnerContext(
+        message=f"loading prompts from {prompts_path = }", **SPINNER_KWARGS
+    ):
+        prompts: list[dict]
+        if raw_prompts:
+            prompts = load_text_data(
+                Path(prompts_path),
+                min_chars=min_chars,
+                max_chars=max_chars,
+                shuffle=True,
+            )
+        else:
+            with open(model_path / "prompts.jsonl", "r") as f:
+                prompts = [json.loads(line) for line in f.readlines()]
+        # truncate to n_samples
+        prompts = prompts[: n_samples]
+
+    print(f"{len(prompts)} prompts loaded")
+    save_path: Path = Path(save_path)
+
+    # write index.html
+    with SpinnerContext(message="writing index.html", **SPINNER_KWARGS):
+        if not no_index_html:
+            html_index: str = (
+                importlib.resources.files(pattern_lens)
+                .joinpath("frontend/index.html")
+                .read_text(encoding="utf-8")
+            )
+            with open(save_path / "index.html", "w", encoding="utf-8") as f:
+                f.write(html_index)
+
+    # get activations
+    list(
+        tqdm.tqdm(
+            map(
+                functools.partial(
+                    get_activations,
+                    model=model,
+                    save_path=save_path,
+                    allow_disk_cache=not force,
+                    return_cache=False,
+                ),
+                prompts,
+            ),
+            total=len(prompts),
+            desc="Computing activations",
+        )
+    )
+
+    with SpinnerContext(
+        message="updating jsonl metadata for models and prompts", **SPINNER_KWARGS
+    ):
+        generate_models_jsonl(save_path)
+        generate_prompts_jsonl(save_path / model_name)
+
+
 def main():
     with SpinnerContext(message="parsing args", **SPINNER_KWARGS):
         arg_parser: argparse.ArgumentParser = argparse.ArgumentParser()
@@ -231,83 +320,17 @@ def main():
 
     print(f"args parsed: {args}")
 
-    with SpinnerContext(message="loading model", **SPINNER_KWARGS):
-        model_name: str = args.model
-        model: HookedTransformer = HookedTransformer.from_pretrained(model_name)
-        model.model_name = model_name
-        model.cfg.model_name = model_name
-        n_params: int = sum(p.numel() for p in model.parameters())
-    print(
-        f"loaded {model_name} with {shorten_numerical_to_str(n_params)} ({n_params}) parameters"
+    activations_main(
+        model_name=args.model,
+        save_path=args.save_path,
+        prompts_path=args.prompts,
+        raw_prompts=args.raw_prompts,
+        min_chars=args.min_chars,
+        max_chars=args.max_chars,
+        force=args.force,
+        n_samples=args.n_samples,
+        no_index_html=args.no_index_html,
     )
-
-    save_path: Path = Path(args.save_path)
-    save_path.mkdir(parents=True, exist_ok=True)
-    model_path: Path = save_path / model_name
-    with SpinnerContext(
-        message=f"saving model info to {model_path.as_posix()}", **SPINNER_KWARGS
-    ):
-        model_cfg: HookedTransformerConfig
-        model_cfg = model.cfg
-        model_path.mkdir(parents=True, exist_ok=True)
-        with open(model_path / "model_cfg.json", "w") as f:
-            json.dump(json_serialize(asdict(model_cfg)), f)
-
-    # load prompts
-    with SpinnerContext(
-        message=f"loading prompts from {args.prompts = }", **SPINNER_KWARGS
-    ):
-        prompts: list[dict]
-        if args.raw_prompts:
-            prompts = load_text_data(
-                Path(args.prompts),
-                min_chars=args.min_chars,
-                max_chars=args.max_chars,
-                shuffle=True,
-            )
-        else:
-            with open(model_path / "prompts.jsonl", "r") as f:
-                prompts = [json.loads(line) for line in f.readlines()]
-        # truncate to n_samples
-        prompts = prompts[: args.n_samples]
-
-    print(f"{len(prompts)} prompts loaded")
-    save_path: Path = Path(args.save_path)
-
-    # write index.html
-    with SpinnerContext(message="writing index.html", **SPINNER_KWARGS):
-        if not args.no_index_html:
-            html_index: str = (
-                importlib.resources.files(pattern_lens)
-                .joinpath("frontend/index.html")
-                .read_text(encoding="utf-8")
-            )
-            with open(save_path / "index.html", "w", encoding="utf-8") as f:
-                f.write(html_index)
-
-    # get activations
-    list(
-        tqdm.tqdm(
-            map(
-                functools.partial(
-                    get_activations,
-                    model=model,
-                    save_path=save_path,
-                    allow_disk_cache=not args.force,
-                    return_cache=False,
-                ),
-                prompts,
-            ),
-            total=len(prompts),
-            desc="Computing activations",
-        )
-    )
-
-    with SpinnerContext(
-        message="updating jsonl metadata for models and prompts", **SPINNER_KWARGS
-    ):
-        generate_models_jsonl(save_path)
-        generate_prompts_jsonl(save_path / model_name)
 
 
 if __name__ == "__main__":

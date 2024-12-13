@@ -114,6 +114,52 @@ def process_prompt(
         force_overwrite=force_overwrite,
     )
 
+def figures_main(
+    model_name: str,
+    save_path: str,
+    n_samples: int,
+    force: bool,
+) -> None:
+
+    with SpinnerContext(message="setting up paths", **SPINNER_KWARGS):
+        # save model info or check if it exists
+        save_path: Path = Path(save_path)
+        model_path: Path = save_path / model_name
+        with open(model_path / "model_cfg.json", "r") as f:
+            model_cfg = HTConfigMock.load(json.load(f))
+
+    with SpinnerContext(message="loading prompts", **SPINNER_KWARGS):
+        # load prompts
+        with open(model_path / "prompts.jsonl", "r") as f:
+            prompts: list[dict] = [json.loads(line) for line in f.readlines()]
+        # truncate to n_samples
+        prompts = prompts[: n_samples]
+
+    print(f"{len(prompts)} prompts loaded")
+
+    with mp.Pool() as pool:
+        list(
+            tqdm.tqdm(
+                pool.imap(
+                    functools.partial(
+                        process_prompt,
+                        model_cfg=model_cfg,
+                        save_path=save_path,
+                        force_overwrite=force,
+                    ),
+                    prompts,
+                ),
+                total=len(prompts),
+                desc="Making figures",
+            )
+        )
+
+    with SpinnerContext(
+        message="updating jsonl metadata for models and functions", **SPINNER_KWARGS
+    ):
+        generate_models_jsonl(save_path)
+        generate_functions_jsonl(save_path)
+
 
 def main():
     with SpinnerContext(message="parsing args", **SPINNER_KWARGS):
@@ -157,48 +203,13 @@ def main():
 
     print(f"args parsed: {args}")
 
-    with SpinnerContext(message="setting up paths", **SPINNER_KWARGS):
-        # load model
-        model_name: str = args.model
-
-        # save model info or check if it exists
-        save_path: Path = Path(args.save_path)
-        model_path: Path = save_path / model_name
-        with open(model_path / "model_cfg.json", "r") as f:
-            model_cfg = HTConfigMock.load(json.load(f))
-
-    with SpinnerContext(message="loading prompts", **SPINNER_KWARGS):
-        # load prompts
-        with open(model_path / "prompts.jsonl", "r") as f:
-            prompts: list[dict] = [json.loads(line) for line in f.readlines()]
-        # truncate to n_samples
-        prompts = prompts[: args.n_samples]
-
-    print(f"{len(prompts)} prompts loaded")
-
-    with mp.Pool() as pool:
-        list(
-            tqdm.tqdm(
-                pool.imap(
-                    functools.partial(
-                        process_prompt,
-                        model_cfg=model_cfg,
-                        save_path=save_path,
-                        force_overwrite=args.force,
-                    ),
-                    prompts,
-                ),
-                total=len(prompts),
-                desc="Making figures",
-            )
-        )
-
-    with SpinnerContext(
-        message="updating jsonl metadata for models and functions", **SPINNER_KWARGS
-    ):
-        generate_models_jsonl(save_path)
-        generate_functions_jsonl(save_path)
-
+    figures_main(
+        model_name=args.model,
+        save_path=args.save_path,
+        n_samples=args.n_samples,
+        force=args.force,
+    )
+    
 
 if __name__ == "__main__":
     main()
