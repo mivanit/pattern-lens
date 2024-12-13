@@ -9,9 +9,10 @@ from pathlib import Path
 import matplotlib.pyplot as plt
 import tqdm
 from muutils.json_serialize import json_serialize
+from muutils.spinner import SpinnerContext
 
 from pattern_lens.attn_figure_funcs import ATTENTION_MATRIX_FIGURE_FUNCS
-from pattern_lens.consts import DATA_DIR, FIGURE_FMT, AttentionMatrix
+from pattern_lens.consts import DATA_DIR, FIGURE_FMT, AttentionMatrix, SPINNER_KWARGS
 from pattern_lens.indexes import (
     generate_functions_jsonl,
     generate_models_jsonl,
@@ -115,60 +116,64 @@ def process_prompt(
 
 
 def main():
-    arg_parser: argparse.ArgumentParser = argparse.ArgumentParser()
-    # input and output
-    arg_parser.add_argument(
-        "--model",
-        "-m",
-        type=str,
-        required=True,
-        help="The model name to use",
-    )
-    arg_parser.add_argument(
-        "--save_path",
-        "-s",
-        type=str,
-        required=False,
-        help="The path to save the attention patterns",
-        default=DATA_DIR,
-    )
-    # number of samples
-    arg_parser.add_argument(
-        "--n_samples",
-        "-n",
-        type=int,
-        required=False,
-        help="The max number of samples to process, do all in the file if None",
-        default=None,
-    )
-    # force overwrite of existing figures
-    arg_parser.add_argument(
-        "--force",
-        "-f",
-        type=bool,
-        required=False,
-        help="Force overwrite of existing figures",
-        default=False,
-    )
+    with SpinnerContext(message="parsing args", **SPINNER_KWARGS):
+        arg_parser: argparse.ArgumentParser = argparse.ArgumentParser()
+        # input and output
+        arg_parser.add_argument(
+            "--model",
+            "-m",
+            type=str,
+            required=True,
+            help="The model name to use",
+        )
+        arg_parser.add_argument(
+            "--save-path",
+            "-s",
+            type=str,
+            required=False,
+            help="The path to save the attention patterns",
+            default=DATA_DIR,
+        )
+        # number of samples
+        arg_parser.add_argument(
+            "--n-samples",
+            "-n",
+            type=int,
+            required=False,
+            help="The max number of samples to process, do all in the file if None",
+            default=None,
+        )
+        # force overwrite of existing figures
+        arg_parser.add_argument(
+            "--force",
+            "-f",
+            type=bool,
+            required=False,
+            help="Force overwrite of existing figures",
+            default=False,
+        )
 
-    args: argparse.Namespace = arg_parser.parse_args()
+        args: argparse.Namespace = arg_parser.parse_args()
 
     print(f"args parsed: {args}")
 
-    # load model
-    model_name: str = args.model
+    with SpinnerContext(message="setting up paths", **SPINNER_KWARGS):
+        # load model
+        model_name: str = args.model
 
-    # save model info or check if it exists
-    save_path: Path = Path(args.save_path)
-    model_path: Path = save_path / model_name
-    with open(model_path / "model_cfg.json", "r") as f:
-        model_cfg = HTConfigMock.load(json.load(f))
+        # save model info or check if it exists
+        save_path: Path = Path(args.save_path)
+        model_path: Path = save_path / model_name
+        with open(model_path / "model_cfg.json", "r") as f:
+            model_cfg = HTConfigMock.load(json.load(f))
 
-    # load prompts
-    with open(model_path / "prompts.jsonl", "r") as f:
-        prompts: list[dict] = [json.loads(line) for line in f.readlines()]
-    # truncate to n_samples
-    prompts = prompts[: args.n_samples]
+    with SpinnerContext(message="loading prompts", **SPINNER_KWARGS):
+        # load prompts
+        with open(model_path / "prompts.jsonl", "r") as f:
+            prompts: list[dict] = [json.loads(line) for line in f.readlines()]
+        # truncate to n_samples
+        prompts = prompts[: args.n_samples]
+
     print(f"{len(prompts)} prompts loaded")
 
     with mp.Pool() as pool:
@@ -184,12 +189,13 @@ def main():
                     prompts,
                 ),
                 total=len(prompts),
-                desc="Processing prompts",
+                desc="Making figures",
             )
         )
 
-    generate_models_jsonl(save_path)
-    generate_functions_jsonl(save_path)
+    with SpinnerContext(message=f"updating jsonl metadata for models and functions", **SPINNER_KWARGS):
+        generate_models_jsonl(save_path)
+        generate_functions_jsonl(save_path)
 
 
 if __name__ == "__main__":
