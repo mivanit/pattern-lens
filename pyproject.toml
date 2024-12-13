@@ -18,7 +18,7 @@ dependencies = [
     "ipykernel>=6.29.5",
     "ipywidgets>=8.1.5",
     # custom utils
-    "muutils>=0.6.12",
+    "muutils>=0.6.17",
 	"zanj>=0.3.1",
     # TL
     "transformer-lens>=2.0.0",
