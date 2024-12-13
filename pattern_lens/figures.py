@@ -193,7 +193,9 @@ def main():
             )
         )
 
-    with SpinnerContext(message=f"updating jsonl metadata for models and functions", **SPINNER_KWARGS):
+    with SpinnerContext(
+        message="updating jsonl metadata for models and functions", **SPINNER_KWARGS
+    ):
         generate_models_jsonl(save_path)
         generate_functions_jsonl(save_path)
 

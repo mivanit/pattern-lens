@@ -1,8 +1,8 @@
-import sys
 import os
 import argparse
 import http.server
 import socketserver
+
 
 def main(path: str, port: int = 8000):
     os.chdir(path)
@@ -32,6 +32,3 @@ if __name__ == "__main__":
     args: argparse.Namespace = arg_parser.parse_args()
 
     main(path=args.path, port=args.port)
-
-
-

@@ -10,13 +10,18 @@ from typing import Callable
 import numpy as np
 import torch
 import tqdm
-from muutils.spinner import SpinnerContext, SpinnerConfig
+from muutils.spinner import SpinnerContext
 from muutils.misc.numerical import shorten_numerical_to_str
 from muutils.json_serialize import json_serialize
 from transformer_lens import HookedTransformer, HookedTransformerConfig
 
 import pattern_lens
-from pattern_lens.consts import ATTN_PATTERN_REGEX, DATA_DIR, AttentionCache, SPINNER_KWARGS
+from pattern_lens.consts import (
+    ATTN_PATTERN_REGEX,
+    DATA_DIR,
+    AttentionCache,
+    SPINNER_KWARGS,
+)
 from pattern_lens.indexes import generate_models_jsonl, generate_prompts_jsonl
 from pattern_lens.load_activations import (
     ActivationsMissingError,
@@ -31,7 +36,7 @@ def compute_activations(
     model: HookedTransformer | None = None,
     save_path: Path = Path(DATA_DIR),
     return_cache: bool = True,
-    names_filter: Callable[[str], bool]|re.Pattern = ATTN_PATTERN_REGEX,
+    names_filter: Callable[[str], bool] | re.Pattern = ATTN_PATTERN_REGEX,
 ) -> tuple[Path, AttentionCache | None]:
     """get activations for a given model and prompt, possibly from a cache
 
@@ -78,7 +83,7 @@ def compute_activations(
     # set up names filter
     names_filter_fn: Callable[[str], bool]
     if isinstance(names_filter, re.Pattern):
-        names_filter_fn = lambda key: names_filter.match(key) is not None # noqa: E731
+        names_filter_fn = lambda key: names_filter.match(key) is not None  # noqa: E731
     else:
         names_filter_fn = names_filter
 
@@ -232,12 +237,16 @@ def main():
         model.model_name = model_name
         model.cfg.model_name = model_name
         n_params: int = sum(p.numel() for p in model.parameters())
-    print(f"loaded {model_name} with {shorten_numerical_to_str(n_params)} ({n_params}) parameters")
+    print(
+        f"loaded {model_name} with {shorten_numerical_to_str(n_params)} ({n_params}) parameters"
+    )
 
     save_path: Path = Path(args.save_path)
     save_path.mkdir(parents=True, exist_ok=True)
     model_path: Path = save_path / model_name
-    with SpinnerContext(message=f"saving model info to {model_path.as_posix()}", **SPINNER_KWARGS):
+    with SpinnerContext(
+        message=f"saving model info to {model_path.as_posix()}", **SPINNER_KWARGS
+    ):
         model_cfg: HookedTransformerConfig
         model_cfg = model.cfg
         model_path.mkdir(parents=True, exist_ok=True)
@@ -245,7 +254,9 @@ def main():
             json.dump(json_serialize(asdict(model_cfg)), f)
 
     # load prompts
-    with SpinnerContext(message=f"loading prompts from {args.prompts = }", **SPINNER_KWARGS):
+    with SpinnerContext(
+        message=f"loading prompts from {args.prompts = }", **SPINNER_KWARGS
+    ):
         prompts: list[dict]
         if args.raw_prompts:
             prompts = load_text_data(
@@ -264,7 +275,7 @@ def main():
     save_path: Path = Path(args.save_path)
 
     # write index.html
-    with SpinnerContext(message=f"writing index.html", **SPINNER_KWARGS):
+    with SpinnerContext(message="writing index.html", **SPINNER_KWARGS):
         if not args.no_index_html:
             html_index: str = (
                 importlib.resources.files(pattern_lens)
@@ -292,8 +303,9 @@ def main():
         )
     )
 
-
-    with SpinnerContext(message=f"updating jsonl metadata for models and prompts", **SPINNER_KWARGS):
+    with SpinnerContext(
+        message="updating jsonl metadata for models and prompts", **SPINNER_KWARGS
+    ):
         generate_models_jsonl(save_path)
         generate_prompts_jsonl(save_path / model_name)
 
