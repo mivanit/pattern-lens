@@ -22,3 +22,7 @@ DATA_DIR: str = "attn_data"
 
 ATTN_PATTERN_REGEX: re.Pattern = re.compile(r"blocks\.(\d+)\.attn\.hook_pattern")
 "regex for finding attention patterns in model state dicts"
+
+SPINNER_KWARGS: dict = dict(
+	config = dict(success="✔️ "),
+)
