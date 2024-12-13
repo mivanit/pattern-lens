@@ -8,6 +8,8 @@ from pathlib import Path
 import numpy as np
 import torch
 import tqdm
+from muutils.spinner import SpinnerContext, SpinnerConfig
+from muutils.misc.numerical import shorten_numerical_to_str
 from muutils.json_serialize import json_serialize
 from transformer_lens import HookedTransformer, HookedTransformerConfig
 
@@ -129,131 +131,139 @@ def get_activations(
 
 
 def main():
-    arg_parser: argparse.ArgumentParser = argparse.ArgumentParser()
-    # input and output
-    arg_parser.add_argument(
-        "--model",
-        "-m",
-        type=str,
-        required=True,
-        help="The model name to use",
+    _spinner_kwargs: dict = dict(
+        config=SpinnerConfig(success="✔️ "),
     )
 
-    arg_parser.add_argument(
-        "--prompts",
-        "-p",
-        type=str,
-        required=False,
-        help="The path to the prompts file (jsonl with 'text' key on each line). If `None`, expects that `--figures` is passed and will generate figures for all prompts in the model directory",
-        default=None,
-    )
+    with SpinnerContext(message="parsing args", **_spinner_kwargs):
+        arg_parser: argparse.ArgumentParser = argparse.ArgumentParser()
+        # input and output
+        arg_parser.add_argument(
+            "--model",
+            "-m",
+            type=str,
+            required=True,
+            help="The model name to use",
+        )
 
-    arg_parser.add_argument(
-        "--save-path",
-        "-s",
-        type=str,
-        required=False,
-        help="The path to save the attention patterns",
-        default=DATA_DIR,
-    )
+        arg_parser.add_argument(
+            "--prompts",
+            "-p",
+            type=str,
+            required=False,
+            help="The path to the prompts file (jsonl with 'text' key on each line). If `None`, expects that `--figures` is passed and will generate figures for all prompts in the model directory",
+            default=None,
+        )
 
-    # min and max prompt lengths
-    arg_parser.add_argument(
-        "--min-chars",
-        type=int,
-        required=False,
-        help="The minimum number of characters for a prompt",
-        default=100,
-    )
-    arg_parser.add_argument(
-        "--max-chars",
-        type=int,
-        required=False,
-        help="The maximum number of characters for a prompt",
-        default=1000,
-    )
+        arg_parser.add_argument(
+            "--save-path",
+            "-s",
+            type=str,
+            required=False,
+            help="The path to save the attention patterns",
+            default=DATA_DIR,
+        )
 
-    # number of samples
-    arg_parser.add_argument(
-        "--n-samples",
-        "-n",
-        type=int,
-        required=False,
-        help="The max number of samples to process, do all in the file if None",
-        default=None,
-    )
+        # min and max prompt lengths
+        arg_parser.add_argument(
+            "--min-chars",
+            type=int,
+            required=False,
+            help="The minimum number of characters for a prompt",
+            default=100,
+        )
+        arg_parser.add_argument(
+            "--max-chars",
+            type=int,
+            required=False,
+            help="The maximum number of characters for a prompt",
+            default=1000,
+        )
 
-    # force overwrite
-    arg_parser.add_argument(
-        "--force",
-        "-f",
-        action="store_true",
-        help="If passed, will overwrite existing files",
-    )
+        # number of samples
+        arg_parser.add_argument(
+            "--n-samples",
+            "-n",
+            type=int,
+            required=False,
+            help="The max number of samples to process, do all in the file if None",
+            default=None,
+        )
 
-    # no index html
-    arg_parser.add_argument(
-        "--no-index-html",
-        action="store_true",
-        help="If passed, will not write an index.html file for the model",
-    )
+        # force overwrite
+        arg_parser.add_argument(
+            "--force",
+            "-f",
+            action="store_true",
+            help="If passed, will overwrite existing files",
+        )
 
-    # raw prompts
-    arg_parser.add_argument(
-        "--raw-prompts",
-        "-r",
-        action="store_true",
-        help="pass if the prompts have not been split and tokenized (still needs keys 'text' and 'meta' for each item)",
-    )
+        # no index html
+        arg_parser.add_argument(
+            "--no-index-html",
+            action="store_true",
+            help="If passed, will not write an index.html file for the model",
+        )
 
-    args: argparse.Namespace = arg_parser.parse_args()
+        # raw prompts
+        arg_parser.add_argument(
+            "--raw-prompts",
+            "-r",
+            action="store_true",
+            help="pass if the prompts have not been split and tokenized (still needs keys 'text' and 'meta' for each item)",
+        )
+
+        args: argparse.Namespace = arg_parser.parse_args()
 
     print(f"args parsed: {args}")
 
-    # load model
-    model_name: str = args.model
-    model: HookedTransformer = HookedTransformer.from_pretrained(model_name)
-    model.model_name = model_name
-    model.cfg.model_name = model_name
-    print("model loaded")
+    with SpinnerContext(message="loading model", **_spinner_kwargs):
+        model_name: str = args.model
+        model: HookedTransformer = HookedTransformer.from_pretrained(model_name)
+        model.model_name = model_name
+        model.cfg.model_name = model_name
+        n_params: int = sum(p.numel() for p in model.parameters())
+    print(f"loaded {model_name} with {shorten_numerical_to_str(n_params)} ({n_params}) parameters")
 
-    # save model info
     save_path: Path = Path(args.save_path)
     save_path.mkdir(parents=True, exist_ok=True)
     model_path: Path = save_path / model_name
-    model_cfg: HookedTransformerConfig
-    model_cfg = model.cfg
-    model_path.mkdir(parents=True, exist_ok=True)
-    with open(model_path / "model_cfg.json", "w") as f:
-        json.dump(json_serialize(asdict(model_cfg)), f)
+    with SpinnerContext(message=f"saving model info to {model_path.as_posix()}", **_spinner_kwargs):
+        model_cfg: HookedTransformerConfig
+        model_cfg = model.cfg
+        model_path.mkdir(parents=True, exist_ok=True)
+        with open(model_path / "model_cfg.json", "w") as f:
+            json.dump(json_serialize(asdict(model_cfg)), f)
 
     # load prompts
-    prompts: list[dict]
-    if args.raw_prompts:
-        prompts = load_text_data(
-            Path(args.prompts),
-            min_chars=args.min_chars,
-            max_chars=args.max_chars,
-            shuffle=True,
-        )
-    else:
-        with open(model_path / "prompts.jsonl", "r") as f:
-            prompts = [json.loads(line) for line in f.readlines()]
-    # truncate to n_samples
-    prompts = prompts[: args.n_samples]
-    print(f"{len(prompts)} prompts loaded")
+    with SpinnerContext(message=f"loading prompts from {args.prompts = }", **_spinner_kwargs):
+        prompts: list[dict]
+        if args.raw_prompts:
+            prompts = load_text_data(
+                Path(args.prompts),
+                min_chars=args.min_chars,
+                max_chars=args.max_chars,
+                shuffle=True,
+            )
+        else:
+            with open(model_path / "prompts.jsonl", "r") as f:
+                prompts = [json.loads(line) for line in f.readlines()]
+        # truncate to n_samples
+        prompts = prompts[: args.n_samples]
 
+    print(f"{len(prompts)} prompts loaded")
     save_path: Path = Path(args.save_path)
 
     # write index.html
-    if not args.no_index_html:
-        html_index: str = (
-            importlib.resources.files(pattern_lens)
-            .joinpath("frontend/index.html")
-            .read_text(encoding="utf-8")
-        )
-        with open(save_path / "index.html", "w") as f:
-            f.write(html_index)
+    with SpinnerContext(message=f"writing index.html", **_spinner_kwargs):
+        if not args.no_index_html:
+            html_index: str = (
+                importlib.resources.files(pattern_lens)
+                .joinpath("frontend/index.html")
+                .read_text(encoding="utf-8")
+            )
+            with open(save_path / "index.html", "w", encoding="utf-8") as f:
+                f.write(html_index)
 
     # get activations
     list(
@@ -273,8 +283,10 @@ def main():
         )
     )
 
-    generate_models_jsonl(save_path)
-    generate_prompts_jsonl(save_path / model_name)
+
+    with SpinnerContext(message=f"updating jsonl metadata for models and prompts", **_spinner_kwargs):
+        generate_models_jsonl(save_path)
+        generate_prompts_jsonl(save_path / model_name)
 
 
 if __name__ == "__main__":
