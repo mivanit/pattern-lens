@@ -1,0 +1,893 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <!-- <meta name="viewport" content="width=device-width, initial-scale=1.0"> -->
+    <title>Attention Pattern Analysis</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/3.2.31/vue.global.min.js"></script>
+    <!-- Include lodash library for utility functions -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.21/lodash.min.js"></script>
+    <!-- Include pako library for decompressing SVGZ files -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pako/2.0.4/pako.min.js"></script>
+    <!-- For decompressing SVGZ files -->
+    <!-- Include ag-Grid library for prompts table -->
+    <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/ag-grid/32.1.0/ag-grid-community.min.js"></script> -->
+    <script src="https://cdn.jsdelivr.net/npm/ag-grid-community@32.2.0/dist/ag-grid-community.min.js"></script>
+    <style>
+        /* General Styles */
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.4;
+            margin: 0;
+            padding: 10px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        /* Layout Styles */
+        .main-selection-content {
+            display: flex;
+            gap: 10px;
+            border: 2px solid #ccc;
+            padding: 10px;
+            resize: vertical;
+            overflow: auto;
+            min-height: 300px;
+        }
+
+        .filters {
+            width: 180px;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .model-function-filters {
+            flex: 0 0 auto;
+        }
+
+        /* Layer and Head Filters */
+        .layer-head-filters {
+            display: flex;
+            gap: 10px;
+            flex: 1;
+            overflow: hidden;
+            min-height: 0;
+        }
+
+        .layer-head-filters .filter-item {
+            display: flex;
+            flex-direction: column;
+            width: 50%;
+            box-sizing: border-box;
+            overflow: hidden;
+            height: 100%;
+        }
+
+        .layer-head-filters .filter-label {
+            flex: 0 0 auto;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            margin-bottom: 5px;
+        }
+
+        .layer-head-filters .filter-label label {
+            margin-bottom: 3px;
+        }
+
+        .layer-head-filters .filter-controls {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            width: 100%;
+        }
+
+        .layer-head-filters .counter {
+            font-size: 0.8em;
+            color: #666;
+            margin-left: auto;
+        }
+
+        .layer-head-filters .checkbox-list {
+            flex: 1;
+            overflow-y: auto;
+            min-height: 0;
+            max-height: none;
+        }
+
+        .layer-head-filters select {
+            flex: 1;
+            overflow-y: auto;
+        }
+
+        /* Form Elements */
+        label {
+            display: block;
+            margin-bottom: 3px;
+            font-size: 0.9em;
+        }
+
+        select {
+            width: 100%;
+            padding: 4px;
+        }
+
+        /* Checkbox Styles */
+        .checkbox-list {
+            border: 1px solid #ccc;
+            padding: 3px;
+        }
+
+        .checkbox-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1px;
+            line-height: 1;
+        }
+
+        .checkbox-item input[type="checkbox"] {
+            margin-right: 0.2em;
+            margin-top: 0;
+            margin-bottom: 0;
+            width: 12px;
+            height: 12px;
+            vertical-align: middle;
+        }
+
+        .checkbox-item label {
+            display: inline-block;
+            margin-bottom: 0;
+            font-size: 0.8em;
+            line-height: 1;
+        }
+
+        /* Filter Item Styles */
+        .filter-item {
+            margin-bottom: 5px;
+            border: 1px solid #ddd;
+            padding: 5px;
+            border-radius: 3px;
+        }
+
+        .filter-label {
+            display: flex;
+            align-items: center;
+            margin-bottom: 3px;
+            justify-content: space-between;
+        }
+
+        .filter-label .counter {
+            font-size: 0.8em;
+            color: #666;
+        }
+
+        .filter-label input[type="checkbox"] {
+            margin-right: 3px;
+        }
+
+        /* Prompt Table Styles */
+        .prompt-table {
+            flex-grow: 1;
+            position: relative;
+        }
+
+        .ag-theme-alpine {
+            height: calc(100% - 3em);
+            width: 100%;
+        }
+
+        /* Dataset List Styles */
+        .dataset-list-container {
+            position: absolute;
+            right: 0;
+            top: 0;
+            margin-right: 10px;
+            margin-top: 0.5em;
+        }
+
+        .dataset-list {
+            position: relative;
+            cursor: pointer;
+            border: 1px solid #ccc;
+            padding: 1px;
+            border-radius: 3px;
+            background-color: #f9f9f9;
+        }
+
+        .dataset-list-content {
+            display: none;
+            position: absolute;
+            right: 0;
+            top: 100%;
+            background-color: white;
+            border: 1px solid #ccc;
+            padding: 3px;
+            padding-right: 3em;
+            font-family: monospace;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+        }
+
+        .dataset-list:hover .dataset-list-content {
+            display: block;
+        }
+
+        /* Image Controls and Display */
+        .image-info {
+            font-size: 0.8em;
+            margin-top: 2em;
+            margin-bottom: -1em;
+        }
+
+        .images {
+            display: grid;
+            gap: 5px;
+            margin-top: 10px;
+        }
+
+        .image-container {
+            text-align: center;
+        }
+
+        .svg-container svg {
+            width: 100%;
+            height: 100%;
+        }
+
+        .image-controls-container {
+            margin-top: 20px;
+            margin-bottom: 20px;
+        }
+
+        .image-controls {
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            padding: 10px;
+            background-color: #f0f0f0;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .image-controls > * {
+            margin-right: 20px;
+        }
+
+        .image-controls button {
+            padding: 8px 16px;
+            font-size: 14px;
+            font-weight: bold;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .btn-primary {
+            background-color: #007bff;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: #0056b3;
+        }
+
+        .btn-secondary {
+            background-color: #6c757d;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background-color: #545b62;
+        }
+
+        .resize-controls {
+            display: flex;
+            align-items: center;
+            margin-left: auto; /* Added to move the resize controls to the right */
+        }
+
+        .resize-controls label {
+            margin-right: 10px;
+            font-size: 14px;
+        }
+
+        .resize-slider {
+            width: 150px;
+        }
+
+        /* Utility Classes */
+        .loading,
+        .error {
+            text-align: center;
+            padding: 10px;
+        }
+
+        .prompts-info {
+            border: 1px solid #ddd;
+            padding: 5px;
+            border-radius: 3px;
+        }
+
+        .prompt-counter {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .prompt-text-cell {
+            cursor: pointer;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Root element for Vue app -->
+    <div id="app" class="container">
+        <h1>Attention Pattern Analysis</h1>
+
+        <div class="main-selection-content">
+            <!-- control model/layer/head/function -->
+            <div class="filters">
+                <div class="model-function-filters">
+                    <!-- Models Filter -->
+                    <div class="filter-item">
+                        <div class="filter-label">
+                            <input type="checkbox" id="select-all-models"
+                                :indeterminate.prop="isIndeterminate('models')" :checked="isChecked('models')"
+                                @change="toggleSelectAll('models', $event)">
+                            <label for="select-all-models">Models:</label>
+                            <span class="counter">{{ selectedItems.models.length }} / {{ items.models.length }}</span>
+                        </div>
+                        <div class="checkbox-list">
+                            <div v-for="model in items.models" :key="model" class="checkbox-item">
+                                <input type="checkbox" :id="'model-' + model" :value="model"
+                                    v-model="selectedItems.models">
+                                <label :for="'model-' + model">{{ model }}</label>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Functions Filter -->
+                    <div class="filter-item">
+                        <div class="filter-label">
+                            <input type="checkbox" id="select-all-functions"
+                                :indeterminate.prop="isIndeterminate('functions')" :checked="isChecked('functions')"
+                                @change="toggleSelectAll('functions', $event)">
+                            <label for="select-all-functions">Functions:</label>
+                            <span class="counter">{{ selectedItems.functions.length }} / {{ items.functions.length }}</span>
+                        </div>
+                        <div class="checkbox-list">
+                            <div v-for="func in items.functions" :key="func" class="checkbox-item">
+                                <input type="checkbox" :id="'func-' + func" :value="func"
+                                    v-model="selectedItems.functions">
+                                <label :for="'func-' + func">{{ func }}</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="layer-head-filters">
+                    <!-- Layers Filter -->
+                    <div class="filter-item">
+                        <div class="filter-label">
+                            <label for="select-all-layers">Layers:</label>
+                            <div class="filter-controls">
+                                <input type="checkbox" id="select-all-layers"
+                                    :indeterminate.prop="isIndeterminate('layers')" :checked="isChecked('layers')"
+                                    @change="toggleSelectAll('layers', $event)">
+                                <span class="counter">{{ selectedItems.layers.length }} / {{ items.layers.length }}</span>
+                            </div>
+                        </div>
+                        <div class="checkbox-list">
+                            <div v-for="layer in items.layers" :key="layer" class="checkbox-item">
+                                <input type="checkbox" :id="'layer-' + layer" :value="layer"
+                                    v-model="selectedItems.layers">
+                                <label :for="'layer-' + layer">{{ layer }}</label>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Heads Filter -->
+                    <div class="filter-item">
+                        <div class="filter-label">
+                            <label for="select-all-heads">Heads:</label>
+                            <div class="filter-controls">
+                                <input type="checkbox" id="select-all-heads" :indeterminate.prop="isIndeterminate('heads')"
+                                    :checked="isChecked('heads')" @change="toggleSelectAll('heads', $event)">
+                                <span class="counter">{{ selectedItems.heads.length }} / {{ items.heads.length }}</span>
+                            </div>
+                        </div>
+                        <div class="checkbox-list">
+                            <div v-for="head in items.heads" :key="head" class="checkbox-item">
+                                <input type="checkbox" :id="'head-' + head" :value="head" v-model="selectedItems.heads">
+                                <label :for="'head-' + head">{{ head }}</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- control prompt -->
+            <div class="prompt-table">
+                <div class="prompts-info">
+                    <div class="prompt-counter">
+                        Selected Prompts: {{ selectedPrompts.length }}
+                    </div>
+                    <div class="dataset-list-container">
+                        <div class="dataset-list">
+                            Hover here to see unique datasets
+                            <div class="dataset-list-content">
+                                <ul>
+                                    <li v-for="dataset in uniqueDatasets" :key="dataset">{{ dataset }}</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div id="promptGrid" class="ag-theme-alpine"></div>
+            </div>
+        </div>
+
+        <!-- image display button and size controls -->
+        <div class="image-controls-container">
+            <div class="image-controls">
+                <button @click="displayImages" :class="{ 'btn-primary': !imagesUpToDate, 'btn-secondary': imagesUpToDate }">
+                    {{ imagesUpToDate ? 'Images Up to Date' : 'Display Images' }}
+                </button>
+                <div class="image-info">
+                    <span v-if="images.length > 0">Displayed Images: {{ images.length }}</span>
+                    <span v-else>No images displayed</span>
+                </div>
+                <div v-if="images.length > 0" class="resize-controls">
+                    <label for="resizeSlider">Size: {{ imageSize }}px</label>
+                    <input type="range" id="resizeSlider" v-model="imageSize" min="100" max="1000" step="50" class="resize-slider">
+                </div>
+            </div>
+        </div>
+        <!-- images are loading -->
+        <div v-if="loading" class="loading">Loading...</div>
+        <!-- actual image display -->
+        <div v-else-if="images.length > 0" class="images"
+            :style="{ 'grid-template-columns': `repeat(auto-fill, minmax(${imageSize}px, 1fr))` }">
+            <div v-for="image in images" class="image-container">
+                <p v-if="imageSize >= 200" class="image-info">
+                    <a :href="getSinglePropertyFilterUrl('models', image.model)">{{ image.model }}</a> -
+                    <a :href="getSinglePropertyFilterUrl('functions', image.function)">{{ image.function }}</a> -
+                    <a :href="getSinglePropertyFilterUrl('layers', image.layer)">L{{ image.layer }}</a> -
+                    <a :href="getSinglePropertyFilterUrl('heads', image.head)">H{{ image.head }}</a> -
+                    <a :href="getSinglePropertyFilterUrl('prompts', image.promptHash)">{{ image.promptHash }}</a>
+                </p>
+                <a :href="getImageUrl(image)" class="svg-container" v-html="image.svgContent"
+                    :style="{ width: `${imageSize}px`, height: `${imageSize}px` }"
+                    :title="imageSize < 200 ? image.name : ''">
+                </a>
+            </div>
+        </div>
+        <!-- Show error message if no images found -->
+        <div v-else-if="imagesRequested" class="error">No images found for the selected criteria.</div>
+
+    </div>
+
+    <script>
+        // Utility functions for file and directory operations
+        const DATA_DIR = '.';
+        const URL_PARAM_MAPPING = {
+            models: 'selectedItems.models',
+            functions: 'selectedItems.functions',
+            layers: 'selectedItems.layers',
+            heads: 'selectedItems.heads',
+            prompts: 'selectedPrompts',
+        };
+        const fileOps = {
+            async getDirectoryContents(path) {
+                const response = await fetch(`${path}/index.txt`);
+                const text = await response.text();
+                return text.trim().split('\n');
+            },
+            async fileExists(path) {
+                const response = await fetch(path, { method: 'HEAD' });
+                return response.ok;
+            },
+            async fetchJson(path) {
+                const response = await fetch(path);
+                return response.json();
+            },
+            async fetchJsonL(path) {
+                const response = await fetch(path);
+                const text = await response.text();
+                // allow for the last line being incomplete
+                const text_split = text.trim().split('\n');
+                let output = text_split.slice(0, -1).map(JSON.parse);
+                try {
+                    output.push(JSON.parse(text_split[text_split.length - 1]));
+                } catch (error) {
+                    console.error('Error parsing last line of JSONL:', error);
+                }
+                return output;
+            },
+            async fetchAndDecompressSvgz(path) {
+                // returns null if file does not exist
+                const response = await fetch(path);
+                if (!response.ok) {
+                    return null;
+                } else {
+                    const arrayBuffer = await response.arrayBuffer();
+                    const uint8Array = new Uint8Array(arrayBuffer);
+                    return pako.inflate(uint8Array, { to: 'string' });
+                }
+            },
+        };
+        // Create a new Vue.js application
+        const app = Vue.createApp({
+            data() {
+                return {
+                    allPrompts: {}, // hash -> prompt
+                    prompts: [], // for the current model
+                    selectedPrompts: [], // selected from table
+                    images: [],
+                    loading: false,
+                    imagesRequested: false,
+                    modelConfigs: {},
+                    gridApi: null,
+                    imageSize: 200,
+                    isGridReady: false,
+                    items: {
+                        models: [],
+                        functions: [],
+                        layers: [],
+                        heads: [],
+                    },
+                    selectedItems: {
+                        models: [],
+                        functions: [],
+                        layers: [],
+                        heads: [],
+                    },
+                    imagesUpToDate: false,
+                }
+            },
+            methods: {
+                updateURL: _.debounce(function () {
+                    const params = new URLSearchParams();
+
+                    for (const [param, dataProp] of Object.entries(URL_PARAM_MAPPING)) {
+                        const value = _.get(this, dataProp);
+                        if (value && value.length > 0) {
+                            params.set(param, value.join('~'));
+                        }
+                    }
+
+                    const newURL = `${window.location.pathname}?${params.toString()}`;
+                    history.replaceState(null, '', newURL);
+                }, 300),
+                readURL() {
+                    const params = new URLSearchParams(window.location.search);
+
+                    for (const [param, dataProp] of Object.entries(URL_PARAM_MAPPING)) {
+                        const value = params.get(param);
+                        _.set(this, dataProp, value ? value.split('~') : []);
+                    }
+
+                    // Ensure that the checkbox lists are properly initialized
+                    this.$nextTick(() => {
+                        this.updateLayersAndHeads();
+                    });
+                },
+                isIndeterminate(category) {
+                    const items = this.items[category];
+                    const selectedItems = this.selectedItems[category];
+                    return selectedItems.length > 0 && selectedItems.length < items.length;
+                },
+                isChecked(category) {
+                    const items = this.items[category];
+                    const selectedItems = this.selectedItems[category];
+                    return selectedItems.length === items.length && items.length > 0;
+                },
+                toggleSelectAll(category, event) {
+                    const checked = event.target.checked;
+                    this.selectedItems[category] = checked ? [...this.items[category]] : [];
+                },
+                capitalizeLabel(str) {
+                    return str.charAt(0).toUpperCase() + str.slice(1);
+                },
+                async loadData() {
+                    try {
+                        await this.loadModels();
+                        await Promise.all([
+                            this.loadAllPrompts(),
+                            this.loadFunctions()
+                        ]);
+
+                        this.updateLayersAndHeads();
+                        this.updatePrompts(); // Update prompts after models and prompts are loaded
+                    } catch (error) {
+                        console.error('Error loading data:', error);
+                    }
+                },
+                async loadModels() {
+                    this.loading = true;
+                    console.log('Loading models...');
+                    const models = await fileOps.fetchJsonL(`${DATA_DIR}/models.jsonl`);
+                    this.modelConfigs = {};
+                    for (const model of models) {
+                        this.modelConfigs[model["model_name"]] = model;
+                    }
+                    this.items.models = Object.keys(this.modelConfigs);
+                    console.log('Models:', this.items.models);
+                    this.loading = false;
+                },
+                async loadAllPrompts() {
+                    this.loading = true;
+                    console.log('Loading prompts...');
+                    this.allPrompts = {};
+
+                    for (const model of this.items.models) {
+                        try {
+                            const modelPrompts = await fileOps.fetchJsonL(`${DATA_DIR}/${model}/prompts.jsonl`);
+                            for (const prompt of modelPrompts) {
+                                if (prompt.hash in this.allPrompts) {
+                                    this.allPrompts[prompt.hash].models.push(model);
+                                } else {
+                                    this.allPrompts[prompt.hash] = { ...prompt, models: [model] };
+                                }
+                            }
+                        } catch (error) {
+                            console.error(`Error loading prompts for model ${model}:`, error);
+                        }
+                    }
+                    console.log('loaded number of prompts:', Object.keys(this.allPrompts).length);
+                    this.loading = false;
+                },
+                updatePrompts() {
+                    this.loading = true;
+                    console.log('Selected models:', this.selectedItems.models);
+
+                    // Use all models if none are selected
+                    const selectedModelsTemp = this.selectedItems.models.length > 0 ? this.selectedItems.models : this.items.models;
+
+                    // Filter prompts based on selected models
+                    this.prompts = Object.values(this.allPrompts).filter(prompt =>
+                        prompt.models.some(model => selectedModelsTemp.includes(model))
+                    );
+
+                    console.log('Prompts after filtering:', this.prompts.length);
+
+                    // Update the grid data
+                    if (this.gridApi) {
+                        this.gridApi.setGridOption('rowData', this.prompts);
+                    }
+
+                    this.loading = false;
+                },
+                async loadFunctions() {
+                    const functions = await fileOps.fetchJsonL(`${DATA_DIR}/functions.jsonl`);
+                    console.log('Functions:', functions);
+                    this.items.functions = functions.map(f => f.name);
+                },
+                // Initialize the ag-Grid table
+                setupPromptTable() {
+                    const columnDefs = [
+                        {
+                            headerName: '✅❓',
+                            field: 'selection',
+                            headerCheckboxSelection: true,
+                            headerCheckboxSelectionFilteredOnly: true,
+                            checkboxSelection: true,
+                            width: 100,
+                            pinned: 'left',
+                            comparator: (valueA, valueB, nodeA, nodeB, isInverted) => {
+                                const selectedA = this.selectedPrompts.includes(nodeA.data.hash);
+                                const selectedB = this.selectedPrompts.includes(nodeB.data.hash);
+                                return selectedA === selectedB ? 0 : (selectedA ? -1 : 1);
+                            },
+                        },
+                        {
+                            headerName: 'Prompt Text',
+                            field: 'text',
+                            sortable: true,
+                            filter: true,
+                            flex: 2,
+                            cellRenderer: (params) => {
+                                const eGui = document.createElement('div');
+                                // Replace tabs and newlines with spaces for display
+                                eGui.innerText = params.value.replace(/\s+/g, ' ');
+                                eGui.classList.add('prompt-text-cell');
+                                eGui.addEventListener('click', () => {
+                                    navigator.clipboard.writeText(params.value);
+                                });
+
+                                eGui.addEventListener('contextmenu', (event) => {
+                                    event.preventDefault();
+                                    const newWindow = window.open();
+                                    newWindow.document.write(`<pre>${params.value}</pre>`);
+                                    newWindow.document.close();
+                                    newWindow.document.title = `Prompt '${params.data.hash}'`;
+                                });
+
+                                return eGui;
+                            },
+                        },
+                        {
+                            headerName: 'Models', field: 'models', sortable: true, filter: true, width: 150,
+                            valueFormatter: (params) => params.value.join(', '),
+                        },
+                        { headerName: 'Hash', field: 'hash', sortable: true, filter: true, width: 100 },
+                        { headerName: 'Tokens', field: 'n_tokens', sortable: true, filter: 'agNumberColumnFilter', width: 80 },
+                        { headerName: 'Dataset', field: 'meta.pile_set_name', sortable: true, filter: true, width: 150 },
+                    ];
+
+                    // Grid options
+                    this.gridOptions = {
+                        columnDefs: columnDefs,
+                        rowData: this.prompts,
+                        pagination: true,
+                        enableCellTextSelection: true,
+                        paginationPageSize: 20,
+                        paginationPageSizeSelector: [5, 10, 20, 50, 100, 500],
+                        rowSelection: 'multiple',
+                        defaultColDef: {
+                            sortable: true,
+                            filter: true,
+                            resizable: true,
+                            floatingFilter: true
+                        },
+                        onSelectionChanged: this.onSelectionChanged.bind(this),
+                        onFirstDataRendered: this.onFirstDataRendered.bind(this),
+                        onGridReady: (params) => {
+                            this.gridApi = params.api;
+                            this.isGridReady = true;
+                            this.selectPromptsFromURL();
+                        },
+                        suppressRowClickSelection: true,
+                    };
+
+                    const gridDiv = document.querySelector('#promptGrid');
+                    this.gridApi = agGrid.createGrid(gridDiv, this.gridOptions);
+                },
+                onFirstDataRendered(params) {
+                    this.selectPromptsFromURL();
+                },
+                selectPromptsFromURL() {
+                    if (!this.isGridReady || this.selectedPrompts.length === 0) return;
+
+                    const promptSet = new Set(this.selectedPrompts);
+                    this.gridApi.forEachNode((node) => {
+                        if (promptSet.has(node.data.hash)) {
+                            node.setSelected(true);
+                        }
+                    });
+                },
+                getImageUrl(image) {
+                    return this.getFilterUrl('all', [image.model], [image.promptHash], [image.layer], [image.head], [image.function]);
+                },
+
+                getSinglePropertyFilterUrl(type, value) {
+                    const params = new URLSearchParams(window.location.search);
+                    params.set(type, value); // This preserves other params while updating just this one
+                    return `${window.location.pathname}?${params.toString()}`;
+                },
+
+                getFilterUrl(type, ...values) {
+                    const params = new URLSearchParams(window.location.search);
+                    
+                    if (type === 'all') {
+                        params.set('models', values[0].join('~'));
+                        params.set('prompts', values[1].join('~'));
+                        params.set('layers', values[2].join('~'));
+                        params.set('heads', values[3].join('~'));
+                        params.set('functions', values[4].join('~'));
+                    } else {
+                        params.set(type, values.flat().join('~'));
+                    }
+
+                    return `${window.location.pathname}?${params.toString()}`;
+                },
+                // Handle selection change in ag-Grid
+                onSelectionChanged() {
+                    const selectedNodes = this.gridApi.getSelectedRows();
+                    this.selectedPrompts = selectedNodes.map(node => node.hash);
+                    this.updateURL();
+                },
+                // Update layers and heads based on selected models
+                updateLayersAndHeads() {
+                    // get all layer and head counts
+                    let mdl_n_layers = [];
+                    let mdl_n_heads = [];
+                    for (const model of this.selectedItems.models) {
+                        const config = this.modelConfigs[model];
+                        if (config) {
+                            mdl_n_layers.push(config.n_layers);
+                            mdl_n_heads.push(config.n_heads);
+                        }
+                    }
+                    // get the max layer and head counts, generate lists
+                    this.items.layers = [];
+                    this.items.heads = [];
+
+                    for (let i = 0; i < _.max(mdl_n_layers); i++) {
+                        this.items.layers.push(i.toString());
+                    }
+                    for (let i = 0; i < _.max(mdl_n_heads); i++) {
+                        this.items.heads.push(i.toString());
+                    }
+                },
+                // Display images based on selected criteria
+                async displayImages() {
+                    this.loading = true;
+                    this.imagesRequested = true;
+                    this.images = [];
+
+                    // horrible nested loop over models, prompts, layers, heads, functions
+                    for (const model of this.selectedItems.models) {
+                        for (const promptHash of this.selectedPrompts) {
+                            // all layers if none selected
+                            const layers = this.selectedItems.layers.length > 0 ? this.selectedItems.layers : this.items.layers;
+                            for (const layer of layers) {
+                                // all heads if none selected
+                                const heads = this.selectedItems.heads.length > 0 ? this.selectedItems.heads : this.items.heads;
+                                for (const head of heads) {
+                                    const basePath = `${DATA_DIR}/${model}/prompts/${promptHash}/L${layer}/H${head}`;
+                                    // for each function try to load the svgz file
+                                    for (const funcName of this.selectedItems.functions) {
+                                        const svgText = await fileOps.fetchAndDecompressSvgz(`${basePath}/${funcName}.svgz`);
+                                        if (svgText) {
+                                            this.images.push({
+                                                svgContent: svgText,
+                                                name: `${model} - Prompt ${promptHash} - L${layer}H${head} - ${funcName}`,
+                                                model: model,
+                                                promptHash: promptHash,
+                                                layer: layer,
+                                                head: head,
+                                                function: funcName,
+                                            });
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    this.imagesUpToDate = true;
+                    this.loading = false;
+                },
+            },
+            computed: {
+                uniqueDatasets() {
+                    return [...new Set(this.prompts.map(prompt => prompt.meta.pile_set_name).filter(Boolean))];
+                }
+            },
+            // Watch for changes in selected models to load prompts and update layers and heads
+            watch: {
+                'selectedItems': {
+                    deep: true,
+                    handler() {
+                        this.imagesUpToDate = false;
+                        this.updateURL();
+                    }
+                },
+                selectedPrompts() {
+                    this.imagesUpToDate = false;
+                },
+                'selectedItems.models'() {
+                    this.updatePrompts();
+                    this.updateLayersAndHeads();
+                    this.updateURL();
+                },
+                // selectedPrompts handled in onSelectionChanged
+            },
+            // Lifecycle hook when component is mounted
+            async mounted() {
+                this.readURL(); // Read filters from URL first
+                await this.loadData(); // Load models, prompts, and functions
+                this.setupPromptTable(); // Initialize the grid
+            }
+        });
+
+        // Mount the Vue app to the DOM element with id="app"
+        app.mount('#app');
+    </script>
+</body>
+
+</html>
