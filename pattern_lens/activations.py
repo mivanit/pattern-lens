@@ -317,14 +317,14 @@ def main():
             help="pass if the prompts have not been split and tokenized (still needs keys 'text' and 'meta' for each item)",
         )
 
-        args: argparse.Namespace = arg_parser.parse_args()
-
         # shuffle
         arg_parser.add_argument(
             "--shuffle",
             action="store_true",
             help="If passed, will shuffle the prompts",
         )
+
+        args: argparse.Namespace = arg_parser.parse_args()
 
     print(f"args parsed: {args}")
 
