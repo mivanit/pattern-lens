@@ -3,6 +3,7 @@ import functools
 import itertools
 import json
 import multiprocessing as mp
+from typing import Any, Callable, Iterable, TypeVar
 import warnings
 from pathlib import Path
 
@@ -10,6 +11,7 @@ import matplotlib.pyplot as plt
 import tqdm
 from muutils.json_serialize import json_serialize
 from muutils.spinner import SpinnerContext
+from muutils.parallel import run_maybe_parallel
 
 from pattern_lens.attn_figure_funcs import ATTENTION_MATRIX_FIGURE_FUNCS
 from pattern_lens.consts import DATA_DIR, FIGURE_FMT, AttentionMatrix, SPINNER_KWARGS
@@ -114,11 +116,14 @@ def process_prompt(
         force_overwrite=force_overwrite,
     )
 
+
+
 def figures_main(
     model_name: str,
     save_path: str,
     n_samples: int,
     force: bool,
+    parallel: bool|int = True,
 ) -> None:
 
     with SpinnerContext(message="setting up paths", **SPINNER_KWARGS):
@@ -136,23 +141,22 @@ def figures_main(
         prompts = prompts[: n_samples]
 
     print(f"{len(prompts)} prompts loaded")
-
-    with mp.Pool() as pool:
-        list(
-            tqdm.tqdm(
-                pool.imap(
-                    functools.partial(
-                        process_prompt,
-                        model_cfg=model_cfg,
-                        save_path=save_path,
-                        force_overwrite=force,
-                    ),
-                    prompts,
-                ),
-                total=len(prompts),
-                desc="Making figures",
-            )
-        )
+    
+    list(run_maybe_parallel(
+        func=functools.partial(
+            process_prompt,
+            model_cfg=model_cfg,
+            save_path=save_path,
+            force_overwrite=force,
+        ),
+        iterable=prompts,
+        parallel=parallel,
+        pbar="tqdm",
+        pbar_kwargs=dict(
+            desc="Making figures",
+            ascii=" =",
+        ),
+    ))
 
     with SpinnerContext(
         message="updating jsonl metadata for models and functions", **SPINNER_KWARGS
