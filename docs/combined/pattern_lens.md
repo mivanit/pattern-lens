@@ -145,6 +145,7 @@ if from a cache, prompt_meta must be passed and contain the prompt hash
 
  - [`raw`](#raw)
  - [`ATTENTION_MATRIX_FIGURE_FUNCS`](#ATTENTION_MATRIX_FIGURE_FUNCS)
+ - [`register_attn_figure_func`](#register_attn_figure_func)
 
 
 
@@ -154,7 +155,7 @@ if from a cache, prompt_meta must be passed and contain the prompt hash
 # `pattern_lens.attn_figure_funcs` { #pattern_lens.attn_figure_funcs }
 
 
-[View Source on GitHub](https://github.com/mivanit/pattern-lens/blob/0.1.0/attn_figure_funcs.py#L0-L14)
+[View Source on GitHub](https://github.com/mivanit/pattern-lens/blob/0.1.0/attn_figure_funcs.py#L0-L19)
 
 
 
@@ -173,6 +174,19 @@ if from a cache, prompt_meta must be passed and contain the prompt hash
 
 
 - `ATTENTION_MATRIX_FIGURE_FUNCS: list[typing.Callable[[jaxtyping.Float[ndarray, 'n_ctx n_ctx'], matplotlib.axes._axes.Axes], NoneType]] = [<function raw>]`
+
+
+
+
+### `def register_attn_figure_func` { #register_attn_figure_func }
+```python
+(
+    func: Callable[[jaxtyping.Float[ndarray, 'n_ctx n_ctx'], matplotlib.axes._axes.Axes], NoneType]
+) -> Callable[[jaxtyping.Float[ndarray, 'n_ctx n_ctx'], matplotlib.axes._axes.Axes], NoneType]
+```
+
+
+[View Source on GitHub](https://github.com/mivanit/pattern-lens/blob/0.1.0/attn_figure_funcs.py#L17-L20)
 
 
 

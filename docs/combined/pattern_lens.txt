@@ -102,6 +102,7 @@ API Documentation
 
 -   raw
 -   ATTENTION_MATRIX_FIGURE_FUNCS
+-   register_attn_figure_func
 
 View Source on GitHub
 
@@ -119,6 +120,14 @@ def raw
 View Source on GitHub
 
 -   ATTENTION_MATRIX_FIGURE_FUNCS: list[typing.Callable[[jaxtyping.Float[ndarray, 'n_ctx n_ctx'], matplotlib.axes._axes.Axes], NoneType]] = [<function raw>]
+
+def register_attn_figure_func
+
+    (
+        func: Callable[[jaxtyping.Float[ndarray, 'n_ctx n_ctx'], matplotlib.axes._axes.Axes], NoneType]
+    ) -> Callable[[jaxtyping.Float[ndarray, 'n_ctx n_ctx'], matplotlib.axes._axes.Axes], NoneType]
+
+View Source on GitHub
 
   docs for pattern_lens v0.1.0
 

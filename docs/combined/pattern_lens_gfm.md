@@ -120,6 +120,7 @@ GitHub](https://github.com/mivanit/pattern-lens/blob/0.1.0/activations.py#L240-L
 
 - [`raw`](#raw)
 - [`ATTENTION_MATRIX_FIGURE_FUNCS`](#ATTENTION_MATRIX_FIGURE_FUNCS)
+- [`register_attn_figure_func`](#register_attn_figure_func)
 
 [View Source on
 GitHub](https://github.com/mivanit/pattern-lens/blob/0.1.0/attn_figure_funcs.py)
@@ -127,7 +128,7 @@ GitHub](https://github.com/mivanit/pattern-lens/blob/0.1.0/attn_figure_funcs.py)
 # `pattern_lens.attn_figure_funcs`
 
 [View Source on
-GitHub](https://github.com/mivanit/pattern-lens/blob/0.1.0/attn_figure_funcs.py#L0-L14)
+GitHub](https://github.com/mivanit/pattern-lens/blob/0.1.0/attn_figure_funcs.py#L0-L19)
 
 ### `def raw`
 
@@ -142,6 +143,17 @@ GitHub](https://github.com/mivanit/pattern-lens/blob/0.1.0/attn_figure_funcs.py#
 GitHub](https://github.com/mivanit/pattern-lens/blob/0.1.0/attn_figure_funcs.py#L6-L9)
 
 - `ATTENTION_MATRIX_FIGURE_FUNCS: list[typing.Callable[[jaxtyping.Float[ndarray, 'n_ctx n_ctx'], matplotlib.axes._axes.Axes], NoneType]] = [<function raw>]`
+
+### `def register_attn_figure_func`
+
+``` python
+(
+    func: Callable[[jaxtyping.Float[ndarray, 'n_ctx n_ctx'], matplotlib.axes._axes.Axes], NoneType]
+) -> Callable[[jaxtyping.Float[ndarray, 'n_ctx n_ctx'], matplotlib.axes._axes.Axes], NoneType]
+```
+
+[View Source on
+GitHub](https://github.com/mivanit/pattern-lens/blob/0.1.0/attn_figure_funcs.py#L17-L20)
 
 > docs for [`pattern_lens`](https://github.com/mivanit/pattern-lens)
 > v0.1.0

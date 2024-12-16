@@ -71,6 +71,9 @@
             <li>
                     <a class="variable" href="#ATTENTION_MATRIX_FIGURE_FUNCS">ATTENTION_MATRIX_FIGURE_FUNCS</a>
             </li>
+            <li>
+                    <a class="function" href="#register_attn_figure_func">register_attn_figure_func</a>
+            </li>
     </ul>
 
 
@@ -93,7 +96,7 @@
                         <div class="source-button-container">
             <label class="pdoc-button view-source-button" for="mod-attn_figure_funcs-view-source"><span>View Source</span></label>
             <div class="github-button-wrapper">
-                <a class="pdoc-button github-link-button" href="https://github.com/mivanit/pattern-lens/blob/0.1.0/attn_figure_funcs.py#L0-L14" target="_blank">
+                <a class="pdoc-button github-link-button" href="https://github.com/mivanit/pattern-lens/blob/0.1.0/attn_figure_funcs.py#L0-L19" target="_blank">
                     <span>View on GitHub</span>
                 </a>
             </div>
@@ -115,6 +118,11 @@
 </span><span id="L-13"><a href="#L-13"><span class="linenos">13</span></a><span class="n">ATTENTION_MATRIX_FIGURE_FUNCS</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">AttentionMatrixFigureFunc</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span>
 </span><span id="L-14"><a href="#L-14"><span class="linenos">14</span></a>    <span class="n">raw</span><span class="p">,</span>
 </span><span id="L-15"><a href="#L-15"><span class="linenos">15</span></a><span class="p">]</span>
+</span><span id="L-16"><a href="#L-16"><span class="linenos">16</span></a>
+</span><span id="L-17"><a href="#L-17"><span class="linenos">17</span></a><span class="k">def</span> <span class="nf">register_attn_figure_func</span><span class="p">(</span><span class="n">func</span><span class="p">:</span> <span class="n">AttentionMatrixFigureFunc</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">AttentionMatrixFigureFunc</span><span class="p">:</span>
+</span><span id="L-18"><a href="#L-18"><span class="linenos">18</span></a>    <span class="k">global</span> <span class="n">ATTENTION_MATRIX_FIGURE_FUNCS</span>
+</span><span id="L-19"><a href="#L-19"><span class="linenos">19</span></a>    <span class="n">ATTENTION_MATRIX_FIGURE_FUNCS</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
+</span><span id="L-20"><a href="#L-20"><span class="linenos">20</span></a>    <span class="k">return</span> <span class="n">func</span>
 </span></pre></div>
 
 
@@ -157,6 +165,34 @@
     </div>
     <a class="headerlink" href="#ATTENTION_MATRIX_FIGURE_FUNCS"></a>
     
+    
+
+                </section>
+                <section id="register_attn_figure_func">
+                            <input id="register_attn_figure_func-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
+<div class="attr function">
+            
+        <span class="def">def</span>
+        <span class="name">register_attn_figure_func</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">func</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">jaxtyping</span><span class="o">.</span><span class="n">Float</span><span class="p">[</span><span class="n">ndarray</span><span class="p">,</span> <span class="s1">&#39;n_ctx n_ctx&#39;</span><span class="p">],</span> <span class="n">matplotlib</span><span class="o">.</span><span class="n">axes</span><span class="o">.</span><span class="n">_axes</span><span class="o">.</span><span class="n">Axes</span><span class="p">],</span> <span class="n">NoneType</span><span class="p">]</span></span><span class="return-annotation">) -> <span class="n">Callable</span><span class="p">[[</span><span class="n">jaxtyping</span><span class="o">.</span><span class="n">Float</span><span class="p">[</span><span class="n">ndarray</span><span class="p">,</span> <span class="s1">&#39;n_ctx n_ctx&#39;</span><span class="p">],</span> <span class="n">matplotlib</span><span class="o">.</span><span class="n">axes</span><span class="o">.</span><span class="n">_axes</span><span class="o">.</span><span class="n">Axes</span><span class="p">],</span> <span class="n">NoneType</span><span class="p">]</span>:</span></span>
+
+                <div class="source-button-container">
+            <label class="pdoc-button view-source-button" for="register_attn_figure_func-view-source"><span>View Source</span></label>
+            <div class="github-button-wrapper">
+                <a class="pdoc-button github-link-button" href="https://github.com/mivanit/pattern-lens/blob/0.1.0/attn_figure_funcs.py#L17-L20" target="_blank">
+                    <span>View on GitHub</span>
+                </a>
+            </div>
+        </div>
+
+    </div>
+    <a class="headerlink" href="#register_attn_figure_func"></a>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="register_attn_figure_func-18"><a href="#register_attn_figure_func-18"><span class="linenos">18</span></a><span class="k">def</span> <span class="nf">register_attn_figure_func</span><span class="p">(</span><span class="n">func</span><span class="p">:</span> <span class="n">AttentionMatrixFigureFunc</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">AttentionMatrixFigureFunc</span><span class="p">:</span>
+</span><span id="register_attn_figure_func-19"><a href="#register_attn_figure_func-19"><span class="linenos">19</span></a>    <span class="k">global</span> <span class="n">ATTENTION_MATRIX_FIGURE_FUNCS</span>
+</span><span id="register_attn_figure_func-20"><a href="#register_attn_figure_func-20"><span class="linenos">20</span></a>    <span class="n">ATTENTION_MATRIX_FIGURE_FUNCS</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
+</span><span id="register_attn_figure_func-21"><a href="#register_attn_figure_func-21"><span class="linenos">21</span></a>    <span class="k">return</span> <span class="n">func</span>
+</span></pre></div>
+
+
     
 
                 </section>
