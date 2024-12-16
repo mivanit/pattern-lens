@@ -2,6 +2,7 @@
 # custom ignores
 
 data/pile_1k.jsonl
+tests/_temp/**
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
