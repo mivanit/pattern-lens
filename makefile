@@ -508,7 +508,7 @@ cov:
 
 # runs the coverage report, then the docs, then the combined docs
 .PHONY: docs
-docs: cov docs-html docs-combined
+docs: demo-docs cov demo docs-html docs-combined
 	@echo "generate all documentation and coverage reports"
 
 # removed all generated documentation files, but leaves the templates and the `docs/make_docs.py` script
@@ -700,3 +700,7 @@ demo-server:
 .PHONY: demo
 demo: demo-clean demo-activations demo-figures demo-server
 	@echo "generate demo"
+
+.PHONY: demo-docs
+demo-docs: demo-clean demo-activations demo-figures
+	@echo "generate demo for docs (no server)"
