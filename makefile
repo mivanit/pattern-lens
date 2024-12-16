@@ -16,10 +16,10 @@ DOCS_DIR := docs
 COVERAGE_REPORTS_DIR := docs/coverage
 
 # where the tests are, for pytest
-TESTS_DIR := tests/
+TESTS_DIR := tests
 
 # tests temp directory to clean up. will remove this in `make clean`
-TESTS_TEMP_DIR := _temp/
+TESTS_TEMP_DIR := $(TESTS_DIR)/_temp/
 
 # probably don't change these:
 # --------------------------------------------------
@@ -291,7 +291,7 @@ endif
 
 # base options for pytest, will be appended to if `COV` or `VERBOSE` are 1.
 # user can also set this when running make to add more options
-PYTEST_OPTIONS ?=
+PYTEST_OPTIONS ?= --durations 10 -vvv
 
 # set to `1` to run pytest with `--cov=.` to get coverage reports in a `.coverage` file
 COV ?= 1
@@ -447,7 +447,7 @@ format-check:
 typing: clean
 	@echo "running type checks"
 	$(PYTHON) -m mypy --config-file $(PYPROJECT) $(TYPECHECK_ARGS) $(PACKAGE_NAME)/
-	$(PYTHON) -m mypy --config-file $(PYPROJECT) $(TYPECHECK_ARGS) $(TESTS_DIR)/
+	$(PYTHON) -m mypy --config-file $(PYPROJECT) $(TYPECHECK_ARGS) $(TESTS_DIR)
 
 .PHONY: test
 test: clean
