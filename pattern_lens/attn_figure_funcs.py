@@ -14,7 +14,10 @@ ATTENTION_MATRIX_FIGURE_FUNCS: list[AttentionMatrixFigureFunc] = [
     raw,
 ]
 
-def register_attn_figure_func(func: AttentionMatrixFigureFunc) -> AttentionMatrixFigureFunc:
+
+def register_attn_figure_func(
+    func: AttentionMatrixFigureFunc,
+) -> AttentionMatrixFigureFunc:
     global ATTENTION_MATRIX_FIGURE_FUNCS
     ATTENTION_MATRIX_FIGURE_FUNCS.append(func)
     return func

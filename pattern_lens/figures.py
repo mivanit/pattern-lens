@@ -2,13 +2,10 @@ import argparse
 import functools
 import itertools
 import json
-import multiprocessing as mp
-from typing import Any, Callable, Iterable, TypeVar
 import warnings
 from pathlib import Path
 
 import matplotlib.pyplot as plt
-import tqdm
 from muutils.json_serialize import json_serialize
 from muutils.spinner import SpinnerContext
 from muutils.parallel import run_maybe_parallel
@@ -117,15 +114,13 @@ def process_prompt(
     )
 
 
-
 def figures_main(
     model_name: str,
     save_path: str,
     n_samples: int,
     force: bool,
-    parallel: bool|int = True,
+    parallel: bool | int = True,
 ) -> None:
-
     with SpinnerContext(message="setting up paths", **SPINNER_KWARGS):
         # save model info or check if it exists
         save_path: Path = Path(save_path)
@@ -138,25 +133,27 @@ def figures_main(
         with open(model_path / "prompts.jsonl", "r") as f:
             prompts: list[dict] = [json.loads(line) for line in f.readlines()]
         # truncate to n_samples
-        prompts = prompts[: n_samples]
+        prompts = prompts[:n_samples]
 
     print(f"{len(prompts)} prompts loaded")
-    
-    list(run_maybe_parallel(
-        func=functools.partial(
-            process_prompt,
-            model_cfg=model_cfg,
-            save_path=save_path,
-            force_overwrite=force,
-        ),
-        iterable=prompts,
-        parallel=parallel,
-        pbar="tqdm",
-        pbar_kwargs=dict(
-            desc="Making figures",
-            ascii=" =",
-        ),
-    ))
+
+    list(
+        run_maybe_parallel(
+            func=functools.partial(
+                process_prompt,
+                model_cfg=model_cfg,
+                save_path=save_path,
+                force_overwrite=force,
+            ),
+            iterable=prompts,
+            parallel=parallel,
+            pbar="tqdm",
+            pbar_kwargs=dict(
+                desc="Making figures",
+                ascii=" =",
+            ),
+        )
+    )
 
     with SpinnerContext(
         message="updating jsonl metadata for models and functions", **SPINNER_KWARGS
@@ -213,7 +210,7 @@ def main():
         n_samples=args.n_samples,
         force=args.force,
     )
-    
+
 
 if __name__ == "__main__":
     main()

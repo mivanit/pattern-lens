@@ -158,6 +158,7 @@ def activations_main(
     force: bool,
     n_samples: int,
     no_index_html: bool,
+    shuffle: bool = False,
 ) -> None:
     with SpinnerContext(message="loading model", **SPINNER_KWARGS):
         model: HookedTransformer = HookedTransformer.from_pretrained(model_name)
@@ -190,13 +191,13 @@ def activations_main(
                 Path(prompts_path),
                 min_chars=min_chars,
                 max_chars=max_chars,
-                shuffle=True,
+                shuffle=shuffle,
             )
         else:
             with open(model_path / "prompts.jsonl", "r") as f:
                 prompts = [json.loads(line) for line in f.readlines()]
         # truncate to n_samples
-        prompts = prompts[: n_samples]
+        prompts = prompts[:n_samples]
 
     print(f"{len(prompts)} prompts loaded")
     save_path: Path = Path(save_path)
@@ -318,6 +319,13 @@ def main():
 
         args: argparse.Namespace = arg_parser.parse_args()
 
+        # shuffle
+        arg_parser.add_argument(
+            "--shuffle",
+            action="store_true",
+            help="If passed, will shuffle the prompts",
+        )
+
     print(f"args parsed: {args}")
 
     activations_main(
@@ -330,6 +338,7 @@ def main():
         force=args.force,
         n_samples=args.n_samples,
         no_index_html=args.no_index_html,
+        shuffle=args.shuffle,
     )
 
 
