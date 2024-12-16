@@ -980,11 +980,11 @@ wheels = [
 
 [[package]]
 name = "muutils"
-version = "0.6.18"
+version = "0.6.19"
 source = { registry = "https://pypi.org/simple" }
-sdist = { url = "https://files.pythonhosted.org/packages/b9/f0/946c51ceb33ca168643d6b7010ee7b7bf0cc577e087c7bd35728e852b0d7/muutils-0.6.18.tar.gz", hash = "sha256:355e27a788493a7963a83b80f102a8cbcb664927d920f0413b19d59a9c7ebb8e", size = 2120258 }
+sdist = { url = "https://files.pythonhosted.org/packages/43/f3/97f51371e8427f276bc24fdc38ab6235c4f782cf9ac2a8cd121a3d574711/muutils-0.6.19.tar.gz", hash = "sha256:2b24c7b92a13539a39f25c5a683744ed2db0c38c653c1b12995aa184970840e9", size = 2120112 }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/ff/eb/8f3c7df6294fdf96f7878abc18bc8099514d95428eabc3fe2ba2114d2145/muutils-0.6.18-py3-none-any.whl", hash = "sha256:ed65f8dbd5f0de61d7e29a7b634dbdaaa358c2f8fbe1e5b8e6c27b727a4b30a9", size = 102605 },
+    { url = "https://files.pythonhosted.org/packages/93/20/77750365beaa748e801f010c496c291ed31a5a8b2fa628ce205c9e9a2b68/muutils-0.6.19-py3-none-any.whl", hash = "sha256:a22a782ea5eeceb267a2aa08359f542faf5fbf4ecbca2e23c42fcfc2e9301de9", size = 102562 },
 ]
 
 [package.optional-dependencies]
@@ -1278,7 +1278,7 @@ requires-dist = [
     { name = "ipywidgets", specifier = ">=8.1.5" },
     { name = "jaxtyping", specifier = ">=0.2.33" },
     { name = "matplotlib", specifier = ">=3.8.0" },
-    { name = "muutils", specifier = ">=0.6.18" },
+    { name = "muutils", specifier = ">=0.6.19" },
     { name = "numpy", specifier = ">=1.26.1,<2.0.0" },
     { name = "pandas", specifier = ">=2.2.2" },
     { name = "scipy", specifier = ">=1.14.1" },
@@ -2171,7 +2171,7 @@ name = "triton"
 version = "3.1.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "filelock" },
+    { name = "filelock", marker = "python_full_version < '3.13'" },
 ]
 wheels = [
     { url = "https://files.pythonhosted.org/packages/78/eb/65f5ba83c2a123f6498a3097746607e5b2f16add29e36765305e4ac7fdd8/triton-3.1.0-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:c8182f42fd8080a7d39d666814fa36c5e30cc00ea7eeeb1a2983dbb4c99a0fdc", size = 209551444 },
