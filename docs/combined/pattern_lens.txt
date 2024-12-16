@@ -1,0 +1,433 @@
+  docs for pattern_lens v0.1.0
+
+Submodules
+
+-   activations
+-   attn_figure_funcs
+-   consts
+-   figures
+-   indexes
+-   load_activations
+-   prompts
+-   server
+
+View Source on GitHub
+
+pattern_lens
+
+  docs for pattern_lens v0.1.0
+
+API Documentation
+
+-   compute_activations
+-   get_activations
+-   activations_main
+-   main
+
+View Source on GitHub
+
+pattern_lens.activations
+
+View Source on GitHub
+
+def compute_activations
+
+    (
+        prompt: dict,
+        model: transformer_lens.HookedTransformer.HookedTransformer | None = None,
+        save_path: pathlib.Path = WindowsPath('attn_data'),
+        return_cache: bool = True,
+        names_filter: Union[Callable[[str], bool], re.Pattern] = re.compile('blocks\\.(\\d+)\\.attn\\.hook_pattern')
+    ) -> tuple[pathlib.Path, dict[str, jaxtyping.Float[ndarray, 'n_ctx n_ctx']] | None]
+
+View Source on GitHub
+
+get activations for a given model and prompt, possibly from a cache
+
+if from a cache, prompt_meta must be passed and contain the prompt hash
+
+Parameters:
+
+-   prompt : dict | None (defaults to None)
+-   model : HookedTransformer
+-   save_path : Path (defaults to Path(DATA_DIR))
+-   return_cache : bool will return None as the second element if False
+    (defaults to True)
+-   names_filter : Callable[[str], bool]|re.Pattern a filter for the
+    names of the activations to return. if an re.Pattern, will use
+    lambda key: names_filter.match(key) is not None (defaults to
+    ATTN_PATTERN_REGEX)
+
+Returns:
+
+-   tuple[Path, AttentionCache|None]
+
+def get_activations
+
+    (
+        prompt: dict,
+        model: transformer_lens.HookedTransformer.HookedTransformer | str,
+        save_path: pathlib.Path = WindowsPath('attn_data'),
+        allow_disk_cache: bool = True,
+        return_cache: bool = True
+    ) -> tuple[pathlib.Path, dict[str, jaxtyping.Float[ndarray, 'n_ctx n_ctx']]]
+
+View Source on GitHub
+
+def activations_main
+
+    (
+        model_name: str,
+        save_path: str,
+        prompts_path: str,
+        raw_prompts: bool,
+        min_chars: int,
+        max_chars: int,
+        force: bool,
+        n_samples: int,
+        no_index_html: bool
+    ) -> None
+
+View Source on GitHub
+
+def main
+
+    ()
+
+View Source on GitHub
+
+  docs for pattern_lens v0.1.0
+
+API Documentation
+
+-   raw
+-   ATTENTION_MATRIX_FIGURE_FUNCS
+
+View Source on GitHub
+
+pattern_lens.attn_figure_funcs
+
+View Source on GitHub
+
+def raw
+
+    (
+        attn_matrix: jaxtyping.Float[ndarray, 'n_ctx n_ctx'],
+        ax: matplotlib.axes._axes.Axes
+    ) -> None
+
+View Source on GitHub
+
+-   ATTENTION_MATRIX_FIGURE_FUNCS: list[typing.Callable[[jaxtyping.Float[ndarray, 'n_ctx n_ctx'], matplotlib.axes._axes.Axes], NoneType]] = [<function raw>]
+
+  docs for pattern_lens v0.1.0
+
+API Documentation
+
+-   AttentionMatrix
+-   AttentionMatrixFigureFunc
+-   AttentionCache
+-   FIGURE_FMT
+-   DATA_DIR
+-   ATTN_PATTERN_REGEX
+-   SPINNER_KWARGS
+
+View Source on GitHub
+
+pattern_lens.consts
+
+View Source on GitHub
+
+-   AttentionMatrix = <class 'jaxtyping.Float[ndarray, 'n_ctx n_ctx']'>
+
+type alias for attention matrix
+
+-   AttentionMatrixFigureFunc = typing.Callable[[jaxtyping.Float[ndarray, 'n_ctx n_ctx'], matplotlib.axes._axes.Axes], NoneType]
+
+Type alias for a function that takes an attention matrix and an axes and
+plots something
+
+-   AttentionCache = dict[str, jaxtyping.Float[ndarray, 'n_ctx n_ctx']]
+
+type alias for a cache of attention matrices, subset of ActivationCache
+
+-   FIGURE_FMT: str = 'svgz'
+
+format for saving figures
+
+-   DATA_DIR: str = 'attn_data'
+
+default directory for attention data
+
+-   ATTN_PATTERN_REGEX: re.Pattern = re.compile('blocks\\.(\\d+)\\.attn\\.hook_pattern')
+
+regex for finding attention patterns in model state dicts
+
+-   SPINNER_KWARGS: dict = {'config': {'success': '✔️ '}}
+
+  docs for pattern_lens v0.1.0
+
+API Documentation
+
+-   HTConfigMock
+-   process_single_head
+-   compute_and_save_figures
+-   process_prompt
+-   figures_main
+-   main
+
+View Source on GitHub
+
+pattern_lens.figures
+
+View Source on GitHub
+
+class HTConfigMock:
+
+View Source on GitHub
+
+HTConfigMock
+
+    (**kwargs)
+
+View Source on GitHub
+
+-   n_layers: int
+
+-   n_heads: int
+
+-   model_name: str
+
+def serialize
+
+    (self)
+
+View Source on GitHub
+
+def load
+
+    (cls, data: dict)
+
+View Source on GitHub
+
+def process_single_head
+
+    (
+        layer_idx: int,
+        head_idx: int,
+        attn_pattern: jaxtyping.Float[ndarray, 'n_ctx n_ctx'],
+        save_dir: pathlib.Path,
+        force_overwrite: bool = False
+    ) -> None
+
+View Source on GitHub
+
+def compute_and_save_figures
+
+    (
+        model_cfg: 'HookedTransformerConfig|HTConfigMock',
+        activations_path: pathlib.Path,
+        cache: dict,
+        save_path: pathlib.Path = WindowsPath('attn_data'),
+        force_overwrite: bool = False
+    ) -> None
+
+View Source on GitHub
+
+def process_prompt
+
+    (
+        prompt: dict,
+        model_cfg: 'HookedTransformerConfig|HTConfigMock',
+        save_path: pathlib.Path,
+        force_overwrite: bool = False
+    ) -> None
+
+View Source on GitHub
+
+def figures_main
+
+    (
+        model_name: str,
+        save_path: str,
+        n_samples: int,
+        force: bool,
+        parallel: bool | int = True
+    ) -> None
+
+View Source on GitHub
+
+def main
+
+    ()
+
+View Source on GitHub
+
+  docs for pattern_lens v0.1.0
+
+API Documentation
+
+-   generate_prompts_jsonl
+-   generate_models_jsonl
+-   generate_functions_jsonl
+
+View Source on GitHub
+
+pattern_lens.indexes
+
+View Source on GitHub
+
+def generate_prompts_jsonl
+
+    (model_dir: pathlib.Path)
+
+View Source on GitHub
+
+creates a prompts.jsonl file with all the prompts in the model directory
+
+looks in all directories in {model_dir}/prompts for a prompt.json file
+
+def generate_models_jsonl
+
+    (path: pathlib.Path)
+
+View Source on GitHub
+
+creates a models.jsonl file with all the models
+
+def generate_functions_jsonl
+
+    (path: pathlib.Path)
+
+View Source on GitHub
+
+unions all functions from file and current ATTENTION_MATRIX_FIGURE_FUNCS
+into a functions.jsonl file
+
+  docs for pattern_lens v0.1.0
+
+API Documentation
+
+-   GetActivationsError
+-   ActivationsMissingError
+-   ActivationsMismatchError
+-   compare_prompt_to_loaded
+-   augment_prompt_with_hash
+-   load_activations
+
+View Source on GitHub
+
+pattern_lens.load_activations
+
+View Source on GitHub
+
+class GetActivationsError(builtins.ValueError):
+
+View Source on GitHub
+
+Inappropriate argument value (of correct type).
+
+Inherited Members
+
+-   ValueError
+
+-   with_traceback
+
+-   add_note
+
+-   args
+
+class ActivationsMissingError(GetActivationsError):
+
+View Source on GitHub
+
+Inappropriate argument value (of correct type).
+
+Inherited Members
+
+-   ValueError
+
+-   with_traceback
+
+-   add_note
+
+-   args
+
+class ActivationsMismatchError(GetActivationsError):
+
+View Source on GitHub
+
+Inappropriate argument value (of correct type).
+
+Inherited Members
+
+-   ValueError
+
+-   with_traceback
+
+-   add_note
+
+-   args
+
+def compare_prompt_to_loaded
+
+    (prompt: dict, prompt_loaded: dict) -> None
+
+View Source on GitHub
+
+def augment_prompt_with_hash
+
+    (prompt: dict) -> dict
+
+View Source on GitHub
+
+def load_activations
+
+    (
+        model_name: str,
+        prompt: dict,
+        save_path: pathlib.Path
+    ) -> tuple[pathlib.Path, dict[str, jaxtyping.Float[ndarray, 'n_ctx n_ctx']]]
+
+View Source on GitHub
+
+  docs for pattern_lens v0.1.0
+
+API Documentation
+
+-   load_text_data
+
+View Source on GitHub
+
+pattern_lens.prompts
+
+View Source on GitHub
+
+def load_text_data
+
+    (
+        fname: pathlib.Path,
+        min_chars: int | None = None,
+        max_chars: int | None = None,
+        shuffle: bool = False
+    ) -> list[dict]
+
+View Source on GitHub
+
+  docs for pattern_lens v0.1.0
+
+API Documentation
+
+-   main
+
+View Source on GitHub
+
+pattern_lens.server
+
+View Source on GitHub
+
+def main
+
+    (path: str, port: int = 8000)
+
+View Source on GitHub
