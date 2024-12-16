@@ -48,6 +48,12 @@ dev = [
 package = true
 compile-bytecode = true
 
+[project.urls]
+Homepage = "https://miv.name/pattern-lens"
+Documentation = "https://miv.name/pattern-lens"
+Repository = "https://github.com/mivanit/pattern-lens"
+Issues = "https://github.com/mivanit/pattern-lens/issues"
+
 [build-system]
 requires = ["hatchling"]
 build-backend = "hatchling.build"
