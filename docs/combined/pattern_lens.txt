@@ -85,7 +85,8 @@ def activations_main
         max_chars: int,
         force: bool,
         n_samples: int,
-        no_index_html: bool
+        no_index_html: bool,
+        shuffle: bool = False
     ) -> None
 
 View Source on GitHub

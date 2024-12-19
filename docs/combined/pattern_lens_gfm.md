@@ -33,7 +33,7 @@ GitHub](https://github.com/mivanit/pattern-lens/blob/0.1.0/activations.py)
 # `pattern_lens.activations`
 
 [View Source on
-GitHub](https://github.com/mivanit/pattern-lens/blob/0.1.0/activations.py#L0-L336)
+GitHub](https://github.com/mivanit/pattern-lens/blob/0.1.0/activations.py#L0-L345)
 
 ### `def compute_activations`
 
@@ -97,12 +97,13 @@ GitHub](https://github.com/mivanit/pattern-lens/blob/0.1.0/activations.py#L115-L
     max_chars: int,
     force: bool,
     n_samples: int,
-    no_index_html: bool
+    no_index_html: bool,
+    shuffle: bool = False
 ) -> None
 ```
 
 [View Source on
-GitHub](https://github.com/mivanit/pattern-lens/blob/0.1.0/activations.py#L151-L237)
+GitHub](https://github.com/mivanit/pattern-lens/blob/0.1.0/activations.py#L151-L238)
 
 ### `def main`
 
@@ -111,7 +112,7 @@ GitHub](https://github.com/mivanit/pattern-lens/blob/0.1.0/activations.py#L151-L
 ```
 
 [View Source on
-GitHub](https://github.com/mivanit/pattern-lens/blob/0.1.0/activations.py#L240-L333)
+GitHub](https://github.com/mivanit/pattern-lens/blob/0.1.0/activations.py#L241-L342)
 
 > docs for [`pattern_lens`](https://github.com/mivanit/pattern-lens)
 > v0.1.0
@@ -128,7 +129,7 @@ GitHub](https://github.com/mivanit/pattern-lens/blob/0.1.0/attn_figure_funcs.py)
 # `pattern_lens.attn_figure_funcs`
 
 [View Source on
-GitHub](https://github.com/mivanit/pattern-lens/blob/0.1.0/attn_figure_funcs.py#L0-L19)
+GitHub](https://github.com/mivanit/pattern-lens/blob/0.1.0/attn_figure_funcs.py#L0-L22)
 
 ### `def raw`
 
@@ -153,7 +154,7 @@ GitHub](https://github.com/mivanit/pattern-lens/blob/0.1.0/attn_figure_funcs.py#
 ```
 
 [View Source on
-GitHub](https://github.com/mivanit/pattern-lens/blob/0.1.0/attn_figure_funcs.py#L17-L20)
+GitHub](https://github.com/mivanit/pattern-lens/blob/0.1.0/attn_figure_funcs.py#L18-L23)
 
 > docs for [`pattern_lens`](https://github.com/mivanit/pattern-lens)
 > v0.1.0
@@ -221,12 +222,12 @@ GitHub](https://github.com/mivanit/pattern-lens/blob/0.1.0/figures.py)
 # `pattern_lens.figures`
 
 [View Source on
-GitHub](https://github.com/mivanit/pattern-lens/blob/0.1.0/figures.py#L0-L218)
+GitHub](https://github.com/mivanit/pattern-lens/blob/0.1.0/figures.py#L0-L215)
 
 ### `class HTConfigMock:`
 
 [View Source on
-GitHub](https://github.com/mivanit/pattern-lens/blob/0.1.0/figures.py#L28-L40)
+GitHub](https://github.com/mivanit/pattern-lens/blob/0.1.0/figures.py#L25-L37)
 
 ### `HTConfigMock`
 
@@ -235,7 +236,7 @@ GitHub](https://github.com/mivanit/pattern-lens/blob/0.1.0/figures.py#L28-L40)
 ```
 
 [View Source on
-GitHub](https://github.com/mivanit/pattern-lens/blob/0.1.0/figures.py#L29-L33)
+GitHub](https://github.com/mivanit/pattern-lens/blob/0.1.0/figures.py#L26-L30)
 
 - `n_layers: int`
 
@@ -250,7 +251,7 @@ GitHub](https://github.com/mivanit/pattern-lens/blob/0.1.0/figures.py#L29-L33)
 ```
 
 [View Source on
-GitHub](https://github.com/mivanit/pattern-lens/blob/0.1.0/figures.py#L35-L36)
+GitHub](https://github.com/mivanit/pattern-lens/blob/0.1.0/figures.py#L32-L33)
 
 ### `def load`
 
@@ -259,7 +260,7 @@ GitHub](https://github.com/mivanit/pattern-lens/blob/0.1.0/figures.py#L35-L36)
 ```
 
 [View Source on
-GitHub](https://github.com/mivanit/pattern-lens/blob/0.1.0/figures.py#L38-L40)
+GitHub](https://github.com/mivanit/pattern-lens/blob/0.1.0/figures.py#L35-L37)
 
 ### `def process_single_head`
 
@@ -274,7 +275,7 @@ GitHub](https://github.com/mivanit/pattern-lens/blob/0.1.0/figures.py#L38-L40)
 ```
 
 [View Source on
-GitHub](https://github.com/mivanit/pattern-lens/blob/0.1.0/figures.py#L43-L67)
+GitHub](https://github.com/mivanit/pattern-lens/blob/0.1.0/figures.py#L40-L64)
 
 ### `def compute_and_save_figures`
 
@@ -289,7 +290,7 @@ GitHub](https://github.com/mivanit/pattern-lens/blob/0.1.0/figures.py#L43-L67)
 ```
 
 [View Source on
-GitHub](https://github.com/mivanit/pattern-lens/blob/0.1.0/figures.py#L70-L96)
+GitHub](https://github.com/mivanit/pattern-lens/blob/0.1.0/figures.py#L67-L93)
 
 ### `def process_prompt`
 
@@ -303,7 +304,7 @@ GitHub](https://github.com/mivanit/pattern-lens/blob/0.1.0/figures.py#L70-L96)
 ```
 
 [View Source on
-GitHub](https://github.com/mivanit/pattern-lens/blob/0.1.0/figures.py#L99-L117)
+GitHub](https://github.com/mivanit/pattern-lens/blob/0.1.0/figures.py#L96-L114)
 
 ### `def figures_main`
 
@@ -318,7 +319,7 @@ GitHub](https://github.com/mivanit/pattern-lens/blob/0.1.0/figures.py#L99-L117)
 ```
 
 [View Source on
-GitHub](https://github.com/mivanit/pattern-lens/blob/0.1.0/figures.py#L121-L165)
+GitHub](https://github.com/mivanit/pattern-lens/blob/0.1.0/figures.py#L117-L162)
 
 ### `def main`
 
@@ -327,7 +328,7 @@ GitHub](https://github.com/mivanit/pattern-lens/blob/0.1.0/figures.py#L121-L165)
 ```
 
 [View Source on
-GitHub](https://github.com/mivanit/pattern-lens/blob/0.1.0/figures.py#L168-L215)
+GitHub](https://github.com/mivanit/pattern-lens/blob/0.1.0/figures.py#L165-L212)
 
 > docs for [`pattern_lens`](https://github.com/mivanit/pattern-lens)
 > v0.1.0

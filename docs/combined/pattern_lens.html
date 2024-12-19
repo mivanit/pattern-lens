@@ -37,7 +37,7 @@ Source on GitHub</a></p>
 <h1
 id="pattern_lens.activations"><code>pattern_lens.activations</code></h1>
 <p><a
-href="https://github.com/mivanit/pattern-lens/blob/0.1.0/activations.py#L0-L336">View
+href="https://github.com/mivanit/pattern-lens/blob/0.1.0/activations.py#L0-L345">View
 Source on GitHub</a></p>
 <h3 id="compute_activations"><code>def compute_activations</code></h3>
 <div class="sourceCode" id="cb1"><pre
@@ -98,16 +98,17 @@ class="sourceCode python"><code class="sourceCode python"><span id="cb3-1"><a hr
 <span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>    max_chars: <span class="bu">int</span>,</span>
 <span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>    force: <span class="bu">bool</span>,</span>
 <span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>    n_samples: <span class="bu">int</span>,</span>
-<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>    no_index_html: <span class="bu">bool</span></span>
-<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>) <span class="op">-&gt;</span> <span class="va">None</span></span></code></pre></div>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>    no_index_html: <span class="bu">bool</span>,</span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>    shuffle: <span class="bu">bool</span> <span class="op">=</span> <span class="va">False</span></span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>) <span class="op">-&gt;</span> <span class="va">None</span></span></code></pre></div>
 <p><a
-href="https://github.com/mivanit/pattern-lens/blob/0.1.0/activations.py#L151-L237">View
+href="https://github.com/mivanit/pattern-lens/blob/0.1.0/activations.py#L151-L238">View
 Source on GitHub</a></p>
 <h3 id="main"><code>def main</code></h3>
 <div class="sourceCode" id="cb4"><pre
 class="sourceCode python"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>()</span></code></pre></div>
 <p><a
-href="https://github.com/mivanit/pattern-lens/blob/0.1.0/activations.py#L240-L333">View
+href="https://github.com/mivanit/pattern-lens/blob/0.1.0/activations.py#L241-L342">View
 Source on GitHub</a></p>
 <blockquote>
 <p>docs for <a
@@ -128,7 +129,7 @@ Source on GitHub</a></p>
 <h1
 id="pattern_lens.attn_figure_funcs"><code>pattern_lens.attn_figure_funcs</code></h1>
 <p><a
-href="https://github.com/mivanit/pattern-lens/blob/0.1.0/attn_figure_funcs.py#L0-L19">View
+href="https://github.com/mivanit/pattern-lens/blob/0.1.0/attn_figure_funcs.py#L0-L22">View
 Source on GitHub</a></p>
 <h3 id="raw"><code>def raw</code></h3>
 <div class="sourceCode" id="cb5"><pre
@@ -149,7 +150,7 @@ class="sourceCode python"><code class="sourceCode python"><span id="cb6-1"><a hr
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>    func: Callable[[jaxtyping.Float[ndarray, <span class="st">&#39;n_ctx n_ctx&#39;</span>], matplotlib.axes._axes.Axes], NoneType]</span>
 <span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>) <span class="op">-&gt;</span> Callable[[jaxtyping.Float[ndarray, <span class="st">&#39;n_ctx n_ctx&#39;</span>], matplotlib.axes._axes.Axes], NoneType]</span></code></pre></div>
 <p><a
-href="https://github.com/mivanit/pattern-lens/blob/0.1.0/attn_figure_funcs.py#L17-L20">View
+href="https://github.com/mivanit/pattern-lens/blob/0.1.0/attn_figure_funcs.py#L18-L23">View
 Source on GitHub</a></p>
 <blockquote>
 <p>docs for <a
@@ -225,17 +226,17 @@ href="https://github.com/mivanit/pattern-lens/blob/0.1.0/figures.py">View
 Source on GitHub</a></p>
 <h1 id="pattern_lens.figures"><code>pattern_lens.figures</code></h1>
 <p><a
-href="https://github.com/mivanit/pattern-lens/blob/0.1.0/figures.py#L0-L218">View
+href="https://github.com/mivanit/pattern-lens/blob/0.1.0/figures.py#L0-L215">View
 Source on GitHub</a></p>
 <h3 id="HTConfigMock"><code>class HTConfigMock:</code></h3>
 <p><a
-href="https://github.com/mivanit/pattern-lens/blob/0.1.0/figures.py#L28-L40">View
+href="https://github.com/mivanit/pattern-lens/blob/0.1.0/figures.py#L25-L37">View
 Source on GitHub</a></p>
 <h3 id="HTConfigMock.__init__"><code>HTConfigMock</code></h3>
 <div class="sourceCode" id="cb7"><pre
 class="sourceCode python"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>(<span class="op">**</span>kwargs)</span></code></pre></div>
 <p><a
-href="https://github.com/mivanit/pattern-lens/blob/0.1.0/figures.py#L29-L33">View
+href="https://github.com/mivanit/pattern-lens/blob/0.1.0/figures.py#L26-L30">View
 Source on GitHub</a></p>
 <ul>
 <li><p><code>n_layers: int</code></p></li>
@@ -246,13 +247,13 @@ Source on GitHub</a></p>
 <div class="sourceCode" id="cb8"><pre
 class="sourceCode python"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>(<span class="va">self</span>)</span></code></pre></div>
 <p><a
-href="https://github.com/mivanit/pattern-lens/blob/0.1.0/figures.py#L35-L36">View
+href="https://github.com/mivanit/pattern-lens/blob/0.1.0/figures.py#L32-L33">View
 Source on GitHub</a></p>
 <h3 id="HTConfigMock.load"><code>def load</code></h3>
 <div class="sourceCode" id="cb9"><pre
 class="sourceCode python"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>(cls, data: <span class="bu">dict</span>)</span></code></pre></div>
 <p><a
-href="https://github.com/mivanit/pattern-lens/blob/0.1.0/figures.py#L38-L40">View
+href="https://github.com/mivanit/pattern-lens/blob/0.1.0/figures.py#L35-L37">View
 Source on GitHub</a></p>
 <h3 id="process_single_head"><code>def process_single_head</code></h3>
 <div class="sourceCode" id="cb10"><pre
@@ -264,7 +265,7 @@ class="sourceCode python"><code class="sourceCode python"><span id="cb10-1"><a h
 <span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>    force_overwrite: <span class="bu">bool</span> <span class="op">=</span> <span class="va">False</span></span>
 <span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>) <span class="op">-&gt;</span> <span class="va">None</span></span></code></pre></div>
 <p><a
-href="https://github.com/mivanit/pattern-lens/blob/0.1.0/figures.py#L43-L67">View
+href="https://github.com/mivanit/pattern-lens/blob/0.1.0/figures.py#L40-L64">View
 Source on GitHub</a></p>
 <h3
 id="compute_and_save_figures"><code>def compute_and_save_figures</code></h3>
@@ -277,7 +278,7 @@ class="sourceCode python"><code class="sourceCode python"><span id="cb11-1"><a h
 <span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>    force_overwrite: <span class="bu">bool</span> <span class="op">=</span> <span class="va">False</span></span>
 <span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>) <span class="op">-&gt;</span> <span class="va">None</span></span></code></pre></div>
 <p><a
-href="https://github.com/mivanit/pattern-lens/blob/0.1.0/figures.py#L70-L96">View
+href="https://github.com/mivanit/pattern-lens/blob/0.1.0/figures.py#L67-L93">View
 Source on GitHub</a></p>
 <h3 id="process_prompt"><code>def process_prompt</code></h3>
 <div class="sourceCode" id="cb12"><pre
@@ -288,7 +289,7 @@ class="sourceCode python"><code class="sourceCode python"><span id="cb12-1"><a h
 <span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>    force_overwrite: <span class="bu">bool</span> <span class="op">=</span> <span class="va">False</span></span>
 <span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>) <span class="op">-&gt;</span> <span class="va">None</span></span></code></pre></div>
 <p><a
-href="https://github.com/mivanit/pattern-lens/blob/0.1.0/figures.py#L99-L117">View
+href="https://github.com/mivanit/pattern-lens/blob/0.1.0/figures.py#L96-L114">View
 Source on GitHub</a></p>
 <h3 id="figures_main"><code>def figures_main</code></h3>
 <div class="sourceCode" id="cb13"><pre
@@ -300,13 +301,13 @@ class="sourceCode python"><code class="sourceCode python"><span id="cb13-1"><a h
 <span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>    parallel: <span class="bu">bool</span> <span class="op">|</span> <span class="bu">int</span> <span class="op">=</span> <span class="va">True</span></span>
 <span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a>) <span class="op">-&gt;</span> <span class="va">None</span></span></code></pre></div>
 <p><a
-href="https://github.com/mivanit/pattern-lens/blob/0.1.0/figures.py#L121-L165">View
+href="https://github.com/mivanit/pattern-lens/blob/0.1.0/figures.py#L117-L162">View
 Source on GitHub</a></p>
 <h3 id="main"><code>def main</code></h3>
 <div class="sourceCode" id="cb14"><pre
 class="sourceCode python"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>()</span></code></pre></div>
 <p><a
-href="https://github.com/mivanit/pattern-lens/blob/0.1.0/figures.py#L168-L215">View
+href="https://github.com/mivanit/pattern-lens/blob/0.1.0/figures.py#L165-L212">View
 Source on GitHub</a></p>
 <blockquote>
 <p>docs for <a

@@ -45,7 +45,7 @@
 # `pattern_lens.activations` { #pattern_lens.activations }
 
 
-[View Source on GitHub](https://github.com/mivanit/pattern-lens/blob/0.1.0/activations.py#L0-L336)
+[View Source on GitHub](https://github.com/mivanit/pattern-lens/blob/0.1.0/activations.py#L0-L345)
 
 
 
@@ -113,12 +113,13 @@ if from a cache, prompt_meta must be passed and contain the prompt hash
     max_chars: int,
     force: bool,
     n_samples: int,
-    no_index_html: bool
+    no_index_html: bool,
+    shuffle: bool = False
 ) -> None
 ```
 
 
-[View Source on GitHub](https://github.com/mivanit/pattern-lens/blob/0.1.0/activations.py#L151-L237)
+[View Source on GitHub](https://github.com/mivanit/pattern-lens/blob/0.1.0/activations.py#L151-L238)
 
 
 
@@ -129,7 +130,7 @@ if from a cache, prompt_meta must be passed and contain the prompt hash
 ```
 
 
-[View Source on GitHub](https://github.com/mivanit/pattern-lens/blob/0.1.0/activations.py#L240-L333)
+[View Source on GitHub](https://github.com/mivanit/pattern-lens/blob/0.1.0/activations.py#L241-L342)
 
 
 
@@ -155,7 +156,7 @@ if from a cache, prompt_meta must be passed and contain the prompt hash
 # `pattern_lens.attn_figure_funcs` { #pattern_lens.attn_figure_funcs }
 
 
-[View Source on GitHub](https://github.com/mivanit/pattern-lens/blob/0.1.0/attn_figure_funcs.py#L0-L19)
+[View Source on GitHub](https://github.com/mivanit/pattern-lens/blob/0.1.0/attn_figure_funcs.py#L0-L22)
 
 
 
@@ -186,7 +187,7 @@ if from a cache, prompt_meta must be passed and contain the prompt hash
 ```
 
 
-[View Source on GitHub](https://github.com/mivanit/pattern-lens/blob/0.1.0/attn_figure_funcs.py#L17-L20)
+[View Source on GitHub](https://github.com/mivanit/pattern-lens/blob/0.1.0/attn_figure_funcs.py#L18-L23)
 
 
 
@@ -285,13 +286,13 @@ regex for finding attention patterns in model state dicts
 # `pattern_lens.figures` { #pattern_lens.figures }
 
 
-[View Source on GitHub](https://github.com/mivanit/pattern-lens/blob/0.1.0/figures.py#L0-L218)
+[View Source on GitHub](https://github.com/mivanit/pattern-lens/blob/0.1.0/figures.py#L0-L215)
 
 
 
 ### `class HTConfigMock:` { #HTConfigMock }
 
-[View Source on GitHub](https://github.com/mivanit/pattern-lens/blob/0.1.0/figures.py#L28-L40)
+[View Source on GitHub](https://github.com/mivanit/pattern-lens/blob/0.1.0/figures.py#L25-L37)
 
 
 
@@ -301,7 +302,7 @@ regex for finding attention patterns in model state dicts
 (**kwargs)
 ```
 
-[View Source on GitHub](https://github.com/mivanit/pattern-lens/blob/0.1.0/figures.py#L29-L33)
+[View Source on GitHub](https://github.com/mivanit/pattern-lens/blob/0.1.0/figures.py#L26-L30)
 
 
 
@@ -327,7 +328,7 @@ regex for finding attention patterns in model state dicts
 ```
 
 
-[View Source on GitHub](https://github.com/mivanit/pattern-lens/blob/0.1.0/figures.py#L35-L36)
+[View Source on GitHub](https://github.com/mivanit/pattern-lens/blob/0.1.0/figures.py#L32-L33)
 
 
 
@@ -338,7 +339,7 @@ regex for finding attention patterns in model state dicts
 ```
 
 
-[View Source on GitHub](https://github.com/mivanit/pattern-lens/blob/0.1.0/figures.py#L38-L40)
+[View Source on GitHub](https://github.com/mivanit/pattern-lens/blob/0.1.0/figures.py#L35-L37)
 
 
 
@@ -355,7 +356,7 @@ regex for finding attention patterns in model state dicts
 ```
 
 
-[View Source on GitHub](https://github.com/mivanit/pattern-lens/blob/0.1.0/figures.py#L43-L67)
+[View Source on GitHub](https://github.com/mivanit/pattern-lens/blob/0.1.0/figures.py#L40-L64)
 
 
 
@@ -372,7 +373,7 @@ regex for finding attention patterns in model state dicts
 ```
 
 
-[View Source on GitHub](https://github.com/mivanit/pattern-lens/blob/0.1.0/figures.py#L70-L96)
+[View Source on GitHub](https://github.com/mivanit/pattern-lens/blob/0.1.0/figures.py#L67-L93)
 
 
 
@@ -388,7 +389,7 @@ regex for finding attention patterns in model state dicts
 ```
 
 
-[View Source on GitHub](https://github.com/mivanit/pattern-lens/blob/0.1.0/figures.py#L99-L117)
+[View Source on GitHub](https://github.com/mivanit/pattern-lens/blob/0.1.0/figures.py#L96-L114)
 
 
 
@@ -405,7 +406,7 @@ regex for finding attention patterns in model state dicts
 ```
 
 
-[View Source on GitHub](https://github.com/mivanit/pattern-lens/blob/0.1.0/figures.py#L121-L165)
+[View Source on GitHub](https://github.com/mivanit/pattern-lens/blob/0.1.0/figures.py#L117-L162)
 
 
 
@@ -416,7 +417,7 @@ regex for finding attention patterns in model state dicts
 ```
 
 
-[View Source on GitHub](https://github.com/mivanit/pattern-lens/blob/0.1.0/figures.py#L168-L215)
+[View Source on GitHub](https://github.com/mivanit/pattern-lens/blob/0.1.0/figures.py#L165-L212)
 
 
 
