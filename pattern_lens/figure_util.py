@@ -29,11 +29,28 @@ SVG_TEMPLATE: str = """<svg xmlns="http://www.w3.org/2000/svg" width="{m}" heigh
 "template for saving an `n` by `m` matrix as an svg/svgz"
 
 
-
+@overload # without keyword arguments, returns decorated function
 def matplotlib_figure_saver(
 	func: Callable[[AttentionMatrix, plt.Axes], None],
+	*args,
 	fmt: str = MATPLOTLIB_FIGURE_FMT,
 ) -> AttentionMatrixFigureFunc:
+	...
+@overload # with keyword arguments, returns decorator
+def matplotlib_figure_saver(
+	func: None = None,
+	*args,
+	fmt: str = MATPLOTLIB_FIGURE_FMT,
+) -> Callable[[Callable[[AttentionMatrix, plt.Axes], None], str], AttentionMatrixFigureFunc]:
+	...
+def matplotlib_figure_saver(
+	func: Callable[[AttentionMatrix, plt.Axes], None]|None = None,
+	*args,
+	fmt: str = MATPLOTLIB_FIGURE_FMT,
+) -> Union[
+	AttentionMatrixFigureFunc,
+	Callable[[Callable[[AttentionMatrix, plt.Axes], None], str], AttentionMatrixFigureFunc]
+]:
 	"""decorator for functions which take an attention matrix and predefined `ax` object, making it save a figure
 	
 	# Parameters:
@@ -59,17 +76,31 @@ def matplotlib_figure_saver(
 
 	"""	
 
-	@functools.wraps(func)
-	def wrapped(attn_matrix: AttentionMatrix, save_dir: Path) -> None:
-		fig_path: Path = save_dir / f"{func.__name__}.{fmt}"
+	assert len(args) == 0, "This decorator only supports keyword arguments"
 
-		fig, ax = plt.subplots(figsize=(10, 10))
-		func(attn_matrix, ax)
-		plt.tight_layout()
-		plt.savefig(fig_path)
-		plt.close(fig)
 
-	return wrapped
+	def decorator(
+		func: Callable[[AttentionMatrix, plt.Axes], None],
+		fmt: str = fmt,
+	) -> AttentionMatrixFigureFunc:
+		@functools.wraps(func)
+		def wrapped(attn_matrix: AttentionMatrix, save_dir: Path) -> None:
+			fig_path: Path = save_dir / f"{func.__name__}.{fmt}"
+
+			fig, ax = plt.subplots(figsize=(10, 10))
+			func(attn_matrix, ax)
+			plt.tight_layout()
+			plt.savefig(fig_path)
+			plt.close(fig)
+
+		return wrapped
+
+	if callable(func):
+		# Handle no-arguments case
+		return decorator(func)
+	else:
+		# Handle arguments case
+		return decorator
 
 
 
@@ -98,6 +129,9 @@ def matrix_as_svg(
 	
 	# check dims
 	assert matrix.ndim == 2, f"Matrix must be 2D, got {matrix.ndim = }"
+
+	# check matrix is not empty
+	assert matrix.size > 0, "Matrix cannot be empty"
 
 	# Normalize the matrix to range [0, 1]
 	normalized_matrix: Matrix2D
@@ -195,9 +229,9 @@ def save_matrix_as_svgz_wrapper(
 				f.write(svg_content)
 		return wrapped
 
-	# Handle no-arguments case
 	if callable(func):
+		# Handle no-arguments case
 		return decorator(func)
-
-	# Handle arguments case
-	return decorator
+	else:
+		# Handle arguments case
+		return decorator

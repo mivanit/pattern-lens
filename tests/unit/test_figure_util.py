@@ -9,37 +9,11 @@ import matplotlib.pyplot as plt
 
 from pattern_lens.consts import AttentionMatrix
 
-from pattern_lens.figure_util import MATPLOTLIB_FIGURE_FMT, SVG_TEMPLATE, save_matrix_as_svgz_wrapper
+from pattern_lens.figure_util import MATPLOTLIB_FIGURE_FMT, SVG_TEMPLATE, matplotlib_figure_saver, matrix_as_svg, save_matrix_as_svgz_wrapper
 
 
 TEMP_DIR: Path = Path("tests/_temp")
 
-def matplotlib_figure_saver(func, fmt: str = MATPLOTLIB_FIGURE_FMT):
-    """Decorator for saving matplotlib figures."""
-    def wrapped(attn_matrix, save_dir: Path):
-        fig_path: Path = save_dir / f"{func.__name__}.{fmt}"
-        fig, ax = plt.subplots(figsize=(10, 10))
-        func(attn_matrix, ax)
-        plt.tight_layout()
-        plt.savefig(fig_path)
-        plt.close(fig)
-    return wrapped
-
-def matrix_as_svg(matrix: np.ndarray, normalize: bool = False, cmap="viridis") -> str:
-    """Convert a 2D matrix to an SVG image."""
-    assert matrix.ndim == 2, f"Matrix must be 2D, got {matrix.ndim = }"
-    if normalize:
-        max_val, min_val = matrix.max(), matrix.min()
-        matrix = (matrix - min_val) / (max_val - min_val)
-    else:
-        assert 0 <= matrix.min() <= matrix.max() <= 1, "Matrix values must be in range [0, 1], or normalize must be True."
-    cmap = matplotlib.colormaps[cmap]
-    rgba_matrix = (cmap(matrix)[:, :, :3] * 255).astype(np.uint8)
-    n, m, channels = rgba_matrix.shape
-    assert channels == 3, f"Expected 3 channels, got {channels = }"
-    image_data = f"P6 {m} {n} 255\n".encode() + rgba_matrix.tobytes()
-    png_base64 = base64.b64encode(image_data).decode("utf-8")
-    return SVG_TEMPLATE.format(m=m, n=n, png_base64=png_base64)
 
 def test_matplotlib_figure_saver():
     TEMP_DIR.mkdir(parents=True, exist_ok=True)
@@ -195,3 +169,76 @@ def test_save_matrix_as_svgz_wrapper_complex_matrix():
 
     saved_file = TEMP_DIR / "complex_processing.svgz"
     assert saved_file.exists(), "SVGZ file was not saved for complex matrix processing"
+
+
+def test_matrix_as_svg_dimensions():
+    # Test different matrix shapes
+    matrices = [
+        np.random.rand(5, 10),  # Non-square
+        np.random.rand(3, 3),   # Small square
+        np.random.rand(100, 50) # Large non-square
+    ]
+    
+    for matrix in matrices:
+        n, m = matrix.shape
+        svg_content = matrix_as_svg(matrix, normalize=True)
+        assert f'width="{m}"' in svg_content
+        assert f'height="{n}"' in svg_content
+        assert f'viewBox="0 0 {m} {n}"' in svg_content
+
+def test_save_matrix_as_svgz_wrapper_content():
+    TEMP_DIR.mkdir(parents=True, exist_ok=True)
+
+    @save_matrix_as_svgz_wrapper(normalize=True)
+    def identity(matrix):
+        return matrix
+
+    test_matrix = np.array([[0.1, 0.2], [0.3, 0.4]], dtype=np.float32)
+    identity(test_matrix, TEMP_DIR)
+    
+    saved_file = TEMP_DIR / "identity.svgz"
+    with gzip.open(saved_file, 'rt') as f:
+        content = f.read()
+        assert 'svg' in content
+        assert 'image href=' in content
+        assert 'base64' in content
+
+
+def test_matplotlib_figure_saver_formats():
+    TEMP_DIR.mkdir(parents=True, exist_ok=True)
+    formats = ['png', 'pdf', 'svg']
+    
+    for fmt in formats:
+        @matplotlib_figure_saver(fmt=fmt)
+        def plot_matrix(attn_matrix, ax):
+            ax.matshow(attn_matrix)
+            ax.axis("off")
+        
+        matrix = np.random.rand(5, 5)
+        plot_matrix(matrix, TEMP_DIR)
+        saved_file = TEMP_DIR / f"plot_matrix.{fmt}"
+        assert saved_file.exists(), f"File not saved for format {fmt}"
+
+def test_matrix_as_svg_empty():
+    empty_matrix = np.array([[]], dtype=np.float32).reshape(0, 0)
+    with pytest.raises(AssertionError, match="Matrix cannot be empty"):
+        matrix_as_svg(empty_matrix)
+
+def test_matplotlib_figure_saver_cleanup():
+    TEMP_DIR.mkdir(parents=True, exist_ok=True)
+    initial_figures = len(plt.get_fignums())
+    
+    @matplotlib_figure_saver
+    def plot_matrix(attn_matrix, ax):
+        ax.matshow(attn_matrix)
+    
+    matrix = np.random.rand(5, 5)
+    plot_matrix(matrix, TEMP_DIR)
+    
+    # Check that no figure objects remain
+    assert len(plt.get_fignums()) == initial_figures, "Figure not properly cleaned up"
+
+def test_matrix_as_svg_non_numeric():
+    matrix = np.array([['a', 'b'], ['c', 'd']])
+    with pytest.raises(TypeError, match="ufunc 'minimum' did not contain a loop with signature matching types"):
+        matrix_as_svg(matrix)
