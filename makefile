@@ -454,6 +454,16 @@ test: clean
 	@echo "running tests"
 	$(PYTHON) -m pytest $(PYTEST_OPTIONS) $(TESTS_DIR)
 
+.PHONY: test-unit
+test-unit:
+	@echo "running unit tests"
+	$(PYTHON) -m pytest $(PYTEST_OPTIONS) $(TESTS_DIR)/unit
+
+.PHONY: test-integration
+test-integration:
+	@echo "running integration tests"
+	$(PYTHON) -m pytest $(PYTEST_OPTIONS) $(TESTS_DIR)/integration
+
 .PHONY: check
 check: clean format-check test typing
 	@echo "run format checks, tests, and typing checks"

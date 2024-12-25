@@ -1,5 +1,5 @@
 from pathlib import Path
-from typing import Any, Callable, Protocol
+from typing import Any, Callable, Protocol, overload, Union
 import functools
 import base64
 import gzip
@@ -15,6 +15,12 @@ from pattern_lens.consts import AttentionMatrix
 
 AttentionMatrixFigureFunc = Callable[[AttentionMatrix, Path], None]
 "Type alias for a function that, given an attention matrix, saves a figure"
+
+Matrix2D = Float[np.ndarray, "n m"]
+"Type alias for a 2D matrix (plottable)"
+
+AttentionMatrixToMatrixFunc = Callable[[AttentionMatrix], Matrix2D]
+"Type alias for a function that, given an attention matrix, returns a 2D matrix"
 
 MATPLOTLIB_FIGURE_FMT: str = "svgz"
 "format for saving matplotlib figures"
@@ -69,7 +75,7 @@ def matplotlib_figure_saver(
 
 
 def matrix_as_svg(
-	matrix: Float[np.ndarray, "n m"],
+	matrix: Matrix2D,
 	normalize: bool = False,
 	cmap = "viridis",
 ) -> str:
@@ -94,7 +100,7 @@ def matrix_as_svg(
 	assert matrix.ndim == 2, f"Matrix must be 2D, got {matrix.ndim = }"
 
 	# Normalize the matrix to range [0, 1]
-	normalized_matrix: Float[np.ndarray, "n m"]
+	normalized_matrix: Matrix2D
 	if normalize:
 		max_val, min_val = matrix.max(), matrix.min()
 		normalized_matrix = (matrix - min_val) / (max_val - min_val)
@@ -124,38 +130,74 @@ def matrix_as_svg(
 	return svg_content
 
 
+@overload # with keyword arguments, returns decorator
 def save_matrix_as_svgz_wrapper(
-	func: Callable[[Float[np.ndarray, "n m"]], Float[np.ndarray, "n m"]],
+	func: None = None,
+	*args,
 	normalize: Bool = False,
-	cmap = "viridis",
+	cmap: str = "viridis",
+) -> Callable[[AttentionMatrixToMatrixFunc], AttentionMatrixFigureFunc]: 
+	...
+@overload # without keyword arguments, returns decorated function
+def save_matrix_as_svgz_wrapper(
+	func: AttentionMatrixToMatrixFunc,
+	*args,
+	normalize: Bool = False,
+	cmap: str = "viridis",
 ) -> AttentionMatrixFigureFunc:
-	"""decorator for functions which take an attention matrix and return a new matrix, making it save an svgz figure using `matrix_as_svg`
-	
+	...
+def save_matrix_as_svgz_wrapper(
+	func: AttentionMatrixToMatrixFunc|None = None,
+	*args,
+	normalize: bool = False,
+	cmap="viridis",
+) -> AttentionMatrixFigureFunc|Callable[[AttentionMatrixToMatrixFunc], AttentionMatrixFigureFunc]:
+	"""
+	Decorator for functions that process an attention matrix and save it as an SVGZ image.
+	Can handle both argumentless usage and with arguments.
+
 	# Parameters:
-	 - `func : Callable[[Float[np.ndarray, 'n m']], Float[np.ndarray, 'n m']]`   
-	   your function, which should take an attention matrix and return a new matrix
-	 - `normalize : Bool`   
-	   whether to normalize the matrix to range [0, 1]. if it's not in the range [0, 1], this must be `True` or it will raise an `AssertionError`. passed to `matrix_as_svg`
-	   (defaults to `False`)
-	 - `cmap : str`   
-	   the colormap to use for the matrix -- will look up in `matplotlib.colormaps` if it's a string. passed to `matrix_as_svg`. passed to `matrix_as_svg`
-	   (defaults to `"viridis"`)
-	
+	 - `func : AttentionMatrixToMatrixFunc|None` 
+		Either the function to decorate (in the no-arguments case) or `None` when used with arguments.
+	 - `normalize : bool, keyword-only`  
+		Whether to normalize the matrix to range [0, 1]. Defaults to `False`.
+	 - `cmap : str, keyword-only`  
+		The colormap to use for the matrix. Defaults to `"viridis"`.
+
 	# Returns:
-	 - `AttentionMatrixFigureFunc` 
-	   your function, after we wrap it to save an svgz figure
-	"""	
 	
-	@functools.wraps(func)
-	def wrapped(attn_matrix: AttentionMatrix, save_dir: Path) -> None:
-		fig_path: Path = save_dir / f"{func.__name__}.svgz"
+	`AttentionMatrixFigureFunc|Callable[[AttentionMatrixToMatrixFunc], AttentionMatrixFigureFunc]`
+	
+	- `AttentionMatrixFigureFunc` if `func` is `AttentionMatrixToMatrixFunc` (no arguments case)
+	- `Callable[[AttentionMatrixToMatrixFunc], AttentionMatrixFigureFunc]` if `func` is `None` -- returns the decorator which will then be applied to the  (with arguments case)
 
-		# Apply the function
-		new_matrix: Float[np.ndarray, "n m"] = func(attn_matrix)
+	# Usage:
+	```python
+	@save_matrix_as_svgz_wrapper(normalize=True, cmap="plasma")
+	def scale_matrix(matrix):
+		return matrix * 2
 
-		# Save the matrix as SVGZ
-		svg_content: str = matrix_as_svg(new_matrix, normalize=normalize, cmap=cmap)
-		with gzip.open(fig_path, "wt") as f:
-			f.write(svg_content)
+	@save_matrix_as_svgz_wrapper
+	def identity_matrix(matrix):
+		return matrix
+	```
+	"""
 
-	return wrapped
+	assert len(args) == 0, "This decorator only supports keyword arguments"
+
+	def decorator(func: Callable[[AttentionMatrix], Matrix2D]) -> AttentionMatrixFigureFunc:
+		@functools.wraps(func)
+		def wrapped(attn_matrix: AttentionMatrix, save_dir: Path) -> None:
+			fig_path: Path = save_dir / f"{func.__name__}.svgz"
+			new_matrix: Matrix2D = func(attn_matrix)
+			svg_content: str = matrix_as_svg(new_matrix, normalize=normalize, cmap=cmap)
+			with gzip.open(fig_path, "wt") as f:
+				f.write(svg_content)
+		return wrapped
+
+	# Handle no-arguments case
+	if callable(func):
+		return decorator(func)
+
+	# Handle arguments case
+	return decorator
