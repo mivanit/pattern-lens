@@ -73,3 +73,6 @@ exports = [
     { name = "all", filename="requirements.txt", groups = true, extras=true },
 	{ name = "all", groups = true, options = ["--all-extras"] },
 ]
+
+[tool.pytest.ini_options]
+addopts = "--jaxtyping-packages=pattern_lens,beartype.beartype"
