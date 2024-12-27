@@ -11,7 +11,7 @@ from muutils.spinner import SpinnerContext
 from muutils.parallel import run_maybe_parallel
 
 from pattern_lens.attn_figure_funcs import ATTENTION_MATRIX_FIGURE_FUNCS
-from pattern_lens.consts import DATA_DIR, AttentionMatrix, SPINNER_KWARGS
+from pattern_lens.consts import DATA_DIR, AttentionMatrix, SPINNER_KWARGS, ActivationCacheNp
 from pattern_lens.indexes import (
     generate_functions_jsonl,
     generate_models_jsonl,
@@ -70,9 +70,9 @@ def process_single_head(
 
 
 def compute_and_save_figures(
-    model_cfg: "HookedTransformerConfig|HTConfigMock",  # noqa: F821
+    model_cfg: "HookedTransformerConfig|HTConfigMock",  # type: ignore[name-defined] # noqa: F821
     activations_path: Path,
-    cache: dict,
+    cache: ActivationCacheNp,
     save_path: Path = Path(DATA_DIR),
     force_overwrite: bool = False,
     track_results: bool = False,
@@ -93,7 +93,7 @@ def compute_and_save_figures(
         range(model_cfg.n_heads),
     ):
         attn_pattern: AttentionMatrix = (
-            cache[f"blocks.{layer_idx}.attn.hook_pattern"][0, head_idx].cpu().numpy()
+            cache[f"blocks.{layer_idx}.attn.hook_pattern"][0, head_idx]
         )
         save_dir: Path = prompt_dir / f"L{layer_idx}" / f"H{head_idx}"
         save_dir.mkdir(parents=True, exist_ok=True)
@@ -116,14 +116,17 @@ def compute_and_save_figures(
 
 def process_prompt(
     prompt: dict,
-    model_cfg: "HookedTransformerConfig|HTConfigMock",  # noqa: F821
+    model_cfg: "HookedTransformerConfig|HTConfigMock",  # type: ignore[name-defined] # noqa: F821
     save_path: Path,
     force_overwrite: bool = False,
 ) -> None:
+    activations_path: Path
+    cache: ActivationCacheNp
     activations_path, cache = load_activations(
         model_name=model_cfg.model_name,
         prompt=prompt,
         save_path=save_path,
+        return_fmt="numpy",
     )
 
     compute_and_save_figures(
@@ -144,8 +147,8 @@ def figures_main(
 ) -> None:
     with SpinnerContext(message="setting up paths", **SPINNER_KWARGS):
         # save model info or check if it exists
-        save_path: Path = Path(save_path)
-        model_path: Path = save_path / model_name
+        save_path_p: Path = Path(save_path)
+        model_path: Path = save_path_p / model_name
         with open(model_path / "model_cfg.json", "r") as f:
             model_cfg = HTConfigMock.load(json.load(f))
 
@@ -163,7 +166,7 @@ def figures_main(
             func=functools.partial(
                 process_prompt,
                 model_cfg=model_cfg,
-                save_path=save_path,
+                save_path=save_path_p,
                 force_overwrite=force,
             ),
             iterable=prompts,
@@ -179,8 +182,8 @@ def figures_main(
     with SpinnerContext(
         message="updating jsonl metadata for models and functions", **SPINNER_KWARGS
     ):
-        generate_models_jsonl(save_path)
-        generate_functions_jsonl(save_path)
+        generate_models_jsonl(save_path_p)
+        generate_functions_jsonl(save_path_p)
 
 
 def main():

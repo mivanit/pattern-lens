@@ -173,14 +173,14 @@ def matrix_as_svg(
 def save_matrix_as_svgz_wrapper(
     func: None = None,
     *args,
-    normalize: Bool = False,
+    normalize: bool = False,
     cmap: str = "viridis",
 ) -> Callable[[AttentionMatrixToMatrixFunc], AttentionMatrixFigureFunc]: ...
 @overload  # without keyword arguments, returns decorated function
 def save_matrix_as_svgz_wrapper(
     func: AttentionMatrixToMatrixFunc,
     *args,
-    normalize: Bool = False,
+    normalize: bool = False,
     cmap: str = "viridis",
 ) -> AttentionMatrixFigureFunc: ...
 def save_matrix_as_svgz_wrapper(

@@ -47,7 +47,7 @@ def generate_functions_jsonl(path: Path):
     if functions_file.exists():
         with open(functions_file, "r") as f:
             for line in f:
-                func_data: list[dict] = json.loads(line)
+                func_data: dict = json.loads(line)
                 existing_functions.add(func_data["name"])
 
     # Add any new functions from ALL_FUNCTIONS

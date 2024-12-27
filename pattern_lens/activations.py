@@ -13,7 +13,7 @@ import tqdm
 from muutils.spinner import SpinnerContext
 from muutils.misc.numerical import shorten_numerical_to_str
 from muutils.json_serialize import json_serialize
-from transformer_lens import HookedTransformer, HookedTransformerConfig
+from transformer_lens import HookedTransformer, HookedTransformerConfig # type: ignore[import-untyped]
 
 import pattern_lens
 from pattern_lens.consts import (
@@ -121,12 +121,17 @@ def get_activations(
     allow_disk_cache: bool = True,
     return_cache: bool = True,
 ) -> tuple[Path, ActivationCacheNp | None]:
+    # add hash to prompt
     augment_prompt_with_hash(prompt)
+
+    # get the model
+    model_name: str = model.model_name if isinstance(model, HookedTransformer) else model
+
     # from cache
     if allow_disk_cache:
         try:
             path, cache = load_activations(
-                model_name=model.model_name,
+                model_name=model_name,
                 prompt=prompt,
                 save_path=save_path,
             )
@@ -139,8 +144,7 @@ def get_activations(
 
     # compute them
     if isinstance(model, str):
-        model = HookedTransformer.from_pretrained(model)
-        model.model_name = model
+        model = HookedTransformer.from_pretrained(model_name)
 
     return compute_activations(
         prompt=prompt,
@@ -171,9 +175,9 @@ def activations_main(
         f"loaded {model_name} with {shorten_numerical_to_str(n_params)} ({n_params}) parameters"
     )
 
-    save_path: Path = Path(save_path)
-    save_path.mkdir(parents=True, exist_ok=True)
-    model_path: Path = save_path / model_name
+    save_path_p: Path = Path(save_path)
+    save_path_p.mkdir(parents=True, exist_ok=True)
+    model_path: Path = save_path_p / model_name
     with SpinnerContext(
         message=f"saving model info to {model_path.as_posix()}", **SPINNER_KWARGS
     ):
@@ -202,7 +206,6 @@ def activations_main(
         prompts = prompts[:n_samples]
 
     print(f"{len(prompts)} prompts loaded")
-    save_path: Path = Path(save_path)
 
     # write index.html
     with SpinnerContext(message="writing index.html", **SPINNER_KWARGS):
@@ -212,7 +215,7 @@ def activations_main(
                 .joinpath("frontend/index.html")
                 .read_text(encoding="utf-8")
             )
-            with open(save_path / "index.html", "w", encoding="utf-8") as f:
+            with open(save_path_p / "index.html", "w", encoding="utf-8") as f:
                 f.write(html_index)
 
     # get activations
@@ -222,7 +225,7 @@ def activations_main(
                 functools.partial(
                     get_activations,
                     model=model,
-                    save_path=save_path,
+                    save_path=save_path_p,
                     allow_disk_cache=not force,
                     return_cache=False,
                 ),
@@ -236,8 +239,8 @@ def activations_main(
     with SpinnerContext(
         message="updating jsonl metadata for models and prompts", **SPINNER_KWARGS
     ):
-        generate_models_jsonl(save_path)
-        generate_prompts_jsonl(save_path / model_name)
+        generate_models_jsonl(save_path_p)
+        generate_prompts_jsonl(save_path_p / model_name)
 
 
 def main():
