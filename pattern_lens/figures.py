@@ -1,4 +1,6 @@
 import argparse
+from collections import defaultdict
+import datetime
 import functools
 import itertools
 import json
@@ -11,7 +13,7 @@ from muutils.spinner import SpinnerContext
 from muutils.parallel import run_maybe_parallel
 
 from pattern_lens.attn_figure_funcs import ATTENTION_MATRIX_FIGURE_FUNCS
-from pattern_lens.consts import DATA_DIR, FIGURE_FMT, AttentionMatrix, SPINNER_KWARGS
+from pattern_lens.consts import DATA_DIR, AttentionMatrix, SPINNER_KWARGS
 from pattern_lens.indexes import (
     generate_functions_jsonl,
     generate_models_jsonl,
@@ -43,25 +45,30 @@ def process_single_head(
     attn_pattern: AttentionMatrix,
     save_dir: Path,
     force_overwrite: bool = False,
-) -> None:
-    for func in ATTENTION_MATRIX_FIGURE_FUNCS:
-        fig_path: Path = save_dir / f"{func.__name__}.{FIGURE_FMT}"
+) -> dict[str, bool|Exception]:
+    funcs_status: dict[str, bool|Exception] = dict()
 
-        if not force_overwrite and fig_path.exists():
+    for func in ATTENTION_MATRIX_FIGURE_FUNCS:
+        func_name: str = func.__name__
+        fig_path: list[Path] = list(save_dir.glob(f"{func_name}.*"))
+
+        if not force_overwrite and len(fig_path) > 0:
+            funcs_status[func_name] = True
             continue
 
         try:
-            fig, ax = plt.subplots(figsize=(10, 10))
-            func(attn_pattern, ax)
-            plt.tight_layout()
-            plt.savefig(fig_path)
-            plt.close(fig)
+            func(attn_pattern, save_dir)
+            funcs_status[func_name] = True
+
         except Exception as e:
             error_file = save_dir / f"{func.__name__}.error.txt"
             error_file.write_text(str(e))
             warnings.warn(
                 f"Error in {func.__name__} for L{layer_idx}H{head_idx}: {str(e)}"
             )
+            funcs_status[func_name] = e
+
+    return funcs_status
 
 
 def compute_and_save_figures(
@@ -70,8 +77,18 @@ def compute_and_save_figures(
     cache: dict,
     save_path: Path = Path(DATA_DIR),
     force_overwrite: bool = False,
+    track_results: bool = False,
 ) -> None:
     prompt_dir: Path = activations_path.parent
+
+    if track_results:
+        results: defaultdict[
+            str, # func name
+            dict[
+                tuple[int, int], # layer, head
+                bool|Exception, # success or exception
+            ]
+        ] = defaultdict(dict)
 
     for layer_idx, head_idx in itertools.product(
         range(model_cfg.n_layers),
@@ -82,13 +99,20 @@ def compute_and_save_figures(
         )
         save_dir: Path = prompt_dir / f"L{layer_idx}" / f"H{head_idx}"
         save_dir.mkdir(parents=True, exist_ok=True)
-        process_single_head(
+        head_res: dict[str, bool|Exception] = process_single_head(
             layer_idx=layer_idx,
             head_idx=head_idx,
             attn_pattern=attn_pattern,
             save_dir=save_dir,
             force_overwrite=force_overwrite,
         )
+
+        if track_results:
+            for func_name, status in head_res.items():
+                results[func_name][(layer_idx, head_idx)] = status
+    
+    # TODO: do something with results
+        
 
     generate_prompts_jsonl(save_path / model_cfg.model_name)
 

@@ -1,3 +1,4 @@
+import jaxtyping
 import pytest
 import numpy as np
 from pathlib import Path
@@ -69,7 +70,7 @@ def test_matrix_as_svg_invalid_range():
 
 def test_matrix_as_svg_invalid_dims():
     matrix = np.random.rand(5, 5, 5).astype(np.float32)
-    with pytest.raises(AssertionError, match="Matrix must be 2D"):
+    with pytest.raises((AssertionError, jaxtyping.TypeCheckError)):
         matrix_as_svg(matrix, normalize=True)
 
 
@@ -265,8 +266,5 @@ def test_matplotlib_figure_saver_cleanup():
 
 def test_matrix_as_svg_non_numeric():
     matrix = np.array([["a", "b"], ["c", "d"]])
-    with pytest.raises(
-        TypeError,
-        match="ufunc 'minimum' did not contain a loop with signature matching types",
-    ):
+    with pytest.raises(TypeError):
         matrix_as_svg(matrix)

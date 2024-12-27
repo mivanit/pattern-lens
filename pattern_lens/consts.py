@@ -6,7 +6,7 @@ from jaxtyping import Float
 AttentionMatrix = Float[np.ndarray, "n_ctx n_ctx"]
 "type alias for attention matrix"
 
-AttentionCache = dict[str, AttentionMatrix]
+ActivationCacheNp = dict[str, np.ndarray]
 "type alias for a cache of attention matrices, subset of ActivationCache"
 
 DATA_DIR: str = "attn_data"

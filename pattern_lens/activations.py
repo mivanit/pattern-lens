@@ -19,7 +19,7 @@ import pattern_lens
 from pattern_lens.consts import (
     ATTN_PATTERN_REGEX,
     DATA_DIR,
-    AttentionCache,
+    ActivationCacheNp,
     SPINNER_KWARGS,
 )
 from pattern_lens.indexes import generate_models_jsonl, generate_prompts_jsonl
@@ -37,7 +37,7 @@ def compute_activations(
     save_path: Path = Path(DATA_DIR),
     return_cache: bool = True,
     names_filter: Callable[[str], bool] | re.Pattern = ATTN_PATTERN_REGEX,
-) -> tuple[Path, AttentionCache | None]:
+) -> tuple[Path, ActivationCacheNp | None]:
     """get activations for a given model and prompt, possibly from a cache
 
     if from a cache, prompt_meta must be passed and contain the prompt hash
@@ -56,7 +56,7 @@ def compute_activations(
        (defaults to `ATTN_PATTERN_REGEX`)
 
     # Returns:
-     - `tuple[Path, AttentionCache|None]`
+     - `tuple[Path, ActivationCacheNp|None]`
     """
     assert model is not None, "model must be passed"
     assert "text" in prompt, "prompt must contain 'text' key"
@@ -96,7 +96,7 @@ def compute_activations(
             return_type=None,
         )
 
-    cache_np: AttentionCache = {k: v.detach().cpu().numpy() for k, v in cache.items()}
+    cache_np: ActivationCacheNp = {k: v.detach().cpu().numpy() for k, v in cache.items()}
 
     # save activations
     activations_path: Path = prompt_dir / "activations.npz"
@@ -107,7 +107,7 @@ def compute_activations(
 
     # return path and cache
     if return_cache:
-        return activations_path, cache
+        return activations_path, cache_np
     else:
         return activations_path, None
 
@@ -118,7 +118,7 @@ def get_activations(
     save_path: Path = Path(DATA_DIR),
     allow_disk_cache: bool = True,
     return_cache: bool = True,
-) -> tuple[Path, AttentionCache]:
+) -> tuple[Path, ActivationCacheNp | None]:
     augment_prompt_with_hash(prompt)
     # from cache
     if allow_disk_cache:
