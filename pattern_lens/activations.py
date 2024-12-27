@@ -96,7 +96,9 @@ def compute_activations(
             return_type=None,
         )
 
-    cache_np: ActivationCacheNp = {k: v.detach().cpu().numpy() for k, v in cache.items()}
+    cache_np: ActivationCacheNp = {
+        k: v.detach().cpu().numpy() for k, v in cache.items()
+    }
 
     # save activations
     activations_path: Path = prompt_dir / "activations.npz"

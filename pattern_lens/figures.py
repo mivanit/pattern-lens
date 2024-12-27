@@ -1,13 +1,11 @@
 import argparse
 from collections import defaultdict
-import datetime
 import functools
 import itertools
 import json
 import warnings
 from pathlib import Path
 
-import matplotlib.pyplot as plt
 from muutils.json_serialize import json_serialize
 from muutils.spinner import SpinnerContext
 from muutils.parallel import run_maybe_parallel
@@ -45,8 +43,8 @@ def process_single_head(
     attn_pattern: AttentionMatrix,
     save_dir: Path,
     force_overwrite: bool = False,
-) -> dict[str, bool|Exception]:
-    funcs_status: dict[str, bool|Exception] = dict()
+) -> dict[str, bool | Exception]:
+    funcs_status: dict[str, bool | Exception] = dict()
 
     for func in ATTENTION_MATRIX_FIGURE_FUNCS:
         func_name: str = func.__name__
@@ -83,11 +81,11 @@ def compute_and_save_figures(
 
     if track_results:
         results: defaultdict[
-            str, # func name
+            str,  # func name
             dict[
-                tuple[int, int], # layer, head
-                bool|Exception, # success or exception
-            ]
+                tuple[int, int],  # layer, head
+                bool | Exception,  # success or exception
+            ],
         ] = defaultdict(dict)
 
     for layer_idx, head_idx in itertools.product(
@@ -99,7 +97,7 @@ def compute_and_save_figures(
         )
         save_dir: Path = prompt_dir / f"L{layer_idx}" / f"H{head_idx}"
         save_dir.mkdir(parents=True, exist_ok=True)
-        head_res: dict[str, bool|Exception] = process_single_head(
+        head_res: dict[str, bool | Exception] = process_single_head(
             layer_idx=layer_idx,
             head_idx=head_idx,
             attn_pattern=attn_pattern,
@@ -110,9 +108,8 @@ def compute_and_save_figures(
         if track_results:
             for func_name, status in head_res.items():
                 results[func_name][(layer_idx, head_idx)] = status
-    
+
     # TODO: do something with results
-        
 
     generate_prompts_jsonl(save_path / model_cfg.model_name)
 
