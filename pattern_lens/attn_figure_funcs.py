@@ -52,6 +52,7 @@ def register_attn_figure_func(
 #     ax.axis("off")
 
 
+@register_attn_figure_func
 @save_matrix_as_svgz_wrapper(normalize=False, cmap="viridis")
 def raw(attn_matrix: AttentionMatrix) -> Matrix2D:
     return attn_matrix
