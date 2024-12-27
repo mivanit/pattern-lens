@@ -5,7 +5,7 @@ import base64
 import gzip
 
 import numpy as np
-from jaxtyping import Float, Bool
+from jaxtyping import Float
 import matplotlib
 import matplotlib.pyplot as plt
 

@@ -13,7 +13,7 @@ import tqdm
 from muutils.spinner import SpinnerContext
 from muutils.misc.numerical import shorten_numerical_to_str
 from muutils.json_serialize import json_serialize
-from transformer_lens import HookedTransformer, HookedTransformerConfig # type: ignore[import-untyped]
+from transformer_lens import HookedTransformer, HookedTransformerConfig  # type: ignore[import-untyped]
 
 import pattern_lens
 from pattern_lens.consts import (
@@ -125,7 +125,9 @@ def get_activations(
     augment_prompt_with_hash(prompt)
 
     # get the model
-    model_name: str = model.model_name if isinstance(model, HookedTransformer) else model
+    model_name: str = (
+        model.model_name if isinstance(model, HookedTransformer) else model
+    )
 
     # from cache
     if allow_disk_cache:

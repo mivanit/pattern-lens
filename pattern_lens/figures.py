@@ -11,7 +11,12 @@ from muutils.spinner import SpinnerContext
 from muutils.parallel import run_maybe_parallel
 
 from pattern_lens.attn_figure_funcs import ATTENTION_MATRIX_FIGURE_FUNCS
-from pattern_lens.consts import DATA_DIR, AttentionMatrix, SPINNER_KWARGS, ActivationCacheNp
+from pattern_lens.consts import (
+    DATA_DIR,
+    AttentionMatrix,
+    SPINNER_KWARGS,
+    ActivationCacheNp,
+)
 from pattern_lens.indexes import (
     generate_functions_jsonl,
     generate_models_jsonl,
@@ -92,9 +97,9 @@ def compute_and_save_figures(
         range(model_cfg.n_layers),
         range(model_cfg.n_heads),
     ):
-        attn_pattern: AttentionMatrix = (
-            cache[f"blocks.{layer_idx}.attn.hook_pattern"][0, head_idx]
-        )
+        attn_pattern: AttentionMatrix = cache[f"blocks.{layer_idx}.attn.hook_pattern"][
+            0, head_idx
+        ]
         save_dir: Path = prompt_dir / f"L{layer_idx}" / f"H{head_idx}"
         save_dir.mkdir(parents=True, exist_ok=True)
         head_res: dict[str, bool | Exception] = process_single_head(
