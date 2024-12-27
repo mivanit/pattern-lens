@@ -1,7 +1,5 @@
 import re
-from typing import Callable, Protocol, Any
 
-import matplotlib.pyplot as plt
 import numpy as np
 from jaxtyping import Float
 
