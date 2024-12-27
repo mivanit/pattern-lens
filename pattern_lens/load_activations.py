@@ -131,10 +131,10 @@ def load_activations(
 
     cache: dict
 
-    with np.load(activations_path) as data:
+    with np.load(activations_path) as npz_data:
         if return_fmt == "numpy":
-            cache = data
+            cache = {k: v for k, v in npz_data.items()}
         elif return_fmt == "torch":
-            cache = {k: torch.from_numpy(v) for k, v in data.items()}
+            cache = {k: torch.from_numpy(v) for k, v in npz_data.items()}
 
     return activations_path, cache
