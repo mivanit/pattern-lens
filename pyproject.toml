@@ -37,6 +37,7 @@ dev = [
 	"coverage-badge>=1.1.0",
 	# type checking
 	"mypy>=1.0.1",
+    "types-tqdm",
 	# docs
 	'pdoc>=14.6.0',
 	# tomli since no tomlib in python < 3.11
