@@ -1246,6 +1246,7 @@ name = "pattern-lens"
 version = "0.1.0"
 source = { editable = "." }
 dependencies = [
+    { name = "beartype" },
     { name = "ipykernel" },
     { name = "ipywidgets" },
     { name = "jaxtyping" },
@@ -1274,6 +1275,7 @@ dev = [
 
 [package.metadata]
 requires-dist = [
+    { name = "beartype", specifier = ">=0.14.1" },
     { name = "ipykernel", specifier = ">=6.29.5" },
     { name = "ipywidgets", specifier = ">=8.1.5" },
     { name = "jaxtyping", specifier = ">=0.2.33" },
@@ -1284,7 +1286,7 @@ requires-dist = [
     { name = "scipy", specifier = ">=1.14.1" },
     { name = "torch", specifier = ">=2.5.1" },
     { name = "tqdm", specifier = ">=4.66.5" },
-    { name = "transformer-lens", specifier = ">=2.0.0" },
+    { name = "transformer-lens", specifier = ">=2.10.0" },
     { name = "typeguard", specifier = ">=4.4.1" },
     { name = "zanj", specifier = ">=0.3.1" },
 ]
@@ -2171,7 +2173,7 @@ name = "triton"
 version = "3.1.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "filelock" },
+    { name = "filelock", marker = "python_full_version < '3.13'" },
 ]
 wheels = [
     { url = "https://files.pythonhosted.org/packages/78/eb/65f5ba83c2a123f6498a3097746607e5b2f16add29e36765305e4ac7fdd8/triton-3.1.0-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:c8182f42fd8080a7d39d666814fa36c5e30cc00ea7eeeb1a2983dbb4c99a0fdc", size = 209551444 },
