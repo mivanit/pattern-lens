@@ -228,14 +228,14 @@
             box-shadow: 0 2px 4px var(--shadow-color);
         }
 
-        .image-controls-left {
+        .image-controls-display {
             display: flex;
             align-items: center;
             width: 50%;
             gap: var(--spacing-md);
         }
 
-        .image-controls-right {
+        .image-controls-size {
             display: flex;
             align-items: center;
             width: 50%;
@@ -454,32 +454,25 @@
         <!-- image display button and size controls -->
         <div class="image-controls-container">
             <div class="image-controls">
-                <div style="display: flex; align-items: center; width: 50%; gap: 10px;">
-                    <button @click="displayImages"
-                        :class="{ 'btn-primary': !imagesUpToDate, 'btn-secondary': imagesUpToDate }">
+                <div class="image-controls-display">
+                    <button class="btn" :class="{ 'btn-primary': !imagesUpToDate, 'btn-secondary': imagesUpToDate }" @click="displayImages">
                         {{ imagesUpToDate ? 'Images Up to Date' : 'Display Images' }}
                     </button>
-                    <div style="flex-grow: 1; display: flex; align-items: center; gap: 10px;">
-                        <span style="white-space: nowrap;">{{ images.length }} / {{ totalExpectedImages }} images</span>
-                        <div class="progress-bar" v-if="loading || images.length > 0"
-                            style="flex-grow: 1; height: 12px; background: #ddd; border-radius: 6px; overflow: hidden;">
-                            <div class="progress-bar-fill" :style="{
-                                     width: `${(images.length / totalExpectedImages) * 100}%`,
-                                     height: '100%',
-                                     background: loading ? '#007bff' : '#28a745',
-                                     transition: 'width 0.3s ease'
-                                 }">
+                    <div class="progress-wrapper">
+                        <span class="progress-status">{{ images.length }} / {{ totalExpectedImages }} images</span>
+                        <div class="progress-bar" v-if="loading || images.length > 0">
+                            <div class="progress-bar-fill" 
+                                 :class="{ 'loading': loading, 'complete': !loading }"
+                                 :style="{ width: `${(images.length / totalExpectedImages) * 100}%` }">
                             </div>
                         </div>
                     </div>
                 </div>
-                <div v-if="images.length > 0" class="resize-controls" style="width: 50%; justify-content: flex-end;">
+                <div class="image-controls-size" v-if="images.length > 0">
                     <label for="resizeSlider">Size:</label>
-                    <input type="range" id="resizeSlider" v-model.number="imageSize" min="25" max="1000" step="25"
-                        class="resize-slider">
-                    <input type="number" v-model.number="imageSize" min="1" max="1000" class="resize-input"
-                        style="width: 75px; margin-left: 10px; padding: 2px 5px;">
-                    <span style="margin-left: 5px">px</span>
+                    <input type="range" id="resizeSlider" class="resize-slider" v-model.number="imageSize" min="25" max="1000" step="25">
+                    <input type="number" class="resize-input" v-model.number="imageSize" min="1" max="1000">
+                    <span>px</span>
                 </div>
             </div>
         </div>

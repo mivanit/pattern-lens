@@ -705,7 +705,7 @@ demo-figures:
 
 .PHONY: demo-server
 demo-server:
-	$(PYTHON) -m pattern_lens.server --path $(DEMO_DATA)
+	$(PYTHON) -m pattern_lens.server --path $(DEMO_DATA) --rewrite-index
 
 .PHONY: demo
 demo: demo-clean demo-activations demo-figures demo-server

@@ -15,12 +15,29 @@
     <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/ag-grid/32.1.0/ag-grid-community.min.js"></script> -->
     <script src="https://cdn.jsdelivr.net/npm/ag-grid-community@32.2.0/dist/ag-grid-community.min.js"></script>
     <style>
-        /* General Styles */
+        /* Base Styles */
+        :root {
+            --primary-color: #007bff;
+            --secondary-color: #6c757d;
+            --primary-hover: #0056b3;
+            --secondary-hover: #545b62;
+            --border-color: #ccc;
+            --light-bg: #f0f0f0;
+            --shadow-color: rgba(0, 0, 0, 0.1);
+            --text-muted: #666;
+            --success-color: #28a745;
+            --border-radius: 4px;
+            --spacing-xs: 3px;
+            --spacing-sm: 5px;
+            --spacing-md: 10px;
+            --spacing-lg: 20px;
+        }
+
         body {
             font-family: Arial, sans-serif;
             line-height: 1.4;
             margin: 0;
-            padding: 10px;
+            padding: var(--spacing-md);
         }
 
         .container {
@@ -28,17 +45,18 @@
             margin: 0 auto;
         }
 
-        /* Layout Styles */
+        /* Layout Components */
         .main-selection-content {
             display: flex;
-            gap: 10px;
-            border: 2px solid #ccc;
-            padding: 10px;
+            gap: var(--spacing-md);
+            border: 2px solid var(--border-color);
+            padding: var(--spacing-md);
             resize: vertical;
             overflow: auto;
             min-height: 300px;
         }
 
+        /* Filters Section */
         .filters {
             width: 180px;
             display: flex;
@@ -53,7 +71,7 @@
         /* Layer and Head Filters */
         .layer-head-filters {
             display: flex;
-            gap: 10px;
+            gap: var(--spacing-md);
             flex: 1;
             overflow: hidden;
             min-height: 0;
@@ -68,59 +86,40 @@
             height: 100%;
         }
 
-        .layer-head-filters .filter-label {
-            flex: 0 0 auto;
+        /* Filter Components */
+        .filter-item {
+            margin-bottom: var(--spacing-sm);
+            border: 1px solid var(--border-color);
+            padding: var(--spacing-sm);
+            border-radius: var(--border-radius);
+        }
+
+        .filter-label {
             display: flex;
-            flex-direction: column;
-            align-items: flex-start;
-            margin-bottom: 5px;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: var(--spacing-xs);
         }
 
-        .layer-head-filters .filter-label label {
-            margin-bottom: 3px;
-        }
-
-        .layer-head-filters .filter-controls {
+        .filter-controls {
             display: flex;
             align-items: center;
             justify-content: space-between;
             width: 100%;
         }
 
-        .layer-head-filters .counter {
+        .counter {
             font-size: 0.8em;
-            color: #666;
+            color: var(--text-muted);
             margin-left: auto;
         }
 
-        .layer-head-filters .checkbox-list {
+        .checkbox-list {
+            border: 1px solid var(--border-color);
+            padding: var(--spacing-xs);
             flex: 1;
             overflow-y: auto;
             min-height: 0;
-            max-height: none;
-        }
-
-        .layer-head-filters select {
-            flex: 1;
-            overflow-y: auto;
-        }
-
-        /* Form Elements */
-        label {
-            display: block;
-            margin-bottom: 3px;
-            font-size: 0.9em;
-        }
-
-        select {
-            width: 100%;
-            padding: 4px;
-        }
-
-        /* Checkbox Styles */
-        .checkbox-list {
-            border: 1px solid #ccc;
-            padding: 3px;
         }
 
         .checkbox-item {
@@ -130,7 +129,19 @@
             line-height: 1;
         }
 
-        .checkbox-item input[type="checkbox"] {
+        /* Form Elements */
+        label {
+            display: block;
+            margin-bottom: var(--spacing-xs);
+            font-size: 0.9em;
+        }
+
+        select {
+            width: 100%;
+            padding: 4px;
+        }
+
+        input[type="checkbox"] {
             margin-right: 0.2em;
             margin-top: 0;
             margin-bottom: 0;
@@ -139,38 +150,7 @@
             vertical-align: middle;
         }
 
-        .checkbox-item label {
-            display: inline-block;
-            margin-bottom: 0;
-            font-size: 0.8em;
-            line-height: 1;
-        }
-
-        /* Filter Item Styles */
-        .filter-item {
-            margin-bottom: 5px;
-            border: 1px solid #ddd;
-            padding: 5px;
-            border-radius: 3px;
-        }
-
-        .filter-label {
-            display: flex;
-            align-items: center;
-            margin-bottom: 3px;
-            justify-content: space-between;
-        }
-
-        .filter-label .counter {
-            font-size: 0.8em;
-            color: #666;
-        }
-
-        .filter-label input[type="checkbox"] {
-            margin-right: 3px;
-        }
-
-        /* Prompt Table Styles */
+        /* Prompt Table Components */
         .prompt-table {
             flex-grow: 1;
             position: relative;
@@ -181,142 +161,10 @@
             width: 100%;
         }
 
-        /* Dataset List Styles */
-        .dataset-list-container {
-            position: absolute;
-            right: 0;
-            top: 0;
-            margin-right: 10px;
-            margin-top: 0.5em;
-        }
-
-        .dataset-list {
-            position: relative;
-            cursor: pointer;
-            border: 1px solid #ccc;
-            padding: 1px;
-            border-radius: 3px;
-            background-color: #f9f9f9;
-        }
-
-        .dataset-list-content {
-            display: none;
-            position: absolute;
-            right: 0;
-            top: 100%;
-            background-color: white;
-            border: 1px solid #ccc;
-            padding: 3px;
-            padding-right: 3em;
-            font-family: monospace;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            z-index: 1000;
-        }
-
-        .dataset-list:hover .dataset-list-content {
-            display: block;
-        }
-
-        /* Image Controls and Display */
-        .image-info {
-            font-size: 0.8em;
-            margin-top: 2em;
-            margin-bottom: -1em;
-        }
-
-        .images {
-            display: grid;
-            gap: 5px;
-            margin-top: 10px;
-        }
-
-        .image-container {
-            text-align: center;
-        }
-
-        .img-container svg {
-            width: 100%;
-            height: 100%;
-        }
-
-        .img-container img {
-            width: 100%;
-            height: 100%;
-        }
-
-        .image-controls-container {
-            margin-top: 20px;
-            margin-bottom: 20px;
-        }
-
-        .image-controls {
-            display: flex;
-            align-items: center;
-            justify-content: space-between; /* Changed from flex-start */
-            padding: 10px;
-            background-color: #f0f0f0;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        }
-
-        .image-controls > * {
-            margin-right: 20px;
-        }
-
-        .image-controls button {
-            padding: 8px 16px;
-            font-size: 14px;
-            font-weight: bold;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            transition: background-color 0.3s ease;
-        }
-
-        .btn-primary {
-            background-color: #007bff;
-            color: white;
-        }
-
-        .btn-primary:hover {
-            background-color: #0056b3;
-        }
-
-        .btn-secondary {
-            background-color: #6c757d;
-            color: white;
-        }
-
-        .btn-secondary:hover {
-            background-color: #545b62;
-        }
-
-        .resize-controls {
-            display: flex;
-            align-items: center;
-            margin-left: auto; /* Added to move the resize controls to the right */
-        }
-
-        .resize-controls label {
-            margin-right: 10px;
-            font-size: 14px;
-        }
-
-        .resize-slider {
-            width: 250px;
-        }
-
-        /* Utility Classes */
-        .loading,
-        .error {
-            text-align: center;
-            padding: 10px;
-        }
-
         .prompts-info {
-            border: 1px solid #ddd;
-            padding: 5px;
-            border-radius: 3px;
+            border: 1px solid var(--border-color);
+            padding: var(--spacing-sm);
+            border-radius: var(--border-radius);
         }
 
         .prompt-counter {
@@ -329,16 +177,168 @@
             cursor: pointer;
         }
 
-        /* images not interpolated */
-        img {
-            object-fit: contain;
-            image-rendering: pixelated;
-            /* or "crisp-edges" in some browsers */
-            -ms-interpolation-mode: nearest-neighbor; /* older IE */
+        /* Dataset List */
+        .dataset-list-container {
+            position: absolute;
+            right: 0;
+            top: 0;
+            margin-right: var(--spacing-md);
+            margin-top: 0.5em;
         }
 
-        svg {
+        .dataset-list {
+            position: relative;
+            cursor: pointer;
+            border: 1px solid var(--border-color);
+            padding: 1px;
+            border-radius: var(--border-radius);
+            background-color: #f9f9f9;
+        }
+
+        .dataset-list-content {
+            display: none;
+            position: absolute;
+            right: 0;
+            top: 100%;
+            background-color: white;
+            border: 1px solid var(--border-color);
+            padding: var(--spacing-xs);
+            padding-right: 3em;
+            font-family: monospace;
+            box-shadow: 0 4px 8px var(--shadow-color);
+            z-index: 1000;
+        }
+
+        .dataset-list:hover .dataset-list-content {
+            display: block;
+        }
+
+        /* Image Display Components */
+        .image-controls-container {
+            margin: var(--spacing-lg) 0;
+        }
+
+        .image-controls {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: var(--spacing-md);
+            background-color: var(--light-bg);
+            border-radius: 8px;
+            box-shadow: 0 2px 4px var(--shadow-color);
+        }
+
+        .image-controls-left {
+            display: flex;
+            align-items: center;
+            width: 50%;
+            gap: var(--spacing-md);
+        }
+
+        .image-controls-right {
+            display: flex;
+            align-items: center;
+            width: 50%;
+            justify-content: flex-end;
+        }
+
+        .resize-controls {
+            display: flex;
+            align-items: center;
+        }
+
+        .resize-slider {
+            width: 250px;
+            margin: 0 var(--spacing-md);
+        }
+
+        .resize-input {
+            width: 75px;
+            padding: 2px var(--spacing-sm);
+        }
+
+        /* Button Styles */
+        .btn {
+            padding: 8px 16px;
+            font-size: 14px;
+            font-weight: bold;
+            border: none;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .btn-primary {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: var(--primary-hover);
+        }
+
+        .btn-secondary {
+            background-color: var(--secondary-color);
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background-color: var(--secondary-hover);
+        }
+
+        /* Progress Bar */
+        .progress-bar {
+            flex-grow: 1;
+            height: 12px;
+            background: #ddd;
+            border-radius: 6px;
+            overflow: hidden;
+        }
+
+        .progress-bar-fill {
+            height: 100%;
+            transition: width 0.3s ease;
+        }
+
+        .progress-bar-fill.loading {
+            background-color: var(--primary-color);
+        }
+
+        .progress-bar-fill.complete {
+            background-color: var(--success-color);
+        }
+
+        /* Image Grid */
+        .images {
+            display: grid;
+            gap: var(--spacing-sm);
+            margin-top: var(--spacing-md);
+        }
+
+        .image-container {
+            text-align: center;
+        }
+
+        .image-info {
+            font-size: 0.8em;
+            margin-top: 2em;
+            margin-bottom: -1em;
+        }
+
+        .img-container svg,
+        .img-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
             image-rendering: pixelated;
+            -ms-interpolation-mode: nearest-neighbor;
+        }
+
+        /* Utility Classes */
+        .loading,
+        .error {
+            text-align: center;
+            padding: var(--spacing-md);
         }
     </style>
 </head>
@@ -376,7 +376,8 @@
                                 :indeterminate.prop="isIndeterminate('functions')" :checked="isChecked('functions')"
                                 @change="toggleSelectAll('functions', $event)">
                             <label for="select-all-functions">Functions:</label>
-                            <span class="counter">{{ selectedItems.functions.length }} / {{ items.functions.length }}</span>
+                            <span class="counter">{{ selectedItems.functions.length }} / {{ items.functions.length
+                                }}</span>
                         </div>
                         <div class="checkbox-list">
                             <div v-for="func in items.functions" :key="func" class="checkbox-item">
@@ -396,7 +397,8 @@
                                 <input type="checkbox" id="select-all-layers"
                                     :indeterminate.prop="isIndeterminate('layers')" :checked="isChecked('layers')"
                                     @change="toggleSelectAll('layers', $event)">
-                                <span class="counter">{{ selectedItems.layers.length }} / {{ items.layers.length }}</span>
+                                <span class="counter">{{ selectedItems.layers.length }} / {{ items.layers.length
+                                    }}</span>
                             </div>
                         </div>
                         <div class="checkbox-list">
@@ -412,8 +414,9 @@
                         <div class="filter-label">
                             <label for="select-all-heads">Heads:</label>
                             <div class="filter-controls">
-                                <input type="checkbox" id="select-all-heads" :indeterminate.prop="isIndeterminate('heads')"
-                                    :checked="isChecked('heads')" @change="toggleSelectAll('heads', $event)">
+                                <input type="checkbox" id="select-all-heads"
+                                    :indeterminate.prop="isIndeterminate('heads')" :checked="isChecked('heads')"
+                                    @change="toggleSelectAll('heads', $event)">
                                 <span class="counter">{{ selectedItems.heads.length }} / {{ items.heads.length }}</span>
                             </div>
                         </div>
@@ -451,40 +454,25 @@
         <!-- image display button and size controls -->
         <div class="image-controls-container">
             <div class="image-controls">
-                <div style="display: flex; align-items: center; width: 50%; gap: 10px;">
-                    <button @click="displayImages" :class="{ 'btn-primary': !imagesUpToDate, 'btn-secondary': imagesUpToDate }">
+                <div class="image-controls-left">
+                    <button class="btn" :class="{ 'btn-primary': !imagesUpToDate, 'btn-secondary': imagesUpToDate }" @click="displayImages">
                         {{ imagesUpToDate ? 'Images Up to Date' : 'Display Images' }}
                     </button>
-                    <div style="flex-grow: 1; display: flex; align-items: center; gap: 10px;">
-                        <span style="white-space: nowrap;">{{ images.length }} / {{ totalExpectedImages }} images</span>
-                        <div class="progress-bar" v-if="loading || images.length > 0" style="flex-grow: 1; height: 12px; background: #ddd; border-radius: 6px; overflow: hidden;">
+                    <div class="progress-wrapper">
+                        <span class="progress-status">{{ images.length }} / {{ totalExpectedImages }} images</span>
+                        <div class="progress-bar" v-if="loading || images.length > 0">
                             <div class="progress-bar-fill" 
-                                 :style="{
-                                     width: `${(images.length / totalExpectedImages) * 100}%`,
-                                     height: '100%',
-                                     background: loading ? '#007bff' : '#28a745',
-                                     transition: 'width 0.3s ease'
-                                 }">
+                                 :class="{ 'loading': loading, 'complete': !loading }"
+                                 :style="{ width: `${(images.length / totalExpectedImages) * 100}%` }">
                             </div>
                         </div>
                     </div>
                 </div>
-                <div v-if="images.length > 0" class="resize-controls" style="width: 50%; justify-content: flex-end;">
+                <div class="image-controls-right" v-if="images.length > 0">
                     <label for="resizeSlider">Size:</label>
-                    <input type="range" 
-                           id="resizeSlider" 
-                           v-model.number="imageSize" 
-                           min="100" 
-                           max="1000" 
-                           step="25" 
-                           class="resize-slider">
-                    <input type="number" 
-                           v-model.number="imageSize" 
-                           min="100" 
-                           max="1000" 
-                           class="resize-input" 
-                           style="width: 75px; margin-left: 10px; padding: 2px 5px;">
-                    <span style="margin-left: 5px">px</span>
+                    <input type="range" id="resizeSlider" class="resize-slider" v-model.number="imageSize" min="25" max="1000" step="25">
+                    <input type="number" class="resize-input" v-model.number="imageSize" min="1" max="1000">
+                    <span>px</span>
                 </div>
             </div>
         </div>
@@ -824,7 +812,7 @@
 
                 getFilterUrl(type, ...values) {
                     const params = new URLSearchParams(window.location.search);
-                    
+
                     if (type === 'all') {
                         params.set('models', values[0].join('~'));
                         params.set('prompts', values[1].join('~'));
@@ -874,10 +862,10 @@
 
                     // Calculate total expected images
                     this.totalExpectedImages = (
-                        this.selectedItems.models.length * 
-                        this.selectedPrompts.length * 
-                        (this.selectedItems.layers.length || this.items.layers.length) * 
-                        (this.selectedItems.heads.length || this.items.heads.length) * 
+                        this.selectedItems.models.length *
+                        this.selectedPrompts.length *
+                        (this.selectedItems.layers.length || this.items.layers.length) *
+                        (this.selectedItems.heads.length || this.items.heads.length) *
                         this.selectedItems.functions.length
                     );
 
@@ -892,11 +880,11 @@
                                 for (const head of heads) {
                                     const basePath = `${DATA_DIR}/${model}/prompts/${promptHash}/L${layer}/H${head}`;
                                     // for each function try to load the svgz file
-                                    for (const funcName of this.selectedItems.functions) {                                        
+                                    for (const funcName of this.selectedItems.functions) {
                                         const figure_format = await fileOps.figureExists(`${basePath}/${funcName}`);
-                                        
+
                                         if (figure_format) {
-                                            
+
                                             const figure_meta = {
                                                 name: `${model} - Prompt ${promptHash} - L${layer}H${head} - ${funcName}`,
                                                 model: model,
@@ -906,8 +894,8 @@
                                                 function: funcName,
                                                 figure_format: figure_format,
                                             };
-                                            
-                                            
+
+
                                             if (figure_format === 'svgz') {
                                                 // load and decompress svgz file, insert svg content inline
                                                 const svgText = await fileOps.fetchAndDecompressSvgz(`${basePath}/${funcName}.svgz`);

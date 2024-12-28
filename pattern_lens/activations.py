@@ -22,7 +22,7 @@ from pattern_lens.consts import (
     ActivationCacheNp,
     SPINNER_KWARGS,
 )
-from pattern_lens.indexes import generate_models_jsonl, generate_prompts_jsonl
+from pattern_lens.indexes import generate_models_jsonl, generate_prompts_jsonl, write_html_index
 from pattern_lens.load_activations import (
     ActivationsMissingError,
     augment_prompt_with_hash,
@@ -212,13 +212,7 @@ def activations_main(
     # write index.html
     with SpinnerContext(message="writing index.html", **SPINNER_KWARGS):
         if not no_index_html:
-            html_index: str = (
-                importlib.resources.files(pattern_lens)
-                .joinpath("frontend/index.html")
-                .read_text(encoding="utf-8")
-            )
-            with open(save_path_p / "index.html", "w", encoding="utf-8") as f:
-                f.write(html_index)
+            write_html_index(save_path_p)
 
     # get activations
     list(

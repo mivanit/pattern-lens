@@ -1,8 +1,11 @@
+from pathlib import Path
 import sys
 import os
 import argparse
 import http.server
 import socketserver
+
+from pattern_lens.indexes import write_html_index
 
 
 def main(path: str, port: int = 8000):
@@ -40,5 +43,8 @@ if __name__ == "__main__":
         help="Whether to write the latest index.html file",
     )
     args: argparse.Namespace = arg_parser.parse_args()
+
+    if args.rewrite_index:
+        write_html_index(path=Path(args.path))
 
     main(path=args.path, port=args.port)

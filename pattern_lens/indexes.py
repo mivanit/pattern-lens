@@ -1,6 +1,8 @@
 import json
 from pathlib import Path
+import importlib.resources
 
+import pattern_lens
 from pattern_lens.attn_figure_funcs import ATTENTION_MATRIX_FIGURE_FUNCS
 
 
@@ -59,3 +61,14 @@ def generate_functions_jsonl(path: Path):
         for func in sorted(all_functions):
             json.dump({"name": func}, f)
             f.write("\n")
+
+
+def write_html_index(path: Path):
+    """writes an index.html file to the path"""
+    html_index: str = (
+        importlib.resources.files(pattern_lens)
+        .joinpath("frontend/index.html")
+        .read_text(encoding="utf-8")
+    )
+    with open(path / "index.html", "w", encoding="utf-8") as f:
+        f.write(html_index)
