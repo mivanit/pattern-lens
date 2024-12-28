@@ -228,14 +228,14 @@
             box-shadow: 0 2px 4px var(--shadow-color);
         }
 
-        .image-controls-left {
+        .image-controls-display {
             display: flex;
             align-items: center;
             width: 50%;
             gap: var(--spacing-md);
         }
 
-        .image-controls-right {
+        .image-controls-size {
             display: flex;
             align-items: center;
             width: 50%;
@@ -288,8 +288,9 @@
 
         /* Progress Bar */
         .progress-bar {
-            flex-grow: 1;
+            /* flex-grow: 1; */
             height: 12px;
+            width: 200px;
             background: #ddd;
             border-radius: 6px;
             overflow: hidden;
@@ -454,7 +455,7 @@
         <!-- image display button and size controls -->
         <div class="image-controls-container">
             <div class="image-controls">
-                <div class="image-controls-left">
+                <div class="image-controls-display">
                     <button class="btn" :class="{ 'btn-primary': !imagesUpToDate, 'btn-secondary': imagesUpToDate }" @click="displayImages">
                         {{ imagesUpToDate ? 'Images Up to Date' : 'Display Images' }}
                     </button>
@@ -468,21 +469,22 @@
                         </div>
                     </div>
                 </div>
-                <div class="image-controls-right" v-if="images.length > 0">
-                    <label for="resizeSlider">Size:</label>
-                    <input type="range" id="resizeSlider" class="resize-slider" v-model.number="imageSize" min="25" max="1000" step="25">
-                    <input type="number" class="resize-input" v-model.number="imageSize" min="1" max="1000">
-                    <span>px</span>
+                <div class="image-controls-size" v-if="images.length > 0">
+                    <label for="resizeSlider">Images per row:</label>
+                    <input type="range" id="resizeSlider" class="resize-slider" v-model.number="imagesPerRow" min="1" max="16" step="1">
+                    <input type="number" class="resize-input" v-model.number="imagesPerRow" min="1" max="128">
                 </div>
             </div>
         </div>
+
         <!-- images are loading -->
         <div v-if="loading" class="loading">Loading...</div>
-        <!-- actual image display -->
+
+        <!-- actual images display -->
         <div v-else-if="images.length > 0" class="images"
-            :style="{ 'grid-template-columns': `repeat(auto-fill, minmax(${imageSize}px, 1fr))` }">
+            :style="{ 'grid-template-columns': `repeat(${imagesPerRow}, 1fr)` }">
             <div v-for="image in images" class="image-container">
-                <p v-if="imageSize >= 200" class="image-info">
+                <p v-if="imagesPerRow <= 4" class="image-info">
                     <a :href="getSinglePropertyFilterUrl('models', image.model)">{{ image.model }}</a> -
                     <a :href="getSinglePropertyFilterUrl('functions', image.function)">{{ image.function }}</a> -
                     <a :href="getSinglePropertyFilterUrl('layers', image.layer)">L{{ image.layer }}</a> -
@@ -490,12 +492,12 @@
                     <a :href="getSinglePropertyFilterUrl('prompts', image.promptHash)">{{ image.promptHash }}</a>
                 </p>
                 <a :href="getImageUrl(image)" class="img-container" v-html="image.content"
-                    :style="{ width: `${imageSize}px`, height: `${imageSize}px` }"
-                    :title="imageSize < 200 ? image.name : ''">
+                    :title="imagesPerRow > 4 ? image.name : ''">
                 </a>
             </div>
         </div>
-        <!-- Show error message if no images found -->
+
+        <!-- no images found -->
         <div v-else-if="imagesRequested" class="error">No images found for the selected criteria.</div>
 
     </div>
@@ -572,7 +574,7 @@
                     imagesRequested: false,
                     modelConfigs: {},
                     gridApi: null,
-                    imageSize: 200,
+                    imagesPerRow: 4,
                     isGridReady: false,
                     items: {
                         models: [],
