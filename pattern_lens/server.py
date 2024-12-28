@@ -34,6 +34,11 @@ if __name__ == "__main__":
         help="The port to serve on, defaults to 8000",
         default=8000,
     )
+    arg_parser.add_argument(
+        "--rewrite-index",
+        action="store_true",
+        help="Whether to write the latest index.html file",
+    )
     args: argparse.Namespace = arg_parser.parse_args()
 
     main(path=args.path, port=args.port)

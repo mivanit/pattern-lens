@@ -303,7 +303,7 @@
         }
 
         .resize-slider {
-            width: 150px;
+            width: 250px;
         }
 
         /* Utility Classes */
@@ -454,13 +454,35 @@
                 <button @click="displayImages" :class="{ 'btn-primary': !imagesUpToDate, 'btn-secondary': imagesUpToDate }">
                     {{ imagesUpToDate ? 'Images Up to Date' : 'Display Images' }}
                 </button>
-                <div class="image-info">
-                    <span v-if="images.length > 0">Displayed Images: {{ images.length }}</span>
-                    <span v-else>No images displayed</span>
+                <div class="image-info" style="display: flex; align-items: center; gap: 10px; min-width: 300px;">
+                    <span>{{ images.length }} / {{ totalExpectedImages }} images</span>
+                    <div class="progress-bar" v-if="loading || images.length > 0" style="flex-grow: 1; height: 8px; background: #eee; border-radius: 4px; overflow: hidden;">
+                        <div class="progress-bar-fill" 
+                             :style="{
+                                 width: `${(images.length / totalExpectedImages) * 100}%`,
+                                 height: '100%',
+                                 background: loading ? '#007bff' : '#28a745',
+                                 transition: 'width 0.3s ease'
+                             }">
+                        </div>
+                    </div>
                 </div>
                 <div v-if="images.length > 0" class="resize-controls">
-                    <label for="resizeSlider">Size: {{ imageSize }}px</label>
-                    <input type="range" id="resizeSlider" v-model="imageSize" min="100" max="1000" step="50" class="resize-slider">
+                    <label for="resizeSlider">Size:</label>
+                    <input type="range" 
+                           id="resizeSlider" 
+                           v-model.number="imageSize" 
+                           min="100" 
+                           max="1000" 
+                           step="25" 
+                           class="resize-slider">
+                    <input type="number" 
+                           v-model.number="imageSize" 
+                           min="100" 
+                           max="1000" 
+                           class="resize-input" 
+                           style="width: 75px; margin-left: 10px; padding: 2px 5px;">
+                    <span style="margin-left: 5px">px</span>
                 </div>
             </div>
         </div>
@@ -555,6 +577,7 @@
                     prompts: [], // for the current model
                     selectedPrompts: [], // selected from table
                     images: [],
+                    totalExpectedImages: 0,
                     loading: false,
                     imagesRequested: false,
                     modelConfigs: {},
@@ -846,6 +869,15 @@
                     this.loading = true;
                     this.imagesRequested = true;
                     this.images = [];
+
+                    // Calculate total expected images
+                    this.totalExpectedImages = (
+                        this.selectedItems.models.length * 
+                        this.selectedPrompts.length * 
+                        (this.selectedItems.layers.length || this.items.layers.length) * 
+                        (this.selectedItems.heads.length || this.items.heads.length) * 
+                        this.selectedItems.functions.length
+                    );
 
                     // horrible nested loop over models, prompts, layers, heads, functions
                     for (const model of this.selectedItems.models) {
