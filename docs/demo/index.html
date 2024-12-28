@@ -323,6 +323,16 @@
         .prompt-text-cell {
             cursor: pointer;
         }
+
+        svg {
+            shape-rendering: crispEdges;
+        }
+
+        img {
+            image-rendering: pixelated;
+            /* or "crisp-edges" in some browsers */
+            -ms-interpolation-mode: nearest-neighbor; /* older IE */
+        }
     </style>
 </head>
 
