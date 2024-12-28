@@ -130,6 +130,8 @@ transformers==4.47.1
 triton==3.1.0 ; python_full_version < '3.13' and platform_machine == 'x86_64' and platform_system == 'Linux'
 typeguard==4.4.1
 typer==0.15.1
+types-requests==2.32.0.20241016
+types-tqdm==4.67.0.20241221
 typing-extensions==4.12.2
 tzdata==2024.2
 urllib3==2.2.3
