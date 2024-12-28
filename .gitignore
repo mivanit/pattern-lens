@@ -3,6 +3,7 @@
 
 data/pile_1k.jsonl
 tests/_temp/**
+docs/demo/**
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
