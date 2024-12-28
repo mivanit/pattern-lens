@@ -234,7 +234,12 @@
             text-align: center;
         }
 
-        .svg-container svg {
+        .img-container svg {
+            width: 100%;
+            height: 100%;
+        }
+
+        .img-container img {
             width: 100%;
             height: 100%;
         }
@@ -322,6 +327,18 @@
 
         .prompt-text-cell {
             cursor: pointer;
+        }
+
+        /* images not interpolated */
+        img {
+            object-fit: contain;
+            image-rendering: pixelated;
+            /* or "crisp-edges" in some browsers */
+            -ms-interpolation-mode: nearest-neighbor; /* older IE */
+        }
+
+        svg {
+            image-rendering: pixelated;
         }
     </style>
 </head>
@@ -460,7 +477,7 @@
                     <a :href="getSinglePropertyFilterUrl('heads', image.head)">H{{ image.head }}</a> -
                     <a :href="getSinglePropertyFilterUrl('prompts', image.promptHash)">{{ image.promptHash }}</a>
                 </p>
-                <a :href="getImageUrl(image)" class="svg-container" v-html="image.svgContent"
+                <a :href="getImageUrl(image)" class="img-container" v-html="image.content"
                     :style="{ width: `${imageSize}px`, height: `${imageSize}px` }"
                     :title="imageSize < 200 ? image.name : ''">
                 </a>
@@ -481,6 +498,7 @@
             heads: 'selectedItems.heads',
             prompts: 'selectedPrompts',
         };
+        const FIGURE_FORMATS = ['svg', 'svgz', 'png'];
         const fileOps = {
             async getDirectoryContents(path) {
                 const response = await fetch(`${path}/index.txt`);
@@ -519,6 +537,15 @@
                     return pako.inflate(uint8Array, { to: 'string' });
                 }
             },
+            async figureExists(path) {
+                for (const format of FIGURE_FORMATS) {
+                    fig_path = `${path}.${format}`;
+                    if (await this.fileExists(fig_path)) {
+                        return format;
+                    }
+                }
+                return null;
+            }
         };
         // Create a new Vue.js application
         const app = Vue.createApp({
@@ -831,18 +858,40 @@
                                 for (const head of heads) {
                                     const basePath = `${DATA_DIR}/${model}/prompts/${promptHash}/L${layer}/H${head}`;
                                     // for each function try to load the svgz file
-                                    for (const funcName of this.selectedItems.functions) {
-                                        const svgText = await fileOps.fetchAndDecompressSvgz(`${basePath}/${funcName}.svgz`);
-                                        if (svgText) {
-                                            this.images.push({
-                                                svgContent: svgText,
+                                    for (const funcName of this.selectedItems.functions) {                                        
+                                        const figure_format = await fileOps.figureExists(`${basePath}/${funcName}`);
+                                        
+                                        if (figure_format) {
+                                            
+                                            const figure_meta = {
                                                 name: `${model} - Prompt ${promptHash} - L${layer}H${head} - ${funcName}`,
                                                 model: model,
                                                 promptHash: promptHash,
                                                 layer: layer,
                                                 head: head,
                                                 function: funcName,
-                                            });
+                                                figure_format: figure_format,
+                                            };
+                                            
+                                            
+                                            if (figure_format === 'svgz') {
+                                                // load and decompress svgz file, insert svg content inline
+                                                const svgText = await fileOps.fetchAndDecompressSvgz(`${basePath}/${funcName}.svgz`);
+                                                if (svgText) {
+                                                    this.images.push({
+                                                        content: svgText,
+                                                        ...figure_meta,
+                                                    });
+                                                }
+                                            }
+                                            else {
+                                                // content is a link to the image
+                                                const imglink = `<img src="${basePath}/${funcName}.${figure_format}" alt="${figure_meta.name}">`;
+                                                this.images.push({
+                                                    content: imglink,
+                                                    ...figure_meta,
+                                                });
+                                            }
                                         }
                                     }
                                 }

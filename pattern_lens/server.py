@@ -1,3 +1,4 @@
+import sys
 import os
 import argparse
 import http.server
@@ -6,11 +7,15 @@ import socketserver
 
 def main(path: str, port: int = 8000):
     os.chdir(path)
-    with socketserver.TCPServer(
-        ("", port), http.server.SimpleHTTPRequestHandler
-    ) as httpd:
-        print(f"Serving at http://localhost:{port}")
-        httpd.serve_forever()
+    try:
+        with socketserver.TCPServer(
+            ("", port), http.server.SimpleHTTPRequestHandler
+        ) as httpd:
+            print(f"Serving at http://localhost:{port}")
+            httpd.serve_forever()
+    except KeyboardInterrupt:
+        print("Server stopped")
+        sys.exit(0)
 
 
 if __name__ == "__main__":

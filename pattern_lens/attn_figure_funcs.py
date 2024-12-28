@@ -1,7 +1,7 @@
 from pattern_lens.consts import AttentionMatrix
 from pattern_lens.figure_util import (
     AttentionMatrixFigureFunc,
-    save_matrix_as_svgz_wrapper,
+    save_matrix_wrapper,
     Matrix2D,
 )
 
@@ -53,6 +53,16 @@ def register_attn_figure_func(
 
 
 @register_attn_figure_func
-@save_matrix_as_svgz_wrapper(normalize=False, cmap="viridis")
-def raw(attn_matrix: AttentionMatrix) -> Matrix2D:
+@save_matrix_wrapper(fmt="svg")
+def raw_svg(attn_matrix: AttentionMatrix) -> Matrix2D:
+    return attn_matrix
+
+@register_attn_figure_func
+@save_matrix_wrapper(fmt="svgz")
+def raw_svgz(attn_matrix: AttentionMatrix) -> Matrix2D:
+    return attn_matrix
+
+@register_attn_figure_func
+@save_matrix_wrapper(fmt="png")
+def raw_png(attn_matrix: AttentionMatrix) -> Matrix2D:
     return attn_matrix
