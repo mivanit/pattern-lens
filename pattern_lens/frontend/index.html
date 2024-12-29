@@ -525,6 +525,46 @@
             border-color: #dc3545;
             background-color: #ffeaea;
         }
+
+        /* Fix for Head Selection input */
+        .ag-cell-edit-input {
+            height: 100% !important;
+            line-height: normal !important;
+            padding: 0 8px !important;
+        }
+
+        /* Fix for head grid layout and updates */
+        .head-grid {
+            display: flex;
+            gap: 1px;
+            margin: 0 8px;
+            height: 100%;
+            align-items: center;
+        }
+
+        .grid-layer {
+            display: flex;
+            flex-direction: column;
+            gap: 1px;
+            height: 100%;
+            justify-content: center;
+        }
+
+        .grid-cell {
+            width: 3px;
+            height: 3px;
+            margin: 0.5px;
+            transition: background-color 0.2s ease;
+        }
+
+        /* Remove the red background for valid head selections */
+        .ag-cell:not(.invalid-selection) {
+            background-color: transparent !important;
+        }
+
+        .ag-cell.invalid-selection {
+            background-color: #ffeaea !important;
+        }
     </style>
 </head>
 
@@ -823,12 +863,12 @@
                     try {
                         // Verify layer and head are within bounds
                         const parsedSelections = this.headSelectionsParsed[model];
-                        if (!Array.isArray(parsedSelections) || 
-                            !Array.isArray(parsedSelections[layer]) || 
+                        if (!Array.isArray(parsedSelections) ||
+                            !Array.isArray(parsedSelections[layer]) ||
                             typeof parsedSelections[layer][head] === 'undefined') {
                             console.warn(
                                 `Invalid layer/head combination for ${model}: L${layer}H${head}`,
-                                `Max bounds: L${parsedSelections.length-1}H${parsedSelections[0]?.length-1}`
+                                `Max bounds: L${parsedSelections.length - 1}H${parsedSelections[0]?.length - 1}`
                             );
                             return false;
                         }
@@ -1116,6 +1156,7 @@
                                 const model = params.data.model_name;
                                 const div = document.createElement('div');
                                 div.className = 'head-grid';
+                                div.setAttribute('data-model', model); // Add data attribute for updates
 
                                 const n_heads = params.data.n_heads;
                                 const n_layers = params.data.n_layers;
@@ -1127,6 +1168,8 @@
                                     for (let l = 0; l < n_layers; l++) {
                                         const cell = document.createElement('div');
                                         cell.className = `grid-cell ${this.isHeadSelected(model, l, h) ? 'grid-cell-selected' : 'grid-cell-empty'}`;
+                                        cell.setAttribute('data-layer', l);
+                                        cell.setAttribute('data-head', h);
                                         layerDiv.appendChild(cell);
                                     }
 
@@ -1147,17 +1190,46 @@
                             },
                             valueSetter: params => {
                                 const newValue = params.newValue;
+                                const model = params.data.model_name;
+
                                 // Update the head selection in Vue's data
-                                params.context.componentParent.headSelectionsRaw[params.data.model_name] = newValue;
-                                params.context.componentParent.updateHeadSelectionsParsed(params.data.model_name);
+                                params.context.componentParent.headSelectionsRaw[model] = newValue;
+                                params.context.componentParent.updateHeadSelectionsParsed(model);
+
+                                // Update the cell class for validation styling
+                                const isValid = params.context.componentParent.isValidHeadSelection(model);
+                                const cell = params.api.getCellRendererInstances({
+                                    rowNodes: [params.node],
+                                    columns: [params.column]
+                                })[0];
+
+                                if (cell) {
+                                    const element = cell.getGui();
+                                    if (isValid) {
+                                        element.classList.remove('invalid-selection');
+                                    } else {
+                                        element.classList.add('invalid-selection');
+                                    }
+                                }
+
+                                // Force refresh of the head grid cell
+                                const gridCol = params.api.getColumnDef('head_grid');
+                                if (gridCol) {
+                                    params.api.refreshCells({
+                                        rowNodes: [params.node],
+                                        columns: ['head_grid'],
+                                        force: true
+                                    });
+                                }
+
                                 return true;
                             },
                             valueGetter: params => {
                                 return params.context.componentParent.headSelectionsRaw[params.data.model_name] || 'L*H*';
                             },
-                            cellStyle: params => {
+                            cellClass: params => {
                                 const isValid = params.context.componentParent.isValidHeadSelection(params.data.model_name);
-                                return isValid ? {} : { backgroundColor: '#ffeaea', borderColor: '#dc3545' };
+                                return isValid ? '' : 'invalid-selection';
                             }
                         },
                     ];
@@ -1207,7 +1279,14 @@
                     const gridDiv = document.querySelector('#modelGrid');
                     this.modelGridApi = agGrid.createGrid(gridDiv, gridOptions);
                 },
-
+                refreshHeadGrids() {
+                    if (this.modelGridApi) {
+                        this.modelGridApi.refreshCells({
+                            columns: ['head_grid'],
+                            force: true
+                        });
+                    }
+                },
                 // ########  ########   #######  ##     ## ########  ########  ######
                 // ##     ## ##     ## ##     ## ###   ### ##     ##    ##    ##    ##
                 // ##     ## ##     ## ##     ## #### #### ##     ##    ##    ##
@@ -1470,6 +1549,7 @@
                         });
                         this.imagesUpToDate = false;
                         this.updateURL();
+                        this.refreshHeadGrids(); // Add this line to refresh the grids
                     }
                 },
                 'selectedItems.models': {
