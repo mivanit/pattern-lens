@@ -349,25 +349,25 @@
             gap: 10px;
             padding: 10px;
         }
-        
+
         .model-item {
             /* border: 1px solid var(--border-color); */
             padding: 10px;
             /* border-radius: var(--border-radius); */
         }
-        
+
         .model-header {
             display: flex;
             align-items: center;
             gap: 10px;
             margin-bottom: 5px;
         }
-        
+
         .model-info {
             color: var(--text-muted);
             font-size: 0.9em;
         }
-        
+
         .head-input {
             flex: 1;
             padding: 5px;
@@ -375,12 +375,12 @@
             border-radius: var(--border-radius);
             margin-top: 5px;
         }
-        
+
         .head-input.error {
-            border-color: #dc3545;
-            background-color: #fff8f8;
+            border-color: #ff2238;
+            background-color: #ff5656;
         }
-        
+
         .head-input:disabled {
             background-color: var(--light-bg);
             cursor: not-allowed;
@@ -403,7 +403,8 @@
         /* Functions filter */
         .functions-filter {
             width: 200px;
-            flex-shrink: 0;  /* Prevent shrinking below 200px */
+            flex-shrink: 0;
+            /* Prevent shrinking below 200px */
             border: 1px solid var(--border-color);
             padding: var(--spacing-md);
             border-radius: var(--border-radius);
@@ -411,12 +412,49 @@
 
         /* Model selection */
         .model-selection {
-            flex: 1;  /* Take up remaining space */
+            flex: 1;
+            /* Take up remaining space */
             border: 1px solid var(--border-color);
             padding: var(--spacing-md);
             border-radius: var(--border-radius);
         }
 
+        .head-grid {
+            display: flex;
+            gap: 1px;
+            margin: 0 8px;
+        }
+
+        .grid-layer {
+            display: flex;
+            flex-direction: column;
+            gap: 1px;
+        }
+
+        .grid-cell {
+            width: 4px;
+            height: 4px;
+            border: none;
+        }
+
+        .grid-cell-selected {
+            background-color: #4f46e5;
+        }
+
+        .grid-cell-empty {
+            background-color: #e5e7eb;
+        }
+
+        .model-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 4px 0;
+        }
+
+        .head-input {
+            text-align: left;
+        }
     </style>
 </head>
 
@@ -432,8 +470,7 @@
                 <div class="functions-filter">
                     <div class="filter-label">
                         <input type="checkbox" id="select-all-functions"
-                            :indeterminate.prop="isIndeterminate('functions')"
-                            :checked="isChecked('functions')"
+                            :indeterminate.prop="isIndeterminate('functions')" :checked="isChecked('functions')"
                             @change="toggleSelectAll('functions', $event)">
                         <label for="select-all-functions">Functions:</label>
                         <span class="counter">{{ selectedItems.functions.length }} / {{ items.functions.length }}</span>
@@ -450,21 +487,23 @@
                 <div class="model-selection">
                     <div v-for="model in items.models" :key="model" class="model-item">
                         <div class="model-header">
-                            <input type="checkbox" 
-                                   :id="'model-' + model" 
-                                   :value="model" 
-                                   v-model="selectedItems.models">
+                            <input type="checkbox" :id="'model-' + model" :value="model" v-model="selectedItems.models">
                             <label :for="'model-' + model">{{ model }}</label>
-                            <div class="model-info">
-                                ({{ modelConfigs[model].n_layers }} layers, 
+                            <span class="text-gray-600 text-sm">
+                                ({{ modelConfigs[model].n_layers }} layers,
                                 {{ modelConfigs[model].n_heads }} heads)
+                            </span>
+                            <div class="head-grid">
+                                <div v-for="head in modelConfigs[model].n_heads" :key="'head-' + head" class="grid-layer">
+                                    <div v-for="layer in modelConfigs[model].n_layers" :key="'layer-' + layer"
+                                         class="grid-cell"
+                                         :class="isHeadSelected(model, layer, head) ? 'grid-cell-selected' : 'grid-cell-empty'">
+                                    </div>
+                                </div>
                             </div>
-                            <input type="text"
-                                   class="head-input"
-                                   :class="{ error: !isValidHeadSelection(model) }"
-                                   :disabled="!selectedItems.models.includes(model)"
-                                   v-model="headSelections[model]"
-                                   :placeholder="'e.g., L0H*, L1-3H0, L4H1'">
+                            <input type="text" class="head-input" :class="{ error: !isValidHeadSelection(model) }"
+                                :disabled="!selectedItems.models.includes(model)" v-model="headSelectionsRaw[model]"
+                                :placeholder="'e.g., L0H*, L1-3H0, L4H1'">
                         </div>
                     </div>
                 </div>
@@ -629,103 +668,112 @@
                         heads: [],
                     },
                     imagesUpToDate: false,
-                    headSelections: {}, // New property for head selections
-                    validationCache: new Map(), // Cache for parsed head selections
+                    headSelectionsRaw: {}, // model -> string mapping
+                    headSelectionsParsed: {}, // model -> boolean[][] mapping for efficient lookup
                 }
             },
             methods: {
-                // New method to parse head selection string
+                // Parse head selection string and return a 2D array of booleans
                 parseHeadString(str, maxLayer, maxHead) {
                     try {
+                        // Initialize 2D array with all false
+                        const result = Array(maxLayer).fill().map(() => Array(maxHead).fill(false));
+                        if (!str || str.trim() === '') return result;
+
                         const selections = str.split(',').map(s => s.trim());
-                        const result = new Set();
-                        
+
                         for (const selection of selections) {
                             const match = selection.match(/^L(\d+|\d+-\d+|\*)(H\d+|H\*|Hx)$/);
                             if (!match) return null;
-                            
+
                             const [_, layerPart, headPart] = match;
-                            
+
                             // Process layer part
                             let layers = [];
                             if (layerPart === '*') {
-                                layers = Array.from({length: maxLayer}, (_, i) => i);
+                                layers = Array.from({ length: maxLayer }, (_, i) => i);
                             } else if (layerPart.includes('-')) {
                                 const [start, end] = layerPart.split('-').map(Number);
                                 if (start > end || end >= maxLayer) return null;
-                                layers = Array.from({length: end - start + 1}, (_, i) => start + i);
+                                layers = Array.from({ length: end - start + 1 }, (_, i) => start + i);
                             } else {
                                 const layer = Number(layerPart);
                                 if (layer >= maxLayer) return null;
                                 layers = [layer];
                             }
-                            
+
                             // Process head part
                             const headStr = headPart.substring(1);
                             if (headStr === '*' || headStr === 'x') {
                                 for (const layer of layers) {
-                                    for (let head = 0; head < maxHead; head++) {
-                                        result.add(`${layer},${head}`);
-                                    }
+                                    result[layer].fill(true);
                                 }
                             } else {
                                 const head = Number(headStr);
                                 if (head >= maxHead) return null;
                                 for (const layer of layers) {
-                                    result.add(`${layer},${head}`);
+                                    result[layer][head] = true;
                                 }
                             }
                         }
-                        
-                        return Array.from(result);
+
+                        return result;
                     } catch (e) {
+                        console.error('Error parsing head string:', e);
                         return null;
                     }
                 },
 
+                isHeadSelected(model, layer, head) {
+                    const parsed = this.headSelectionsParsed[model];
+                    return parsed ? parsed[layer][head] : false;
+                },
+
                 // Validate head selection string
                 isValidHeadSelection(model) {
-                    const selection = this.headSelections[model];
-                    if (!selection || !this.modelConfigs[model]) return true; // Empty or no config is considered valid
-                    
-                    const cacheKey = `${model}:${selection}`;
-                    if (this.validationCache.has(cacheKey)) {
-                        return this.validationCache.get(cacheKey);
-                    }
-                    
-                    const config = this.modelConfigs[model];
-                    const isValid = this.parseHeadString(selection, config.n_layers, config.n_heads) !== null;
-                    this.validationCache.set(cacheKey, isValid);
-                    return isValid;
+                    return this.headSelectionsParsed[model] !== null;
                 },
-               // Modified URL handling
-               updateURL() {
+
+                updateHeadSelectionsParsed(model) {
+                    const config = this.modelConfigs[model];
+                    if (!config) return;
+
+                    const parsed = this.parseHeadString(
+                        this.headSelectionsRaw[model],
+                        config.n_layers,
+                        config.n_heads
+                    );
+
+                    this.$set(this.headSelectionsParsed, model, parsed);
+                },
+                // Modified URL handling
+                updateURL() {
                     const params = new URLSearchParams();
-                    
+
                     if (this.selectedItems.models.length > 0) {
                         params.set('models', this.selectedItems.models.join('~'));
                         params.set('headSelections', JSON.stringify(this.headSelections));
                     }
-                    
+
                     if (this.selectedItems.functions.length > 0) {
                         params.set('functions', this.selectedItems.functions.join('~'));
                     }
-                    
+
                     if (this.selectedPrompts.length > 0) {
                         params.set('prompts', this.selectedPrompts.join('~'));
                     }
-                    
+
                     const newURL = `${window.location.pathname}?${params.toString()}`;
                     history.replaceState(null, '', newURL);
                 },
 
                 readURL() {
                     const params = new URLSearchParams(window.location.search);
-                    
+
                     this.selectedItems.models = params.get('models')?.split('~') || [];
                     this.selectedItems.functions = params.get('functions')?.split('~') || [];
                     this.selectedPrompts = params.get('prompts')?.split('~') || [];
-                    
+
                     try {
                         const headSelections = params.get('headSelections');
                         if (headSelections) {
@@ -984,7 +1032,7 @@
                     this.loading = true;
                     this.imagesRequested = true;
                     this.images = [];
-                    
+
                     // Calculate total images based on parsed head selections
                     let totalImages = 0;
                     for (const model of this.selectedItems.models) {
@@ -1002,51 +1050,51 @@
                         const config = this.modelConfigs[model];
                         const headSelection = this.headSelections[model] || 'L*H*';
                         const parsedHeads = this.parseHeadString(headSelection, config.n_layers, config.n_heads);
-                        
+
                         if (!parsedHeads) continue;
-                        
+
                         for (const [layer, head] of parsedHeads.map(h => h.split(','))) {
                             for (const promptHash of this.selectedPrompts) {
                                 const basePath = `${DATA_DIR}/${model}/prompts/${promptHash}/L${layer}/H${head}`;
-                                
+
                                 for (const funcName of this.selectedItems.functions) {
                                     const figure_format = await fileOps.figureExists(`${basePath}/${funcName}`);
-                                    
+
                                     if (figure_format) {
-                                            const figure_meta = {
-                                                name: `${model} - Prompt ${promptHash} - L${layer}H${head} - ${funcName}`,
-                                                model: model,
-                                                promptHash: promptHash,
-                                                layer: layer,
-                                                head: head,
-                                                function: funcName,
-                                                figure_format: figure_format,
-                                            };
+                                        const figure_meta = {
+                                            name: `${model} - Prompt ${promptHash} - L${layer}H${head} - ${funcName}`,
+                                            model: model,
+                                            promptHash: promptHash,
+                                            layer: layer,
+                                            head: head,
+                                            function: funcName,
+                                            figure_format: figure_format,
+                                        };
 
 
-                                            if (figure_format === 'svgz') {
-                                                // load and decompress svgz file, insert svg content inline
-                                                const svgText = await fileOps.fetchAndDecompressSvgz(`${basePath}/${funcName}.svgz`);
-                                                if (svgText) {
-                                                    this.images.push({
-                                                        content: svgText,
-                                                        ...figure_meta,
-                                                    });
-                                                }
-                                            }
-                                            else {
-                                                // content is a link to the image
-                                                const imglink = `<img src="${basePath}/${funcName}.${figure_format}" alt="${figure_meta.name}">`;
+                                        if (figure_format === 'svgz') {
+                                            // load and decompress svgz file, insert svg content inline
+                                            const svgText = await fileOps.fetchAndDecompressSvgz(`${basePath}/${funcName}.svgz`);
+                                            if (svgText) {
                                                 this.images.push({
-                                                    content: imglink,
+                                                    content: svgText,
                                                     ...figure_meta,
                                                 });
                                             }
+                                        }
+                                        else {
+                                            // content is a link to the image
+                                            const imglink = `<img src="${basePath}/${funcName}.${figure_format}" alt="${figure_meta.name}">`;
+                                            this.images.push({
+                                                content: imglink,
+                                                ...figure_meta,
+                                            });
                                         }
                                     }
                                 }
                             }
                         }
+                    }
                     this.imagesUpToDate = true;
                     this.loading = false;
                 },
@@ -1084,13 +1132,27 @@
                     this.updatePrompts();
                     this.updateURL();
                 },
-                'headSelections': {
+                headSelectionsRaw: {
                     deep: true,
-                    handler() {
-                        this.validationCache.clear();
+                    handler(newValue) {
+                        for (const model in newValue) {
+                            this.updateHeadSelectionsParsed(model);
+                        }
                         this.imagesUpToDate = false;
                         this.updateURL();
                     }
+                },
+
+                'selectedItems.models'(newModels) {
+                    // Initialize head selections for newly selected models
+                    newModels.forEach(model => {
+                        if (!this.headSelectionsRaw[model]) {
+                            this.$set(this.headSelectionsRaw, model, 'L*H*');
+                            this.updateHeadSelectionsParsed(model);
+                        }
+                    });
+                    this.updatePrompts();
+                    this.updateURL();
                 },
             },
             // Lifecycle hook when component is mounted
