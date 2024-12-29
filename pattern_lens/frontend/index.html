@@ -341,6 +341,86 @@
             text-align: center;
             padding: var(--spacing-md);
         }
+
+        /* Add new styles for head selection */
+        .model-selection {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            padding: 10px;
+        }
+        
+        .model-item {
+            border: 1px solid var(--border-color);
+            padding: 10px;
+            border-radius: var(--border-radius);
+        }
+        
+        .model-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 5px;
+        }
+        
+        .model-info {
+            color: var(--text-muted);
+            font-size: 0.9em;
+        }
+        
+        .head-input {
+            width: 100%;
+            padding: 5px;
+            border: 1px solid var(--border-color);
+            border-radius: var(--border-radius);
+            margin-top: 5px;
+        }
+        
+        .head-input.error {
+            border-color: #dc3545;
+            background-color: #fff8f8;
+        }
+        
+        .head-input:disabled {
+            background-color: var(--light-bg);
+            cursor: not-allowed;
+        }
+
+        .main-selection-content {
+            display: flex;
+            flex-direction: column;
+            gap: var(--spacing-md);
+            border: 2px solid var(--border-color);
+            padding: var(--spacing-md);
+            min-height: 300px;
+        }
+
+        .top-filters {
+            display: flex;
+            gap: var(--spacing-md);
+        }
+
+        /* Functions filter */
+        .functions-filter {
+            width: 50%;
+            border: 1px solid var(--border-color);
+            padding: var(--spacing-md);
+            border-radius: var(--border-radius);
+        }
+
+        /* Model selection */
+        .model-selection {
+            width: 50%;
+            border: 1px solid var(--border-color);
+            padding: var(--spacing-md);
+            border-radius: var(--border-radius);
+        }
+
+        /* Prompts section takes full width */
+        .prompt-table {
+            flex-grow: 1;
+            position: relative;
+        }
     </style>
 </head>
 
@@ -350,88 +430,53 @@
         <h1>Attention Pattern Analysis</h1>
 
         <div class="main-selection-content">
-            <!-- control model/layer/head/function -->
-            <div class="filters">
-                <div class="model-function-filters">
-                    <!-- Models Filter -->
-                    <div class="filter-item">
-                        <div class="filter-label">
-                            <input type="checkbox" id="select-all-models"
-                                :indeterminate.prop="isIndeterminate('models')" :checked="isChecked('models')"
-                                @change="toggleSelectAll('models', $event)">
-                            <label for="select-all-models">Models:</label>
-                            <span class="counter">{{ selectedItems.models.length }} / {{ items.models.length }}</span>
-                        </div>
-                        <div class="checkbox-list">
-                            <div v-for="model in items.models" :key="model" class="checkbox-item">
-                                <input type="checkbox" :id="'model-' + model" :value="model"
-                                    v-model="selectedItems.models">
-                                <label :for="'model-' + model">{{ model }}</label>
-                            </div>
-                        </div>
-                    </div>
-                    <!-- Functions Filter -->
+            <!-- Top section with functions and models side by side -->
+            <div class="top-filters">
+                <!-- Functions Filter -->
+                <div class="functions-filter">
                     <div class="filter-item">
                         <div class="filter-label">
                             <input type="checkbox" id="select-all-functions"
-                                :indeterminate.prop="isIndeterminate('functions')" :checked="isChecked('functions')"
+                                :indeterminate.prop="isIndeterminate('functions')"
+                                :checked="isChecked('functions')"
                                 @change="toggleSelectAll('functions', $event)">
                             <label for="select-all-functions">Functions:</label>
-                            <span class="counter">{{ selectedItems.functions.length }} / {{ items.functions.length
-                                }}</span>
+                            <span class="counter">{{ selectedItems.functions.length }} / {{ items.functions.length }}</span>
                         </div>
                         <div class="checkbox-list">
                             <div v-for="func in items.functions" :key="func" class="checkbox-item">
-                                <input type="checkbox" :id="'func-' + func" :value="func"
-                                    v-model="selectedItems.functions">
+                                <input type="checkbox" :id="'func-' + func" :value="func" v-model="selectedItems.functions">
                                 <label :for="'func-' + func">{{ func }}</label>
                             </div>
                         </div>
                     </div>
                 </div>
-                <div class="layer-head-filters">
-                    <!-- Layers Filter -->
-                    <div class="filter-item">
-                        <div class="filter-label">
-                            <label for="select-all-layers">Layers:</label>
-                            <div class="filter-controls">
-                                <input type="checkbox" id="select-all-layers"
-                                    :indeterminate.prop="isIndeterminate('layers')" :checked="isChecked('layers')"
-                                    @change="toggleSelectAll('layers', $event)">
-                                <span class="counter">{{ selectedItems.layers.length }} / {{ items.layers.length
-                                    }}</span>
-                            </div>
+
+                <!-- Model Selection -->
+                <div class="model-selection">
+                    <div v-for="model in items.models" :key="model" class="model-item">
+                        <div class="model-header">
+                            <input type="checkbox" 
+                                   :id="'model-' + model" 
+                                   :value="model" 
+                                   v-model="selectedItems.models">
+                            <label :for="'model-' + model">{{ model }}</label>
+                            <span class="model-info">
+                                ({{ modelConfigs[model].n_layers }} layers, 
+                                {{ modelConfigs[model].n_heads }} heads)
+                            </span>
                         </div>
-                        <div class="checkbox-list">
-                            <div v-for="layer in items.layers" :key="layer" class="checkbox-item">
-                                <input type="checkbox" :id="'layer-' + layer" :value="layer"
-                                    v-model="selectedItems.layers">
-                                <label :for="'layer-' + layer">{{ layer }}</label>
-                            </div>
-                        </div>
-                    </div>
-                    <!-- Heads Filter -->
-                    <div class="filter-item">
-                        <div class="filter-label">
-                            <label for="select-all-heads">Heads:</label>
-                            <div class="filter-controls">
-                                <input type="checkbox" id="select-all-heads"
-                                    :indeterminate.prop="isIndeterminate('heads')" :checked="isChecked('heads')"
-                                    @change="toggleSelectAll('heads', $event)">
-                                <span class="counter">{{ selectedItems.heads.length }} / {{ items.heads.length }}</span>
-                            </div>
-                        </div>
-                        <div class="checkbox-list">
-                            <div v-for="head in items.heads" :key="head" class="checkbox-item">
-                                <input type="checkbox" :id="'head-' + head" :value="head" v-model="selectedItems.heads">
-                                <label :for="'head-' + head">{{ head }}</label>
-                            </div>
-                        </div>
+                        <input type="text"
+                               class="head-input"
+                               :class="{ error: !isValidHeadSelection(model) }"
+                               :disabled="!selectedItems.models.includes(model)"
+                               v-model="headSelections[model]"
+                               :placeholder="'e.g., L0H*, L1-3H0, L4H1'">
                     </div>
                 </div>
             </div>
 
-            <!-- control prompt -->
+            <!-- Prompts Table (full width) -->
             <div class="prompt-table">
                 <div class="prompts-info">
                     <div class="prompt-counter">
@@ -456,22 +501,23 @@
         <div class="image-controls-container">
             <div class="image-controls">
                 <div class="image-controls-display">
-                    <button class="btn" :class="{ 'btn-primary': !imagesUpToDate, 'btn-secondary': imagesUpToDate }" @click="displayImages">
+                    <button class="btn" :class="{ 'btn-primary': !imagesUpToDate, 'btn-secondary': imagesUpToDate }"
+                        @click="displayImages">
                         {{ imagesUpToDate ? 'Images Up to Date' : 'Display Images' }}
                     </button>
                     <div class="progress-wrapper">
                         <span class="progress-status">{{ images.length }} / {{ totalExpectedImages }} images</span>
                         <div class="progress-bar" v-if="loading || images.length > 0">
-                            <div class="progress-bar-fill" 
-                                 :class="{ 'loading': loading, 'complete': !loading }"
-                                 :style="{ width: `${(images.length / totalExpectedImages) * 100}%` }">
+                            <div class="progress-bar-fill" :class="{ 'loading': loading, 'complete': !loading }"
+                                :style="{ width: `${(images.length / totalExpectedImages) * 100}%` }">
                             </div>
                         </div>
                     </div>
                 </div>
                 <div class="image-controls-size" v-if="images.length > 0">
                     <label for="resizeSlider">Images per row:</label>
-                    <input type="range" id="resizeSlider" class="resize-slider" v-model.number="imagesPerRow" min="1" max="16" step="1">
+                    <input type="range" id="resizeSlider" class="resize-slider" v-model.number="imagesPerRow" min="1"
+                        max="16" step="1">
                     <input type="number" class="resize-input" v-model.number="imagesPerRow" min="1" max="64">
                 </div>
             </div>
@@ -589,34 +635,111 @@
                         heads: [],
                     },
                     imagesUpToDate: false,
+                    headSelections: {}, // New property for head selections
+                    validationCache: new Map(), // Cache for parsed head selections
                 }
             },
             methods: {
-                updateURL: _.debounce(function () {
-                    const params = new URLSearchParams();
-
-                    for (const [param, dataProp] of Object.entries(URL_PARAM_MAPPING)) {
-                        const value = _.get(this, dataProp);
-                        if (value && value.length > 0) {
-                            params.set(param, value.join('~'));
+                // New method to parse head selection string
+                parseHeadString(str, maxLayer, maxHead) {
+                    try {
+                        const selections = str.split(',').map(s => s.trim());
+                        const result = new Set();
+                        
+                        for (const selection of selections) {
+                            const match = selection.match(/^L(\d+|\d+-\d+|\*)(H\d+|H\*|Hx)$/);
+                            if (!match) return null;
+                            
+                            const [_, layerPart, headPart] = match;
+                            
+                            // Process layer part
+                            let layers = [];
+                            if (layerPart === '*') {
+                                layers = Array.from({length: maxLayer}, (_, i) => i);
+                            } else if (layerPart.includes('-')) {
+                                const [start, end] = layerPart.split('-').map(Number);
+                                if (start > end || end >= maxLayer) return null;
+                                layers = Array.from({length: end - start + 1}, (_, i) => start + i);
+                            } else {
+                                const layer = Number(layerPart);
+                                if (layer >= maxLayer) return null;
+                                layers = [layer];
+                            }
+                            
+                            // Process head part
+                            const headStr = headPart.substring(1);
+                            if (headStr === '*' || headStr === 'x') {
+                                for (const layer of layers) {
+                                    for (let head = 0; head < maxHead; head++) {
+                                        result.add(`${layer},${head}`);
+                                    }
+                                }
+                            } else {
+                                const head = Number(headStr);
+                                if (head >= maxHead) return null;
+                                for (const layer of layers) {
+                                    result.add(`${layer},${head}`);
+                                }
+                            }
                         }
+                        
+                        return Array.from(result);
+                    } catch (e) {
+                        return null;
                     }
+                },
 
+                // Validate head selection string
+                isValidHeadSelection(model) {
+                    const selection = this.headSelections[model];
+                    if (!selection || !this.modelConfigs[model]) return true; // Empty or no config is considered valid
+                    
+                    const cacheKey = `${model}:${selection}`;
+                    if (this.validationCache.has(cacheKey)) {
+                        return this.validationCache.get(cacheKey);
+                    }
+                    
+                    const config = this.modelConfigs[model];
+                    const isValid = this.parseHeadString(selection, config.n_layers, config.n_heads) !== null;
+                    this.validationCache.set(cacheKey, isValid);
+                    return isValid;
+                },
+               // Modified URL handling
+               updateURL() {
+                    const params = new URLSearchParams();
+                    
+                    if (this.selectedItems.models.length > 0) {
+                        params.set('models', this.selectedItems.models.join('~'));
+                        params.set('headSelections', JSON.stringify(this.headSelections));
+                    }
+                    
+                    if (this.selectedItems.functions.length > 0) {
+                        params.set('functions', this.selectedItems.functions.join('~'));
+                    }
+                    
+                    if (this.selectedPrompts.length > 0) {
+                        params.set('prompts', this.selectedPrompts.join('~'));
+                    }
+                    
                     const newURL = `${window.location.pathname}?${params.toString()}`;
                     history.replaceState(null, '', newURL);
-                }, 300),
+                },
+
                 readURL() {
                     const params = new URLSearchParams(window.location.search);
-
-                    for (const [param, dataProp] of Object.entries(URL_PARAM_MAPPING)) {
-                        const value = params.get(param);
-                        _.set(this, dataProp, value ? value.split('~') : []);
+                    
+                    this.selectedItems.models = params.get('models')?.split('~') || [];
+                    this.selectedItems.functions = params.get('functions')?.split('~') || [];
+                    this.selectedPrompts = params.get('prompts')?.split('~') || [];
+                    
+                    try {
+                        const headSelections = params.get('headSelections');
+                        if (headSelections) {
+                            this.headSelections = JSON.parse(headSelections);
+                        }
+                    } catch (e) {
+                        console.error('Error parsing head selections from URL:', e);
                     }
-
-                    // Ensure that the checkbox lists are properly initialized
-                    this.$nextTick(() => {
-                        this.updateLayersAndHeads();
-                    });
                 },
                 isIndeterminate(category) {
                     const items = this.items[category];
@@ -660,6 +783,12 @@
                     this.items.models = Object.keys(this.modelConfigs);
                     console.log('Models:', this.items.models);
                     this.loading = false;
+                    // After loading models, initialize head selections
+                    this.selectedItems.models.forEach(model => {
+                        if (!this.headSelections[model]) {
+                            this.headSelections[model] = 'L*H*';
+                        }
+                    });
                 },
                 async loadAllPrompts() {
                     this.loading = true;
@@ -861,32 +990,35 @@
                     this.loading = true;
                     this.imagesRequested = true;
                     this.images = [];
-
-                    // Calculate total expected images
-                    this.totalExpectedImages = (
-                        this.selectedItems.models.length *
-                        this.selectedPrompts.length *
-                        (this.selectedItems.layers.length || this.items.layers.length) *
-                        (this.selectedItems.heads.length || this.items.heads.length) *
-                        this.selectedItems.functions.length
-                    );
-
-                    // horrible nested loop over models, prompts, layers, heads, functions
+                    
+                    // Calculate total images based on parsed head selections
+                    let totalImages = 0;
                     for (const model of this.selectedItems.models) {
-                        for (const promptHash of this.selectedPrompts) {
-                            // all layers if none selected
-                            const layers = this.selectedItems.layers.length > 0 ? this.selectedItems.layers : this.items.layers;
-                            for (const layer of layers) {
-                                // all heads if none selected
-                                const heads = this.selectedItems.heads.length > 0 ? this.selectedItems.heads : this.items.heads;
-                                for (const head of heads) {
-                                    const basePath = `${DATA_DIR}/${model}/prompts/${promptHash}/L${layer}/H${head}`;
-                                    // for each function try to load the svgz file
-                                    for (const funcName of this.selectedItems.functions) {
-                                        const figure_format = await fileOps.figureExists(`${basePath}/${funcName}`);
+                        const config = this.modelConfigs[model];
+                        const headSelection = this.headSelections[model] || 'L*H*';
+                        const parsedHeads = this.parseHeadString(headSelection, config.n_layers, config.n_heads);
+                        if (parsedHeads) {
+                            totalImages += parsedHeads.length * this.selectedPrompts.length * this.selectedItems.functions.length;
+                        }
+                    }
+                    this.totalExpectedImages = totalImages;
 
-                                        if (figure_format) {
-
+                    // Load images based on parsed head selections
+                    for (const model of this.selectedItems.models) {
+                        const config = this.modelConfigs[model];
+                        const headSelection = this.headSelections[model] || 'L*H*';
+                        const parsedHeads = this.parseHeadString(headSelection, config.n_layers, config.n_heads);
+                        
+                        if (!parsedHeads) continue;
+                        
+                        for (const [layer, head] of parsedHeads.map(h => h.split(','))) {
+                            for (const promptHash of this.selectedPrompts) {
+                                const basePath = `${DATA_DIR}/${model}/prompts/${promptHash}/L${layer}/H${head}`;
+                                
+                                for (const funcName of this.selectedItems.functions) {
+                                    const figure_format = await fileOps.figureExists(`${basePath}/${funcName}`);
+                                    
+                                    if (figure_format) {
                                             const figure_meta = {
                                                 name: `${model} - Prompt ${promptHash} - L${layer}H${head} - ${funcName}`,
                                                 model: model,
@@ -921,7 +1053,6 @@
                                 }
                             }
                         }
-                    }
                     this.imagesUpToDate = true;
                     this.loading = false;
                 },
@@ -949,6 +1080,24 @@
                     this.updateURL();
                 },
                 // selectedPrompts handled in onSelectionChanged
+                'selectedItems.models'(newModels) {
+                    // Initialize head selections for newly selected models
+                    newModels.forEach(model => {
+                        if (!this.headSelections[model]) {
+                            this.headSelections[model] = 'L*H*';
+                        }
+                    });
+                    this.updatePrompts();
+                    this.updateURL();
+                },
+                'headSelections': {
+                    deep: true,
+                    handler() {
+                        this.validationCache.clear();
+                        this.imagesUpToDate = false;
+                        this.updateURL();
+                    }
+                },
             },
             // Lifecycle hook when component is mounted
             async mounted() {
