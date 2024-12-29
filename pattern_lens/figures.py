@@ -16,6 +16,8 @@ from pattern_lens.consts import (
     AttentionMatrix,
     SPINNER_KWARGS,
     ActivationCacheNp,
+    DIVIDER_S1,
+    DIVIDER_S2,
 )
 from pattern_lens.indexes import (
     generate_functions_jsonl,
@@ -179,7 +181,7 @@ def figures_main(
             pbar="tqdm",
             pbar_kwargs=dict(
                 desc="Making figures",
-                ascii=" =",
+                unit="prompt",
             ),
         )
     )
@@ -192,6 +194,7 @@ def figures_main(
 
 
 def main():
+    print(DIVIDER_S1)
     with SpinnerContext(message="parsing args", **SPINNER_KWARGS):
         arg_parser: argparse.ArgumentParser = argparse.ArgumentParser()
         # input and output
@@ -200,7 +203,7 @@ def main():
             "-m",
             type=str,
             required=True,
-            help="The model name to use",
+            help="The model name(s) to use. comma separated with no whitespace if multiple",
         )
         arg_parser.add_argument(
             "--save-path",
@@ -233,13 +236,25 @@ def main():
 
     print(f"args parsed: {args}")
 
-    figures_main(
-        model_name=args.model,
-        save_path=args.save_path,
-        n_samples=args.n_samples,
-        force=args.force,
-    )
+    models: list[str]
+    if "," in args.model:
+        models = args.model.split(",")
+    else:
+        models = [args.model]
 
+    n_models: int = len(models)
+    for idx, model in enumerate(models):
+        print(DIVIDER_S2)
+        print(f"processing model {idx+1} / {n_models}: {model}")
+        print(DIVIDER_S2)
+        figures_main(
+            model_name=model,
+            save_path=args.save_path,
+            n_samples=args.n_samples,
+            force=args.force,
+        )
+
+    print(DIVIDER_S1)
 
 if __name__ == "__main__":
     main()

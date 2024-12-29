@@ -18,3 +18,9 @@ ATTN_PATTERN_REGEX: re.Pattern = re.compile(r"blocks\.(\d+)\.attn\.hook_pattern"
 SPINNER_KWARGS: dict = dict(
     config=dict(success="✔️ "),
 )
+
+DIVIDER_S1: str = "=" * 70
+"divider string for separating sections"
+
+DIVIDER_S2: str = "-" * 50
+"divider string for separating subsections"

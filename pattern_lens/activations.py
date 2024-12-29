@@ -21,6 +21,8 @@ from pattern_lens.consts import (
     DATA_DIR,
     ActivationCacheNp,
     SPINNER_KWARGS,
+    DIVIDER_S1,
+    DIVIDER_S2,
 )
 from pattern_lens.indexes import generate_models_jsonl, generate_prompts_jsonl, write_html_index
 from pattern_lens.load_activations import (
@@ -229,6 +231,7 @@ def activations_main(
             ),
             total=len(prompts),
             desc="Computing activations",
+            unit="prompt",
         )
     )
 
@@ -240,6 +243,7 @@ def activations_main(
 
 
 def main():
+    print(DIVIDER_S1)
     with SpinnerContext(message="parsing args", **SPINNER_KWARGS):
         arg_parser: argparse.ArgumentParser = argparse.ArgumentParser()
         # input and output
@@ -248,7 +252,7 @@ def main():
             "-m",
             type=str,
             required=True,
-            help="The model name to use",
+            help="The model name(s) to use. comma separated with no whitespace if multiple",
         )
 
         arg_parser.add_argument(
@@ -329,18 +333,32 @@ def main():
 
     print(f"args parsed: {args}")
 
-    activations_main(
-        model_name=args.model,
-        save_path=args.save_path,
-        prompts_path=args.prompts,
-        raw_prompts=args.raw_prompts,
-        min_chars=args.min_chars,
-        max_chars=args.max_chars,
-        force=args.force,
-        n_samples=args.n_samples,
-        no_index_html=args.no_index_html,
-        shuffle=args.shuffle,
-    )
+    models: list[str]
+    if "," in args.model:
+        models = args.model.split(",")
+    else:
+        models = [args.model]
+
+    n_models: int = len(models)
+    for idx, model in enumerate(models):
+        print(DIVIDER_S2)
+        print(f"processing model {idx+1} / {n_models}: {model}")
+        print(DIVIDER_S2)
+
+        activations_main(
+            model_name=model,
+            save_path=args.save_path,
+            prompts_path=args.prompts,
+            raw_prompts=args.raw_prompts,
+            min_chars=args.min_chars,
+            max_chars=args.max_chars,
+            force=args.force,
+            n_samples=args.n_samples,
+            no_index_html=args.no_index_html,
+            shuffle=args.shuffle,
+        )
+    
+    print(DIVIDER_S1)
 
 
 if __name__ == "__main__":

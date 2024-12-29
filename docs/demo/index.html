@@ -402,7 +402,8 @@
 
         /* Functions filter */
         .functions-filter {
-            width: 50%;
+            width: 200px;
+            flex-shrink: 0;  /* Prevent shrinking below 200px */
             border: 1px solid var(--border-color);
             padding: var(--spacing-md);
             border-radius: var(--border-radius);
@@ -410,7 +411,7 @@
 
         /* Model selection */
         .model-selection {
-            width: 50%;
+            flex: 1;  /* Take up remaining space */
             border: 1px solid var(--border-color);
             padding: var(--spacing-md);
             border-radius: var(--border-radius);
