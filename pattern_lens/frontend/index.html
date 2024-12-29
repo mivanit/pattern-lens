@@ -424,7 +424,7 @@
 
         /* Functions filter */
         .functions-filter {
-            width: 200px;
+            width: 150px;
             flex-shrink: 0;
             /* Prevent shrinking below 200px */
             border: 1px solid var(--border-color);
@@ -477,6 +477,54 @@
         .head-input {
             text-align: left;
         }
+
+        .main-selection-content {
+            display: flex;
+            flex-direction: column;
+            gap: var(--spacing-md);
+            border: 2px solid var(--border-color);
+            padding: var(--spacing-md);
+            min-height: 300px;
+        }
+
+        .top-filters {
+            display: flex;
+            gap: var(--spacing-md);
+            height: 350px;
+        }
+
+        .functions-filter {
+            width: 200px;
+            flex-shrink: 0;
+            border: 1px solid var(--border-color);
+            padding: var(--spacing-md);
+            border-radius: var(--border-radius);
+        }
+
+        .model-selection {
+            flex: 1;
+            border: 1px solid var(--border-color);
+            padding: var(--spacing-md);
+            border-radius: var(--border-radius);
+        }
+
+        .grid-cell {
+            width: 3px;
+            height: 3px;
+            margin: 0.5px;
+        }
+
+        .head-input {
+            width: 100%;
+            padding: 2px 4px;
+            border: 1px solid var(--border-color);
+            border-radius: 2px;
+        }
+
+        .head-input.error {
+            border-color: #dc3545;
+            background-color: #ffeaea;
+        }
     </style>
 </head>
 
@@ -516,28 +564,7 @@
 
                 <!-- Model Selection -->
                 <div class="model-selection">
-                    <div v-for="model in items.models" :key="model" class="model-item">
-                        <div class="model-header">
-                            <input type="checkbox" :id="'model-' + model" :value="model" v-model="selectedItems.models">
-                            <label :for="'model-' + model">{{ model }}</label>
-                            <span class="text-gray-600 text-sm">
-                                ({{ modelConfigs[model].n_layers }} layers,
-                                {{ modelConfigs[model].n_heads }} heads)
-                            </span>
-                            <div class="head-grid">
-                                <div v-for="headIndex in Array.from({ length: modelConfigs[model].n_heads }, (_, i) => i)"
-                                    :key="'head-' + headIndex" class="grid-layer">
-                                    <div v-for="layerIndex in Array.from({ length: modelConfigs[model].n_layers }, (_, i) => i)"
-                                        :key="'layer-' + layerIndex" class="grid-cell"
-                                        :class="isHeadSelected(model, layerIndex, headIndex) ? 'grid-cell-selected' : 'grid-cell-empty'">
-                                    </div>
-                                </div>
-                            </div>
-                            <input type="text" class="head-input" :class="{ error: !isValidHeadSelection(model) }"
-                                :disabled="!selectedItems.models.includes(model)" v-model="headSelectionsRaw[model]"
-                                @input="updateHeadSelectionsParsed(model)" :placeholder="'e.g., L0H*, L1-3H0, L4H1'">
-                        </div>
-                    </div>
+                    <div id="modelGrid" class="ag-theme-alpine" style="height: 300px; width: 100%;"></div>
                 </div>
             </div>
 
@@ -989,6 +1016,166 @@
                     }
                 },
 
+                // ##     ##  #######  ########  ######## ##        ######
+                // ###   ### ##     ## ##     ## ##       ##       ##    ##
+                // #### #### ##     ## ##     ## ##       ##       ##
+                // ## ### ## ##     ## ##     ## ######   ##        ######
+                // ##     ## ##     ## ##     ## ##       ##             ##
+                // ##     ## ##     ## ##     ## ##       ##       ##    ##
+                // ##     ##  #######  ########  ######## ########  ######
+                setupModelTable() {
+                    const getHeadSelectionCount = (model) => {
+                        const parsed = this.headSelectionsParsed[model];
+                        if (!parsed) return 0;
+                        return parsed.reduce((acc, layer) =>
+                            acc + layer.reduce((sum, isSelected) => sum + (isSelected ? 1 : 0), 0), 0);
+                    };
+
+                    const getTotalHeads = (model) => {
+                        const config = this.modelConfigs[model];
+                        return config ? config.n_layers * config.n_heads : 0;
+                    };
+
+                    const columnDefs = [
+                        {
+                            headerName: '',
+                            field: 'selected',
+                            width: 50,
+                            checkboxSelection: true,
+                            headerCheckboxSelection: true,
+                            pinned: 'left'
+                        },
+                        {
+                            headerName: 'Model',
+                            field: 'model_name',
+                            sort: 'asc',
+                            width: 150
+                        },
+                        {
+                            headerName: 'd_model',
+                            field: 'd_model',
+                            width: 90,
+                            filter: 'agNumberColumnFilter'
+                        },
+                        {
+                            headerName: 'n_layers',
+                            field: 'n_layers',
+                            width: 90,
+                            filter: 'agNumberColumnFilter'
+                        },
+                        {
+                            headerName: 'n_heads',
+                            field: 'n_heads',
+                            width: 90,
+                            filter: 'agNumberColumnFilter'
+                        },
+                        {
+                            headerName: 'Selected',
+                            valueGetter: (params) => {
+                                return `${getHeadSelectionCount(params.data.model_name)} / ${getTotalHeads(params.data.model_name)}`;
+                            },
+                            width: 100
+                        },
+                        {
+                            headerName: 'Head Grid',
+                            field: 'head_grid',
+                            width: 150,
+                            cellRenderer: (params) => {
+                                const model = params.data.model_name;
+                                const div = document.createElement('div');
+                                div.className = 'head-grid';
+
+                                const n_heads = params.data.n_heads;
+                                const n_layers = params.data.n_layers;
+
+                                for (let h = 0; h < n_heads; h++) {
+                                    const layerDiv = document.createElement('div');
+                                    layerDiv.className = 'grid-layer';
+
+                                    for (let l = 0; l < n_layers; l++) {
+                                        const cell = document.createElement('div');
+                                        cell.className = `grid-cell ${this.isHeadSelected(model, l, h) ? 'grid-cell-selected' : 'grid-cell-empty'}`;
+                                        layerDiv.appendChild(cell);
+                                    }
+
+                                    div.appendChild(layerDiv);
+                                }
+
+                                return div;
+                            }
+                        },
+                        {
+                            headerName: 'Head Selection',
+                            field: 'head_selection',
+                            editable: true,
+                            width: 200,
+                            cellEditor: 'agTextCellEditor',
+                            cellEditorParams: {
+                                maxLength: 50
+                            },
+                            valueSetter: params => {
+                                const newValue = params.newValue;
+                                // Update the head selection in Vue's data
+                                params.context.componentParent.headSelectionsRaw[params.data.model_name] = newValue;
+                                params.context.componentParent.updateHeadSelectionsParsed(params.data.model_name);
+                                return true;
+                            },
+                            valueGetter: params => {
+                                return params.context.componentParent.headSelectionsRaw[params.data.model_name] || 'L*H*';
+                            },
+                            cellStyle: params => {
+                                const isValid = params.context.componentParent.isValidHeadSelection(params.data.model_name);
+                                return isValid ? {} : { backgroundColor: '#ffeaea', borderColor: '#dc3545' };
+                            }
+                        },
+                    ];
+
+                    const gridOptions = {
+                        columnDefs: columnDefs,
+                        rowData: Object.values(this.modelConfigs),
+                        rowSelection: 'multiple',
+                        suppressRowClickSelection: true,
+                        defaultColDef: {
+                            sortable: true,
+                            filter: true,
+                            resizable: true,
+                            floatingFilter: true,
+                            suppressKeyboardEvent: params => {
+                                // Allow all keyboard events in edit mode
+                                if (params.editing) {
+                                    return false;
+                                }
+                                // Prevent default grid behavior for typing when not in edit mode
+                                if (params.event.key.length === 1 && !params.event.ctrlKey && !params.event.metaKey) {
+                                    return false;
+                                }
+                                return true;
+                            },
+                        },
+                        context: {
+                            componentParent: this
+                        },
+                        onSelectionChanged: (event) => {
+                            const selectedRows = event.api.getSelectedRows();
+                            this.selectedItems.models = selectedRows.map(row => row.model_name);
+                        },
+                        onGridReady: (params) => {
+                            this.modelGridApi = params.api;
+                            // Select models from URL
+                            if (this.selectedItems.models.length > 0) {
+                                params.api.forEachNode(node => {
+                                    if (this.selectedItems.models.includes(node.data.model_name)) {
+                                        node.setSelected(true);
+                                    }
+                                });
+                            }
+                        },
+                    };
+
+                    const gridDiv = document.querySelector('#modelGrid');
+                    this.modelGridApi = agGrid.createGrid(gridDiv, gridOptions);
+                },
+
                 // ########  ########   #######  ##     ## ########  ########  ######
                 // ##     ## ##     ## ##     ## ###   ### ##     ##    ##    ##    ##
                 // ##     ## ##     ## ##     ## #### #### ##     ##    ##    ##
@@ -1266,7 +1453,8 @@
             async mounted() {
                 this.readURL(); // Read filters from URL first
                 await this.loadData(); // Load models, prompts, and functions
-                this.setupPromptTable(); // Initialize the grid
+                this.setupModelTable(); // Initialize the model grid
+                this.setupPromptTable(); // Initialize the prompts grid
             }
         });
 
