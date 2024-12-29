@@ -768,10 +768,16 @@
                         const selections = str.split(',').map(s => s.trim());
 
                         for (const selection of selections) {
-                            const match = selection.match(/^L(\d+|\d+-\d+|\*)(H\d+|H\*|Hx)$/);
+                            const match = selection.match(/^L(\d+|\d+-\d+|\*)(H\d+|H\*|Hx)?$/);
                             if (!match) return null;
 
-                            const [_, layerPart, headPart] = match;
+                            const layerPart = match[1];
+                            let headPart = match[2];
+
+                            // If the user typed only "L8" (no head specification), default to H*
+                            if (!headPart) {
+                                headPart = 'H*';
+                            }
 
                             let layers = [];
                             if (layerPart === '*') {
@@ -832,6 +838,10 @@
                         config.n_layers,
                         config.n_heads
                     );
+
+                    if (!parsedHeads) {
+                        console.warn(`Invalid head selection for ${model}: "${rawString}"`);
+                    }
 
                     this.headSelectionsParsed[model] = parsed;
                 },
@@ -1334,6 +1344,9 @@
                         if (parsedHeads) {
                             totalImages += parsedHeads.length * this.selectedPrompts.length * this.selectedItems.functions.length;
                         }
+                        else {
+                            console.warn(`Invalid head selection for ${model}: "${rawString}"`);
+                        }
                     }
                     this.totalExpectedImages = totalImages;
 
@@ -1343,6 +1356,7 @@
                         const rawString = this.headSelectionsRaw[model] || 'L*H*';
                         const parsedHeads = this.parseHeadString(rawString, config.n_layers, config.n_heads);
                         if (!parsedHeads) {
+                            console.warn(`Invalid head selection for ${model}: "${rawString}"`);
                             continue;
                         }
 
