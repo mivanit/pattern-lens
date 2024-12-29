@@ -15,7 +15,7 @@ from pattern_lens.figure_util import (
     MATPLOTLIB_FIGURE_FMT,
     matplotlib_figure_saver,
     matrix_as_svg,
-    save_matrix_as_svg_wrapper,
+    save_matrix_wrapper,
 )
 
 
@@ -88,7 +88,7 @@ def test_matrix_as_svg_invalid_cmap_fixed():
 def test_save_matrix_as_svgz_wrapper_no_args():
     TEMP_DIR.mkdir(parents=True, exist_ok=True)
 
-    @save_matrix_as_svg_wrapper
+    @save_matrix_wrapper(fmt="svgz")
     def no_op(matrix):
         return matrix
 
@@ -103,7 +103,7 @@ def test_save_matrix_as_svgz_wrapper_no_args():
 def test_save_matrix_as_svgz_wrapper_with_args():
     TEMP_DIR.mkdir(parents=True, exist_ok=True)
 
-    @save_matrix_as_svg_wrapper(normalize=True, cmap="plasma")
+    @save_matrix_wrapper(normalize=True, cmap="plasma")
     def scale_matrix(matrix):
         return matrix * 2
 
@@ -118,7 +118,7 @@ def test_save_matrix_as_svgz_wrapper_with_args():
 def test_save_matrix_as_svgz_wrapper_exceptions():
     TEMP_DIR.mkdir(parents=True, exist_ok=True)
 
-    @save_matrix_as_svg_wrapper(normalize=False)
+    @save_matrix_wrapper(normalize=False)
     def invalid_range(matrix):
         return matrix * 2
 
@@ -134,7 +134,7 @@ def test_save_matrix_as_svgz_wrapper_exceptions():
 def test_save_matrix_as_svgz_wrapper_keyword_only():
     TEMP_DIR.mkdir(parents=True, exist_ok=True)
 
-    @save_matrix_as_svg_wrapper(normalize=True, cmap="plasma")
+    @save_matrix_wrapper(normalize=True, cmap="plasma")
     def scale_matrix(matrix):
         return matrix * 2
 
@@ -149,7 +149,7 @@ def test_save_matrix_as_svgz_wrapper_keyword_only():
 def test_save_matrix_as_svgz_wrapper_multiple():
     TEMP_DIR.mkdir(parents=True, exist_ok=True)
 
-    @save_matrix_as_svg_wrapper(normalize=True)
+    @save_matrix_wrapper(normalize=True)
     def scale_by_factor(matrix):
         return matrix * 3
 
@@ -168,7 +168,7 @@ def test_save_matrix_as_svgz_wrapper_multiple():
 def test_save_matrix_as_svgz_wrapper_no_normalization():
     TEMP_DIR.mkdir(parents=True, exist_ok=True)
 
-    @save_matrix_as_svg_wrapper(normalize=False)
+    @save_matrix_wrapper(normalize=False)
     def pass_through(matrix):
         return matrix
 
@@ -185,7 +185,7 @@ def test_save_matrix_as_svgz_wrapper_no_normalization():
 def test_save_matrix_as_svgz_wrapper_complex_matrix():
     TEMP_DIR.mkdir(parents=True, exist_ok=True)
 
-    @save_matrix_as_svg_wrapper(normalize=True, cmap="viridis")
+    @save_matrix_wrapper(normalize=True, cmap="viridis")
     def complex_processing(matrix):
         return np.sin(matrix)
 
@@ -205,7 +205,7 @@ def test_matrix_as_svg_dimensions():
     ]
 
     for matrix in matrices:
-        n, m = matrix.shape
+        m, n = matrix.shape
         svg_content = matrix_as_svg(matrix, normalize=True)
         assert f'width="{m}"' in svg_content
         assert f'height="{n}"' in svg_content
@@ -215,7 +215,7 @@ def test_matrix_as_svg_dimensions():
 def test_save_matrix_as_svgz_wrapper_content():
     TEMP_DIR.mkdir(parents=True, exist_ok=True)
 
-    @save_matrix_as_svg_wrapper(normalize=True)
+    @save_matrix_wrapper(normalize=True)
     def identity(matrix):
         return matrix
 

@@ -15,6 +15,7 @@ import numpy as np
 from jaxtyping import Float, UInt8
 import matplotlib
 import matplotlib.pyplot as plt
+from matplotlib.colors import Colormap
 
 from pattern_lens.consts import AttentionMatrix
 
@@ -127,7 +128,7 @@ def matplotlib_figure_saver(
 def matrix_to_image_preprocess(
     matrix: Matrix2D,
     normalize: bool = MATRIX_SAVE_NORMALIZE,
-    cmap: str = MATRIX_SAVE_CMAP,
+    cmap: str|Colormap = MATRIX_SAVE_CMAP,
 ) -> Matrix2Drgb:
     """preprocess a 2D matrix into a plottable heatmap image
 
@@ -137,7 +138,7 @@ def matrix_to_image_preprocess(
      - `normalize : bool`
         whether to normalize the matrix to range [0, 1]
        (defaults to `MATRIX_SAVE_NORMALIZE`)
-     - `cmap : str`
+     - `cmap : str|Colormap`
         the colormap to use for the matrix
        (defaults to `MATRIX_SAVE_CMAP`)
 
@@ -162,12 +163,17 @@ def matrix_to_image_preprocess(
         normalized_matrix = matrix
 
     # get the colormap
+    cmap_: Colormap
     if isinstance(cmap, str):
-        cmap = matplotlib.colormaps[cmap]
+        cmap_ = matplotlib.colormaps[cmap]
+    elif isinstance(cmap, Colormap):
+        cmap_ = cmap
+    else:
+        raise TypeError(f"Invalid type for {cmap = }, {type(cmap) = }, must be str or Colormap")
 
     # Apply the viridis colormap
     rgb_matrix: Float[np.ndarray, "n m channels=3"] = (  # noqa: F722
-        cmap(normalized_matrix)[:, :, :3] * 255
+        cmap_(normalized_matrix)[:, :, :3] * 255
     ).astype(np.uint8)  # Drop alpha channel
 
     assert rgb_matrix.shape == (
@@ -180,7 +186,7 @@ def matrix_to_image_preprocess(
 
 
 @overload
-def matrix2drgb_to_png_bytes(matrix: Matrix2Drgb, buffer: None) -> bytes: ...
+def matrix2drgb_to_png_bytes(matrix: Matrix2Drgb, buffer: None = None) -> bytes: ...
 @overload
 def matrix2drgb_to_png_bytes(matrix: Matrix2Drgb, buffer: io.BytesIO) -> None: ...
 def matrix2drgb_to_png_bytes(
@@ -201,7 +207,7 @@ def matrix2drgb_to_png_bytes(
        `bytes` if `buffer` is `None`, otherwise `None`
     """
 
-    pil_img: Image = Image.fromarray(matrix, mode="RGB")
+    pil_img: Image.Image = Image.fromarray(matrix, mode="RGB")
     if buffer is None:
         buffer = io.BytesIO()
         pil_img.save(buffer, format="PNG")
@@ -209,6 +215,7 @@ def matrix2drgb_to_png_bytes(
         return buffer.read()
     else:
         pil_img.save(buffer, format="PNG")
+        return None
 
 
 def matrix_as_svg(
@@ -321,8 +328,8 @@ def save_matrix_wrapper(
     assert len(args) == 0, "This decorator only supports keyword arguments"
 
     assert (
-        fmt in MatrixSaveFormat.__args__
-    ), f"Invalid format {fmt = }, must be one of {MatrixSaveFormat.__args__}"
+        fmt in MatrixSaveFormat.__args__ # type: ignore[attr-defined]
+    ), f"Invalid format {fmt = }, must be one of {MatrixSaveFormat.__args__}" # type: ignore[attr-defined]
 
     def decorator(
         func: Callable[[AttentionMatrix], Matrix2D],
