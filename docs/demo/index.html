@@ -814,13 +814,29 @@
                 },
 
                 isHeadSelected(model, layer, head) {
-                    const parsed = this.headSelectionsParsed[model];
-                    console.log(parsed);
+                    // First check if we have parsed selections for this model
+                    if (!this.headSelectionsParsed[model]) {
+                        console.warn(`No parsed head selections found for model: ${model}`);
+                        return false;
+                    }
+
                     try {
-                        return parsed[layer][head];
+                        // Verify layer and head are within bounds
+                        const parsedSelections = this.headSelectionsParsed[model];
+                        if (!Array.isArray(parsedSelections) || 
+                            !Array.isArray(parsedSelections[layer]) || 
+                            typeof parsedSelections[layer][head] === 'undefined') {
+                            console.warn(
+                                `Invalid layer/head combination for ${model}: L${layer}H${head}`,
+                                `Max bounds: L${parsedSelections.length-1}H${parsedSelections[0]?.length-1}`
+                            );
+                            return false;
+                        }
+
+                        return parsedSelections[layer][head];
                     } catch (e) {
                         console.error('Error checking head selection:', e);
-                        console.log('parsed:', parsed, 'model:', model, 'layer:', layer, 'head:', head);
+                        console.log('Model:', model, 'Layer:', layer, 'Head:', head);
                         return false;
                     }
                 },
@@ -831,10 +847,14 @@
 
                 updateHeadSelectionsParsed(model) {
                     const config = this.modelConfigs[model];
-                    if (!config) return;
+                    if (!config) {
+                        console.warn(`No config found for model: ${model}`);
+                        this.headSelectionsParsed[model] = null;
+                        return;
+                    }
 
                     const parsedHeads = this.parseHeadString(
-                        this.headSelectionsRaw[model],
+                        this.headSelectionsRaw[model] || 'L*H*',
                         config.n_layers,
                         config.n_heads
                     );
@@ -843,9 +863,9 @@
                         console.warn(
                             `Invalid head selection for ${model}: "${this.headSelectionsRaw[model]}"`
                         );
-
-                        this.headSelectionsParsed[model] = parsedHeads;
                     }
+
+                    this.headSelectionsParsed[model] = parsedHeads;
                 },
 
 
@@ -1441,9 +1461,13 @@
                 headSelectionsRaw: {
                     deep: true,
                     handler(newValue) {
-                        for (const model in newValue) {
+                        Object.keys(newValue).forEach(model => {
+                            if (!this.modelConfigs[model]) {
+                                console.warn(`Attempting to update head selections for unknown model: ${model}`);
+                                return;
+                            }
                             this.updateHeadSelectionsParsed(model);
-                        }
+                        });
                         this.imagesUpToDate = false;
                         this.updateURL();
                     }
