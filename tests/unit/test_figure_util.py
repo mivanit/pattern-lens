@@ -273,10 +273,10 @@ def test_matrix_as_svg_non_numeric():
     with pytest.raises(TypeError):
         matrix_as_svg(matrix)
 
+
 def test_matrix_as_svg_format():
     # create a small 2x2 matrix
-    matrix = np.array([[0.0, 0.5],
-                       [1.0, 0.75]], dtype=float)
+    matrix = np.array([[0.0, 0.5], [1.0, 0.75]], dtype=float)
 
     svg_str = matrix_as_svg(matrix)
 

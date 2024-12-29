@@ -24,7 +24,6 @@ activations_main(
 
 import argparse
 import functools
-import importlib.resources
 import json
 from dataclasses import asdict
 from pathlib import Path
@@ -39,7 +38,6 @@ from muutils.misc.numerical import shorten_numerical_to_str
 from muutils.json_serialize import json_serialize
 from transformer_lens import HookedTransformer, HookedTransformerConfig  # type: ignore[import-untyped]
 
-import pattern_lens
 from pattern_lens.consts import (
     ATTN_PATTERN_REGEX,
     DATA_DIR,
@@ -48,7 +46,11 @@ from pattern_lens.consts import (
     DIVIDER_S1,
     DIVIDER_S2,
 )
-from pattern_lens.indexes import generate_models_jsonl, generate_prompts_jsonl, write_html_index
+from pattern_lens.indexes import (
+    generate_models_jsonl,
+    generate_prompts_jsonl,
+    write_html_index,
+)
 from pattern_lens.load_activations import (
     ActivationsMissingError,
     augment_prompt_with_hash,
@@ -139,24 +141,23 @@ def compute_activations(
     else:
         return activations_path, None
 
+
 @overload
 def get_activations(
     prompt: dict,
-    model: HookedTransformer|str,
+    model: HookedTransformer | str,
     save_path: Path = Path(DATA_DIR),
     allow_disk_cache: bool = True,
     return_cache: Literal[False] = False,
-) -> tuple[Path, None]:
-    ...
+) -> tuple[Path, None]: ...
 @overload
 def get_activations(
     prompt: dict,
-    model: HookedTransformer|str,
+    model: HookedTransformer | str,
     save_path: Path = Path(DATA_DIR),
     allow_disk_cache: bool = True,
     return_cache: Literal[True] = True,
-) -> tuple[Path, ActivationCacheNp]:
-    ...
+) -> tuple[Path, ActivationCacheNp]: ...
 def get_activations(
     prompt: dict,
     model: HookedTransformer | str,
@@ -165,27 +166,27 @@ def get_activations(
     return_cache: bool = True,
 ) -> tuple[Path, ActivationCacheNp | None]:
     """given a prompt and a model, save or load activations
-    
+
     # Parameters:
-     - `prompt : dict`   
+     - `prompt : dict`
         expected to contain the 'text' key
-     - `model : HookedTransformer | str`   
+     - `model : HookedTransformer | str`
         either a `HookedTransformer` or a string model name, to be loaded with `HookedTransformer.from_pretrained`
-     - `save_path : Path`   
+     - `save_path : Path`
         path to save the activations to (and load from)
        (defaults to `Path(DATA_DIR)`)
-     - `allow_disk_cache : bool`   
+     - `allow_disk_cache : bool`
         whether to allow loading from disk cache
        (defaults to `True`)
      - `return_cache : bool`
         whether to return the cache. if `False`, will return `None` as the second element
        (defaults to `True`)
-    
+
     # Returns:
-     - `tuple[Path, ActivationCacheNp | None]` 
+     - `tuple[Path, ActivationCacheNp | None]`
          the path to the activations and the cache if `return_cache` is `True`
-       
-    """    
+
+    """
     # add hash to prompt
     augment_prompt_with_hash(prompt)
 
@@ -234,31 +235,31 @@ def activations_main(
     shuffle: bool = False,
 ) -> None:
     """main function for computing activations
-    
+
     # Parameters:
-     - `model_name : str`   
+     - `model_name : str`
         name of a model to load with `HookedTransformer.from_pretrained`
-     - `save_path : str`   
+     - `save_path : str`
         path to save the activations to
-     - `prompts_path : str`   
+     - `prompts_path : str`
         path to the prompts file
-     - `raw_prompts : bool`   
+     - `raw_prompts : bool`
         whether the prompts are raw, not filtered by length. `load_text_data` will be called if `True`, otherwise just load the "text" field from each line in `prompts_path`
-     - `min_chars : int`   
+     - `min_chars : int`
         minimum number of characters for a prompt
-     - `max_chars : int`   
+     - `max_chars : int`
         maximum number of characters for a prompt
-     - `force : bool`   
+     - `force : bool`
         whether to overwrite existing files
-     - `n_samples : int`   
+     - `n_samples : int`
         maximum number of samples to process
-     - `no_index_html : bool`   
+     - `no_index_html : bool`
         whether to write an index.html file
-     - `shuffle : bool`   
+     - `shuffle : bool`
         whether to shuffle the prompts
        (defaults to `False`)
-    """    
-    
+    """
+
     with SpinnerContext(message="loading model", **SPINNER_KWARGS):
         model: HookedTransformer = HookedTransformer.from_pretrained(model_name)
         model.model_name = model_name
@@ -446,7 +447,7 @@ def main():
             no_index_html=args.no_index_html,
             shuffle=args.shuffle,
         )
-    
+
     print(DIVIDER_S1)
 
 

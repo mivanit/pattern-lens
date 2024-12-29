@@ -31,7 +31,7 @@ from pattern_lens.load_activations import load_activations
 
 class HTConfigMock:
     """Mock of `transformer_lens.HookedTransformerConfig` for type hinting and loading config json
-    
+
     can be initialized with any kwargs, and will update its `__dict__` with them. does, however, require the following attributes:
     - `n_layers: int`
     - `n_heads: int`
@@ -62,22 +62,22 @@ def process_single_head(
     force_overwrite: bool = False,
 ) -> dict[str, bool | Exception]:
     """process a single head's attention pattern, running all the functions in `ATTENTION_MATRIX_FIGURE_FUNCS` on the attention pattern
-    
+
     # Parameters:
-     - `layer_idx : int`   
-     - `head_idx : int`   
-     - `attn_pattern : AttentionMatrix`   
+     - `layer_idx : int`
+     - `head_idx : int`
+     - `attn_pattern : AttentionMatrix`
         attention pattern for the head
-     - `save_dir : Path`   
+     - `save_dir : Path`
         directory to save the figures to
-     - `force_overwrite : bool`   
+     - `force_overwrite : bool`
         whether to overwrite existing figures. if `False`, will skip any functions which have already saved a figure
        (defaults to `False`)
-    
+
     # Returns:
-     - `dict[str, bool | Exception]` 
+     - `dict[str, bool | Exception]`
         a dictionary of the status of each function, with the function name as the key and the status as the value
-    """    
+    """
     funcs_status: dict[str, bool | Exception] = dict()
 
     for func in ATTENTION_MATRIX_FIGURE_FUNCS:
@@ -112,19 +112,19 @@ def compute_and_save_figures(
     track_results: bool = False,
 ) -> None:
     """compute and save figures for all heads in the model, using the functions in `ATTENTION_MATRIX_FIGURE_FUNCS`
-        
+
     # Parameters:
-     - `model_cfg : HookedTransformerConfig|HTConfigMock`   
-     - `cache : ActivationCacheNp`   
-     - `save_path : Path`   
+     - `model_cfg : HookedTransformerConfig|HTConfigMock`
+     - `cache : ActivationCacheNp`
+     - `save_path : Path`
        (defaults to `Path(DATA_DIR)`)
-     - `force_overwrite : bool`   
+     - `force_overwrite : bool`
         force overwrite of existing figures. if `False`, will skip any functions which have already saved a figure
        (defaults to `False`)
-     - `track_results : bool`   
+     - `track_results : bool`
         whether to track the results of each function for each head. Isn't used for anything yet, but this is a TODO
        (defaults to `False`)
-    """    
+    """
     prompt_dir: Path = activations_path.parent
 
     if track_results:
@@ -173,11 +173,11 @@ def process_prompt(
     basically just calls `load_activations` and then `compute_and_save_figures`
 
     # Parameters:
-     - `prompt : dict`   
-     - `model_cfg : HookedTransformerConfig|HTConfigMock`   
-     - `force_overwrite : bool`   
+     - `prompt : dict`
+     - `model_cfg : HookedTransformerConfig|HTConfigMock`
+     - `force_overwrite : bool`
        (defaults to `False`)
-    """    
+    """
     activations_path: Path
     cache: ActivationCacheNp
     activations_path, cache = load_activations(
@@ -204,20 +204,20 @@ def figures_main(
     parallel: bool | int = True,
 ) -> None:
     """main function for generating figures from attention patterns, using the functions in `ATTENTION_MATRIX_FIGURE_FUNCS`
-        
+
     # Parameters:
-     - `model_name : str`   
+     - `model_name : str`
         model name to use, used for loading the model config, prompts, activations, and saving the figures
-     - `save_path : str`   
+     - `save_path : str`
         base path to look in
-     - `n_samples : int`   
+     - `n_samples : int`
         max number of samples to process
-     - `force : bool`   
+     - `force : bool`
         force overwrite of existing figures. if `False`, will skip any functions which have already saved a figure
-     - `parallel : bool | int`   
+     - `parallel : bool | int`
         whether to run in parallel. if `True`, will use all available cores. if `False`, will run in serial. if an int, will try to use that many cores
        (defaults to `True`)
-    """    
+    """
     with SpinnerContext(message="setting up paths", **SPINNER_KWARGS):
         # save model info or check if it exists
         save_path_p: Path = Path(save_path)
@@ -321,6 +321,7 @@ def main():
         )
 
     print(DIVIDER_S1)
+
 
 if __name__ == "__main__":
     main()

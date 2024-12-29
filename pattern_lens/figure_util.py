@@ -130,20 +130,20 @@ def matrix_to_image_preprocess(
     cmap: str = MATRIX_SAVE_CMAP,
 ) -> Matrix2Drgb:
     """preprocess a 2D matrix into a plottable heatmap image
-    
+
     # Parameters:
-     - `matrix : Matrix2D`   
+     - `matrix : Matrix2D`
         input matrix
-     - `normalize : bool`   
+     - `normalize : bool`
         whether to normalize the matrix to range [0, 1]
        (defaults to `MATRIX_SAVE_NORMALIZE`)
-     - `cmap : str`   
+     - `cmap : str`
         the colormap to use for the matrix
        (defaults to `MATRIX_SAVE_CMAP`)
-    
+
     # Returns:
      - `Matrix2Drgb`
-    """    
+    """
     # check dims
     assert matrix.ndim == 2, f"Matrix must be 2D, got {matrix.ndim = }"
 
@@ -170,9 +170,10 @@ def matrix_to_image_preprocess(
         cmap(normalized_matrix)[:, :, :3] * 255
     ).astype(np.uint8)  # Drop alpha channel
 
-    assert (
-        rgb_matrix.shape
-        == (matrix.shape[0], matrix.shape[1], 3)
+    assert rgb_matrix.shape == (
+        matrix.shape[0],
+        matrix.shape[1],
+        3,
     ), f"Matrix after colormap must have 3 channels, got {rgb_matrix.shape = }"
 
     return rgb_matrix
@@ -182,21 +183,23 @@ def matrix_to_image_preprocess(
 def matrix2drgb_to_png_bytes(matrix: Matrix2Drgb, buffer: None) -> bytes: ...
 @overload
 def matrix2drgb_to_png_bytes(matrix: Matrix2Drgb, buffer: io.BytesIO) -> None: ...
-def matrix2drgb_to_png_bytes(matrix: Matrix2Drgb, buffer: io.BytesIO|None = None) -> bytes|None:
+def matrix2drgb_to_png_bytes(
+    matrix: Matrix2Drgb, buffer: io.BytesIO | None = None
+) -> bytes | None:
     """Convert a `Matrix2Drgb` to valid PNG bytes via PIL
-    
+
     - if `buffer` is provided, it will write the PNG bytes to the buffer and return `None`
     - if `buffer` is not provided, it will return the PNG bytes
-    
+
     # Parameters:
-     - `matrix : Matrix2Drgb`   
-     - `buffer : io.BytesIO | None`   
+     - `matrix : Matrix2Drgb`
+     - `buffer : io.BytesIO | None`
        (defaults to `None`, in which case it will return the PNG bytes)
-    
+
     # Returns:
-     - `bytes|None` 
+     - `bytes|None`
        `bytes` if `buffer` is `None`, otherwise `None`
-    """    
+    """
 
     pil_img: Image = Image.fromarray(matrix, mode="RGB")
     if buffer is None:
@@ -207,10 +210,11 @@ def matrix2drgb_to_png_bytes(matrix: Matrix2Drgb, buffer: io.BytesIO|None = None
     else:
         pil_img.save(buffer, format="PNG")
 
+
 def matrix_as_svg(
     matrix: Matrix2D,
     normalize: bool = MATRIX_SAVE_NORMALIZE,
-    cmap = MATRIX_SAVE_CMAP,
+    cmap=MATRIX_SAVE_CMAP,
 ) -> str:
     """quickly convert a 2D matrix to an SVG image, without matplotlib
 
@@ -232,7 +236,9 @@ def matrix_as_svg(
     m, n = matrix.shape
 
     # Preprocess the matrix into an RGB image
-    matrix_rgb: Matrix2Drgb = matrix_to_image_preprocess(matrix, normalize=normalize, cmap=cmap)
+    matrix_rgb: Matrix2Drgb = matrix_to_image_preprocess(
+        matrix, normalize=normalize, cmap=cmap
+    )
 
     # Convert the RGB image to PNG bytes
     image_data: bytes = matrix2drgb_to_png_bytes(matrix_rgb)
@@ -277,7 +283,7 @@ def save_matrix_wrapper(
     Can handle both argumentless usage and with arguments.
 
     # Parameters:
-    
+
      - `func : AttentionMatrixToMatrixFunc|None`
         Either the function to decorate (in the no-arguments case) or `None` when used with arguments.
      - `fmt : MatrixSaveFormat, keyword-only`
@@ -300,7 +306,7 @@ def save_matrix_wrapper(
     @save_matrix_wrapper
     def identity_matrix(matrix):
         return matrix
-    
+
     @save_matrix_wrapper(normalize=True, fmt="png")
     def scale_matrix(matrix):
         return matrix * 2
@@ -314,7 +320,9 @@ def save_matrix_wrapper(
 
     assert len(args) == 0, "This decorator only supports keyword arguments"
 
-    assert fmt in MatrixSaveFormat.__args__, f"Invalid format {fmt = }, must be one of {MatrixSaveFormat.__args__}"
+    assert (
+        fmt in MatrixSaveFormat.__args__
+    ), f"Invalid format {fmt = }, must be one of {MatrixSaveFormat.__args__}"
 
     def decorator(
         func: Callable[[AttentionMatrix], Matrix2D],
@@ -332,9 +340,11 @@ def save_matrix_wrapper(
                 )
                 image_data: bytes = matrix2drgb_to_png_bytes(processed_matrix_rgb)
                 fig_path.write_bytes(image_data)
-                
+
             else:
-                svg_content: str = matrix_as_svg(processed_matrix, normalize=normalize, cmap=cmap)
+                svg_content: str = matrix_as_svg(
+                    processed_matrix, normalize=normalize, cmap=cmap
+                )
 
                 if fmt == "svgz":
                     with gzip.open(fig_path, "wt") as f:

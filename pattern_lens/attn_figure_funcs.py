@@ -68,10 +68,12 @@ def register_attn_figure_func(
 def raw_svg(attn_matrix: AttentionMatrix) -> Matrix2D:
     return attn_matrix
 
+
 @register_attn_figure_func
 @save_matrix_wrapper(fmt="svgz")
 def raw_svgz(attn_matrix: AttentionMatrix) -> Matrix2D:
     return attn_matrix
+
 
 @register_attn_figure_func
 @save_matrix_wrapper(fmt="png")

@@ -1,6 +1,5 @@
 """writes indexes to the model directory for the frontend to use or for record keeping"""
 
-
 import json
 from pathlib import Path
 import importlib.resources
