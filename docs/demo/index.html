@@ -833,17 +833,19 @@
                     const config = this.modelConfigs[model];
                     if (!config) return;
 
-                    const parsed = this.parseHeadString(
+                    const parsedHeads = this.parseHeadString(
                         this.headSelectionsRaw[model],
                         config.n_layers,
                         config.n_heads
                     );
 
                     if (!parsedHeads) {
-                        console.warn(`Invalid head selection for ${model}: "${rawString}"`);
-                    }
+                        console.warn(
+                            `Invalid head selection for ${model}: "${this.headSelectionsRaw[model]}"`
+                        );
 
-                    this.headSelectionsParsed[model] = parsed;
+                        this.headSelectionsParsed[model] = parsedHeads;
+                    }
                 },
 
 
