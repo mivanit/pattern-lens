@@ -454,8 +454,8 @@
         }
 
         .grid-cell {
-            width: 4px;
-            height: 4px;
+            width: 5px;
+            height: 5px;
             border: none;
         }
 
@@ -1095,19 +1095,17 @@
                 // ##     ## ##     ## ##     ## ##       ##             ##
                 // ##     ## ##     ## ##     ## ##       ##       ##    ##
                 // ##     ##  #######  ########  ######## ########  ######
+                getHeadSelectionCount(model) {
+                    const parsed = this.headSelectionsParsed[model];
+                    if (!parsed) return 0;
+                    return parsed.reduce((acc, layer) =>
+                        acc + layer.reduce((sum, isSelected) => sum + (isSelected ? 1 : 0), 0), 0);
+                },
+                getTotalHeads(model) {
+                    const config = this.modelConfigs[model];
+                    return config ? config.n_layers * config.n_heads : 0;
+                },
                 setupModelTable() {
-                    const getHeadSelectionCount = (model) => {
-                        const parsed = this.headSelectionsParsed[model];
-                        if (!parsed) return 0;
-                        return parsed.reduce((acc, layer) =>
-                            acc + layer.reduce((sum, isSelected) => sum + (isSelected ? 1 : 0), 0), 0);
-                    };
-
-                    const getTotalHeads = (model) => {
-                        const config = this.modelConfigs[model];
-                        return config ? config.n_layers * config.n_heads : 0;
-                    };
-
                     const columnDefs = [
                         {
                             headerName: '',
@@ -1144,7 +1142,7 @@
                         {
                             headerName: 'Selected',
                             valueGetter: (params) => {
-                                return `${getHeadSelectionCount(params.data.model_name)} / ${getTotalHeads(params.data.model_name)}`;
+                                return `${this.getHeadSelectionCount(params.data.model_name)} / ${this.getTotalHeads(params.data.model_name)}`;
                             },
                             width: 100
                         },
@@ -1342,17 +1340,6 @@
                 setupPromptTable() {
                     const columnDefs = [
                         {
-                            headerName: '✅❓',
-                            field: 'selection',
-                            width: 100,
-                            pinned: 'left',
-                            comparator: (valueA, valueB, nodeA, nodeB, isInverted) => {
-                                const selectedA = this.selectedPrompts.includes(nodeA.data.hash);
-                                const selectedB = this.selectedPrompts.includes(nodeB.data.hash);
-                                return selectedA === selectedB ? 0 : (selectedA ? -1 : 1);
-                            },
-                        },
-                        {
                             headerName: 'Prompt Text',
                             field: 'text',
                             sortable: true,
@@ -1439,15 +1426,7 @@
                     // Calculate total images based on parsed head selections
                     let totalImages = 0;
                     for (const model of this.selectedItems.models) {
-                        const config = this.modelConfigs[model];
-                        const headSelection = this.headSelectionsRaw[model] || 'L*H*';
-                        const parsedHeads = this.parseHeadString(headSelection, config.n_layers, config.n_heads);
-                        if (parsedHeads) {
-                            totalImages += parsedHeads.length * this.selectedPrompts.length * this.selectedItems.functions.length;
-                        }
-                        else {
-                            console.warn(`Invalid head selection for ${model}: "${rawString}"`);
-                        }
+                        totalImages += this.getHeadSelectionCount(model) * this.selectedPrompts.length * this.selectedItems.functions.length;
                     }
                     this.totalExpectedImages = totalImages;
 
