@@ -128,7 +128,7 @@ def matplotlib_figure_saver(
 def matrix_to_image_preprocess(
     matrix: Matrix2D,
     normalize: bool = MATRIX_SAVE_NORMALIZE,
-    cmap: str|Colormap = MATRIX_SAVE_CMAP,
+    cmap: str | Colormap = MATRIX_SAVE_CMAP,
 ) -> Matrix2Drgb:
     """preprocess a 2D matrix into a plottable heatmap image
 
@@ -169,7 +169,9 @@ def matrix_to_image_preprocess(
     elif isinstance(cmap, Colormap):
         cmap_ = cmap
     else:
-        raise TypeError(f"Invalid type for {cmap = }, {type(cmap) = }, must be str or Colormap")
+        raise TypeError(
+            f"Invalid type for {cmap = }, {type(cmap) = }, must be str or Colormap"
+        )
 
     # Apply the viridis colormap
     rgb_matrix: Float[np.ndarray, "n m channels=3"] = (  # noqa: F722
@@ -328,8 +330,8 @@ def save_matrix_wrapper(
     assert len(args) == 0, "This decorator only supports keyword arguments"
 
     assert (
-        fmt in MatrixSaveFormat.__args__ # type: ignore[attr-defined]
-    ), f"Invalid format {fmt = }, must be one of {MatrixSaveFormat.__args__}" # type: ignore[attr-defined]
+        fmt in MatrixSaveFormat.__args__  # type: ignore[attr-defined]
+    ), f"Invalid format {fmt = }, must be one of {MatrixSaveFormat.__args__}"  # type: ignore[attr-defined]
 
     def decorator(
         func: Callable[[AttentionMatrix], Matrix2D],
