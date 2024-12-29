@@ -53,7 +53,7 @@
             padding: var(--spacing-md);
             resize: vertical;
             overflow: auto;
-            min-height: 300px;
+            min-height: 500px;
         }
 
         /* Filters Section */
@@ -351,9 +351,9 @@
         }
         
         .model-item {
-            border: 1px solid var(--border-color);
+            /* border: 1px solid var(--border-color); */
             padding: 10px;
-            border-radius: var(--border-radius);
+            /* border-radius: var(--border-radius); */
         }
         
         .model-header {
@@ -369,7 +369,7 @@
         }
         
         .head-input {
-            width: 100%;
+            flex: 1;
             padding: 5px;
             border: 1px solid var(--border-color);
             border-radius: var(--border-radius);
@@ -417,11 +417,6 @@
             border-radius: var(--border-radius);
         }
 
-        /* Prompts section takes full width */
-        .prompt-table {
-            flex-grow: 1;
-            position: relative;
-        }
     </style>
 </head>
 
@@ -435,20 +430,18 @@
             <div class="top-filters">
                 <!-- Functions Filter -->
                 <div class="functions-filter">
-                    <div class="filter-item">
-                        <div class="filter-label">
-                            <input type="checkbox" id="select-all-functions"
-                                :indeterminate.prop="isIndeterminate('functions')"
-                                :checked="isChecked('functions')"
-                                @change="toggleSelectAll('functions', $event)">
-                            <label for="select-all-functions">Functions:</label>
-                            <span class="counter">{{ selectedItems.functions.length }} / {{ items.functions.length }}</span>
-                        </div>
-                        <div class="checkbox-list">
-                            <div v-for="func in items.functions" :key="func" class="checkbox-item">
-                                <input type="checkbox" :id="'func-' + func" :value="func" v-model="selectedItems.functions">
-                                <label :for="'func-' + func">{{ func }}</label>
-                            </div>
+                    <div class="filter-label">
+                        <input type="checkbox" id="select-all-functions"
+                            :indeterminate.prop="isIndeterminate('functions')"
+                            :checked="isChecked('functions')"
+                            @change="toggleSelectAll('functions', $event)">
+                        <label for="select-all-functions">Functions:</label>
+                        <span class="counter">{{ selectedItems.functions.length }} / {{ items.functions.length }}</span>
+                    </div>
+                    <div class="checkbox-list">
+                        <div v-for="func in items.functions" :key="func" class="checkbox-item">
+                            <input type="checkbox" :id="'func-' + func" :value="func" v-model="selectedItems.functions">
+                            <label :for="'func-' + func">{{ func }}</label>
                         </div>
                     </div>
                 </div>
@@ -462,17 +455,17 @@
                                    :value="model" 
                                    v-model="selectedItems.models">
                             <label :for="'model-' + model">{{ model }}</label>
-                            <span class="model-info">
+                            <div class="model-info">
                                 ({{ modelConfigs[model].n_layers }} layers, 
                                 {{ modelConfigs[model].n_heads }} heads)
-                            </span>
+                            </div>
+                            <input type="text"
+                                   class="head-input"
+                                   :class="{ error: !isValidHeadSelection(model) }"
+                                   :disabled="!selectedItems.models.includes(model)"
+                                   v-model="headSelections[model]"
+                                   :placeholder="'e.g., L0H*, L1-3H0, L4H1'">
                         </div>
-                        <input type="text"
-                               class="head-input"
-                               :class="{ error: !isValidHeadSelection(model) }"
-                               :disabled="!selectedItems.models.includes(model)"
-                               v-model="headSelections[model]"
-                               :placeholder="'e.g., L0H*, L1-3H0, L4H1'">
                     </div>
                 </div>
             </div>
