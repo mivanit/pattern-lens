@@ -1,3 +1,8 @@
+"""implements a bunch of types, default values, and templates which are useful for figure functions
+
+notably, you can use the decorators `matplotlib_figure_saver`, `save_matrix_wrapper` to make your functions save figures
+"""
+
 from pathlib import Path
 from typing import Callable, Literal, overload, Union
 import functools

@@ -1,3 +1,5 @@
+"""implements some constants and types"""
+
 import re
 
 import numpy as np
@@ -18,6 +20,7 @@ ATTN_PATTERN_REGEX: re.Pattern = re.compile(r"blocks\.(\d+)\.attn\.hook_pattern"
 SPINNER_KWARGS: dict = dict(
     config=dict(success="✔️ "),
 )
+"default kwargs for `muutils.spinner.Spinner`"
 
 DIVIDER_S1: str = "=" * 70
 "divider string for separating sections"

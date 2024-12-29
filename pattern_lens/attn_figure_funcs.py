@@ -1,3 +1,14 @@
+"""default figure functions
+
+- If you are making a PR, add your new figure function here.
+- if you are using this as a library, then you can see examples here
+
+
+note that for `pattern_lens.figures` to recognize your function, you need to use the `register_attn_figure_func` decorator
+which adds your function to `ATTENTION_MATRIX_FIGURE_FUNCS`
+
+"""
+
 from pattern_lens.consts import AttentionMatrix
 from pattern_lens.figure_util import (
     AttentionMatrixFigureFunc,

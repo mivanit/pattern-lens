@@ -1,3 +1,8 @@
+"""cli for starting the server to show the web ui.
+
+can also run with --rewrite-index to update the index.html file. this is useful for working on the ui.
+"""
+
 from pathlib import Path
 import sys
 import os

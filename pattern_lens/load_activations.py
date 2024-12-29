@@ -1,3 +1,5 @@
+"loading activations from .npz on disk. implements some custom Exception classes"
+
 import base64
 import hashlib
 import json

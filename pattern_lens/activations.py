@@ -1,3 +1,27 @@
+"""computing and saving activations given a model and prompts
+
+
+# Usage:
+
+from the command line:
+
+```bash
+python -m pattern_lens.activations --model <model_name> --prompts <prompts_path> --save-path <save_path> --min-chars <min_chars> --max-chars <max_chars> --n-samples <n_samples>
+```
+
+from a script:
+
+```python
+from pattern_lens.activations import activations_main
+activations_main(
+    model_name="gpt2",
+    save_path="demo/"
+    prompts_path="data/pile_1k.jsonl",
+)
+```
+
+"""
+
 import argparse
 import functools
 import importlib.resources
@@ -5,7 +29,7 @@ import json
 from dataclasses import asdict
 from pathlib import Path
 import re
-from typing import Callable
+from typing import Callable, Literal, overload
 
 import numpy as np
 import torch
@@ -115,7 +139,24 @@ def compute_activations(
     else:
         return activations_path, None
 
-
+@overload
+def get_activations(
+    prompt: dict,
+    model: HookedTransformer|str,
+    save_path: Path = Path(DATA_DIR),
+    allow_disk_cache: bool = True,
+    return_cache: Literal[False] = False,
+) -> tuple[Path, None]:
+    ...
+@overload
+def get_activations(
+    prompt: dict,
+    model: HookedTransformer|str,
+    save_path: Path = Path(DATA_DIR),
+    allow_disk_cache: bool = True,
+    return_cache: Literal[True] = True,
+) -> tuple[Path, ActivationCacheNp]:
+    ...
 def get_activations(
     prompt: dict,
     model: HookedTransformer | str,
@@ -123,6 +164,28 @@ def get_activations(
     allow_disk_cache: bool = True,
     return_cache: bool = True,
 ) -> tuple[Path, ActivationCacheNp | None]:
+    """given a prompt and a model, save or load activations
+    
+    # Parameters:
+     - `prompt : dict`   
+        expected to contain the 'text' key
+     - `model : HookedTransformer | str`   
+        either a `HookedTransformer` or a string model name, to be loaded with `HookedTransformer.from_pretrained`
+     - `save_path : Path`   
+        path to save the activations to (and load from)
+       (defaults to `Path(DATA_DIR)`)
+     - `allow_disk_cache : bool`   
+        whether to allow loading from disk cache
+       (defaults to `True`)
+     - `return_cache : bool`
+        whether to return the cache. if `False`, will return `None` as the second element
+       (defaults to `True`)
+    
+    # Returns:
+     - `tuple[Path, ActivationCacheNp | None]` 
+         the path to the activations and the cache if `return_cache` is `True`
+       
+    """    
     # add hash to prompt
     augment_prompt_with_hash(prompt)
 
@@ -170,6 +233,32 @@ def activations_main(
     no_index_html: bool,
     shuffle: bool = False,
 ) -> None:
+    """main function for computing activations
+    
+    # Parameters:
+     - `model_name : str`   
+        name of a model to load with `HookedTransformer.from_pretrained`
+     - `save_path : str`   
+        path to save the activations to
+     - `prompts_path : str`   
+        path to the prompts file
+     - `raw_prompts : bool`   
+        whether the prompts are raw, not filtered by length. `load_text_data` will be called if `True`, otherwise just load the "text" field from each line in `prompts_path`
+     - `min_chars : int`   
+        minimum number of characters for a prompt
+     - `max_chars : int`   
+        maximum number of characters for a prompt
+     - `force : bool`   
+        whether to overwrite existing files
+     - `n_samples : int`   
+        maximum number of samples to process
+     - `no_index_html : bool`   
+        whether to write an index.html file
+     - `shuffle : bool`   
+        whether to shuffle the prompts
+       (defaults to `False`)
+    """    
+    
     with SpinnerContext(message="loading model", **SPINNER_KWARGS):
         model: HookedTransformer = HookedTransformer.from_pretrained(model_name)
         model.model_name = model_name
