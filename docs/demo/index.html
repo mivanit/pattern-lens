@@ -5,6 +5,17 @@
     <meta charset="UTF-8">
     <!-- <meta name="viewport" content="width=device-width, initial-scale=1.0"> -->
     <title>Attention Pattern Analysis</title>
+
+    <!--
+    #### ##     ## ########   #######  ########  ########  ######
+     ##  ###   ### ##     ## ##     ## ##     ##    ##    ##    ##
+     ##  #### #### ##     ## ##     ## ##     ##    ##    ##
+     ##  ## ### ## ########  ##     ## ########     ##     ######
+     ##  ##     ## ##        ##     ## ##   ##      ##          ##
+     ##  ##     ## ##        ##     ## ##    ##     ##    ##    ##
+    #### ##     ## ##         #######  ##     ##    ##     ######
+    -->
+
     <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/3.2.31/vue.global.min.js"></script>
     <!-- Include lodash library for utility functions -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.21/lodash.min.js"></script>
@@ -14,6 +25,17 @@
     <!-- Include ag-Grid library for prompts table -->
     <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/ag-grid/32.1.0/ag-grid-community.min.js"></script> -->
     <script src="https://cdn.jsdelivr.net/npm/ag-grid-community@32.2.0/dist/ag-grid-community.min.js"></script>
+
+
+    <!--
+     ######   ######   ######
+    ##    ## ##    ## ##    ##
+    ##       ##       ##
+    ##        ######   ######
+    ##             ##       ##
+    ##    ## ##    ## ##    ##
+     ######   ######   ######
+    -->
     <style>
         /* Base Styles */
         :root {
@@ -459,6 +481,15 @@
 </head>
 
 <body>
+    <!--
+    ##     ## ######## ##     ## ##
+    ##     ##    ##    ###   ### ##
+    ##     ##    ##    #### #### ##
+    #########    ##    ## ### ## ##
+    ##     ##    ##    ##     ## ##
+    ##     ##    ##    ##     ## ##
+    ##     ##    ##    ##     ## ########
+    -->
     <!-- Root element for Vue app -->
     <div id="app" class="container">
         <h1>Attention Pattern Analysis</h1>
@@ -494,11 +525,11 @@
                                 {{ modelConfigs[model].n_heads }} heads)
                             </span>
                             <div class="head-grid">
-                                <div v-for="head in modelConfigs[model].n_heads" :key="'head-' + head"
-                                    class="grid-layer">
-                                    <div v-for="layer in modelConfigs[model].n_layers" :key="'layer-' + layer"
-                                        class="grid-cell"
-                                        :class="isHeadSelected(model, layer, head) ? 'grid-cell-selected' : 'grid-cell-empty'">
+                                <div v-for="headIndex in Array.from({ length: modelConfigs[model].n_heads }, (_, i) => i)"
+                                    :key="'head-' + headIndex" class="grid-layer">
+                                    <div v-for="layerIndex in Array.from({ length: modelConfigs[model].n_layers }, (_, i) => i)"
+                                        :key="'layer-' + layerIndex" class="grid-cell"
+                                        :class="isHeadSelected(model, layerIndex, headIndex) ? 'grid-cell-selected' : 'grid-cell-empty'">
                                     </div>
                                 </div>
                             </div>
@@ -584,6 +615,13 @@
 
     <script>
         // Utility functions for file and directory operations
+        //  ######   #######  ##    ##  ######  ########  ######        ## ####  #######
+        // ##    ## ##     ## ###   ## ##    ##    ##    ##    ##      ##   ##  ##     ##
+        // ##       ##     ## ####  ## ##          ##    ##           ##    ##  ##     ##
+        // ##       ##     ## ## ## ##  ######     ##     ######     ##     ##  ##     ##
+        // ##       ##     ## ##  ####       ##    ##          ##   ##      ##  ##     ##
+        // ##    ## ##     ## ##   ### ##    ##    ##    ##    ##  ##       ##  ##     ##
+        //  ######   #######  ##    ##  ######     ##     ######  ##       ####  #######
         const DATA_DIR = '.';
         const URL_PARAM_MAPPING = {
             models: 'selectedItems.models',
@@ -641,6 +679,15 @@
         };
         // Create a new Vue.js application
         const app = Vue.createApp({
+
+            // ########     ###    ########    ###
+            // ##     ##   ## ##      ##      ## ##
+            // ##     ##  ##   ##     ##     ##   ##
+            // ##     ## ##     ##    ##    ##     ##
+            // ##     ## #########    ##    #########
+            // ##     ## ##     ##    ##    ##     ##
+            // ########  ##     ##    ##    ##     ##
+
             data() {
                 return {
                     // prompts
@@ -676,6 +723,15 @@
                 }
             },
             methods: {
+
+                // ##     ## ########    ###    ########   ######
+                // ##     ## ##         ## ##   ##     ## ##    ##
+                // ##     ## ##        ##   ##  ##     ## ##
+                // ######### ######   ##     ## ##     ##  ######
+                // ##     ## ##       ######### ##     ##       ##
+                // ##     ## ##       ##     ## ##     ## ##    ##
+                // ##     ## ######## ##     ## ########   ######
+
                 // Parse head selection string and return a 2D array of booleans
                 parseHeadString(str, maxLayer, maxHead) {
                     try {
@@ -752,6 +808,16 @@
 
                     this.headSelectionsParsed[model] = parsed;
                 },
+
+
+                // ##     ## ########  ##
+                // ##     ## ##     ## ##
+                // ##     ## ##     ## ##
+                // ##     ## ########  ##
+                // ##     ## ##   ##   ##
+                // ##     ## ##    ##  ##
+                //  #######  ##     ## ########
+
                 // Modified URL handling
                 updateURL() {
                     const params = new URLSearchParams();
@@ -792,6 +858,51 @@
                         console.error('Error parsing head selections from URL:', e);
                     }
                 },
+                selectPromptsFromURL() {
+                    if (!this.isGridReady || this.selectedPrompts.length === 0) return;
+
+                    const promptSet = new Set(this.selectedPrompts);
+                    this.gridApi.forEachNode((node) => {
+                        if (promptSet.has(node.data.hash)) {
+                            node.setSelected(true);
+                        }
+                    });
+                },
+                getImageUrl(image) {
+                    return this.getFilterUrl('all', [image.model], [image.promptHash], [image.layer], [image.head], [image.function]);
+                },
+
+                getSinglePropertyFilterUrl(type, value) {
+                    const params = new URLSearchParams(window.location.search);
+                    params.set(type, value); // This preserves other params while updating just this one
+                    return `${window.location.pathname}?${params.toString()}`;
+                },
+
+                getFilterUrl(type, ...values) {
+                    const params = new URLSearchParams(window.location.search);
+
+                    if (type === 'all') {
+                        params.set('models', values[0].join('~'));
+                        params.set('prompts', values[1].join('~'));
+                        params.set('layers', values[2].join('~'));
+                        params.set('heads', values[3].join('~'));
+                        params.set('functions', values[4].join('~'));
+                    } else {
+                        params.set(type, values.flat().join('~'));
+                    }
+
+                    return `${window.location.pathname}?${params.toString()}`;
+                },
+
+                // ##     ## ######## ##       ########  ######## ########
+                // ##     ## ##       ##       ##     ## ##       ##     ##
+                // ##     ## ##       ##       ##     ## ##       ##     ##
+                // ######### ######   ##       ########  ######   ########
+                // ##     ## ##       ##       ##        ##       ##   ##
+                // ##     ## ##       ##       ##        ##       ##    ##
+                // ##     ## ######## ######## ##        ######## ##     ##
+
+
                 isIndeterminate(category) {
                     const items = this.items[category];
                     const selectedItems = this.selectedItems[category];
@@ -805,9 +916,6 @@
                 toggleSelectAll(category, event) {
                     const checked = event.target.checked;
                     this.selectedItems[category] = checked ? [...this.items[category]] : [];
-                },
-                capitalizeLabel(str) {
-                    return str.charAt(0).toUpperCase() + str.slice(1);
                 },
                 async loadData() {
                     try {
@@ -843,6 +951,52 @@
                         }
                     });
                 },
+                async loadFunctions() {
+                    const functions = await fileOps.fetchJsonL(`${DATA_DIR}/functions.jsonl`);
+                    console.log('Functions:', functions);
+                    this.items.functions = functions.map(f => f.name);
+                },
+                onFirstDataRendered(params) {
+                    this.selectPromptsFromURL();
+                },
+                // Handle selection change in ag-Grid
+                onSelectionChanged() {
+                    const selectedNodes = this.gridApi.getSelectedRows();
+                    this.selectedPrompts = selectedNodes.map(node => node.hash);
+                    this.updateURL();
+                },
+                // Update layers and heads based on selected models
+                updateLayersAndHeads() {
+                    // get all layer and head counts
+                    let mdl_n_layers = [];
+                    let mdl_n_heads = [];
+                    for (const model of this.selectedItems.models) {
+                        const config = this.modelConfigs[model];
+                        if (config) {
+                            mdl_n_layers.push(config.n_layers);
+                            mdl_n_heads.push(config.n_heads);
+                        }
+                    }
+                    // get the max layer and head counts, generate lists
+                    this.items.layers = [];
+                    this.items.heads = [];
+
+                    for (let i = 0; i < _.max(mdl_n_layers); i++) {
+                        this.items.layers.push(i.toString());
+                    }
+                    for (let i = 0; i < _.max(mdl_n_heads); i++) {
+                        this.items.heads.push(i.toString());
+                    }
+                },
+
+                // ########  ########   #######  ##     ## ########  ########  ######
+                // ##     ## ##     ## ##     ## ###   ### ##     ##    ##    ##    ##
+                // ##     ## ##     ## ##     ## #### #### ##     ##    ##    ##
+                // ########  ########  ##     ## ## ### ## ########     ##     ######
+                // ##        ##   ##   ##     ## ##     ## ##           ##          ##
+                // ##        ##    ##  ##     ## ##     ## ##           ##    ##    ##
+                // ##        ##     ##  #######  ##     ## ##           ##     ######
+
                 async loadAllPrompts() {
                     this.loading = true;
                     console.log('Loading prompts...');
@@ -885,11 +1039,6 @@
                     }
 
                     this.loading = false;
-                },
-                async loadFunctions() {
-                    const functions = await fileOps.fetchJsonL(`${DATA_DIR}/functions.jsonl`);
-                    console.log('Functions:', functions);
-                    this.items.functions = functions.map(f => f.name);
                 },
                 // Initialize the ag-Grid table
                 setupPromptTable() {
@@ -974,73 +1123,15 @@
                     const gridDiv = document.querySelector('#promptGrid');
                     this.gridApi = agGrid.createGrid(gridDiv, this.gridOptions);
                 },
-                onFirstDataRendered(params) {
-                    this.selectPromptsFromURL();
-                },
-                selectPromptsFromURL() {
-                    if (!this.isGridReady || this.selectedPrompts.length === 0) return;
 
-                    const promptSet = new Set(this.selectedPrompts);
-                    this.gridApi.forEachNode((node) => {
-                        if (promptSet.has(node.data.hash)) {
-                            node.setSelected(true);
-                        }
-                    });
-                },
-                getImageUrl(image) {
-                    return this.getFilterUrl('all', [image.model], [image.promptHash], [image.layer], [image.head], [image.function]);
-                },
+                // ########  ####  ######  ########  ##          ###    ##    ##
+                // ##     ##  ##  ##    ## ##     ## ##         ## ##    ##  ##
+                // ##     ##  ##  ##       ##     ## ##        ##   ##    ####
+                // ##     ##  ##   ######  ########  ##       ##     ##    ##
+                // ##     ##  ##        ## ##        ##       #########    ##
+                // ##     ##  ##  ##    ## ##        ##       ##     ##    ##
+                // ########  ####  ######  ##        ######## ##     ##    ##
 
-                getSinglePropertyFilterUrl(type, value) {
-                    const params = new URLSearchParams(window.location.search);
-                    params.set(type, value); // This preserves other params while updating just this one
-                    return `${window.location.pathname}?${params.toString()}`;
-                },
-
-                getFilterUrl(type, ...values) {
-                    const params = new URLSearchParams(window.location.search);
-
-                    if (type === 'all') {
-                        params.set('models', values[0].join('~'));
-                        params.set('prompts', values[1].join('~'));
-                        params.set('layers', values[2].join('~'));
-                        params.set('heads', values[3].join('~'));
-                        params.set('functions', values[4].join('~'));
-                    } else {
-                        params.set(type, values.flat().join('~'));
-                    }
-
-                    return `${window.location.pathname}?${params.toString()}`;
-                },
-                // Handle selection change in ag-Grid
-                onSelectionChanged() {
-                    const selectedNodes = this.gridApi.getSelectedRows();
-                    this.selectedPrompts = selectedNodes.map(node => node.hash);
-                    this.updateURL();
-                },
-                // Update layers and heads based on selected models
-                updateLayersAndHeads() {
-                    // get all layer and head counts
-                    let mdl_n_layers = [];
-                    let mdl_n_heads = [];
-                    for (const model of this.selectedItems.models) {
-                        const config = this.modelConfigs[model];
-                        if (config) {
-                            mdl_n_layers.push(config.n_layers);
-                            mdl_n_heads.push(config.n_heads);
-                        }
-                    }
-                    // get the max layer and head counts, generate lists
-                    this.items.layers = [];
-                    this.items.heads = [];
-
-                    for (let i = 0; i < _.max(mdl_n_layers); i++) {
-                        this.items.layers.push(i.toString());
-                    }
-                    for (let i = 0; i < _.max(mdl_n_heads); i++) {
-                        this.items.heads.push(i.toString());
-                    }
-                },
                 // Display images based on selected criteria
                 async displayImages() {
                     this.loading = true;
@@ -1118,6 +1209,15 @@
                     this.loading = false;
                 },
             },
+
+            //  #######  ######## ##     ## ######## ########
+            // ##     ##    ##    ##     ## ##       ##     ##
+            // ##     ##    ##    ##     ## ##       ##     ##
+            // ##     ##    ##    ######### ######   ########
+            // ##     ##    ##    ##     ## ##       ##   ##
+            // ##     ##    ##    ##     ## ##       ##    ##
+            //  #######     ##    ##     ## ######## ##     ##
+
             computed: {
                 uniqueDatasets() {
                     return [...new Set(this.prompts.map(prompt => prompt.meta.pile_set_name).filter(Boolean))];
