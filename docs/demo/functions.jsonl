@@ -1,3 +1,3 @@
-{"name": "raw_png"}
-{"name": "raw_svg"}
-{"name": "raw_svgz"}
+{"name": "raw_png", "doc": null, "figure_save_fmt": "png", "source": "F:\\projects\\pattern-lens\\pattern_lens\\figure_util.py", "code": "@register_attn_figure_func\n@save_matrix_wrapper(fmt=\"png\")\ndef raw_png(attn_matrix: AttentionMatrix) -> Matrix2D:\n    return attn_matrix\n"}
+{"name": "raw_svg", "doc": null, "figure_save_fmt": "svg", "source": "F:\\projects\\pattern-lens\\pattern_lens\\figure_util.py", "code": "@register_attn_figure_func\n@save_matrix_wrapper(fmt=\"svg\")\ndef raw_svg(attn_matrix: AttentionMatrix) -> Matrix2D:\n    return attn_matrix\n"}
+{"name": "raw_svgz", "doc": null, "figure_save_fmt": "svgz", "source": "F:\\projects\\pattern-lens\\pattern_lens\\figure_util.py", "code": "@register_attn_figure_func\n@save_matrix_wrapper(fmt=\"svgz\")\ndef raw_svgz(attn_matrix: AttentionMatrix) -> Matrix2D:\n    return attn_matrix\n"}

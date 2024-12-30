@@ -406,6 +406,63 @@
             color: var(--text-muted);
             margin-left: auto;
         }
+
+        /* Remove or comment out the overflow here */
+        .filters,
+        .functions-filter {
+            width: 180px;
+            display: flex;
+            flex-direction: column;
+            /* overflow: hidden; */
+            /* or set overflow: visible; if needed */
+        }
+
+        .checkbox-list {
+            border: 1px solid var(--border);
+            padding: var(--space-xs);
+            flex: 1;
+            /* keep vertical scrolling, but allow tooltips to show on hover */
+            overflow-y: auto;
+            overflow-x: visible;
+        }
+
+        /* Give each checkbox item a positioning context for the tooltip */
+        .checkbox-item {
+            position: relative;
+            display: flex;
+            align-items: center;
+            margin-bottom: 1px;
+            line-height: 1;
+        }
+
+        /* For the tooltip parent */
+        .function-info {
+            position: relative;
+            cursor: help;
+            display: inline-block;
+            margin-left: 0.3em;
+        }
+
+        /* The hidden tooltip content */
+        .function-tooltip {
+            display: none;
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: #eee;
+            border: 1px solid #ccc;
+            padding: 8px;
+            width: 250px;
+            z-index: 1000;
+            border-radius: 4px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Show the tooltip on hover */
+        .function-info:hover .function-tooltip {
+            display: block;
+        }
     </style>
 </head>
 
@@ -433,12 +490,23 @@
                             :indeterminate.prop="isIndeterminate('functions')" :checked="isChecked('functions')"
                             @change="toggleSelectAll('functions', $event)">
                         <label for="select-all-functions">Functions:</label>
-                        <span class="counter">{{ selectedItems.functions.length }} / {{ items.functions.length }}</span>
+                        <span class="counter">{{ filters.selected.functions.length }} / {{ filters.available.functions.length }}</span>
                     </div>
                     <div class="checkbox-list">
-                        <div v-for="func in items.functions" :key="func" class="checkbox-item">
-                            <input type="checkbox" :id="'func-' + func" :value="func" v-model="selectedItems.functions">
-                            <label :for="'func-' + func">{{ func }}</label>
+                        <div v-for="(func, name) in filters.available.functions" :key="name" class="checkbox-item">
+                            <input type="checkbox" :id="'func-' + name" :value="name" v-model="filters.selected.functions">
+                            <label :for="'func-' + name" @contextmenu.prevent="openMetadata(func)">
+                                <span class="function-name">{{ name }}</span>
+                                <span class="function-info">
+                                    ℹ️
+                                    <div class="function-tooltip">
+                                        <div v-if="func.doc"><strong>Description:</strong> {{ func.doc }}</div>
+                                        <div v-if="func.figure_save_fmt"><strong>Format:</strong> {{
+                                            func.figure_save_fmt }}</div>
+                                        <div v-if="func.source"><strong>Source:</strong> {{ func.source }}</div>
+                                    </div>
+                                </span>
+                            </label>
                         </div>
                     </div>
                 </div>
@@ -453,7 +521,7 @@
             <div class="prompt-table">
                 <div class="prompts-info">
                     <div class="prompt-counter">
-                        Selected Prompts: {{ selectedPrompts.length }}
+                        Selected Prompts: {{ prompts.selected.length }}
                     </div>
                     <div class="dataset-list-container">
                         <div class="dataset-list">
@@ -532,9 +600,9 @@
         //  ######   #######  ##    ##  ######     ##     ######  ##       ####  #######
         const DATA_DIR = '.';
         const URL_PARAM_MAPPING = {
-            models: 'selectedItems.models',
-            functions: 'selectedItems.functions',
-            prompts: 'selectedPrompts',
+            models: 'filters.selected.models',
+            functions: 'filters.selected.functions',
+            prompts: 'prompts.selected',
         };
         const FIGURE_FORMATS = ['svg', 'svgz', 'png'];
         const fileOps = {
@@ -598,38 +666,50 @@
 
             data() {
                 return {
-                    // prompts
-                    allPrompts: {}, // hash -> prompt
-                    prompts: [], // for the current model
-                    selectedPrompts: [], // selected from table
-                    gridApi: null,
-                    isGridReady: false,
-                    // images
-                    images: [],
-                    totalExpectedImages: 0,
-                    loading: false,
-                    imagesRequested: false,
-                    imagesUpToDate: false,
-                    imagesPerRow: 4,
-                    // filters
-                    modelConfigs: {},
-                    items: {
-                        models: [],
-                        functions: [],
-                        layers: [],
-                        heads: [],
+                    prompts: {
+                        all: {},        // hash -> prompt mapping
+                        visible: [],    // filtered prompts for current models
+                        selected: [],   // selected from table
+                        grid: {
+                            api: null,
+                            isReady: false
+                        }
                     },
-                    selectedItems: {
-                        models: [],
-                        functions: [],
-                        layers: [],
-                        heads: [],
+                    images: {
+                        visible: [],
+                        expected: 0,
+                        loading: false,
+                        requested: false,
+                        upToDate: false,
+                        perRow: 4
                     },
-                    // head selection
-                    headSelectionsRaw: {}, // model -> string mapping
-                    headSelectionsParsed: {}, // model -> boolean[][] mapping for efficient lookup
-                }
+                    models: {
+                        configs: {},    // model -> config mapping
+                        grid: {
+                            api: null
+                        }
+                    },
+                    filters: {
+                        available: {    // all available options
+                            models: [],
+                            functions: [],
+                            layers: [],
+                            heads: []
+                        },
+                        selected: {     // currently selected options
+                            models: [],
+                            functions: [],
+                            layers: [],
+                            heads: []
+                        }
+                    },
+                    heads: {
+                        selections: {}, // model -> selection string mapping
+                        parsed: {}      // model -> boolean[][] mapping (moved to computed)
+                    }
+                };
             },
+
             methods: {
 
                 // ##     ## ########    ###    ########   ######
@@ -725,31 +805,6 @@
                 isValidHeadSelection(model) {
                     return this.headSelectionsParsed[model] !== null;
                 },
-
-                updateHeadSelectionsParsed(model) {
-                    const config = this.modelConfigs[model];
-                    if (!config) {
-                        console.warn(`No config found for model: ${model}`);
-                        this.headSelectionsParsed[model] = null;
-                        return;
-                    }
-
-                    const parsedHeads = this.parseHeadString(
-                        this.headSelectionsRaw[model] || 'L*H*',
-                        config.n_layers,
-                        config.n_heads
-                    );
-
-                    if (!parsedHeads) {
-                        console.warn(
-                            `Invalid head selection for ${model}: "${this.headSelectionsRaw[model]}"`
-                        );
-                    }
-
-                    this.headSelectionsParsed[model] = parsedHeads;
-                },
-
-
                 // ##     ## ########  ##
                 // ##     ## ##     ## ##
                 // ##     ## ##     ## ##
@@ -762,16 +817,16 @@
                 updateURL() {
                     const params = new URLSearchParams();
 
-                    if (this.selectedItems.models.length > 0) {
-                        params.set('models', this.selectedItems.models.join('~'));
+                    if (this.filters.selected.models.length > 0) {
+                        params.set('models', this.filters.selected.models.join('~'));
                         params.set('headSelections', JSON.stringify(this.headSelectionsRaw));
                     }
-                    if (this.selectedItems.functions.length > 0) {
-                        params.set('functions', this.selectedItems.functions.join('~'));
+                    if (this.filters.selected.functions.length > 0) {
+                        params.set('functions', this.filters.selected.functions.join('~'));
                     }
 
-                    if (this.selectedPrompts.length > 0) {
-                        params.set('prompts', this.selectedPrompts.join('~'));
+                    if (this.prompts.selected.length > 0) {
+                        params.set('prompts', this.prompts.selected.join('~'));
                     }
 
                     const newURL = `${window.location.pathname}?${params.toString()}`;
@@ -781,28 +836,25 @@
                 readURL() {
                     const params = new URLSearchParams(window.location.search);
 
-                    this.selectedItems.models = params.get('models')?.split('~') || [];
-                    this.selectedItems.functions = params.get('functions')?.split('~') || [];
-                    this.selectedPrompts = params.get('prompts')?.split('~') || [];
+                    this.filters.selected.models = params.get('models')?.split('~') || [];
+                    this.filters.selected.functions = params.get('functions')?.split('~') || [];
+                    this.prompts.selected = params.get('prompts')?.split('~') || [];
 
                     try {
                         const headSelections = params.get('headSelections');
                         if (headSelections) {
                             const parsed = JSON.parse(headSelections);
                             this.headSelectionsRaw = parsed;
-                            Object.keys(parsed).forEach(model => {
-                                this.updateHeadSelectionsParsed(model);
-                            });
                         }
                     } catch (e) {
                         console.error('Error parsing head selections from URL:', e);
                     }
                 },
                 selectPromptsFromURL() {
-                    if (!this.isGridReady || this.selectedPrompts.length === 0) return;
+                    if (!this.isGridReady || this.prompts.selected.length === 0) return;
 
-                    const promptSet = new Set(this.selectedPrompts);
-                    this.gridApi.forEachNode((node) => {
+                    const promptSet = new Set(this.prompts.selected);
+                    this.prompts.grid.api.forEachNode((node) => {
                         if (promptSet.has(node.data.hash)) {
                             node.setSelected(true);
                         }
@@ -844,18 +896,18 @@
 
 
                 isIndeterminate(category) {
-                    const items = this.items[category];
-                    const selectedItems = this.selectedItems[category];
+                    const items = this.filters.available[category];
+                    const selectedItems = this.filters.selected[category];
                     return selectedItems.length > 0 && selectedItems.length < items.length;
                 },
                 isChecked(category) {
-                    const items = this.items[category];
-                    const selectedItems = this.selectedItems[category];
+                    const items = this.filters.available[category];
+                    const selectedItems = this.filters.selected[category];
                     return selectedItems.length === items.length && items.length > 0;
                 },
                 toggleSelectAll(category, event) {
                     const checked = event.target.checked;
-                    this.selectedItems[category] = checked ? [...this.items[category]] : [];
+                    this.filters.selected[category] = checked ? [...this.filters.available[category]] : [];
                 },
                 async loadData() {
                     try {
@@ -879,30 +931,36 @@
                     for (const model of models) {
                         this.modelConfigs[model["model_name"]] = model;
                     }
-                    this.items.models = Object.keys(this.modelConfigs);
-                    console.log('Models:', this.items.models);
+                    this.filters.available.models = Object.keys(this.modelConfigs);
+                    console.log('Models:', this.filters.available.models);
                     this.loading = false;
 
                     // After loading models, initialize head selections
-                    this.selectedItems.models.forEach(model => {
+                    this.filters.selected.models.forEach(model => {
                         if (!this.headSelectionsRaw[model]) {
                             this.headSelectionsRaw[model] = 'L*H*';
-                            this.updateHeadSelectionsParsed(model);
                         }
                     });
                 },
                 async loadFunctions() {
                     const functions = await fileOps.fetchJsonL(`${DATA_DIR}/functions.jsonl`);
                     console.log('Functions:', functions);
-                    this.items.functions = functions.map(f => f.name);
+                    this.filters.available.functions = functions.reduce(
+                        (acc, item) => {
+                            acc[item.name] = item;
+                            return acc;
+                        },
+                        {},
+                    );
+                    console.log('this.filters.available.functions:', this.filters.available.functions);
                 },
                 onFirstDataRendered(params) {
                     this.selectPromptsFromURL();
                 },
                 // Handle selection change in ag-Grid
                 onSelectionChanged() {
-                    const selectedNodes = this.gridApi.getSelectedRows();
-                    this.selectedPrompts = selectedNodes.map(node => node.hash);
+                    const selectedNodes = this.prompts.grid.api.getSelectedRows();
+                    this.prompts.selected = selectedNodes.map(node => node.hash);
                     this.updateURL();
                 },
                 // Update layers and heads based on selected models
@@ -910,7 +968,7 @@
                     // get all layer and head counts
                     let mdl_n_layers = [];
                     let mdl_n_heads = [];
-                    for (const model of this.selectedItems.models) {
+                    for (const model of this.filters.selected.models) {
                         const config = this.modelConfigs[model];
                         if (config) {
                             mdl_n_layers.push(config.n_layers);
@@ -918,14 +976,14 @@
                         }
                     }
                     // get the max layer and head counts, generate lists
-                    this.items.layers = [];
-                    this.items.heads = [];
+                    this.filters.available.layers = [];
+                    this.filters.available.heads = [];
 
                     for (let i = 0; i < _.max(mdl_n_layers); i++) {
-                        this.items.layers.push(i.toString());
+                        this.filters.available.layers.push(i.toString());
                     }
                     for (let i = 0; i < _.max(mdl_n_heads); i++) {
-                        this.items.heads.push(i.toString());
+                        this.filters.available.heads.push(i.toString());
                     }
                 },
 
@@ -1033,7 +1091,6 @@
 
                                 // Update the head selection in Vue's data
                                 params.context.componentParent.headSelectionsRaw[model] = newValue;
-                                params.context.componentParent.updateHeadSelectionsParsed(model);
 
                                 // Update the cell class for validation styling
                                 const isValid = params.context.componentParent.isValidHeadSelection(model);
@@ -1100,14 +1157,14 @@
                         },
                         onSelectionChanged: (event) => {
                             const selectedRows = event.api.getSelectedRows();
-                            this.selectedItems.models = selectedRows.map(row => row.model_name);
+                            this.filters.selected.models = selectedRows.map(row => row.model_name);
                         },
                         onGridReady: (params) => {
                             this.modelGridApi = params.api;
                             // Select models from URL
-                            if (this.selectedItems.models.length > 0) {
+                            if (this.filters.selected.models.length > 0) {
                                 params.api.forEachNode(node => {
-                                    if (this.selectedItems.models.includes(node.data.model_name)) {
+                                    if (this.filters.selected.models.includes(node.data.model_name)) {
                                         node.setSelected(true);
                                     }
                                 });
@@ -1137,42 +1194,42 @@
                 async loadAllPrompts() {
                     this.loading = true;
                     console.log('Loading prompts...');
-                    this.allPrompts = {};
+                    this.prompts.all = {};
 
-                    for (const model of this.items.models) {
+                    for (const model of this.filters.available.models) {
                         try {
                             const modelPrompts = await fileOps.fetchJsonL(`${DATA_DIR}/${model}/prompts.jsonl`);
                             for (const prompt of modelPrompts) {
-                                if (prompt.hash in this.allPrompts) {
-                                    this.allPrompts[prompt.hash].models.push(model);
+                                if (prompt.hash in this.prompts.all) {
+                                    this.prompts.all[prompt.hash].models.push(model);
                                 } else {
-                                    this.allPrompts[prompt.hash] = { ...prompt, models: [model] };
+                                    this.prompts.all[prompt.hash] = { ...prompt, models: [model] };
                                 }
                             }
                         } catch (error) {
                             console.error(`Error loading prompts for model ${model}:`, error);
                         }
                     }
-                    console.log('loaded number of prompts:', Object.keys(this.allPrompts).length);
+                    console.log('loaded number of prompts:', Object.keys(this.prompts.all).length);
                     this.loading = false;
                 },
                 updatePrompts() {
                     this.loading = true;
-                    console.log('Selected models:', this.selectedItems.models);
+                    console.log('Selected models:', this.filters.selected.models);
 
                     // Use all models if none are selected
-                    const selectedModelsTemp = this.selectedItems.models.length > 0 ? this.selectedItems.models : this.items.models;
+                    const selectedModelsTemp = this.filters.selected.models.length > 0 ? this.filters.selected.models : this.filters.available.models;
 
                     // Filter prompts based on selected models
-                    this.prompts = Object.values(this.allPrompts).filter(prompt =>
+                    this.prompts.visible = Object.values(this.prompts.all).filter(prompt =>
                         prompt.models.some(model => selectedModelsTemp.includes(model))
                     );
 
-                    console.log('Prompts after filtering:', this.prompts.length);
+                    console.log('Prompts after filtering:', this.prompts.visible.length);
 
                     // Update the grid data
-                    if (this.gridApi) {
-                        this.gridApi.setGridOption('rowData', this.prompts);
+                    if (this.prompts.grid.api) {
+                        this.prompts.grid.api.setGridOption('rowData', this.prompts.visible);
                     }
 
                     this.loading = false;
@@ -1218,7 +1275,7 @@
                     // Grid options
                     this.gridOptions = {
                         columnDefs: columnDefs,
-                        rowData: this.prompts,
+                        rowData: this.prompts.visible,
                         pagination: true,
                         enableCellTextSelection: true,
                         paginationPageSize: 20,
@@ -1240,14 +1297,14 @@
                         onSelectionChanged: this.onSelectionChanged.bind(this),
                         onFirstDataRendered: this.onFirstDataRendered.bind(this),
                         onGridReady: (params) => {
-                            this.gridApi = params.api;
+                            this.prompts.grid.api = params.api;
                             this.isGridReady = true;
                             this.selectPromptsFromURL();
                         },
                     };
 
                     const gridDiv = document.querySelector('#promptGrid');
-                    this.gridApi = agGrid.createGrid(gridDiv, this.gridOptions);
+                    this.prompts.grid.api = agGrid.createGrid(gridDiv, this.gridOptions);
                 },
 
                 // ########  ####  ######  ########  ##          ###    ##    ##
@@ -1266,13 +1323,13 @@
 
                     // Calculate total images based on parsed head selections
                     let totalImages = 0;
-                    for (const model of this.selectedItems.models) {
-                        totalImages += this.getHeadSelectionCount(model) * this.selectedPrompts.length * this.selectedItems.functions.length;
+                    for (const model of this.filters.selected.models) {
+                        totalImages += this.getHeadSelectionCount(model) * this.prompts.selected.length * this.filters.selected.functions.length;
                     }
                     this.totalExpectedImages = totalImages;
 
                     // Load images based on parsed head selections
-                    for (const model of this.selectedItems.models) {
+                    for (const model of this.filters.selected.models) {
                         const config = this.modelConfigs[model];
                         const rawString = this.headSelectionsRaw[model] || 'L*H*';
                         const parsedHeads = this.parseHeadString(rawString, config.n_layers, config.n_heads);
@@ -1288,10 +1345,16 @@
                                     continue;
                                 }
                                 // Now for each selected prompt and function:
-                                for (const promptHash of this.selectedPrompts) {
-                                    for (const funcName of this.selectedItems.functions) {
+                                for (const promptHash of this.prompts.selected) {
+                                    for (const funcName of this.filters.selected.functions) {
                                         const basePath = `${DATA_DIR}/${model}/prompts/${promptHash}/L${layer}/H${head}`;
-                                        const figure_format = await fileOps.figureExists(`${basePath}/${funcName}`);
+
+                                        // get the figure format from metadata
+                                        let figure_format = this.filters.available.functions[funcName].figure_format;
+                                        if (!figure_format) {
+                                            // as a fallback, look for all valid formats
+                                            figure_format = await fileOps.figureExists(`${basePath}/${funcName}`);
+                                        }
 
                                         if (figure_format) {
                                             // Create figure entry
@@ -1330,67 +1393,149 @@
                     this.imagesUpToDate = true;
                     this.loading = false;
                 },
+                updateVisiblePrompts() {
+                    this.images.loading = true;
+                    console.log('Selected models:', this.filters.selected.models);
+
+                    // Use all models if none are selected
+                    const selectedModelsTemp = this.filters.selected.models.length > 0
+                        ? this.filters.selected.models
+                        : this.filters.available.models;
+
+                    // Filter prompts based on selected models
+                    this.prompts.visible = Object.values(this.prompts.all).filter(prompt =>
+                        prompt.models.some(model => selectedModelsTemp.includes(model))
+                    );
+
+                    console.log('Prompts after filtering:', this.prompts.visible.length);
+
+                    // Update the grid data
+                    if (this.prompts.grid.api) {
+                        this.prompts.grid.api.setGridOption('rowData', this.prompts.visible);
+                    }
+
+                    this.images.loading = false;
+                },
+                openMetadata(func) {
+                    const newWindow = window.open('', '_blank');
+                    let content = `<div style="font-family: sans-serif; line-height:1.4;">`;
+                    if (func.doc) {
+                        content += `<p><strong>Description:</strong> ${func.doc}</p>`;
+                    }
+                    if (func.figure_save_fmt) {
+                        content += `<p><strong>Format:</strong> ${func.figure_save_fmt}</p>`;
+                    }
+                    if (func.source) {
+                        content += `<p><strong>Source:</strong> ${func.source}</p>`;
+                    }
+                    content += `</div>`;
+                    newWindow.document.write(content);
+                    newWindow.document.close();
+                    newWindow.document.title = `Metadata for ${func.name}`;
+                },
             },
 
-            //  #######  ######## ##     ## ######## ########
-            // ##     ##    ##    ##     ## ##       ##     ##
-            // ##     ##    ##    ##     ## ##       ##     ##
-            // ##     ##    ##    ######### ######   ########
-            // ##     ##    ##    ##     ## ##       ##   ##
-            // ##     ##    ##    ##     ## ##       ##    ##
-            //  #######     ##    ##     ## ######## ##     ##
-
+            // <!--
+            //  ######   #######  ##     ## ########  ##     ## ######## ######## ########
+            // ##    ## ##     ## ###   ### ##     ## ##     ##    ##    ##       ##     ##
+            // ##       ##     ## #### #### ##     ## ##     ##    ##    ##       ##     ##
+            // ##       ##     ## ## ### ## ########  ##     ##    ##    ######   ##     ##
+            // ##       ##     ## ##     ## ##        ##     ##    ##    ##       ##     ##
+            // ##    ## ##     ## ##     ## ##        ##     ##    ##    ##       ##     ##
+            //  ######   #######  ##     ## ##         #######     ##    ######## ########
+            // -->
             computed: {
                 uniqueDatasets() {
-                    return [...new Set(this.prompts.map(prompt => prompt.meta.pile_set_name).filter(Boolean))];
+                    return [...new Set(this.prompts.visible
+                        .map(prompt => prompt.meta.pile_set_name)
+                        .filter(Boolean))];
+                },
+                headSelectionsParsed() {
+                    // model -> boolean[][] mapping for efficient lookup
+                    let parsed = {};
+
+                    for (const model in this.heads.selections) {
+                        const config = this.models.configs[model];
+                        if (!config) {
+                            console.warn(`No config found for model: ${model}`);
+                            parsed[model] = null;
+                            continue;
+                        }
+
+                        const parsedHeads = this.parseHeadString(
+                            this.heads.selections[model] || 'L*H*',
+                            config.n_layers,
+                            config.n_heads
+                        );
+
+                        if (!parsedHeads) {
+                            console.warn(
+                                `Invalid head selection for ${model}: "${this.heads.selections[model]}"`
+                            );
+                        }
+
+                        parsed[model] = parsedHeads;
+                    }
+
+                    return parsed;
                 }
             },
+
+            // <!--
+            // ##      ##    ###    ########  ######  ##     ##
+            // ##  ##  ##   ## ##      ##    ##    ## ##     ##
+            // ##  ##  ##  ##   ##     ##    ##       ##     ##
+            // ##  ##  ## ##     ##    ##    ##       #########
+            // ##  ##  ## #########    ##    ##       ##     ##
+            // ##  ##  ## ##     ##    ##    ##    ## ##     ##
+            //  ###  ###  ##     ##    ##     ######  ##     ##
+            // -->
             // Watch for changes in selected models to load prompts and update layers and heads
             watch: {
-                'selectedItems': {
+                'filters.selected': {
                     deep: true,
                     handler() {
-                        this.imagesUpToDate = false;
+                        this.images.upToDate = false;
                         this.updateURL();
                     }
                 },
-                selectedPrompts() {
-                    this.imagesUpToDate = false;
+                'prompts.selected': {
+                    handler() {
+                        this.images.upToDate = false;
+                    }
                 },
-                headSelectionsRaw: {
+                'heads.selections': {
                     deep: true,
                     handler(newValue) {
                         Object.keys(newValue).forEach(model => {
-                            if (!this.modelConfigs[model]) {
+                            if (!this.models.configs[model]) {
                                 console.warn(`Attempting to update head selections for unknown model: ${model}`);
                                 return;
                             }
-                            this.updateHeadSelectionsParsed(model);
                         });
-                        this.imagesUpToDate = false;
+                        this.images.upToDate = false;
                         this.updateURL();
-                        this.refreshHeadGrids(); // Add this line to refresh the grids
+                        this.refreshHeadGrids();
                     }
                 },
-                'selectedItems.models': {
+                'filters.selected.models': {
                     deep: true,
                     handler(newModels) {
-                        // For newly selected models, make sure we have a default raw head selection string:
+                        // Initialize head selections for new models
                         newModels.forEach(model => {
-                            if (!this.headSelectionsRaw[model]) {
-                                this.headSelectionsRaw[model] = 'L*H*';
-                                this.updateHeadSelectionsParsed(model);
+                            if (!this.heads.selections[model]) {
+                                this.heads.selections[model] = 'L*H*';
                             }
                         });
-                        // Update prompts to reflect newly selected models
-                        this.updatePrompts();
-                        // Ensure the URL is up to date
+                        this.updateVisiblePrompts();
                         this.updateURL();
                     }
                 },
             },
+
             // Lifecycle hook when component is mounted
             async mounted() {
+                console.log('Mounted app:', this);
                 this.readURL(); // Read filters from URL first
                 await this.loadData(); // Load models, prompts, and functions
                 this.setupModelTable(); // Initialize the model grid
