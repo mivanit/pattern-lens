@@ -94,26 +94,11 @@
             /* Changed from auto to hidden */
         }
 
-        .top-section {
-            display: flex;
-            min-height: 200px;
-            /* Minimum height for top section */
-            max-height: 80%;
-            /* Maximum height relative to parent */
-            flex-shrink: 0;
-            /* Prevent shrinking */
-            position: relative;
-            /* For resize handle */
-            border-bottom: 2px solid var(--border);
-            resize: vertical;
-            overflow: auto;
-        }
-
         .functions-filter {
             width: 200px;
-            min-width: 150px;
+            min-width: 100px;
             /* Minimum width */
-            max-width: 400px;
+            max-width: 500px;
             /* Maximum width */
             display: flex;
             flex-direction: column;
@@ -126,6 +111,13 @@
             display: flex;
             gap: var(--space-md);
             height: 350px;
+            border-bottom: 1px solid var(--border);
+            min-height: 100px;
+            max-height: 80vh;
+            padding: var(--space-md);
+            resize: vertical;
+            position: relative;
+            overflow: auto;
         }
 
         /* Filter Components */
