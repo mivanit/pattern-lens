@@ -542,15 +542,15 @@
         <div class="image-controls-container">
             <div class="image-controls">
                 <div class="image-controls-display">
-                    <button class="btn" :class="{ 'btn-primary': !imagesUpToDate, 'btn-secondary': imagesUpToDate }"
+                    <button class="btn" :class="{ 'btn-primary': !images.upToDate, 'btn-secondary': images.upToDate }"
                         @click="displayImages">
-                        {{ imagesUpToDate ? 'Images Up to Date' : 'Display Images' }}
+                        {{ images.upToDate ? 'Images Up to Date' : 'Display Images' }}
                     </button>
                     <div class="progress-wrapper">
-                        <span class="progress-status">{{ images.length }} / {{ totalExpectedImages }} images</span>
+                        <span class="progress-status">{{ images.length }} / {{ images.expected }} images</span>
                         <div class="progress-bar" v-if="loading || images.length > 0">
                             <div class="progress-bar-fill" :class="{ 'loading': loading, 'complete': !loading }"
-                                :style="{ width: `${(images.length / totalExpectedImages) * 100}%` }">
+                                :style="{ width: `${(images.length / images.expected) * 100}%` }">
                             </div>
                         </div>
                     </div>
@@ -585,7 +585,7 @@
         </div>
 
         <!-- no images found -->
-        <div v-else-if="imagesRequested" class="error">No images found for the selected criteria.</div>
+        <div v-else-if="images.requested" class="error">No images found for the selected criteria.</div>
 
     </div>
 
@@ -1007,14 +1007,6 @@
                 setupModelTable() {
                     const columnDefs = [
                         {
-                            headerName: '',
-                            field: 'selected',
-                            width: 50,
-                            checkboxSelection: true,
-                            headerCheckboxSelection: true,
-                            pinned: 'left'
-                        },
-                        {
                             headerName: 'Model',
                             field: 'model_name',
                             sort: 'asc',
@@ -1133,8 +1125,12 @@
                     const gridOptions = {
                         columnDefs: columnDefs,
                         rowData: Object.values(this.modelConfigs),
-                        rowSelection: 'multiple',
-                        suppressRowClickSelection: true,
+                        selection: {
+                            checkboxes: true,
+                            headerCheckbox: true,
+                            mode: 'multiple',
+                            enableClickSelection: false,
+                        },
                         defaultColDef: {
                             sortable: true,
                             filter: true,
@@ -1318,7 +1314,7 @@
                 // Display images based on selected criteria
                 async displayImages() {
                     this.loading = true;
-                    this.imagesRequested = true;
+                    this.images.requested = true;
                     this.images = [];
 
                     // Calculate total images based on parsed head selections
@@ -1326,7 +1322,7 @@
                     for (const model of this.filters.selected.models) {
                         totalImages += this.getHeadSelectionCount(model) * this.prompts.selected.length * this.filters.selected.functions.length;
                     }
-                    this.totalExpectedImages = totalImages;
+                    this.images.expected = totalImages;
 
                     // Load images based on parsed head selections
                     for (const model of this.filters.selected.models) {
@@ -1398,7 +1394,7 @@
                         }
                     }
 
-                    this.imagesUpToDate = true;
+                    this.images.upToDate = true;
                     this.loading = false;
                 },
                 updateVisiblePrompts() {
