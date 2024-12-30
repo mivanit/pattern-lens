@@ -115,6 +115,8 @@ def matplotlib_figure_saver(
             plt.savefig(fig_path)
             plt.close(fig)
 
+        wrapped.figure_save_fmt = fmt
+
         return wrapped
 
     if callable(func):
@@ -361,6 +363,8 @@ def save_matrix_wrapper(
 
                 else:
                     fig_path.write_text(svg_content, encoding="utf-8")
+
+        wrapped.figure_save_fmt = fmt
 
         return wrapped
 

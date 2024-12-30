@@ -1,8 +1,10 @@
 """writes indexes to the model directory for the frontend to use or for record keeping"""
 
+import inspect
 import json
 from pathlib import Path
 import importlib.resources
+from typing import Callable
 
 import pattern_lens
 from pattern_lens.attn_figure_funcs import ATTENTION_MATRIX_FIGURE_FUNCS
@@ -43,25 +45,65 @@ def generate_models_jsonl(path: Path):
             f.write("\n")
 
 
+def get_func_metadata(func: Callable) -> dict[str, str | None]:
+    """get metadata for a function
+
+    # Parameters:
+     - `func : Callable`
+
+    # Returns:
+
+    `dict[str, str | None]`
+    dictionary:
+
+    - `name : str` : the name of the function
+    - `doc : str` : the docstring of the function
+    - `figure_save_fmt : str | None` : the format of the figure that the function saves, using the `figure_save_fmt` attribute of the function. `None` if the attribute does not exist
+    - `source : str | None` : the source file of the function
+    - `code : str | None` : the source code of the function, split by line. `None` if the source file cannot be read
+
+    """
+    output: dict[str, str | None] = dict(
+        name=func.__name__,
+        doc=func.__doc__,
+        figure_save_fmt=getattr(func, "figure_save_fmt", None),
+        source=inspect.getsourcefile(func),
+    )
+
+    try:
+        output["code"] = inspect.getsource(func)
+    except OSError:
+        output["code"] = None
+
+    return output
+
+
 def generate_functions_jsonl(path: Path):
     "unions all functions from file and current `ATTENTION_MATRIX_FIGURE_FUNCS` into a `functions.jsonl` file"
     functions_file: Path = path / "functions.jsonl"
-    existing_functions: set[str] = set()
+    existing_functions: dict[str, dict] = dict()
 
     if functions_file.exists():
         with open(functions_file, "r") as f:
             for line in f:
                 func_data: dict = json.loads(line)
-                existing_functions.add(func_data["name"])
+                existing_functions[func_data["name"]] = func_data
 
     # Add any new functions from ALL_FUNCTIONS
-    all_functions: set[str] = existing_functions.union(
-        set([func.__name__ for func in ATTENTION_MATRIX_FIGURE_FUNCS])
+    new_functions: dict[str, dict] = {
+        func.__name__: get_func_metadata(func) for func in ATTENTION_MATRIX_FIGURE_FUNCS
+    }
+
+    all_functions: list[dict] = list(
+        {
+            **existing_functions,
+            **new_functions,
+        }.values()
     )
 
     with open(functions_file, "w") as f:
-        for func in sorted(all_functions):
-            json.dump({"name": func}, f)
+        for func_meta in sorted(all_functions, key=lambda x: x["name"]):
+            json.dump(func_meta, f)
             f.write("\n")
 
 
