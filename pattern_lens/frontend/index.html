@@ -557,9 +557,9 @@
                 </div>
                 <div class="image-controls-size" v-if="images.length > 0">
                     <label for="resizeSlider">Images per row:</label>
-                    <input type="range" id="resizeSlider" class="resize-slider" v-model.number="imagesPerRow" min="1"
+                    <input type="range" id="resizeSlider" class="resize-slider" v-model.number="images.perRow" min="1"
                         max="16" step="1">
-                    <input type="number" class="resize-input" v-model.number="imagesPerRow" min="1" max="64">
+                    <input type="number" class="resize-input" v-model.number="images.perRow" min="1" max="64">
                 </div>
             </div>
         </div>
@@ -569,9 +569,9 @@
 
         <!-- actual images display -->
         <div v-else-if="images.length > 0" class="images"
-            :style="{ 'grid-template-columns': `repeat(${imagesPerRow}, 1fr)` }">
+            :style="{ 'grid-template-columns': `repeat(${images.perRow}, 1fr)` }">
             <div v-for="image in images" class="image-container">
-                <p v-if="imagesPerRow <= 4" class="image-info">
+                <p v-if="images.perRow <= 4" class="image-info">
                     <a :href="getSinglePropertyFilterUrl('models', image.model)">{{ image.model }}</a> -
                     <a :href="getSinglePropertyFilterUrl('functions', image.function)">{{ image.function }}</a> -
                     <a :href="getSinglePropertyFilterUrl('layers', image.layer)">L{{ image.layer }}</a> -
@@ -579,7 +579,7 @@
                     <a :href="getSinglePropertyFilterUrl('prompts', image.promptHash)">{{ image.promptHash }}</a>
                 </p>
                 <a :href="getImageUrl(image)" class="img-container" v-html="image.content"
-                    :title="imagesPerRow > 4 ? image.name : ''">
+                    :title="images.perRow > 4 ? image.name : ''">
                 </a>
             </div>
         </div>
@@ -1346,30 +1346,38 @@
                                 }
                                 // Now for each selected prompt and function:
                                 for (const promptHash of this.prompts.selected) {
-                                    for (const funcName of this.filters.selected.functions) {
+                                    for (
+                                        const func_name of 
+                                        this.filters.selected.functions
+                                    ) {
+                                        let func = this.filters.available.functions[func_name];
+                                        if (!func) {
+                                            console.warn(`Function not found ${func_name}`, typeof func_name, JSON.stringify(func_name), func_name, this.filters.available.functions);
+                                        }
                                         const basePath = `${DATA_DIR}/${model}/prompts/${promptHash}/L${layer}/H${head}`;
 
                                         // get the figure format from metadata
-                                        let figure_format = this.filters.available.functions[funcName].figure_format;
+                                        let figure_format = func.figure_save_fmt;
                                         if (!figure_format) {
                                             // as a fallback, look for all valid formats
-                                            figure_format = await fileOps.figureExists(`${basePath}/${funcName}`);
+                                            figure_format = await fileOps.figureExists(`${basePath}/${func_name}`);
+                                            console.log('could not find figure format for func name', func_name, 'found', figure_format);
                                         }
 
                                         if (figure_format) {
                                             // Create figure entry
                                             const figure_meta = {
-                                                name: `${model} - Prompt ${promptHash} - L${layer}H${head} - ${funcName}`,
+                                                name: `${model} - Prompt ${promptHash} - L${layer}H${head} - ${func_name}`,
                                                 model: model,
                                                 promptHash: promptHash,
                                                 layer: layer,
                                                 head: head,
-                                                function: funcName,
+                                                function: func_name,
                                                 figure_format: figure_format,
                                             };
 
                                             if (figure_format === 'svgz') {
-                                                const svgText = await fileOps.fetchAndDecompressSvgz(`${basePath}/${funcName}.svgz`);
+                                                const svgText = await fileOps.fetchAndDecompressSvgz(`${basePath}/${func_name}.svgz`);
                                                 if (svgText) {
                                                     this.images.push({
                                                         content: svgText,
@@ -1377,7 +1385,7 @@
                                                     });
                                                 }
                                             } else {
-                                                const imglink = `<img src="${basePath}/${funcName}.${figure_format}" alt="${figure_meta.name}">`;
+                                                const imglink = `<img src="${basePath}/${func_name}.${figure_format}" alt="${figure_meta.name}">`;
                                                 this.images.push({
                                                     content: imglink,
                                                     ...figure_meta,
