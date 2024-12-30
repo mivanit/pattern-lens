@@ -490,11 +490,13 @@
                             :indeterminate.prop="isIndeterminate('functions')" :checked="isChecked('functions')"
                             @change="toggleSelectAll('functions', $event)">
                         <label for="select-all-functions">Functions:</label>
-                        <span class="counter">{{ filters.selected.functions.length }} / {{ filters.available.functions.length }}</span>
+                        <span class="counter">{{ filters.selected.functions.length }} / {{
+                            filters.available.functions.length }}</span>
                     </div>
                     <div class="checkbox-list">
                         <div v-for="(func, name) in filters.available.functions" :key="name" class="checkbox-item">
-                            <input type="checkbox" :id="'func-' + name" :value="name" v-model="filters.selected.functions">
+                            <input type="checkbox" :id="'func-' + name" :value="name"
+                                v-model="filters.selected.functions">
                             <label :for="'func-' + name" @contextmenu.prevent="openMetadata(func)">
                                 <span class="function-name">{{ name }}</span>
                                 <span class="function-info">
@@ -673,7 +675,7 @@
                         grid: {
                             api: null,
                             isReady: false
-                        }
+                        },
                     },
                     loading: false,
                     images: {
@@ -681,32 +683,29 @@
                         expected: 0,
                         requested: false,
                         upToDate: false,
-                        perRow: 4
+                        perRow: 4,
                     },
                     models: {
                         configs: {},    // model -> config mapping
                         grid: {
-                            api: null
-                        }
+                            api: null,
+                        },
                     },
                     filters: {
                         available: {    // all available options
                             models: [],
                             functions: [],
                             layers: [],
-                            heads: []
+                            heads: [],
                         },
                         selected: {     // currently selected options
                             models: [],
                             functions: [],
                             layers: [],
-                            heads: []
-                        }
+                            heads: [],
+                        },
                     },
-                    heads: {
-                        selections: {}, // model -> selection string mapping
-                        parsed: {}      // model -> boolean[][] mapping (moved to computed)
-                    }
+                    head_selections_str: {}, // model -> selection string mapping
                 };
             },
 
@@ -776,14 +775,14 @@
 
                 isHeadSelected(model, layer, head) {
                     // First check if we have parsed selections for this model
-                    if (!this.headSelectionsParsed[model]) {
+                    if (!this.head_selections_arr[model]) {
                         console.warn(`No parsed head selections found for model: ${model}`);
                         return false;
                     }
 
                     try {
                         // Verify layer and head are within bounds
-                        const parsedSelections = this.headSelectionsParsed[model];
+                        const parsedSelections = this.head_selections_arr[model];
                         if (!Array.isArray(parsedSelections) ||
                             !Array.isArray(parsedSelections[layer]) ||
                             typeof parsedSelections[layer][head] === 'undefined') {
@@ -803,7 +802,7 @@
                 },
 
                 isValidHeadSelection(model) {
-                    return this.headSelectionsParsed[model] !== null;
+                    return this.head_selections_arr[model] !== null;
                 },
                 // ##     ## ########  ##
                 // ##     ## ##     ## ##
@@ -819,7 +818,7 @@
 
                     if (this.filters.selected.models.length > 0) {
                         params.set('models', this.filters.selected.models.join('~'));
-                        params.set('headSelections', JSON.stringify(this.headSelectionsRaw));
+                        params.set('headSelections', JSON.stringify(this.head_selections_str));
                     }
                     if (this.filters.selected.functions.length > 0) {
                         params.set('functions', this.filters.selected.functions.join('~'));
@@ -844,7 +843,7 @@
                         const headSelections = params.get('headSelections');
                         if (headSelections) {
                             const parsed = JSON.parse(headSelections);
-                            this.headSelectionsRaw = parsed;
+                            this.head_selections_str = parsed;
                         }
                     } catch (e) {
                         console.error('Error parsing head selections from URL:', e);
@@ -927,18 +926,18 @@
                     this.loading = true;
                     console.log('Loading models...');
                     const models = await fileOps.fetchJsonL(`${DATA_DIR}/models.jsonl`);
-                    this.modelConfigs = {};
+                    this.models.configs = {};
                     for (const model of models) {
-                        this.modelConfigs[model["model_name"]] = model;
+                        this.models.configs[model["model_name"]] = model;
                     }
-                    this.filters.available.models = Object.keys(this.modelConfigs);
+                    this.filters.available.models = Object.keys(this.models.configs);
                     console.log('Models:', this.filters.available.models);
                     this.loading = false;
 
                     // After loading models, initialize head selections
                     this.filters.selected.models.forEach(model => {
-                        if (!this.headSelectionsRaw[model]) {
-                            this.headSelectionsRaw[model] = 'L*H*';
+                        if (!this.head_selections_str[model]) {
+                            this.head_selections_str[model] = 'L*H*';
                         }
                     });
                 },
@@ -969,7 +968,7 @@
                     let mdl_n_layers = [];
                     let mdl_n_heads = [];
                     for (const model of this.filters.selected.models) {
-                        const config = this.modelConfigs[model];
+                        const config = this.models.configs[model];
                         if (config) {
                             mdl_n_layers.push(config.n_layers);
                             mdl_n_heads.push(config.n_heads);
@@ -995,13 +994,13 @@
                 // ##     ## ##     ## ##     ## ##       ##       ##    ##
                 // ##     ##  #######  ########  ######## ########  ######
                 getHeadSelectionCount(model) {
-                    const parsed = this.headSelectionsParsed[model];
+                    const parsed = this.head_selections_arr[model];
                     if (!parsed) return 0;
                     return parsed.reduce((acc, layer) =>
                         acc + layer.reduce((sum, isSelected) => sum + (isSelected ? 1 : 0), 0), 0);
                 },
                 getTotalHeads(model) {
-                    const config = this.modelConfigs[model];
+                    const config = this.models.configs[model];
                     return config ? config.n_layers * config.n_heads : 0;
                 },
                 setupModelTable() {
@@ -1082,7 +1081,7 @@
                                 const model = params.data.model_name;
 
                                 // Update the head selection in Vue's data
-                                params.context.componentParent.headSelectionsRaw[model] = newValue;
+                                params.context.componentParent.head_selections_str[model] = newValue;
 
                                 // Update the cell class for validation styling
                                 const isValid = params.context.componentParent.isValidHeadSelection(model);
@@ -1113,7 +1112,7 @@
                                 return true;
                             },
                             valueGetter: params => {
-                                return params.context.componentParent.headSelectionsRaw[params.data.model_name] || 'L*H*';
+                                return params.context.componentParent.head_selections_str[params.data.model_name] || 'L*H*';
                             },
                             cellClass: params => {
                                 const isValid = params.context.componentParent.isValidHeadSelection(params.data.model_name);
@@ -1124,7 +1123,7 @@
 
                     const gridOptions = {
                         columnDefs: columnDefs,
-                        rowData: Object.values(this.modelConfigs),
+                        rowData: Object.values(this.models.configs),
                         selection: {
                             checkboxes: true,
                             headerCheckbox: true,
@@ -1326,8 +1325,8 @@
 
                     // Load images based on parsed head selections
                     for (const model of this.filters.selected.models) {
-                        const config = this.modelConfigs[model];
-                        const rawString = this.headSelectionsRaw[model] || 'L*H*';
+                        const config = this.models.configs[model];
+                        const rawString = this.head_selections_str[model] || 'L*H*';
                         const parsedHeads = this.parseHeadString(rawString, config.n_layers, config.n_heads);
                         if (!parsedHeads) {
                             console.warn(`Invalid head selection for ${model}: "${rawString}"`);
@@ -1343,7 +1342,7 @@
                                 // Now for each selected prompt and function:
                                 for (const promptHash of this.prompts.selected) {
                                     for (
-                                        const func_name of 
+                                        const func_name of
                                         this.filters.selected.functions
                                     ) {
                                         let func = this.filters.available.functions[func_name];
@@ -1439,7 +1438,7 @@
                 },
             },
 
-            
+
             //  ######   #######  ##     ## ########  ##     ## ######## ######## ########
             // ##    ## ##     ## ###   ### ##     ## ##     ##    ##    ##       ##     ##
             // ##       ##     ## #### #### ##     ## ##     ##    ##    ##       ##     ##
@@ -1447,18 +1446,18 @@
             // ##       ##     ## ##     ## ##        ##     ##    ##    ##       ##     ##
             // ##    ## ##     ## ##     ## ##        ##     ##    ##    ##       ##     ##
             //  ######   #######  ##     ## ##         #######     ##    ######## ########
-            
+
             computed: {
                 uniqueDatasets() {
                     return [...new Set(this.prompts.visible
                         .map(prompt => prompt.meta.pile_set_name)
                         .filter(Boolean))];
                 },
-                headSelectionsParsed() {
+                head_selections_arr() {
                     // model -> boolean[][] mapping for efficient lookup
                     let parsed = {};
 
-                    for (const model in this.heads.selections) {
+                    for (const model in this.head_selections_str) {
                         const config = this.models.configs[model];
                         if (!config) {
                             console.warn(`No config found for model: ${model}`);
@@ -1467,14 +1466,14 @@
                         }
 
                         const parsedHeads = this.parseHeadString(
-                            this.heads.selections[model] || 'L*H*',
+                            this.head_selections_str[model] || 'L*H*',
                             config.n_layers,
                             config.n_heads
                         );
 
                         if (!parsedHeads) {
                             console.warn(
-                                `Invalid head selection for ${model}: "${this.heads.selections[model]}"`
+                                `Invalid head selection for ${model}: "${this.head_selections_str[model]}"`
                             );
                         }
 
@@ -1485,7 +1484,7 @@
                 }
             },
 
-            
+
             // ##      ##    ###    ########  ######  ##     ##
             // ##  ##  ##   ## ##      ##    ##    ## ##     ##
             // ##  ##  ##  ##   ##     ##    ##       ##     ##
@@ -1493,7 +1492,7 @@
             // ##  ##  ## #########    ##    ##       ##     ##
             // ##  ##  ## ##     ##    ##    ##    ## ##     ##
             //  ###  ###  ##     ##    ##     ######  ##     ##
-            
+
             // Watch for changes in selected models to load prompts and update layers and heads
             watch: {
                 'filters.selected': {
@@ -1508,7 +1507,7 @@
                         this.images.upToDate = false;
                     }
                 },
-                'heads.selections': {
+                'head_selections_str': {
                     deep: true,
                     handler(newValue) {
                         Object.keys(newValue).forEach(model => {
@@ -1527,8 +1526,8 @@
                     handler(newModels) {
                         // Initialize head selections for new models
                         newModels.forEach(model => {
-                            if (!this.heads.selections[model]) {
-                                this.heads.selections[model] = 'L*H*';
+                            if (!this.head_selections_str[model]) {
+                                this.head_selections_str[model] = 'L*H*';
                             }
                         });
                         this.updateVisiblePrompts();
