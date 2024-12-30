@@ -675,10 +675,10 @@
                             isReady: false
                         }
                     },
+                    loading: false,
                     images: {
                         visible: [],
                         expected: 0,
-                        loading: false,
                         requested: false,
                         upToDate: false,
                         perRow: 4
@@ -1398,7 +1398,7 @@
                     this.loading = false;
                 },
                 updateVisiblePrompts() {
-                    this.images.loading = true;
+                    this.loading = true;
                     console.log('Selected models:', this.filters.selected.models);
 
                     // Use all models if none are selected
@@ -1418,7 +1418,7 @@
                         this.prompts.grid.api.setGridOption('rowData', this.prompts.visible);
                     }
 
-                    this.images.loading = false;
+                    this.loading = false;
                 },
                 openMetadata(func) {
                     const newWindow = window.open('', '_blank');
