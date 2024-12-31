@@ -6,6 +6,9 @@
     <!-- <meta name="viewport" content="width=device-width, initial-scale=1.0"> -->
     <title>Attention Pattern Analysis</title>
 
+    <link rel="icon" type="image/svg+xml"
+        href='data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect width="100" height="100" fill="%23000" stroke="%23333" stroke-width="1"/><path d="M0,0 L100,100 L0,100 Z" fill="rgba(0,255,255,0.2)"/><path d="M0,0 L15,15 L0,15 Z" fill="rgba(255,255,255,0.3)"/><path d="M15,15 L35,35 L15,35 Z" fill="rgba(255,255,255,0.3)"/><path d="M35,35 L60,60 L35,60 Z" fill="rgba(255,255,255,0.3)"/><path d="M60,60 L100,100 L60,100 Z" fill="rgba(255,255,255,0.3)"/></svg>'>
+
     <!--
     #### ##     ## ########   #######  ########  ########  ######
      ##  ###   ### ##     ## ##     ## ##     ##    ##    ##    ##
@@ -80,11 +83,27 @@
         .main-selection-content {
             display: flex;
             flex-direction: column;
-            gap: var(--space-md);
+            gap: 0;
+            /* Remove gap to allow for resize handle */
             border: 2px solid var(--border);
-            padding: var(--space-md);
-            min-height: 300px;
+            height: 800px;
+            /* Fixed initial height */
+            min-height: 400px;
             resize: vertical;
+            overflow: hidden;
+            /* Changed from auto to hidden */
+        }
+
+        .functions-filter {
+            width: 200px;
+            min-width: 100px;
+            /* Minimum width */
+            max-width: 500px;
+            /* Maximum width */
+            display: flex;
+            flex-direction: column;
+            border-right: 1px solid var(--border);
+            resize: horizontal;
             overflow: auto;
         }
 
@@ -92,6 +111,13 @@
             display: flex;
             gap: var(--space-md);
             height: 350px;
+            border-bottom: 1px solid var(--border);
+            min-height: 100px;
+            max-height: 80vh;
+            padding: var(--space-md);
+            resize: vertical;
+            position: relative;
+            overflow: auto;
         }
 
         /* Filter Components */
@@ -154,21 +180,6 @@
             vertical-align: middle;
         }
 
-        /* Model Selection */
-        .model-selection {
-            flex: 1;
-            border: 1px solid var(--border);
-            padding: var(--space-md);
-            border-radius: var(--border-radius);
-        }
-
-        .model-header {
-            display: flex;
-            align-items: center;
-            gap: var(--space-md);
-            padding: 4px 0;
-        }
-
         /* Head Grid */
         .head-grid {
             display: flex;
@@ -178,7 +189,7 @@
             align-items: center;
         }
 
-        .grid-layer {
+        .headsGrid-col {
             display: flex;
             flex-direction: column;
             gap: 1px;
@@ -186,19 +197,19 @@
             justify-content: center;
         }
 
-        .grid-cell {
-            width: 3px;
-            height: 3px;
+        .headsGrid-cell {
+            width: 5px;
+            height: 5px;
             margin: 0.5px;
             transition: background-color 0.2s ease;
         }
 
-        .grid-cell-selected {
-            background-color: #4f46e5;
+        .headsGrid-cell-selected {
+            background-color: #2a1fee;
         }
 
-        .grid-cell-empty {
-            background-color: #e5e7eb;
+        .headsGrid-cell-empty {
+            background-color: #ac9a9a;
         }
 
         /* Prompt Table */
@@ -443,25 +454,269 @@
             margin-left: 0.3em;
         }
 
-        /* The hidden tooltip content */
-        .function-tooltip {
-            display: none;
-            position: absolute;
-            top: 100%;
-            left: 50%;
-            transform: translateX(-50%);
-            background-color: #eee;
-            border: 1px solid #ccc;
-            padding: 8px;
-            width: 250px;
-            z-index: 1000;
-            border-radius: 4px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-        }
 
         /* Show the tooltip on hover */
         .function-info:hover .function-tooltip {
             display: block;
+        }
+
+        #modelGrid {
+            flex: 1;
+            min-width: 200px;
+            overflow: auto;
+        }
+
+        /* Prompts section */
+        .prompt-table {
+            flex: 1;
+            min-height: 200px;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        /* Resize handle styles */
+        .resize-handle {
+            width: 100%;
+            height: 6px;
+            background: #f0f0f0;
+            cursor: row-resize;
+            position: absolute;
+            bottom: -3px;
+            left: 0;
+            z-index: 1;
+        }
+
+        .resize-handle:hover {
+            background: #d0d0d0;
+        }
+
+        .vertical-resize-handle {
+            width: 6px;
+            height: 100%;
+            background: #f0f0f0;
+            cursor: col-resize;
+            position: absolute;
+            right: -3px;
+            top: 0;
+            z-index: 1;
+        }
+
+        .vertical-resize-handle:hover {
+            background: #d0d0d0;
+        }
+
+        /* Ensure ag-Grid containers fill available space */
+        .ag-theme-alpine {
+            height: 100% !important;
+            width: 100% !important;
+        }
+
+        /* Checkbox item container */
+        .checkbox-item {
+            position: relative;
+            display: flex;
+            align-items: center;
+            margin-bottom: 1px;
+            line-height: 1;
+            width: 100%;
+        }
+
+        /* Label container to allow for proper flex layout */
+        .checkbox-item label {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            width: 100%;
+            margin-left: 4px;
+        }
+
+        /* Function name text */
+        .function-name {
+            flex-grow: 1;
+            margin-right: 8px;
+        }
+
+        /* Info icon container */
+        .function-info {
+            position: relative;
+            cursor: help;
+            display: flex;
+            align-items: center;
+            margin-left: auto;
+        }
+
+        /* Tooltip styles */
+        .function-tooltip {
+            display: none;
+            position: fixed;
+            background-color: #eee;
+            border: 1px solid #ccc;
+            padding: 8px;
+            width: 250px;
+            z-index: 9999999;
+            border-radius: 4px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Show tooltip on hover */
+        .function-info:hover .function-tooltip {
+            display: block;
+        }
+
+        /* Add CSS variables for dark mode */
+        :root {
+            /* Previous CSS variables */
+            --primary: #007bff;
+            --primary-hover: #0056b3;
+            --secondary: #6c757d;
+            --secondary-hover: #545b62;
+            --success: #28a745;
+            --border: #ccc;
+            --text-muted: #666;
+            --bg-light: #f0f0f0;
+            --bg-white: #fff;
+            --shadow: rgba(0, 0, 0, 0.1);
+            --text-color: #000;
+
+            /* Dark mode specific variables */
+            --dark-bg: #1a1a1a;
+            --dark-text: #ffffff;
+            --dark-border: #444;
+            --dark-bg-light: #2d2d2d;
+            --dark-shadow: rgba(0, 0, 0, 0.3);
+        }
+
+        /* Dark mode class */
+        .dark-mode {
+            background-color: var(--dark-bg);
+            color: var(--dark-text);
+        }
+
+        .dark-mode .container {
+            background-color: var(--dark-bg);
+        }
+
+        .dark-mode .functions-filter,
+        .dark-mode .filter-item,
+        .dark-mode .checkbox-list {
+            background-color: var(--dark-bg-light);
+            border-color: var(--dark-border);
+        }
+
+        .dark-mode .ag-theme-alpine {
+            --ag-background-color: var(--dark-bg-light);
+            --ag-header-background-color: var(--dark-bg);
+            --ag-odd-row-background-color: var(--dark-bg);
+            --ag-header-foreground-color: var(--dark-text);
+            --ag-foreground-color: var(--dark-text);
+            --ag-border-color: var(--dark-border);
+        }
+
+        /* Top controls section */
+        .top-controls {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1rem;
+            padding: 1rem;
+            background-color: var(--bg-light);
+            border-radius: var(--border-radius);
+        }
+
+        .dark-mode .top-controls {
+            background-color: var(--dark-bg-light);
+        }
+
+        /* Button styles */
+        .btn {
+            padding: 8px 16px;
+            font-size: 14px;
+            font-weight: bold;
+            border: none;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .btn-clear {
+            background-color: var(--secondary);
+            color: white;
+        }
+
+        .btn-clear:hover {
+            background-color: var(--secondary-hover);
+        }
+
+        .btn-dark-mode {
+            background-color: #6c757d;
+            color: white;
+        }
+
+        .btn-dark-mode:hover {
+            background-color: #5a6268;
+        }
+
+        /* Dataset hover list */
+        .dark-mode .dataset-list {
+            background-color: var(--dark-bg-light);
+            border-color: var(--dark-border);
+            color: var(--dark-text);
+        }
+
+        .dark-mode .dataset-list-content {
+            background-color: var(--dark-bg);
+            border-color: var(--dark-border);
+            color: var(--dark-text);
+        }
+
+        .dark-mode .dataset-list-content ul {
+            margin: 0;
+            padding: 0.5em 1em;
+            list-style-type: none;
+        }
+
+        .dark-mode .dataset-list-content li {
+            color: var(--dark-text);
+            padding: 0.2em 0;
+        }
+
+        /* Image controls */
+        .dark-mode .image-controls-container {
+            background-color: transparent;
+        }
+
+        .dark-mode .image-controls {
+            background-color: var(--dark-bg-light);
+            border-color: var(--dark-border);
+            box-shadow: 0 2px 4px var(--dark-shadow);
+        }
+
+        .dark-mode .resize-slider {
+            background-color: var(--dark-bg);
+            border-color: var(--dark-border);
+        }
+
+        .dark-mode .resize-input {
+            background-color: var(--dark-bg);
+            color: var(--dark-text);
+            border: 1px solid var(--dark-border);
+        }
+
+        .dark-mode .image-controls label {
+            color: var(--dark-text);
+        }
+
+        .dark-mode .progress-bar {
+            background-color: var(--dark-bg);
+            border: 1px solid var(--dark-border);
+        }
+
+        .dark-mode .progress-status {
+            color: var(--dark-text);
+        }
+
+        .progress-wrapper {
+            padding-left: 1rem;
         }
     </style>
 </head>
@@ -477,8 +732,18 @@
     ##     ##    ##    ##     ## ########
     -->
     <!-- Root element for Vue app -->
-    <div id="app" class="container">
+    <div id="app" class="container" :class="{ 'dark-mode': isDarkMode }">
         <h1>Attention Pattern Analysis</h1>
+
+        <!-- Add top controls section -->
+        <div class="top-controls">
+            <button class="btn btn-dark-mode" @click.prevent="toggleDarkMode" type="button">
+                {{ isDarkMode ? '☀️ Light Mode' : '🌙 Dark Mode' }}
+            </button>
+            <button class="btn btn-clear" @click="clearAllSelections">
+                🗑️ Clear All Selections
+            </button>
+        </div>
 
         <div class="main-selection-content">
             <!-- Top section with functions and models side by side -->
@@ -490,22 +755,24 @@
                             :indeterminate.prop="isIndeterminate('functions')" :checked="isChecked('functions')"
                             @change="toggleSelectAll('functions', $event)">
                         <label for="select-all-functions">Functions:</label>
-                        <span class="counter">{{ filters.selected.functions.length }} / {{
-                            filters.available.functions.length }}</span>
+                        <span class="counter">
+                            {{ filters.selected.functions.length }} / {{ Object.keys(filters.available.functions).length
+                            }}
+                        </span>
                     </div>
                     <div class="checkbox-list">
                         <div v-for="(func, name) in filters.available.functions" :key="name" class="checkbox-item">
                             <input type="checkbox" :id="'func-' + name" :value="name"
                                 v-model="filters.selected.functions">
-                            <label :for="'func-' + name" @contextmenu.prevent="openMetadata(func)">
+                            <label :for="'func-' + name">
                                 <span class="function-name">{{ name }}</span>
-                                <span class="function-info">
-                                    ℹ️
+                                <span class="function-info">ℹ️
                                     <div class="function-tooltip">
                                         <div v-if="func.doc"><strong>Description:</strong> {{ func.doc }}</div>
                                         <div v-if="func.figure_save_fmt"><strong>Format:</strong> {{
                                             func.figure_save_fmt }}</div>
                                         <div v-if="func.source"><strong>Source:</strong> {{ func.source }}</div>
+                                        <div v-if="func.code"><strong>Code:</strong><br>{{ func.code }}</div>
                                     </div>
                                 </span>
                             </label>
@@ -514,16 +781,14 @@
                 </div>
 
                 <!-- Model Selection -->
-                <div class="model-selection">
-                    <div id="modelGrid" class="ag-theme-alpine" style="height: 300px; width: 100%;"></div>
-                </div>
+                <div id="modelGrid" class="ag-theme-alpine" style="height: 300px; width: 100%;"></div>
             </div>
 
             <!-- Prompts Table (full width) -->
             <div class="prompt-table">
                 <div class="prompts-info">
                     <div class="prompt-counter">
-                        Selected Prompts: {{ prompts.selected.length }}
+                        Selected Prompts: {{ prompts.selected.length }} / {{ Object.keys(prompts.all).length }}
                     </div>
                     <div class="dataset-list-container">
                         <div class="dataset-list">
@@ -549,15 +814,16 @@
                         {{ images.upToDate ? 'Images Up to Date' : 'Display Images' }}
                     </button>
                     <div class="progress-wrapper">
-                        <span class="progress-status">{{ images.length }} / {{ images.expected }} images</span>
-                        <div class="progress-bar" v-if="loading || images.length > 0">
+                        <span class="progress-status" v-if="images.expected > 0"> {{ images.visible.length || 'N/A' }} /
+                            {{ images.expected }} images</span>
+                        <div class="progress-bar" v-if="loading || images.visible.length > 0">
                             <div class="progress-bar-fill" :class="{ 'loading': loading, 'complete': !loading }"
-                                :style="{ width: `${(images.length / images.expected) * 100}%` }">
+                                :style="{ width: `${(images.visible.length / images.expected) * 100}%` }">
                             </div>
                         </div>
                     </div>
                 </div>
-                <div class="image-controls-size" v-if="images.length > 0">
+                <div class="image-controls-size" v-if="images.visible.length > 0">
                     <label for="resizeSlider">Images per row:</label>
                     <input type="range" id="resizeSlider" class="resize-slider" v-model.number="images.perRow" min="1"
                         max="16" step="1">
@@ -570,9 +836,9 @@
         <div v-if="loading" class="loading">Loading...</div>
 
         <!-- actual images display -->
-        <div v-else-if="images.length > 0" class="images"
+        <div v-else-if="images.visible.length > 0" class="images"
             :style="{ 'grid-template-columns': `repeat(${images.perRow}, 1fr)` }">
-            <div v-for="image in images" class="image-container">
+            <div v-for="image in images.visible" class="image-container">
                 <p v-if="images.perRow <= 4" class="image-info">
                     <a :href="getSinglePropertyFilterUrl('models', image.model)">{{ image.model }}</a> -
                     <a :href="getSinglePropertyFilterUrl('functions', image.function)">{{ image.function }}</a> -
@@ -601,12 +867,8 @@
         // ##    ## ##     ## ##   ### ##    ##    ##    ##    ##
         //  ######   #######  ##    ##  ######     ##     ######
         const DATA_DIR = '.';
-        const URL_PARAM_MAPPING = {
-            models: 'filters.selected.models',
-            functions: 'filters.selected.functions',
-            prompts: 'prompts.selected',
-        };
         const FIGURE_FORMATS = ['svg', 'svgz', 'png'];
+        const URL_HEAD_PREFIX = 'heads-';
         const fileOps = {
             async getDirectoryContents(path) {
                 const response = await fetch(`${path}/index.txt`);
@@ -668,9 +930,9 @@
 
             data() {
                 return {
+                    isDarkMode: false,
                     prompts: {
                         all: {},        // hash -> prompt mapping
-                        visible: [],    // filtered prompts for current models
                         selected: [],   // selected from table
                         grid: {
                             api: null,
@@ -725,7 +987,7 @@
                         const result = Array(maxLayer).fill().map(() => Array(maxHead).fill(false));
                         if (!str || str.trim() === '') return result;
 
-                        const selections = str.split(',').map(s => s.trim());
+                        const selections = str.replaceAll("x", "*").split(',').map(s => s.trim());
 
                         for (const selection of selections) {
                             const match = selection.match(/^L(\d+|\d+-\d+|\*)(H\d+|H\*|Hx)?$/);
@@ -816,16 +1078,25 @@
                 updateURL() {
                     const params = new URLSearchParams();
 
-                    if (this.filters.selected.models.length > 0) {
-                        params.set('models', this.filters.selected.models.join('~'));
-                        params.set('headSelections', JSON.stringify(this.head_selections_str));
-                    }
                     if (this.filters.selected.functions.length > 0) {
                         params.set('functions', this.filters.selected.functions.join('~'));
                     }
 
                     if (this.prompts.selected.length > 0) {
                         params.set('prompts', this.prompts.selected.join('~'));
+                    }
+
+                    if (this.filters.selected.models.length > 0) {
+                        params.set('models', this.filters.selected.models.join('~'));
+                    }
+
+                    if (this.filters.selected.models.length > 0) {
+                        for (const model of Object.keys(this.head_selections_str)) {
+                            params.set(
+                                `${URL_HEAD_PREFIX}${model}`,
+                                this.head_selections_str[model].replaceAll("*", "x").replaceAll(" ", "").split(',').join('~')
+                            );
+                        }
                     }
 
                     const newURL = `${window.location.pathname}?${params.toString()}`;
@@ -835,15 +1106,19 @@
                 readURL() {
                     const params = new URLSearchParams(window.location.search);
 
-                    this.filters.selected.models = params.get('models')?.split('~') || [];
                     this.filters.selected.functions = params.get('functions')?.split('~') || [];
+
                     this.prompts.selected = params.get('prompts')?.split('~') || [];
 
+                    this.filters.selected.models = params.get('models')?.split('~') || [];
+
                     try {
-                        const headSelections = params.get('headSelections');
-                        if (headSelections) {
-                            const parsed = JSON.parse(headSelections);
-                            this.head_selections_str = parsed;
+                        this.head_selections_str = {};
+                        for (const [key, value] of params) {
+                            if (key.startsWith(URL_HEAD_PREFIX)) {
+                                const model = key.substring(URL_HEAD_PREFIX.length);
+                                this.head_selections_str[model] = value.split('~').join(', ');
+                            }
                         }
                     } catch (e) {
                         console.error('Error parsing head selections from URL:', e);
@@ -893,7 +1168,35 @@
                 // ##     ## ##       ##       ##        ##       ##    ##
                 // ##     ## ######## ######## ##        ######## ##     ##
 
+                toggleDarkMode() {
+                    console.log('Toggling dark mode');  // Add this debug line
+                    this.isDarkMode = !this.isDarkMode;
+                    localStorage.setItem('darkMode', this.isDarkMode);
+                    // Force a DOM update
+                    this.$nextTick(() => {
+                        document.documentElement.classList.toggle('dark-mode', this.isDarkMode);
+                    });
+                },
+                clearAllSelections() {
+                    // Clear prompts selection
+                    if (this.prompts.grid.api) {
+                        this.prompts.grid.api.deselectAll();
+                    }
 
+                    // Clear models selection
+                    if (this.models.grid.api) {
+                        this.models.grid.api.deselectAll();
+                    }
+
+                    // Clear function selections
+                    this.filters.selected.functions = [];
+
+                    // Reset head selections
+                    this.head_selections_str = {};
+
+                    // Update URL to reflect cleared state
+                    this.updateURL();
+                },
                 isIndeterminate(category) {
                     const items = this.filters.available[category];
                     const selectedItems = this.filters.selected[category];
@@ -917,7 +1220,6 @@
                         ]);
 
                         this.updateLayersAndHeads();
-                        this.updatePrompts(); // Update prompts after models and prompts are loaded
                     } catch (error) {
                         console.error('Error loading data:', error);
                     }
@@ -1051,11 +1353,11 @@
 
                                 for (let h = 0; h < n_heads; h++) {
                                     const layerDiv = document.createElement('div');
-                                    layerDiv.className = 'grid-layer';
+                                    layerDiv.className = 'headsGrid-col';
 
                                     for (let l = 0; l < n_layers; l++) {
                                         const cell = document.createElement('div');
-                                        cell.className = `grid-cell ${this.isHeadSelected(model, l, h) ? 'grid-cell-selected' : 'grid-cell-empty'}`;
+                                        cell.className = `headsGrid-cell ${this.isHeadSelected(model, l, h) ? 'headsGrid-cell-selected' : 'headsGrid-cell-empty'}`;
                                         cell.setAttribute('data-layer', l);
                                         cell.setAttribute('data-head', h);
                                         layerDiv.appendChild(cell);
@@ -1121,14 +1423,15 @@
                         },
                     ];
 
-                    const gridOptions = {
+                    const modelGrid_options = {
                         columnDefs: columnDefs,
                         rowData: Object.values(this.models.configs),
                         selection: {
-                            checkboxes: true,
                             headerCheckbox: true,
-                            mode: 'multiple',
-                            enableClickSelection: false,
+                            selectAll: 'filtered',
+                            checkboxes: true,
+                            mode: 'multiRow',
+                            enableClickSelection: true,
                         },
                         defaultColDef: {
                             sortable: true,
@@ -1155,7 +1458,7 @@
                             this.filters.selected.models = selectedRows.map(row => row.model_name);
                         },
                         onGridReady: (params) => {
-                            this.modelGridApi = params.api;
+                            this.models.grid.api = params.api;
                             // Select models from URL
                             if (this.filters.selected.models.length > 0) {
                                 params.api.forEachNode(node => {
@@ -1167,12 +1470,12 @@
                         },
                     };
 
-                    const gridDiv = document.querySelector('#modelGrid');
-                    this.modelGridApi = agGrid.createGrid(gridDiv, gridOptions);
+                    const modelGrid_div = document.querySelector('#modelGrid');
+                    this.models.grid.api = agGrid.createGrid(modelGrid_div, modelGrid_options);
                 },
                 refreshHeadGrids() {
-                    if (this.modelGridApi) {
-                        this.modelGridApi.refreshCells({
+                    if (this.models.grid.api) {
+                        this.models.grid.api.refreshCells({
                             columns: ['head_grid'],
                             force: true
                         });
@@ -1206,27 +1509,6 @@
                         }
                     }
                     console.log('loaded number of prompts:', Object.keys(this.prompts.all).length);
-                    this.loading = false;
-                },
-                updatePrompts() {
-                    this.loading = true;
-                    console.log('Selected models:', this.filters.selected.models);
-
-                    // Use all models if none are selected
-                    const selectedModelsTemp = this.filters.selected.models.length > 0 ? this.filters.selected.models : this.filters.available.models;
-
-                    // Filter prompts based on selected models
-                    this.prompts.visible = Object.values(this.prompts.all).filter(prompt =>
-                        prompt.models.some(model => selectedModelsTemp.includes(model))
-                    );
-
-                    console.log('Prompts after filtering:', this.prompts.visible.length);
-
-                    // Update the grid data
-                    if (this.prompts.grid.api) {
-                        this.prompts.grid.api.setGridOption('rowData', this.prompts.visible);
-                    }
-
                     this.loading = false;
                 },
                 // Initialize the ag-Grid table
@@ -1268,9 +1550,9 @@
                     ];
 
                     // Grid options
-                    this.gridOptions = {
+                    const promptGrid_options = {
                         columnDefs: columnDefs,
-                        rowData: this.prompts.visible,
+                        rowData: Object.values(this.prompts.all),
                         pagination: true,
                         enableCellTextSelection: true,
                         paginationPageSize: 20,
@@ -1298,8 +1580,8 @@
                         },
                     };
 
-                    const gridDiv = document.querySelector('#promptGrid');
-                    this.prompts.grid.api = agGrid.createGrid(gridDiv, this.gridOptions);
+                    const promptGrid_div = document.querySelector('#promptGrid');
+                    this.prompts.grid.api = agGrid.createGrid(promptGrid_div, promptGrid_options);
                 },
 
                 // ########  ####  ######  ########  ##          ###    ##    ##
@@ -1314,7 +1596,7 @@
                 async displayImages() {
                     this.loading = true;
                     this.images.requested = true;
-                    this.images = [];
+                    this.images.visible = [];
 
                     // Calculate total images based on parsed head selections
                     let totalImages = 0;
@@ -1374,14 +1656,14 @@
                                             if (figure_format === 'svgz') {
                                                 const svgText = await fileOps.fetchAndDecompressSvgz(`${basePath}/${func_name}.svgz`);
                                                 if (svgText) {
-                                                    this.images.push({
+                                                    this.images.visible.push({
                                                         content: svgText,
                                                         ...figure_meta,
                                                     });
                                                 }
                                             } else {
                                                 const imglink = `<img src="${basePath}/${func_name}.${figure_format}" alt="${figure_meta.name}">`;
-                                                this.images.push({
+                                                this.images.visible.push({
                                                     content: imglink,
                                                     ...figure_meta,
                                                 });
@@ -1394,29 +1676,6 @@
                     }
 
                     this.images.upToDate = true;
-                    this.loading = false;
-                },
-                updateVisiblePrompts() {
-                    this.loading = true;
-                    console.log('Selected models:', this.filters.selected.models);
-
-                    // Use all models if none are selected
-                    const selectedModelsTemp = this.filters.selected.models.length > 0
-                        ? this.filters.selected.models
-                        : this.filters.available.models;
-
-                    // Filter prompts based on selected models
-                    this.prompts.visible = Object.values(this.prompts.all).filter(prompt =>
-                        prompt.models.some(model => selectedModelsTemp.includes(model))
-                    );
-
-                    console.log('Prompts after filtering:', this.prompts.visible.length);
-
-                    // Update the grid data
-                    if (this.prompts.grid.api) {
-                        this.prompts.grid.api.setGridOption('rowData', this.prompts.visible);
-                    }
-
                     this.loading = false;
                 },
                 openMetadata(func) {
@@ -1449,9 +1708,11 @@
 
             computed: {
                 uniqueDatasets() {
-                    return [...new Set(this.prompts.visible
-                        .map(prompt => prompt.meta.pile_set_name)
-                        .filter(Boolean))];
+                    return [
+                        ...new Set(
+                            Object.values(this.prompts.all).map(prompt => prompt.meta.pile_set_name).filter(Boolean)
+                        )
+                    ];
                 },
                 head_selections_arr() {
                     // model -> boolean[][] mapping for efficient lookup
@@ -1530,7 +1791,6 @@
                                 this.head_selections_str[model] = 'L*H*';
                             }
                         });
-                        this.updateVisiblePrompts();
                         this.updateURL();
                     }
                 },
@@ -1538,11 +1798,19 @@
 
             // Lifecycle hook when component is mounted
             async mounted() {
-                console.log('Mounted app:', this);
+                console.log('Mounting app:', this);
+                const savedDarkMode = localStorage.getItem('darkMode');
+                if (savedDarkMode !== null) {
+                    this.isDarkMode = savedDarkMode === 'true';
+                }
+                if (this.isDarkMode) {
+                    document.documentElement.classList.add('dark-mode');
+                }
                 this.readURL(); // Read filters from URL first
                 await this.loadData(); // Load models, prompts, and functions
                 this.setupModelTable(); // Initialize the model grid
                 this.setupPromptTable(); // Initialize the prompts grid
+                console.log('Mounted app:', this);
             }
         });
 
