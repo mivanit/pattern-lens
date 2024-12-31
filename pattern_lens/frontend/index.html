@@ -53,6 +53,14 @@
             --bg-light: #f0f0f0;
             --bg-white: #fff;
             --shadow: rgba(0, 0, 0, 0.1);
+            --text-color: #000;
+
+            /* Dark mode colors */
+            --dark-bg: #1a1a1a;
+            --dark-text: #ffffff;
+            --dark-border: #444;
+            --dark-bg-light: #2d2d2d;
+            --dark-shadow: rgba(0, 0, 0, 0.3);
 
             /* Spacing */
             --space-xs: 3px;
@@ -79,32 +87,33 @@
             margin: 0 auto;
         }
 
+        /* Header Styles */
+        .header-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .header-title {
+            margin: 0;
+        }
+
+        .header-controls {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
         /* Layout Components */
         .main-selection-content {
             display: flex;
             flex-direction: column;
-            gap: 0;
-            /* Remove gap to allow for resize handle */
             border: 2px solid var(--border);
             height: 800px;
-            /* Fixed initial height */
             min-height: 400px;
             resize: vertical;
             overflow: hidden;
-            /* Changed from auto to hidden */
-        }
-
-        .functions-filter {
-            width: 200px;
-            min-width: 100px;
-            /* Minimum width */
-            max-width: 500px;
-            /* Maximum width */
-            display: flex;
-            flex-direction: column;
-            border-right: 1px solid var(--border);
-            resize: horizontal;
-            overflow: auto;
         }
 
         .top-filters {
@@ -120,23 +129,20 @@
             overflow: auto;
         }
 
-        /* Filter Components */
-        .filters,
-        .functions-filter {
-            width: 180px;
-            display: flex;
-            flex-direction: column;
-            overflow: hidden;
-        }
-
+        /* Functions Filter */
         .functions-filter {
             width: 200px;
-            flex-shrink: 0;
+            min-width: 100px;
+            max-width: 500px;
+            display: flex;
+            flex-direction: column;
             border: 1px solid var(--border);
             padding: var(--space-md);
             border-radius: var(--border-radius);
+            flex-shrink: 0;
         }
 
+        /* Filter Components */
         .filter-item {
             margin-bottom: var(--space-sm);
             border: 1px solid var(--border);
@@ -151,26 +157,35 @@
             margin-bottom: var(--space-xs);
         }
 
-        .filter-controls {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            width: 100%;
-        }
-
         /* Checkbox Lists */
         .checkbox-list {
             border: 1px solid var(--border);
             padding: var(--space-xs);
             flex: 1;
             overflow-y: auto;
+            overflow-x: visible;
         }
 
         .checkbox-item {
+            position: relative;
             display: flex;
             align-items: center;
             margin-bottom: 1px;
             line-height: 1;
+            width: 100%;
+        }
+
+        .checkbox-item label {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            width: 100%;
+            margin-left: 4px;
+        }
+
+        .function-name {
+            flex-grow: 1;
+            margin-right: 8px;
         }
 
         input[type="checkbox"] {
@@ -212,9 +227,20 @@
             background-color: #ac9a9a;
         }
 
+        /* Model Grid */
+        #modelGrid {
+            flex: 1;
+            min-width: 200px;
+            overflow: auto;
+        }
+
         /* Prompt Table */
         .prompt-table {
-            flex-grow: 1;
+            flex: 1;
+            min-height: 200px;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
             position: relative;
         }
 
@@ -234,10 +260,10 @@
             cursor: pointer;
         }
 
-        /* ag-Grid Specific */
+        /* ag-Grid Customization */
         .ag-theme-alpine {
-            height: calc(100% - 3em);
-            width: 100%;
+            height: calc(100% - 3em) !important;
+            width: 100% !important;
         }
 
         .ag-cell-edit-input {
@@ -277,8 +303,7 @@
             top: 100%;
             background-color: var(--bg-white);
             border: 1px solid var(--border);
-            padding: var(--space-xs);
-            padding-right: 3em;
+            padding: var(--space-xs) var(--space-lg) var(--space-xs) var(--space-xs);
             font-family: monospace;
             box-shadow: 0 4px 8px var(--shadow);
             z-index: 1000;
@@ -288,7 +313,7 @@
             display: block;
         }
 
-        /* Image Controls */
+        /* Image Controls and Display */
         .image-controls-container {
             margin: var(--space-lg) 0;
         }
@@ -312,11 +337,6 @@
 
         .image-controls-size {
             justify-content: flex-end;
-        }
-
-        .resize-controls {
-            display: flex;
-            align-items: center;
         }
 
         .resize-slider {
@@ -356,6 +376,7 @@
 
         /* Buttons */
         .btn {
+            margin: 5px;
             padding: 8px 16px;
             font-size: 14px;
             font-weight: bold;
@@ -374,12 +395,16 @@
             background-color: var(--primary-hover);
         }
 
-        .btn-secondary {
+        .btn-secondary,
+        .btn-header,
+        .btn-dark-mode {
             background-color: var(--secondary);
             color: white;
         }
 
-        .btn-secondary:hover {
+        .btn-secondary:hover,
+        .btn-header:hover,
+        .btn-dark-mode:hover {
             background-color: var(--secondary-hover);
         }
 
@@ -405,139 +430,11 @@
             background-color: var(--success);
         }
 
-        /* Utility Classes */
-        .loading,
-        .error {
-            text-align: center;
-            padding: var(--space-md);
+        .progress-wrapper {
+            padding-left: 1rem;
         }
 
-        .counter {
-            font-size: 0.8em;
-            color: var(--text-muted);
-            margin-left: auto;
-        }
-
-        /* Remove or comment out the overflow here */
-        .filters,
-        .functions-filter {
-            width: 180px;
-            display: flex;
-            flex-direction: column;
-            /* overflow: hidden; */
-            /* or set overflow: visible; if needed */
-        }
-
-        .checkbox-list {
-            border: 1px solid var(--border);
-            padding: var(--space-xs);
-            flex: 1;
-            /* keep vertical scrolling, but allow tooltips to show on hover */
-            overflow-y: auto;
-            overflow-x: visible;
-        }
-
-        /* Give each checkbox item a positioning context for the tooltip */
-        .checkbox-item {
-            position: relative;
-            display: flex;
-            align-items: center;
-            margin-bottom: 1px;
-            line-height: 1;
-        }
-
-        /* For the tooltip parent */
-        .function-info {
-            position: relative;
-            cursor: help;
-            display: inline-block;
-            margin-left: 0.3em;
-        }
-
-
-        /* Show the tooltip on hover */
-        .function-info:hover .function-tooltip {
-            display: block;
-        }
-
-        #modelGrid {
-            flex: 1;
-            min-width: 200px;
-            overflow: auto;
-        }
-
-        /* Prompts section */
-        .prompt-table {
-            flex: 1;
-            min-height: 200px;
-            display: flex;
-            flex-direction: column;
-            overflow: hidden;
-        }
-
-        /* Resize handle styles */
-        .resize-handle {
-            width: 100%;
-            height: 6px;
-            background: #f0f0f0;
-            cursor: row-resize;
-            position: absolute;
-            bottom: -3px;
-            left: 0;
-            z-index: 1;
-        }
-
-        .resize-handle:hover {
-            background: #d0d0d0;
-        }
-
-        .vertical-resize-handle {
-            width: 6px;
-            height: 100%;
-            background: #f0f0f0;
-            cursor: col-resize;
-            position: absolute;
-            right: -3px;
-            top: 0;
-            z-index: 1;
-        }
-
-        .vertical-resize-handle:hover {
-            background: #d0d0d0;
-        }
-
-        /* Ensure ag-Grid containers fill available space */
-        .ag-theme-alpine {
-            height: 100% !important;
-            width: 100% !important;
-        }
-
-        /* Checkbox item container */
-        .checkbox-item {
-            position: relative;
-            display: flex;
-            align-items: center;
-            margin-bottom: 1px;
-            line-height: 1;
-            width: 100%;
-        }
-
-        /* Label container to allow for proper flex layout */
-        .checkbox-item label {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            width: 100%;
-            margin-left: 4px;
-        }
-
-        /* Function name text */
-        .function-name {
-            flex-grow: 1;
-            margin-right: 8px;
-        }
-
-        /* Info icon container */
+        /* Function Info Tooltip */
         .function-info {
             position: relative;
             cursor: help;
@@ -546,7 +443,6 @@
             margin-left: auto;
         }
 
-        /* Tooltip styles */
         .function-tooltip {
             display: none;
             position: fixed;
@@ -559,35 +455,11 @@
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
         }
 
-        /* Show tooltip on hover */
         .function-info:hover .function-tooltip {
             display: block;
         }
 
-        /* Add CSS variables for dark mode */
-        :root {
-            /* Previous CSS variables */
-            --primary: #007bff;
-            --primary-hover: #0056b3;
-            --secondary: #6c757d;
-            --secondary-hover: #545b62;
-            --success: #28a745;
-            --border: #ccc;
-            --text-muted: #666;
-            --bg-light: #f0f0f0;
-            --bg-white: #fff;
-            --shadow: rgba(0, 0, 0, 0.1);
-            --text-color: #000;
-
-            /* Dark mode specific variables */
-            --dark-bg: #1a1a1a;
-            --dark-text: #ffffff;
-            --dark-border: #444;
-            --dark-bg-light: #2d2d2d;
-            --dark-shadow: rgba(0, 0, 0, 0.3);
-        }
-
-        /* Dark mode class */
+        /* Dark Mode Styles */
         .dark-mode {
             background-color: var(--dark-bg);
             color: var(--dark-text);
@@ -613,58 +485,13 @@
             --ag-border-color: var(--dark-border);
         }
 
-        /* Top controls section */
-        .top-controls {
-            display: flex;
-            gap: 1rem;
-            margin-bottom: 1rem;
-            padding: 1rem;
-            background-color: var(--bg-light);
-            border-radius: var(--border-radius);
-        }
-
         .dark-mode .top-controls {
             background-color: var(--dark-bg-light);
         }
 
-        /* Button styles */
-        .btn {
-            padding: 8px 16px;
-            font-size: 14px;
-            font-weight: bold;
-            border: none;
-            border-radius: var(--border-radius);
-            cursor: pointer;
-            transition: background-color 0.3s ease;
-        }
-
-        .btn-clear {
-            background-color: var(--secondary);
-            color: white;
-        }
-
-        .btn-clear:hover {
-            background-color: var(--secondary-hover);
-        }
-
-        .btn-dark-mode {
-            background-color: #6c757d;
-            color: white;
-        }
-
-        .btn-dark-mode:hover {
-            background-color: #5a6268;
-        }
-
-        /* Dataset hover list */
-        .dark-mode .dataset-list {
-            background-color: var(--dark-bg-light);
-            border-color: var(--dark-border);
-            color: var(--dark-text);
-        }
-
+        .dark-mode .dataset-list,
         .dark-mode .dataset-list-content {
-            background-color: var(--dark-bg);
+            background-color: var(--dark-bg-light);
             border-color: var(--dark-border);
             color: var(--dark-text);
         }
@@ -680,7 +507,6 @@
             padding: 0.2em 0;
         }
 
-        /* Image controls */
         .dark-mode .image-controls-container {
             background-color: transparent;
         }
@@ -691,15 +517,14 @@
             box-shadow: 0 2px 4px var(--dark-shadow);
         }
 
-        .dark-mode .resize-slider {
+        .dark-mode .resize-slider,
+        .dark-mode .resize-input {
             background-color: var(--dark-bg);
             border-color: var(--dark-border);
         }
 
         .dark-mode .resize-input {
-            background-color: var(--dark-bg);
             color: var(--dark-text);
-            border: 1px solid var(--dark-border);
         }
 
         .dark-mode .image-controls label {
@@ -715,8 +540,90 @@
             color: var(--dark-text);
         }
 
-        .progress-wrapper {
-            padding-left: 1rem;
+        .dark-mode .function-tooltip {
+            background-color: var(--dark-bg-light);
+            border-color: var(--dark-border);
+            color: var(--dark-text);
+        }
+
+        /* Utility Classes */
+        .loading,
+        .error {
+            text-align: center;
+            padding: var(--space-md);
+        }
+
+        .counter {
+            font-size: 0.8em;
+            color: var(--text-muted);
+            margin-left: auto;
+        }
+
+        /* Dark Mode Toggle */
+        .dark-mode-toggle {
+            position: relative;
+            width: 60px;
+            height: 30px;
+            border-radius: 15px;
+            background-color: #e2e8f0;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            border: none;
+            padding: 0;
+            overflow: hidden;
+        }
+
+        .dark-mode-toggle::before {
+            content: "";
+            position: absolute;
+            top: 3px;
+            left: 3px;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background-color: white;
+            transition: transform 0.3s ease;
+            z-index: 1;
+        }
+
+        .dark-mode .dark-mode-toggle {
+            background-color: #4a5568;
+        }
+
+        .dark-mode .dark-mode-toggle::before {
+            transform: translateX(30px);
+        }
+
+        .dark-mode-icon {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 14px;
+            pointer-events: none;
+            line-height: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 24px;
+            height: 24px;
+        }
+
+        .sun-icon {
+            left: 8px;
+            opacity: 1;
+        }
+
+        .moon-icon {
+            right: 8px;
+            opacity: 1;
+        }
+
+        .dark-mode-button {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            color: inherit;
         }
     </style>
 </head>
@@ -733,16 +640,20 @@
     -->
     <!-- Root element for Vue app -->
     <div id="app" class="container" :class="{ 'dark-mode': isDarkMode }">
-        <h1>Attention Pattern Analysis</h1>
-
-        <!-- Add top controls section -->
-        <div class="top-controls">
-            <button class="btn btn-dark-mode" @click.prevent="toggleDarkMode" type="button">
-                {{ isDarkMode ? '☀️ Light Mode' : '🌙 Dark Mode' }}
-            </button>
-            <button class="btn btn-clear" @click="clearAllSelections">
-                🗑️ Clear All Selections
-            </button>
+        <div class="header-container">
+            <h1 class="header-title">Attention Pattern Analysis</h1>
+            <div class="header-controls">
+                <button class="btn btn-header dark-mode-button" @click="toggleDarkMode">
+                    <span>Dark Mode</span>
+                    <div class="dark-mode-toggle">
+                        <div class="dark-mode-icon" style="left: 4px">☀️</div>
+                        <div class="dark-mode-icon" style="right: 4px">🌙</div>
+                    </div>
+                </button>
+                <button class="btn btn-header" @click="clearAllSelections">
+                    🗑️ Clear All Selections
+                </button>
+            </div>
         </div>
 
         <div class="main-selection-content">
@@ -772,7 +683,6 @@
                                         <div v-if="func.figure_save_fmt"><strong>Format:</strong> {{
                                             func.figure_save_fmt }}</div>
                                         <div v-if="func.source"><strong>Source:</strong> {{ func.source }}</div>
-                                        <div v-if="func.code"><strong>Code:</strong><br>{{ func.code }}</div>
                                     </div>
                                 </span>
                             </label>
