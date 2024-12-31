@@ -563,6 +563,161 @@
         .function-info:hover .function-tooltip {
             display: block;
         }
+
+        /* Add CSS variables for dark mode */
+        :root {
+            /* Previous CSS variables */
+            --primary: #007bff;
+            --primary-hover: #0056b3;
+            --secondary: #6c757d;
+            --secondary-hover: #545b62;
+            --success: #28a745;
+            --border: #ccc;
+            --text-muted: #666;
+            --bg-light: #f0f0f0;
+            --bg-white: #fff;
+            --shadow: rgba(0, 0, 0, 0.1);
+            --text-color: #000;
+
+            /* Dark mode specific variables */
+            --dark-bg: #1a1a1a;
+            --dark-text: #ffffff;
+            --dark-border: #444;
+            --dark-bg-light: #2d2d2d;
+            --dark-shadow: rgba(0, 0, 0, 0.3);
+        }
+
+        /* Dark mode class */
+        .dark-mode {
+            background-color: var(--dark-bg);
+            color: var(--dark-text);
+        }
+
+        .dark-mode .container {
+            background-color: var(--dark-bg);
+        }
+
+        .dark-mode .functions-filter,
+        .dark-mode .filter-item,
+        .dark-mode .checkbox-list {
+            background-color: var(--dark-bg-light);
+            border-color: var(--dark-border);
+        }
+
+        .dark-mode .ag-theme-alpine {
+            --ag-background-color: var(--dark-bg-light);
+            --ag-header-background-color: var(--dark-bg);
+            --ag-odd-row-background-color: var(--dark-bg);
+            --ag-header-foreground-color: var(--dark-text);
+            --ag-foreground-color: var(--dark-text);
+            --ag-border-color: var(--dark-border);
+        }
+
+        /* Top controls section */
+        .top-controls {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1rem;
+            padding: 1rem;
+            background-color: var(--bg-light);
+            border-radius: var(--border-radius);
+        }
+
+        .dark-mode .top-controls {
+            background-color: var(--dark-bg-light);
+        }
+
+        /* Button styles */
+        .btn {
+            padding: 8px 16px;
+            font-size: 14px;
+            font-weight: bold;
+            border: none;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .btn-clear {
+            background-color: var(--secondary);
+            color: white;
+        }
+
+        .btn-clear:hover {
+            background-color: var(--secondary-hover);
+        }
+
+        .btn-dark-mode {
+            background-color: #6c757d;
+            color: white;
+        }
+
+        .btn-dark-mode:hover {
+            background-color: #5a6268;
+        }
+
+        /* Dataset hover list */
+        .dark-mode .dataset-list {
+            background-color: var(--dark-bg-light);
+            border-color: var(--dark-border);
+            color: var(--dark-text);
+        }
+
+        .dark-mode .dataset-list-content {
+            background-color: var(--dark-bg);
+            border-color: var(--dark-border);
+            color: var(--dark-text);
+        }
+
+        .dark-mode .dataset-list-content ul {
+            margin: 0;
+            padding: 0.5em 1em;
+            list-style-type: none;
+        }
+
+        .dark-mode .dataset-list-content li {
+            color: var(--dark-text);
+            padding: 0.2em 0;
+        }
+
+        /* Image controls */
+        .dark-mode .image-controls-container {
+            background-color: transparent;
+        }
+
+        .dark-mode .image-controls {
+            background-color: var(--dark-bg-light);
+            border-color: var(--dark-border);
+            box-shadow: 0 2px 4px var(--dark-shadow);
+        }
+
+        .dark-mode .resize-slider {
+            background-color: var(--dark-bg);
+            border-color: var(--dark-border);
+        }
+
+        .dark-mode .resize-input {
+            background-color: var(--dark-bg);
+            color: var(--dark-text);
+            border: 1px solid var(--dark-border);
+        }
+
+        .dark-mode .image-controls label {
+            color: var(--dark-text);
+        }
+
+        .dark-mode .progress-bar {
+            background-color: var(--dark-bg);
+            border: 1px solid var(--dark-border);
+        }
+
+        .dark-mode .progress-status {
+            color: var(--dark-text);
+        }
+
+        .progress-wrapper {
+            padding-left: 1rem;
+        }
     </style>
 </head>
 
@@ -577,8 +732,18 @@
     ##     ##    ##    ##     ## ########
     -->
     <!-- Root element for Vue app -->
-    <div id="app" class="container">
+    <div id="app" class="container" :class="{ 'dark-mode': isDarkMode }">
         <h1>Attention Pattern Analysis</h1>
+
+        <!-- Add top controls section -->
+        <div class="top-controls">
+            <button class="btn btn-dark-mode" @click.prevent="toggleDarkMode" type="button">
+                {{ isDarkMode ? '☀️ Light Mode' : '🌙 Dark Mode' }}
+            </button>
+            <button class="btn btn-clear" @click="clearAllSelections">
+                🗑️ Clear All Selections
+            </button>
+        </div>
 
         <div class="main-selection-content">
             <!-- Top section with functions and models side by side -->
@@ -591,7 +756,8 @@
                             @change="toggleSelectAll('functions', $event)">
                         <label for="select-all-functions">Functions:</label>
                         <span class="counter">
-                            {{ filters.selected.functions.length }} / {{ Object.keys(filters.available.functions).length }}
+                            {{ filters.selected.functions.length }} / {{ Object.keys(filters.available.functions).length
+                            }}
                         </span>
                     </div>
                     <div class="checkbox-list">
@@ -648,7 +814,8 @@
                         {{ images.upToDate ? 'Images Up to Date' : 'Display Images' }}
                     </button>
                     <div class="progress-wrapper">
-                        <span class="progress-status" v-if="images.expected > 0"> {{ images.visible.length || 'N/A' }} / {{ images.expected }} images</span>
+                        <span class="progress-status" v-if="images.expected > 0"> {{ images.visible.length || 'N/A' }} /
+                            {{ images.expected }} images</span>
                         <div class="progress-bar" v-if="loading || images.visible.length > 0">
                             <div class="progress-bar-fill" :class="{ 'loading': loading, 'complete': !loading }"
                                 :style="{ width: `${(images.visible.length / images.expected) * 100}%` }">
@@ -763,6 +930,7 @@
 
             data() {
                 return {
+                    isDarkMode: false,
                     prompts: {
                         all: {},        // hash -> prompt mapping
                         selected: [],   // selected from table
@@ -913,7 +1081,7 @@
                     if (this.filters.selected.functions.length > 0) {
                         params.set('functions', this.filters.selected.functions.join('~'));
                     }
-                    
+
                     if (this.prompts.selected.length > 0) {
                         params.set('prompts', this.prompts.selected.join('~'));
                     }
@@ -1000,7 +1168,35 @@
                 // ##     ## ##       ##       ##        ##       ##    ##
                 // ##     ## ######## ######## ##        ######## ##     ##
 
+                toggleDarkMode() {
+                    console.log('Toggling dark mode');  // Add this debug line
+                    this.isDarkMode = !this.isDarkMode;
+                    localStorage.setItem('darkMode', this.isDarkMode);
+                    // Force a DOM update
+                    this.$nextTick(() => {
+                        document.documentElement.classList.toggle('dark-mode', this.isDarkMode);
+                    });
+                },
+                clearAllSelections() {
+                    // Clear prompts selection
+                    if (this.prompts.grid.api) {
+                        this.prompts.grid.api.deselectAll();
+                    }
 
+                    // Clear models selection
+                    if (this.models.grid.api) {
+                        this.models.grid.api.deselectAll();
+                    }
+
+                    // Clear function selections
+                    this.filters.selected.functions = [];
+
+                    // Reset head selections
+                    this.head_selections_str = {};
+
+                    // Update URL to reflect cleared state
+                    this.updateURL();
+                },
                 isIndeterminate(category) {
                     const items = this.filters.available[category];
                     const selectedItems = this.filters.selected[category];
@@ -1602,11 +1798,19 @@
 
             // Lifecycle hook when component is mounted
             async mounted() {
-                console.log('Mounted app:', this);
+                console.log('Mounting app:', this);
+                const savedDarkMode = localStorage.getItem('darkMode');
+                if (savedDarkMode !== null) {
+                    this.isDarkMode = savedDarkMode === 'true';
+                }
+                if (this.isDarkMode) {
+                    document.documentElement.classList.add('dark-mode');
+                }
                 this.readURL(); // Read filters from URL first
                 await this.loadData(); // Load models, prompts, and functions
                 this.setupModelTable(); // Initialize the model grid
                 this.setupPromptTable(); // Initialize the prompts grid
+                console.log('Mounted app:', this);
             }
         });
 
