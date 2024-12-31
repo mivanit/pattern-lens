@@ -622,7 +622,7 @@
             <div class="prompt-table">
                 <div class="prompts-info">
                     <div class="prompt-counter">
-                        Selected Prompts: {{ prompts.selected.length }}
+                        Selected Prompts: {{ prompts.selected.length }} / {{ Object.keys(prompts.all).length }}
                     </div>
                     <div class="dataset-list-container">
                         <div class="dataset-list">
@@ -648,15 +648,15 @@
                         {{ images.upToDate ? 'Images Up to Date' : 'Display Images' }}
                     </button>
                     <div class="progress-wrapper">
-                        <span class="progress-status">{{ images.length }} / {{ images.expected }} images</span>
-                        <div class="progress-bar" v-if="loading || images.length > 0">
+                        <span class="progress-status" v-if="images.expected > 0"> {{ images.visible.length || 'N/A' }} / {{ images.expected }} images</span>
+                        <div class="progress-bar" v-if="loading || images.visible.length > 0">
                             <div class="progress-bar-fill" :class="{ 'loading': loading, 'complete': !loading }"
-                                :style="{ width: `${(images.length / images.expected) * 100}%` }">
+                                :style="{ width: `${(images.visible.length / images.expected) * 100}%` }">
                             </div>
                         </div>
                     </div>
                 </div>
-                <div class="image-controls-size" v-if="images.length > 0">
+                <div class="image-controls-size" v-if="images.visible.length > 0">
                     <label for="resizeSlider">Images per row:</label>
                     <input type="range" id="resizeSlider" class="resize-slider" v-model.number="images.perRow" min="1"
                         max="16" step="1">
@@ -669,9 +669,9 @@
         <div v-if="loading" class="loading">Loading...</div>
 
         <!-- actual images display -->
-        <div v-else-if="images.length > 0" class="images"
+        <div v-else-if="images.visible.length > 0" class="images"
             :style="{ 'grid-template-columns': `repeat(${images.perRow}, 1fr)` }">
-            <div v-for="image in images" class="image-container">
+            <div v-for="image in images.visible" class="image-container">
                 <p v-if="images.perRow <= 4" class="image-info">
                     <a :href="getSinglePropertyFilterUrl('models', image.model)">{{ image.model }}</a> -
                     <a :href="getSinglePropertyFilterUrl('functions', image.function)">{{ image.function }}</a> -
@@ -1391,7 +1391,7 @@
                 async displayImages() {
                     this.loading = true;
                     this.images.requested = true;
-                    this.images = [];
+                    this.images.visible = [];
 
                     // Calculate total images based on parsed head selections
                     let totalImages = 0;
@@ -1451,14 +1451,14 @@
                                             if (figure_format === 'svgz') {
                                                 const svgText = await fileOps.fetchAndDecompressSvgz(`${basePath}/${func_name}.svgz`);
                                                 if (svgText) {
-                                                    this.images.push({
+                                                    this.images.visible.push({
                                                         content: svgText,
                                                         ...figure_meta,
                                                     });
                                                 }
                                             } else {
                                                 const imglink = `<img src="${basePath}/${func_name}.${figure_format}" alt="${figure_meta.name}">`;
-                                                this.images.push({
+                                                this.images.visible.push({
                                                     content: imglink,
                                                     ...figure_meta,
                                                 });
