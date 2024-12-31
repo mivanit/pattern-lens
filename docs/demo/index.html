@@ -700,12 +700,8 @@
         // ##    ## ##     ## ##   ### ##    ##    ##    ##    ##
         //  ######   #######  ##    ##  ######     ##     ######
         const DATA_DIR = '.';
-        const URL_PARAM_MAPPING = {
-            models: 'filters.selected.models',
-            functions: 'filters.selected.functions',
-            prompts: 'prompts.selected',
-        };
         const FIGURE_FORMATS = ['svg', 'svgz', 'png'];
+        const URL_HEAD_PREFIX = 'heads-';
         const fileOps = {
             async getDirectoryContents(path) {
                 const response = await fetch(`${path}/index.txt`);
@@ -823,7 +819,7 @@
                         const result = Array(maxLayer).fill().map(() => Array(maxHead).fill(false));
                         if (!str || str.trim() === '') return result;
 
-                        const selections = str.split(',').map(s => s.trim());
+                        const selections = str.replaceAll("x", "*").split(',').map(s => s.trim());
 
                         for (const selection of selections) {
                             const match = selection.match(/^L(\d+|\d+-\d+|\*)(H\d+|H\*|Hx)?$/);
@@ -914,16 +910,25 @@
                 updateURL() {
                     const params = new URLSearchParams();
 
-                    if (this.filters.selected.models.length > 0) {
-                        params.set('models', this.filters.selected.models.join('~'));
-                        params.set('headSelections', JSON.stringify(this.head_selections_str));
-                    }
                     if (this.filters.selected.functions.length > 0) {
                         params.set('functions', this.filters.selected.functions.join('~'));
                     }
-
+                    
                     if (this.prompts.selected.length > 0) {
                         params.set('prompts', this.prompts.selected.join('~'));
+                    }
+
+                    if (this.filters.selected.models.length > 0) {
+                        params.set('models', this.filters.selected.models.join('~'));
+                    }
+
+                    if (this.filters.selected.models.length > 0) {
+                        for (const model of Object.keys(this.head_selections_str)) {
+                            params.set(
+                                `${URL_HEAD_PREFIX}${model}`,
+                                this.head_selections_str[model].replaceAll("*", "x").replaceAll(" ", "").split(',').join('~')
+                            );
+                        }
                     }
 
                     const newURL = `${window.location.pathname}?${params.toString()}`;
@@ -933,15 +938,19 @@
                 readURL() {
                     const params = new URLSearchParams(window.location.search);
 
-                    this.filters.selected.models = params.get('models')?.split('~') || [];
                     this.filters.selected.functions = params.get('functions')?.split('~') || [];
+
                     this.prompts.selected = params.get('prompts')?.split('~') || [];
 
+                    this.filters.selected.models = params.get('models')?.split('~') || [];
+
                     try {
-                        const headSelections = params.get('headSelections');
-                        if (headSelections) {
-                            const parsed = JSON.parse(headSelections);
-                            this.head_selections_str = parsed;
+                        this.head_selections_str = {};
+                        for (const [key, value] of params) {
+                            if (key.startsWith(URL_HEAD_PREFIX)) {
+                                const model = key.substring(URL_HEAD_PREFIX.length);
+                                this.head_selections_str[model] = value.split('~').join(', ');
+                            }
                         }
                     } catch (e) {
                         console.error('Error parsing head selections from URL:', e);
