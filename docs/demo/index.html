@@ -769,7 +769,6 @@
                 return {
                     prompts: {
                         all: {},        // hash -> prompt mapping
-                        visible: [],    // filtered prompts for current models
                         selected: [],   // selected from table
                         grid: {
                             api: null,
@@ -1016,7 +1015,6 @@
                         ]);
 
                         this.updateLayersAndHeads();
-                        this.updatePrompts(); // Update prompts after models and prompts are loaded
                     } catch (error) {
                         console.error('Error loading data:', error);
                     }
@@ -1220,14 +1218,15 @@
                         },
                     ];
 
-                    const gridOptions = {
+                    const modelGrid_options = {
                         columnDefs: columnDefs,
                         rowData: Object.values(this.models.configs),
                         selection: {
-                            checkboxes: true,
                             headerCheckbox: true,
-                            mode: 'multiple',
-                            enableClickSelection: false,
+                            selectAll: 'filtered',
+                            checkboxes: true,
+                            mode: 'multiRow',
+                            enableClickSelection: true,
                         },
                         defaultColDef: {
                             sortable: true,
@@ -1254,7 +1253,7 @@
                             this.filters.selected.models = selectedRows.map(row => row.model_name);
                         },
                         onGridReady: (params) => {
-                            this.modelGridApi = params.api;
+                            this.models.grid.api = params.api;
                             // Select models from URL
                             if (this.filters.selected.models.length > 0) {
                                 params.api.forEachNode(node => {
@@ -1266,12 +1265,12 @@
                         },
                     };
 
-                    const gridDiv = document.querySelector('#modelGrid');
-                    this.modelGridApi = agGrid.createGrid(gridDiv, gridOptions);
+                    const modelGrid_div = document.querySelector('#modelGrid');
+                    this.models.grid.api = agGrid.createGrid(modelGrid_div, modelGrid_options);
                 },
                 refreshHeadGrids() {
-                    if (this.modelGridApi) {
-                        this.modelGridApi.refreshCells({
+                    if (this.models.grid.api) {
+                        this.models.grid.api.refreshCells({
                             columns: ['head_grid'],
                             force: true
                         });
@@ -1305,27 +1304,6 @@
                         }
                     }
                     console.log('loaded number of prompts:', Object.keys(this.prompts.all).length);
-                    this.loading = false;
-                },
-                updatePrompts() {
-                    this.loading = true;
-                    console.log('Selected models:', this.filters.selected.models);
-
-                    // Use all models if none are selected
-                    const selectedModelsTemp = this.filters.selected.models.length > 0 ? this.filters.selected.models : this.filters.available.models;
-
-                    // Filter prompts based on selected models
-                    this.prompts.visible = Object.values(this.prompts.all).filter(prompt =>
-                        prompt.models.some(model => selectedModelsTemp.includes(model))
-                    );
-
-                    console.log('Prompts after filtering:', this.prompts.visible.length);
-
-                    // Update the grid data
-                    if (this.prompts.grid.api) {
-                        this.prompts.grid.api.setGridOption('rowData', this.prompts.visible);
-                    }
-
                     this.loading = false;
                 },
                 // Initialize the ag-Grid table
@@ -1367,9 +1345,9 @@
                     ];
 
                     // Grid options
-                    this.gridOptions = {
+                    const promptGrid_options = {
                         columnDefs: columnDefs,
-                        rowData: this.prompts.visible,
+                        rowData: Object.values(this.prompts.all),
                         pagination: true,
                         enableCellTextSelection: true,
                         paginationPageSize: 20,
@@ -1397,8 +1375,8 @@
                         },
                     };
 
-                    const gridDiv = document.querySelector('#promptGrid');
-                    this.prompts.grid.api = agGrid.createGrid(gridDiv, this.gridOptions);
+                    const promptGrid_div = document.querySelector('#promptGrid');
+                    this.prompts.grid.api = agGrid.createGrid(promptGrid_div, promptGrid_options);
                 },
 
                 // ########  ####  ######  ########  ##          ###    ##    ##
@@ -1495,29 +1473,6 @@
                     this.images.upToDate = true;
                     this.loading = false;
                 },
-                updateVisiblePrompts() {
-                    this.loading = true;
-                    console.log('Selected models:', this.filters.selected.models);
-
-                    // Use all models if none are selected
-                    const selectedModelsTemp = this.filters.selected.models.length > 0
-                        ? this.filters.selected.models
-                        : this.filters.available.models;
-
-                    // Filter prompts based on selected models
-                    this.prompts.visible = Object.values(this.prompts.all).filter(prompt =>
-                        prompt.models.some(model => selectedModelsTemp.includes(model))
-                    );
-
-                    console.log('Prompts after filtering:', this.prompts.visible.length);
-
-                    // Update the grid data
-                    if (this.prompts.grid.api) {
-                        this.prompts.grid.api.setGridOption('rowData', this.prompts.visible);
-                    }
-
-                    this.loading = false;
-                },
                 openMetadata(func) {
                     const newWindow = window.open('', '_blank');
                     let content = `<div style="font-family: sans-serif; line-height:1.4;">`;
@@ -1548,9 +1503,11 @@
 
             computed: {
                 uniqueDatasets() {
-                    return [...new Set(this.prompts.visible
-                        .map(prompt => prompt.meta.pile_set_name)
-                        .filter(Boolean))];
+                    return [
+                        ...new Set(
+                            Object.values(this.prompts.all).map(prompt => prompt.meta.pile_set_name).filter(Boolean)
+                        )
+                    ];
                 },
                 head_selections_arr() {
                     // model -> boolean[][] mapping for efficient lookup
@@ -1629,7 +1586,6 @@
                                 this.head_selections_str[model] = 'L*H*';
                             }
                         });
-                        this.updateVisiblePrompts();
                         this.updateURL();
                     }
                 },
