@@ -678,24 +678,6 @@
             width: 24px;
             height: 24px;
         }
-
-        .sun-icon {
-            left: 4px;
-            opacity: 1;
-        }
-
-        .moon-icon {
-            right: 4px;
-            opacity: 1;
-        }
-
-        .dark-mode .sun-icon {
-            opacity: 1;
-        }
-
-        .dark-mode .moon-icon {
-            opacity: 1;
-        }
     </style>
 </head>
 
@@ -717,8 +699,8 @@
                 <button class="btn btn-header dark-mode-button" @click="toggleDarkMode">
                     <span>Dark Mode</span>
                     <div class="dark-mode-toggle">
-                        <div class="dark-mode-icon sun-icon">☀️</div>
-                        <div class="dark-mode-icon moon-icon">🌙</div>
+                        <div class="dark-mode-icon" style="left: 4px">☀️</div>
+                        <div class="dark-mode-icon" style="right: 4px">🌙</div>
                     </div>
                 </button>
                 <button class="btn btn-header" @click="clearAllSelections">
