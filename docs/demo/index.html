@@ -454,21 +454,6 @@
             margin-left: 0.3em;
         }
 
-        /* The hidden tooltip content */
-        .function-tooltip {
-            display: none;
-            position: absolute;
-            top: 100%;
-            left: 50%;
-            transform: translateX(-50%);
-            background-color: #eee;
-            border: 1px solid #ccc;
-            padding: 8px;
-            width: 250px;
-            z-index: 1000;
-            border-radius: 4px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-        }
 
         /* Show the tooltip on hover */
         .function-info:hover .function-tooltip {
@@ -526,6 +511,58 @@
             height: 100% !important;
             width: 100% !important;
         }
+
+        /* Checkbox item container */
+        .checkbox-item {
+            position: relative;
+            display: flex;
+            align-items: center;
+            margin-bottom: 1px;
+            line-height: 1;
+            width: 100%;
+        }
+
+        /* Label container to allow for proper flex layout */
+        .checkbox-item label {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            width: 100%;
+            margin-left: 4px;
+        }
+
+        /* Function name text */
+        .function-name {
+            flex-grow: 1;
+            margin-right: 8px;
+        }
+
+        /* Info icon container */
+        .function-info {
+            position: relative;
+            cursor: help;
+            display: flex;
+            align-items: center;
+            margin-left: auto;
+        }
+
+        /* Tooltip styles */
+        .function-tooltip {
+            display: none;
+            position: fixed;
+            background-color: #eee;
+            border: 1px solid #ccc;
+            padding: 8px;
+            width: 250px;
+            z-index: 9999999;
+            border-radius: 4px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Show tooltip on hover */
+        .function-info:hover .function-tooltip {
+            display: block;
+        }
     </style>
 </head>
 
@@ -553,22 +590,23 @@
                             :indeterminate.prop="isIndeterminate('functions')" :checked="isChecked('functions')"
                             @change="toggleSelectAll('functions', $event)">
                         <label for="select-all-functions">Functions:</label>
-                        <span class="counter">{{ filters.selected.functions.length }} / {{
-                            filters.available.functions.length }}</span>
+                        <span class="counter">
+                            {{ filters.selected.functions.length }} / {{ Object.keys(filters.available.functions).length }}
+                        </span>
                     </div>
                     <div class="checkbox-list">
                         <div v-for="(func, name) in filters.available.functions" :key="name" class="checkbox-item">
                             <input type="checkbox" :id="'func-' + name" :value="name"
                                 v-model="filters.selected.functions">
-                            <label :for="'func-' + name" @contextmenu.prevent="openMetadata(func)">
+                            <label :for="'func-' + name">
                                 <span class="function-name">{{ name }}</span>
-                                <span class="function-info">
-                                    ℹ️
+                                <span class="function-info">ℹ️
                                     <div class="function-tooltip">
                                         <div v-if="func.doc"><strong>Description:</strong> {{ func.doc }}</div>
                                         <div v-if="func.figure_save_fmt"><strong>Format:</strong> {{
                                             func.figure_save_fmt }}</div>
                                         <div v-if="func.source"><strong>Source:</strong> {{ func.source }}</div>
+                                        <div v-if="func.code"><strong>Code:</strong><br>{{ func.code }}</div>
                                     </div>
                                 </span>
                             </label>
