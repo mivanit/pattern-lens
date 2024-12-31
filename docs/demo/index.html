@@ -87,6 +87,24 @@
             margin: 0 auto;
         }
 
+        /* Header Styles */
+        .header-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .header-title {
+            margin: 0;
+        }
+
+        .header-controls {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
         /* Layout Components */
         .main-selection-content {
             display: flex;
@@ -295,7 +313,7 @@
             display: block;
         }
 
-        /* Image Controls */
+        /* Image Controls and Display */
         .image-controls-container {
             margin: var(--space-lg) 0;
         }
@@ -377,29 +395,15 @@
             background-color: var(--primary-hover);
         }
 
-        .btn-secondary {
-            background-color: var(--secondary);
-            color: white;
-        }
-
-        .btn-secondary:hover {
-            background-color: var(--secondary-hover);
-        }
-
-        .btn-header {
-            background-color: var(--secondary);
-            color: white;
-        }
-
-        .btn-header:hover {
-            background-color: var(--secondary-hover);
-        }
-
+        .btn-secondary,
+        .btn-header,
         .btn-dark-mode {
             background-color: var(--secondary);
             color: white;
         }
 
+        .btn-secondary:hover,
+        .btn-header:hover,
         .btn-dark-mode:hover {
             background-color: var(--secondary-hover);
         }
@@ -451,28 +455,8 @@
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
         }
 
-        /* dark mode tooltip */
-        .dark-mode .function-tooltip {
-            background-color: var(--dark-bg-light);
-            border-color: var(--dark-border);
-            color: var(--dark-text);
-        }
-
         .function-info:hover .function-tooltip {
             display: block;
-        }
-
-        /* Utility Classes */
-        .loading,
-        .error {
-            text-align: center;
-            padding: var(--space-md);
-        }
-
-        .counter {
-            font-size: 0.8em;
-            color: var(--text-muted);
-            margin-left: auto;
         }
 
         /* Dark Mode Styles */
@@ -556,23 +540,26 @@
             color: var(--dark-text);
         }
 
-        .header-container {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 1rem;
+        .dark-mode .function-tooltip {
+            background-color: var(--dark-bg-light);
+            border-color: var(--dark-border);
+            color: var(--dark-text);
         }
 
-        .header-title {
-            margin: 0;
+        /* Utility Classes */
+        .loading,
+        .error {
+            text-align: center;
+            padding: var(--space-md);
         }
 
-        .header-controls {
-            display: flex;
-            gap: 1rem;
-            align-items: center;
+        .counter {
+            font-size: 0.8em;
+            color: var(--text-muted);
+            margin-left: auto;
         }
 
+        /* Dark Mode Toggle */
         .dark-mode-toggle {
             position: relative;
             width: 60px;
@@ -612,7 +599,13 @@
             top: 50%;
             transform: translateY(-50%);
             font-size: 14px;
-            transition: opacity 0.3s ease;
+            pointer-events: none;
+            line-height: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 24px;
+            height: 24px;
         }
 
         .sun-icon {
@@ -631,52 +624,6 @@
             gap: 8px;
             cursor: pointer;
             color: inherit;
-        }
-
-        .dark-mode-toggle {
-            position: relative;
-            width: 60px;
-            height: 30px;
-            border-radius: 15px;
-            background-color: #e2e8f0;
-            transition: background-color 0.3s ease;
-            display: inline-block;
-            vertical-align: middle;
-        }
-
-        .dark-mode-toggle::before {
-            content: "";
-            position: absolute;
-            top: 3px;
-            left: 3px;
-            width: 24px;
-            height: 24px;
-            border-radius: 50%;
-            background-color: white;
-            transition: transform 0.3s ease;
-            z-index: 1;
-        }
-
-        .dark-mode .dark-mode-toggle {
-            background-color: #4a5568;
-        }
-
-        .dark-mode .dark-mode-toggle::before {
-            transform: translateX(30px);
-        }
-
-        .dark-mode-icon {
-            position: absolute;
-            top: 50%;
-            transform: translateY(-50%);
-            font-size: 14px;
-            pointer-events: none;
-            line-height: 1;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            width: 24px;
-            height: 24px;
         }
     </style>
 </head>
