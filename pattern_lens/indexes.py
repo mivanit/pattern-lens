@@ -67,7 +67,7 @@ def get_func_metadata(func: Callable) -> dict[str, str | None]:
         name=func.__name__,
         doc=func.__doc__,
         figure_save_fmt=getattr(func, "figure_save_fmt", None),
-        source=inspect.getsourcefile(func),
+        source=Path(inspect.getsourcefile(func)).as_posix(),
     )
 
     try:
