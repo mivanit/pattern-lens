@@ -714,3 +714,9 @@ demo: demo-clean demo-activations demo-figures demo-server
 .PHONY: demo-docs
 demo-docs: demo-clean demo-activations demo-figures
 	@echo "generate demo for docs (no server)"
+
+
+.PHONY: summary
+summary:
+	@echo "write docs/summary.md using lmcat"
+	py -m lmcat -o docs/summary.md

@@ -31,6 +31,8 @@ dependencies = [
 
 [dependency-groups]
 dev = [
+    # lmcat
+    "lmcat>=0.0.1",
 	# test
 	"pytest>=8.2.2",
 	# coverage
