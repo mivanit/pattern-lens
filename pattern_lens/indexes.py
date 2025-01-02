@@ -63,11 +63,12 @@ def get_func_metadata(func: Callable) -> dict[str, str | None]:
     - `code : str | None` : the source code of the function, split by line. `None` if the source file cannot be read
 
     """
+    source_file: str | None = inspect.getsourcefile(func)
     output: dict[str, str | None] = dict(
         name=func.__name__,
         doc=func.__doc__,
         figure_save_fmt=getattr(func, "figure_save_fmt", None),
-        source=Path(inspect.getsourcefile(func)).as_posix(),
+        source=Path(source_file).as_posix() if source_file else None,
     )
 
     try:

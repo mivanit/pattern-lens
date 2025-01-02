@@ -55,6 +55,14 @@ def register_attn_figure_func(
     return func
 
 
+@register_attn_figure_func
+@save_matrix_wrapper(fmt="png")
+def raw(attn_matrix: AttentionMatrix) -> Matrix2D:
+    return attn_matrix
+
+
+# some more examples:
+
 # @register_attn_figure_func
 # @matplotlib_figure_saver
 # def raw(attn_matrix: AttentionMatrix, ax: plt.Axes) -> None:
@@ -62,20 +70,12 @@ def register_attn_figure_func(
 #     ax.set_title("Raw Attention Pattern")
 #     ax.axis("off")
 
+# @register_attn_figure_func
+# @save_matrix_wrapper(fmt="svg")
+# def raw_svg(attn_matrix: AttentionMatrix) -> Matrix2D:
+#     return attn_matrix
 
-@register_attn_figure_func
-@save_matrix_wrapper(fmt="svg")
-def raw_svg(attn_matrix: AttentionMatrix) -> Matrix2D:
-    return attn_matrix
-
-
-@register_attn_figure_func
-@save_matrix_wrapper(fmt="svgz")
-def raw_svgz(attn_matrix: AttentionMatrix) -> Matrix2D:
-    return attn_matrix
-
-
-@register_attn_figure_func
-@save_matrix_wrapper(fmt="png")
-def raw_png(attn_matrix: AttentionMatrix) -> Matrix2D:
-    return attn_matrix
+# @register_attn_figure_func
+# @save_matrix_wrapper(fmt="svgz")
+# def raw_svgz(attn_matrix: AttentionMatrix) -> Matrix2D:
+#     return attn_matrix
