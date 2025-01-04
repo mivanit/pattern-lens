@@ -234,6 +234,9 @@ def figures_main(
 
     print(f"{len(prompts)} prompts loaded")
 
+    print(f"{len(ATTENTION_MATRIX_FIGURE_FUNCS)} figure functions loaded")
+    print("\t" + ", ".join([func.__name__ for func in ATTENTION_MATRIX_FIGURE_FUNCS]))
+
     list(
         run_maybe_parallel(
             func=functools.partial(

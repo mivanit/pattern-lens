@@ -44,26 +44,48 @@ python -m pattern_lens.server --path attn_data
 
 View a demo of the web UI at [miv.name/pattern-lens/demo](https://miv.name/pattern-lens/demo/).
 
-## Custom Visualizations
+## Custom Figures
 
-Add custom visualization functions by decorating them with `@register_attn_figure_func`. You should generate the activations first:
+Add custom visualization functions by decorating them with `@register_attn_figure_func`. You should still generate the activations first:
 ```
 python -m pattern_lens.activations --model gpt2 --prompts data/pile_1k.jsonl --save-path attn_data
 ```
 
 
-and then write+run a script/notebook that looks something like this:
+and then write+run a script/notebook that looks something like this (see `demo.ipynb` for a full example):
+
 ```python
 # imports
+import numpy as np
 import matplotlib.pyplot as plt
-from pattern_lens.figure_util import save_matrix_wrapper, matplotlib_figure_saver
+from scipy.linalg import svd
+
+from pattern_lens.figure_util import matplotlib_figure_saver, save_matrix_wrapper
 from pattern_lens.attn_figure_funcs import register_attn_figure_func
 from pattern_lens.figures import figures_main
 
 # define your own functions
+# this one uses `matplotlib_figure_saver` -- define a function that takes matrix and `plt.Axes`, modify the axes
+@register_attn_figure_func
+@matplotlib_figure_saver(fmt="svgz")
+def svd_spectra(attn_matrix: np.ndarray, ax: plt.Axes) -> None:
+    # Perform SVD
+    U, s, Vh = svd(attn_matrix)
+
+    # Plot singular values
+    ax.plot(s, "o-")
+    ax.set_yscale("log")
+    ax.set_xlabel("Singular Value Index")
+    ax.set_ylabel("Singular Value")
+    ax.set_title("Singular Value Spectrum of Attention Matrix")
 
 
 # run the figures pipelne
-
-
+# run the pipeline
+figures_main(
+	model_name="pythia-14m",
+	save_path=Path("docs/demo/"),
+	n_samples=5,
+	force=False,
+)
 ```
