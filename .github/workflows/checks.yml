@@ -83,6 +83,6 @@ jobs:
       - name: typing
         run: make typing
     
-      - name: run demo
-        run: make demo
+      - name: run demo (no server)
+        run: make demo-docs
      
