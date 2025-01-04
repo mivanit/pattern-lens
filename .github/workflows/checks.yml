@@ -1,0 +1,88 @@
+name: Checks
+
+on:
+  workflow_dispatch:
+  pull_request:
+    branches:
+      - '*'
+  push:
+    branches:
+      - main
+
+jobs:
+  dep-check:
+    name: Check dependencies
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        versions:
+          - python: "3.12"
+          - python: "3.13"
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # whole history for making version
+      
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.versions.python }}
+
+      - name: set up uv
+        run: curl -LsSf https://astral.sh/uv/install.sh | sh
+
+      - name: print python version
+        run: python --version
+
+      - name: check version
+        run: make version
+
+      - name: check deps
+        run: make dep-check
+      
+
+  lint:
+    name: Lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: install
+        run: |
+          curl -LsSf https://astral.sh/uv/install.sh | sh
+          make setup
+
+      - name: format-check
+        run: make format-check
+
+  test:
+    name: Test
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        versions:
+          - python: "3.12"
+          - python: "3.13"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.versions.python }}
+
+      - name: install
+        run: |
+          curl -LsSf https://astral.sh/uv/install.sh | sh
+          make setup
+
+      - name: Tests
+        run: make test
+
+      - name: typing
+        run: make typing
+    
+      - name: run demo
+        run: make demo
+     
