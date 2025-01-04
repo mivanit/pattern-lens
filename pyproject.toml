@@ -52,7 +52,6 @@ dev = [
 
 [tool.uv]
 package = true
-compile-bytecode = true
 
 [project.urls]
 Homepage = "https://miv.name/pattern-lens"
