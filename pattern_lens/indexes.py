@@ -4,6 +4,7 @@ import inspect
 import json
 from pathlib import Path
 import importlib.resources
+import importlib.metadata
 from typing import Callable
 
 import pattern_lens
@@ -115,5 +116,7 @@ def write_html_index(path: Path):
         .joinpath("frontend/index.html")
         .read_text(encoding="utf-8")
     )
+    pattern_lens_version: str = importlib.metadata.version("pattern-lens")
+    html_index = html_index.replace("$$PATTERN_LENS_VERSION$$", pattern_lens_version)
     with open(path / "index.html", "w", encoding="utf-8") as f:
         f.write(html_index)
