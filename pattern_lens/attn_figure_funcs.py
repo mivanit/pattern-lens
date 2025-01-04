@@ -58,6 +58,7 @@ def register_attn_figure_func(
 @register_attn_figure_func
 @save_matrix_wrapper(fmt="png")
 def raw(attn_matrix: AttentionMatrix) -> Matrix2D:
+    "raw attention matrix"
     return attn_matrix
 
 
