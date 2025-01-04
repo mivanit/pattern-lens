@@ -1,0 +1,402 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="generator" content="pdoc 15.0.1"/>
+    <title>pattern_lens API documentation</title>
+<link rel="stylesheet" href="resources/bootstrap-reboot.min.css"><link rel="stylesheet" href="resources/syntax-highlighting.css"><link rel="stylesheet" href="resources/theme.css"><link rel="stylesheet" href="resources/layout.css"><link rel="stylesheet" href="resources/content.css"><link rel="stylesheet" href="resources/custom.css"><script>
+    window.MathJax = {
+        tex: {
+            inlineMath: [['$', '$'], ['\\(', '\\)']]
+        }
+    };
+</script>
+<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+<script>
+    /* Re-invoke MathJax when DOM content changes, for example during search. */
+    document.addEventListener("DOMContentLoaded", () => {
+        new MutationObserver(() => MathJax.typeset()).observe(
+            document.querySelector("main.pdoc").parentNode,
+            {childList: true}
+        );
+    })
+</script>
+<style>
+    mjx-container {
+        overflow-x: auto;
+        overflow-y: hidden;
+    }
+</style><style>
+    .pdoc .mermaid-pre {
+        border: none;
+        background: none;
+    }
+</style>
+<script type="module" defer>
+    import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs";
+
+    /* Re-invoke Mermaid when DOM content changes, for example during search. */
+    document.addEventListener("DOMContentLoaded", () => {
+        new MutationObserver(() => mermaid.run()).observe(
+            document.querySelector("main.pdoc").parentNode,
+            {childList: true}
+        );
+    })
+</script></head>
+<body>
+<div class="package-version">
+    docs for <a href="https://github.com/mivanit/pattern-lens">pattern_lens</a> v0.1.0<br>
+</div>
+    <nav class="pdoc">
+        <label id="navtoggle" for="togglestate" class="pdoc-button">
+            <img src="resources/svg/navtoggle.svg" alt="Toggle navigation"> 
+        </label>
+        <input id="togglestate" type="checkbox" aria-hidden="true" tabindex="-1">
+        <div>
+
+            <input type="search" placeholder="Search..." role="searchbox" aria-label="search"
+                   pattern=".+" required>
+
+            <h2>Contents</h2>
+            <ul>
+  <li><a href="#pattern-lens">pattern-lens</a></li>
+  <li><a href="#installation">Installation</a></li>
+  <li><a href="#usage">Usage</a>
+  <ul>
+    <li><a href="#basic-cli">Basic CLI</a></li>
+    <li><a href="#web-ui">Web UI</a></li>
+    <li><a href="#custom-figures">Custom Figures</a></li>
+  </ul></li>
+</ul>
+
+
+            <h2>Submodules</h2>
+            <ul>
+                    <li><a href="pattern_lens/activations.html">activations</a></li>
+                    <li><a href="pattern_lens/attn_figure_funcs.html">attn_figure_funcs</a></li>
+                    <li><a href="pattern_lens/consts.html">consts</a></li>
+                    <li><a href="pattern_lens/figure_util.html">figure_util</a></li>
+                    <li><a href="pattern_lens/figures.html">figures</a></li>
+                    <li><a href="pattern_lens/indexes.html">indexes</a></li>
+                    <li><a href="pattern_lens/load_activations.html">load_activations</a></li>
+                    <li><a href="pattern_lens/prompts.html">prompts</a></li>
+                    <li><a href="pattern_lens/server.html">server</a></li>
+            </ul>
+
+
+
+        <a class="attribution" title="pdoc: Python API documentation generator" href="https://pdoc.dev" target="_blank">
+            built with <span class="visually-hidden">pdoc</span>
+            <img src="resources/svg/pdoc-logo.svg" alt="pdoc logo"/>
+        </a>
+</div>
+    </nav>
+    <main class="pdoc">
+            <section class="module-info">
+                        <a class="pdoc-button git-button" href="https://github.com/mivanit/pattern-lens/blob/0.1.0/__init__.py">View Source on GitHub</a>
+                    <h1 class="modulename">
+pattern_lens    </h1>
+
+                        <div class="docstring"><h1 id="pattern-lens">pattern-lens</h1>
+
+<p>visualization of LLM attention patterns and things computed about them</p>
+
+<p><code>pattern-lens</code> makes it easy to:</p>
+
+<ul>
+<li>Generate visualizations of attention patterns, or figures computed from attention patterns, from models supported by <a href="https://github.com/TransformerLensOrg/TransformerLens">TransformerLens</a></li>
+<li>Compare generated figures across models, layers, and heads in an <a href="https://miv.name/pattern-lens/demo/">interactive web interface</a></li>
+</ul>
+
+<h1 id="installation">Installation</h1>
+
+<div class="pdoc-code codehilite">
+<pre><span></span><code>pip<span class="w"> </span>install<span class="w"> </span>pattern-lens
+</code></pre>
+</div>
+
+<h1 id="usage">Usage</h1>
+
+<p>The pipeline is as follows:</p>
+
+<ul>
+<li>Generate attention patterns using <code>pattern_lens.activations.acitvations_main()</code>, saving them in <code>npz</code> files</li>
+<li>Generate visualizations using <code><a href="pattern_lens/figures.html#figures_main">pattern_lens.figures.figures_main()</a></code> -- read the <code>npz</code> files, pass each attention pattern to each visualization function, and save the resulting figures</li>
+<li>Serve the web interface using <code><a href="pattern_lens/server.html">pattern_lens.server</a></code> -- web interface reads metadata in json/jsonl files, then lets the user select figures to show</li>
+</ul>
+
+<h2 id="basic-cli">Basic CLI</h2>
+
+<p>Generate attention patterns and default visualizations:</p>
+
+<div class="pdoc-code codehilite">
+<pre><span></span><code><span class="c1"># generate activations</span>
+python<span class="w"> </span>-m<span class="w"> </span><a href="pattern_lens/activations.html">pattern_lens.activations</a><span class="w"> </span>--model<span class="w"> </span>gpt2<span class="w"> </span>--prompts<span class="w"> </span>data/pile_1k.jsonl<span class="w"> </span>--save-path<span class="w"> </span>attn_data
+<span class="c1"># create visualizations</span>
+python<span class="w"> </span>-m<span class="w"> </span><a href="pattern_lens/figures.html">pattern_lens.figures</a><span class="w"> </span>--model<span class="w"> </span>gpt2<span class="w"> </span>--save-path<span class="w"> </span>attn_data
+</code></pre>
+</div>
+
+<p>serve the web UI:</p>
+
+<div class="pdoc-code codehilite">
+<pre><span></span><code>python<span class="w"> </span>-m<span class="w"> </span><a href="pattern_lens/server.html">pattern_lens.server</a><span class="w"> </span>--path<span class="w"> </span>attn_data
+</code></pre>
+</div>
+
+<h2 id="web-ui">Web UI</h2>
+
+<p>View a demo of the web UI at <a href="https://miv.name/pattern-lens/demo/">miv.name/pattern-lens/demo</a>.</p>
+
+<h2 id="custom-figures">Custom Figures</h2>
+
+<p>Add custom visualization functions by decorating them with <code>@register_attn_figure_func</code>. You should still generate the activations first:</p>
+
+<pre><code>python -m <a href="pattern_lens/activations.html">pattern_lens.activations</a> --model gpt2 --prompts data/pile_1k.jsonl --save-path attn_data
+</code></pre>
+
+<p>and then write+run a script/notebook that looks something like this (see <code>demo.ipynb</code> for a full example):</p>
+
+<div class="pdoc-code codehilite">
+<pre><span></span><code><span class="c1"># imports</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">from</span> <span class="nn">scipy.linalg</span> <span class="kn">import</span> <span class="n">svd</span>
+
+<span class="kn">from</span> <span class="nn"><a href="pattern_lens/figure_util.html">pattern_lens.figure_util</a></span> <span class="kn">import</span> <span class="n">matplotlib_figure_saver</span><span class="p">,</span> <span class="n">save_matrix_wrapper</span>
+<span class="kn">from</span> <span class="nn"><a href="pattern_lens/attn_figure_funcs.html">pattern_lens.attn_figure_funcs</a></span> <span class="kn">import</span> <span class="n">register_attn_figure_func</span>
+<span class="kn">from</span> <span class="nn"><a href="pattern_lens/figures.html">pattern_lens.figures</a></span> <span class="kn">import</span> <span class="n">figures_main</span>
+
+<span class="c1"># define your own functions</span>
+<span class="c1"># this one uses `matplotlib_figure_saver` -- define a function that takes matrix and `plt.Axes`, modify the axes</span>
+<span class="nd">@register_attn_figure_func</span>
+<span class="nd">@matplotlib_figure_saver</span><span class="p">(</span><span class="n">fmt</span><span class="o">=</span><span class="s2">&quot;svgz&quot;</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">svd_spectra</span><span class="p">(</span><span class="n">attn_matrix</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">ax</span><span class="p">:</span> <span class="n">plt</span><span class="o">.</span><span class="n">Axes</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="c1"># Perform SVD</span>
+    <span class="n">U</span><span class="p">,</span> <span class="n">s</span><span class="p">,</span> <span class="n">Vh</span> <span class="o">=</span> <span class="n">svd</span><span class="p">(</span><span class="n">attn_matrix</span><span class="p">)</span>
+
+    <span class="c1"># Plot singular values</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="s2">&quot;o-&quot;</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_yscale</span><span class="p">(</span><span class="s2">&quot;log&quot;</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;Singular Value Index&quot;</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;Singular Value&quot;</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;Singular Value Spectrum of Attention Matrix&quot;</span><span class="p">)</span>
+
+
+<span class="c1"># run the figures pipelne</span>
+<span class="c1"># run the pipeline</span>
+<span class="n">figures_main</span><span class="p">(</span>
+    <span class="n">model_name</span><span class="o">=</span><span class="s2">&quot;pythia-14m&quot;</span><span class="p">,</span>
+    <span class="n">save_path</span><span class="o">=</span><span class="n">Path</span><span class="p">(</span><span class="s2">&quot;docs/demo/&quot;</span><span class="p">),</span>
+    <span class="n">n_samples</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span>
+    <span class="n">force</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+<span class="p">)</span>
+</code></pre>
+</div>
+</div>
+
+                        <input id="mod-pattern_lens-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
+
+                        <div class="source-button-container">
+            <label class="pdoc-button view-source-button" for="mod-pattern_lens-view-source"><span>View Source</span></label>
+            <div class="github-button-wrapper">
+                <a class="pdoc-button github-link-button" href="https://github.com/mivanit/pattern-lens/blob/0.1.0/__init__.py#L0-L2" target="_blank">
+                    <span>View on GitHub</span>
+                </a>
+            </div>
+        </div>
+
+                <br/>
+                        <div class="pdoc-code codehilite"><pre><span></span><span id="L-1"><a href="#L-1"><span class="linenos">1</span></a><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-2"><a href="#L-2"><span class="linenos">2</span></a><span class="sd">.. include:: ../README.md</span>
+</span><span id="L-3"><a href="#L-3"><span class="linenos">3</span></a><span class="sd">&quot;&quot;&quot;</span>
+</span></pre></div>
+
+
+                <br/>
+            </section>
+    </main>
+<script>
+    function escapeHTML(html) {
+        return document.createElement('div').appendChild(document.createTextNode(html)).parentNode.innerHTML;
+    }
+
+    const originalContent = document.querySelector("main.pdoc");
+    let currentContent = originalContent;
+
+    function setContent(innerHTML) {
+        let elem;
+        if (innerHTML) {
+            elem = document.createElement("main");
+            elem.classList.add("pdoc");
+            elem.innerHTML = innerHTML;
+        } else {
+            elem = originalContent;
+        }
+        if (currentContent !== elem) {
+            currentContent.replaceWith(elem);
+            currentContent = elem;
+        }
+    }
+
+    function getSearchTerm() {
+        return (new URL(window.location)).searchParams.get("search");
+    }
+
+    const searchBox = document.querySelector(".pdoc input[type=search]");
+    searchBox.addEventListener("input", function () {
+        let url = new URL(window.location);
+        if (searchBox.value.trim()) {
+            url.hash = "";
+            url.searchParams.set("search", searchBox.value);
+        } else {
+            url.searchParams.delete("search");
+        }
+        history.replaceState("", "", url.toString());
+        onInput();
+    });
+    window.addEventListener("popstate", onInput);
+
+
+    let search, searchErr;
+
+    async function initialize() {
+        try {
+            search = await new Promise((resolve, reject) => {
+                const script = document.createElement("script");
+                script.type = "text/javascript";
+                script.async = true;
+                script.onload = () => resolve(window.pdocSearch);
+                script.onerror = (e) => reject(e);
+                script.src = "search.js";
+                document.getElementsByTagName("head")[0].appendChild(script);
+            });
+        } catch (e) {
+            console.error("Cannot fetch pdoc search index");
+            searchErr = "Cannot fetch search index.";
+        }
+        onInput();
+
+        document.querySelector("nav.pdoc").addEventListener("click", e => {
+            if (e.target.hash) {
+                searchBox.value = "";
+                searchBox.dispatchEvent(new Event("input"));
+            }
+        });
+    }
+
+    function onInput() {
+        setContent((() => {
+            const term = getSearchTerm();
+            if (!term) {
+                return null
+            }
+            if (searchErr) {
+                return `<h3>Error: ${searchErr}</h3>`
+            }
+            if (!search) {
+                return "<h3>Searching...</h3>"
+            }
+
+            window.scrollTo({top: 0, left: 0, behavior: 'auto'});
+
+            const results = search(term);
+
+            let html;
+            if (results.length === 0) {
+                html = `No search results for '${escapeHTML(term)}'.`
+            } else {
+                html = `<h4>${results.length} search result${results.length > 1 ? "s" : ""} for '${escapeHTML(term)}'.</h4>`;
+            }
+            for (let result of results.slice(0, 10)) {
+                let doc = result.doc;
+                let url = `${doc.modulename.replaceAll(".", "/")}.html`;
+                if (doc.qualname) {
+                    url += `#${doc.qualname}`;
+                }
+
+                let heading;
+                switch (result.doc.kind) {
+                    case "function":
+                        if (doc.fullname.endsWith(".__init__")) {
+                            heading = `<span class="name">${doc.fullname.replace(/\.__init__$/, "")}</span>${doc.signature}`;
+                        } else {
+                            heading = `<span class="def">${doc.funcdef}</span> <span class="name">${doc.fullname}</span>${doc.signature}`;
+                        }
+                        break;
+                    case "class":
+                        heading = `<span class="def">class</span> <span class="name">${doc.fullname}</span>`;
+                        if (doc.bases)
+                            heading += `<wbr>(<span class="base">${doc.bases}</span>)`;
+                        heading += `:`;
+                        break;
+                    case "variable":
+                        heading = `<span class="name">${doc.fullname}</span>`;
+                        if (doc.annotation)
+                            heading += `<span class="annotation">${doc.annotation}</span>`;
+                        if (doc.default_value)
+                            heading += `<span class="default_value"> = ${doc.default_value}</span>`;
+                        break;
+                    default:
+                        heading = `<span class="name">${doc.fullname}</span>`;
+                        break;
+                }
+                html += `
+                        <section class="search-result">
+                        <a href="${url}" class="attr ${doc.kind}">${heading}</a>
+                        <div class="docstring">${doc.doc}</div>
+                        </section>
+                    `;
+
+            }
+            return html;
+        })());
+    }
+
+    if (getSearchTerm()) {
+        initialize();
+        searchBox.value = getSearchTerm();
+        onInput();
+    } else {
+        searchBox.addEventListener("focus", initialize, {once: true});
+    }
+
+    searchBox.addEventListener("keydown", e => {
+        if (["ArrowDown", "ArrowUp", "Enter"].includes(e.key)) {
+            let focused = currentContent.querySelector(".search-result.focused");
+            if (!focused) {
+                currentContent.querySelector(".search-result").classList.add("focused");
+            } else if (
+                e.key === "ArrowDown"
+                && focused.nextElementSibling
+                && focused.nextElementSibling.classList.contains("search-result")
+            ) {
+                focused.classList.remove("focused");
+                focused.nextElementSibling.classList.add("focused");
+                focused.nextElementSibling.scrollIntoView({
+                    behavior: "smooth",
+                    block: "nearest",
+                    inline: "nearest"
+                });
+            } else if (
+                e.key === "ArrowUp"
+                && focused.previousElementSibling
+                && focused.previousElementSibling.classList.contains("search-result")
+            ) {
+                focused.classList.remove("focused");
+                focused.previousElementSibling.classList.add("focused");
+                focused.previousElementSibling.scrollIntoView({
+                    behavior: "smooth",
+                    block: "nearest",
+                    inline: "nearest"
+                });
+            } else if (
+                e.key === "Enter"
+            ) {
+                focused.querySelector("a").click();
+            }
+        }
+    });
+</script></body>
+</html>

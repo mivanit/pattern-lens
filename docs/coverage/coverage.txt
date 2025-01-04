@@ -1,0 +1,16 @@
+Name                                 Stmts   Miss  Cover   Missing
+------------------------------------------------------------------
+pattern_lens\__init__.py                 0      0   100%
+pattern_lens\activations.py            114     38    67%   116, 142, 200-211, 215, 297-298, 336-451, 455
+pattern_lens\attn_figure_funcs.py       10      0   100%
+pattern_lens\consts.py                  17      0   100%
+pattern_lens\figure_util.py            115      7    94%   171-174, 221-222, 365, 373
+pattern_lens\figures.py                 97     33    66%   49, 88-89, 95-101, 131, 157-158, 261, 265-319, 329-330
+pattern_lens\indexes.py                 57      2    96%   76-77
+pattern_lens\load_activations.py        47      7    85%   48, 83, 116, 120, 127, 139-140
+pattern_lens\prompts.py                 24      1    96%   79
+pattern_lens\server.py                  25     25     0%   6-55
+tests\integration\test_pipeline.py      15      0   100%
+tests\unit\test_figure_util.py         176      0   100%
+------------------------------------------------------------------
+TOTAL                                  697    113    84%
