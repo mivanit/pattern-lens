@@ -1,4 +1,5 @@
 # pattern-lens
+
 visualization of LLM attention patterns and things computed about them
 
 `pattern-lens` makes it easy to:
@@ -51,17 +52,18 @@ Add custom visualization functions by decorating them with `@register_attn_figur
 python -m pattern_lens.activations --model gpt2 --prompts data/pile_1k.jsonl --save-path attn_data
 ```
 
-
-and then write+run a script/notebook that looks something like this (see `demo.ipynb` for a full example):
+and then write+run a script/notebook that looks something like this:
 
 ```python
-# imports
 import numpy as np
 import matplotlib.pyplot as plt
 from scipy.linalg import svd
 
+# these functions simplify writing a function which saves a figure
 from pattern_lens.figure_util import matplotlib_figure_saver, save_matrix_wrapper
+# decorator to register your function, such that it will be run by `figures_main`
 from pattern_lens.attn_figure_funcs import register_attn_figure_func
+# runs the actual figure generation pipeline
 from pattern_lens.figures import figures_main
 
 # define your own functions
@@ -89,3 +91,5 @@ figures_main(
 	force=False,
 )
 ```
+
+see `demo.ipynb` for a full example
