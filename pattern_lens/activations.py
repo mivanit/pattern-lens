@@ -117,6 +117,7 @@ def compute_activations(
 
     # compute activations
     with torch.no_grad():
+        model.eval()
         # TODO: batching?
         _, cache = model.run_with_cache(
             prompt_str,
@@ -233,6 +234,7 @@ def activations_main(
     n_samples: int,
     no_index_html: bool,
     shuffle: bool = False,
+    device: str | torch.device = "cuda" if torch.cuda.is_available() else "cpu",
 ) -> None:
     """main function for computing activations
 
@@ -258,16 +260,32 @@ def activations_main(
      - `shuffle : bool`
         whether to shuffle the prompts
        (defaults to `False`)
+     - `device : str | torch.device`
+        the device to use. if a string, will be passed to `torch.device`
     """
 
+    # figure out the device to use
+    device_: torch.device
+    if isinstance(device, torch.device):
+        device_ = device
+    elif isinstance(device, str):
+        device_ = torch.device(device)
+    else:
+        raise ValueError(f"invalid device: {device}")
+
+    print(f"using device: {device_}")
+
     with SpinnerContext(message="loading model", **SPINNER_KWARGS):
-        model: HookedTransformer = HookedTransformer.from_pretrained(model_name)
+        model: HookedTransformer = HookedTransformer.from_pretrained(
+            model_name, device=device_
+        )
         model.model_name = model_name
         model.cfg.model_name = model_name
         n_params: int = sum(p.numel() for p in model.parameters())
     print(
         f"loaded {model_name} with {shorten_numerical_to_str(n_params)} ({n_params}) parameters"
     )
+    print(f"\tmodel devices: {set(p.device for p in model.parameters())}")
 
     save_path_p: Path = Path(save_path)
     save_path_p.mkdir(parents=True, exist_ok=True)
@@ -419,6 +437,15 @@ def main():
             help="If passed, will shuffle the prompts",
         )
 
+        # device
+        arg_parser.add_argument(
+            "--device",
+            type=str,
+            required=False,
+            help="The device to use for the model",
+            default="cuda" if torch.cuda.is_available() else "cpu",
+        )
+
         args: argparse.Namespace = arg_parser.parse_args()
 
     print(f"args parsed: {args}")
@@ -446,6 +473,7 @@ def main():
             n_samples=args.n_samples,
             no_index_html=args.no_index_html,
             shuffle=args.shuffle,
+            device=args.device,
         )
 
     print(DIVIDER_S1)
