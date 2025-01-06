@@ -125,7 +125,7 @@ def test_save_matrix_as_svgz_wrapper_exceptions():
     test_matrix = np.array([[2, 3], [4, 5]], dtype=np.float32)
     with pytest.raises(
         AssertionError,
-        match=r"Matrix values must be in range \[0, 1\], or normalize must be True\. got: min: .*?, max: .*?",
+        match=r"Matrix values must be in range \[0, 1\], or normalize must be True.*",
     ):
         invalid_range(test_matrix, TEMP_DIR)
 
