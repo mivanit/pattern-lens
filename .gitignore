@@ -4,6 +4,7 @@
 data/pile_1k.jsonl
 tests/_temp/**
 .github/local/**
+test.ipynb
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
