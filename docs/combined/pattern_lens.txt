@@ -1,6 +1,11 @@
-  docs for pattern_lens v0.1.0
+  docs for pattern_lens v0.2.0
 
 Contents
+
+[PyPI] [PyPI - Downloads] [docs] [Checks]
+
+[Coverage] [GitHub commits] [GitHub commit activity] [GitHub closed pull
+requests] [code size, bytes]
 
 pattern-lens
 
@@ -56,16 +61,17 @@ first:
 
     python -m pattern_lens.activations --model gpt2 --prompts data/pile_1k.jsonl --save-path attn_data
 
-and then write+run a script/notebook that looks something like this (see
-demo.ipynb for a full example):
+and then write+run a script/notebook that looks something like this:
 
-    # imports
     import numpy as np
     import matplotlib.pyplot as plt
     from scipy.linalg import svd
 
+    # these functions simplify writing a function which saves a figure
     from pattern_lens.figure_util import matplotlib_figure_saver, save_matrix_wrapper
+    # decorator to register your function, such that it will be run by `figures_main`
     from pattern_lens.attn_figure_funcs import register_attn_figure_func
+    # runs the actual figure generation pipeline
     from pattern_lens.figures import figures_main
 
     # define your own functions
@@ -93,6 +99,8 @@ demo.ipynb for a full example):
         force=False,
     )
 
+see demo.ipynb for a full example
+
 Submodules
 
 -   activations
@@ -108,6 +116,11 @@ Submodules
 View Source on GitHub
 
 pattern_lens
+
+[PyPI] [PyPI - Downloads] [docs] [Checks]
+
+[Coverage] [GitHub commits] [GitHub commit activity] [GitHub closed pull
+requests] [code size, bytes]
 
 pattern-lens
 
@@ -165,16 +178,17 @@ first:
 
     python -m <a href="pattern_lens/activations.html">pattern_lens.activations</a> --model gpt2 --prompts data/pile_1k.jsonl --save-path attn_data
 
-and then write+run a script/notebook that looks something like this (see
-demo.ipynb for a full example):
+and then write+run a script/notebook that looks something like this:
 
-    ### imports
     import numpy as np
     import matplotlib.pyplot as plt
     from scipy.linalg import svd
 
+    ### these functions simplify writing a function which saves a figure
     from <a href="pattern_lens/figure_util.html">pattern_lens.figure_util</a> import matplotlib_figure_saver, save_matrix_wrapper
+    ### decorator to register your function, such that it will be run by `figures_main`
     from <a href="pattern_lens/attn_figure_funcs.html">pattern_lens.attn_figure_funcs</a> import register_attn_figure_func
+    ### runs the actual figure generation pipeline
     from <a href="pattern_lens/figures.html">pattern_lens.figures</a> import figures_main
 
     ### define your own functions
@@ -202,9 +216,11 @@ demo.ipynb for a full example):
         force=False,
     )
 
+see demo.ipynb for a full example
+
 View Source on GitHub
 
-  docs for pattern_lens v0.1.0
+  docs for pattern_lens v0.2.0
 
 Contents
 
@@ -331,7 +347,8 @@ def activations_main
         force: bool,
         n_samples: int,
         no_index_html: bool,
-        shuffle: bool = False
+        shuffle: bool = False,
+        device: str | torch.device = 'cuda'
     ) -> None
 
 View Source on GitHub
@@ -353,6 +370,8 @@ Parameters:
 -   n_samples : int maximum number of samples to process
 -   no_index_html : bool whether to write an index.html file
 -   shuffle : bool whether to shuffle the prompts (defaults to False)
+-   device : str | torch.device the device to use. if a string, will be
+    passed to torch.device
 
 def main
 
@@ -360,7 +379,7 @@ def main
 
 View Source on GitHub
 
-  docs for pattern_lens v0.1.0
+  docs for pattern_lens v0.2.0
 
 Contents
 
@@ -435,7 +454,9 @@ def raw
 
 View Source on GitHub
 
-  docs for pattern_lens v0.1.0
+raw attention matrix
+
+  docs for pattern_lens v0.2.0
 
 Contents
 
@@ -487,7 +508,7 @@ divider string for separating sections
 
 divider string for separating subsections
 
-  docs for pattern_lens v0.1.0
+  docs for pattern_lens v0.2.0
 
 Contents
 
@@ -609,7 +630,9 @@ def matrix_to_image_preprocess
     (
         matrix: jaxtyping.Float[ndarray, 'n m'],
         normalize: bool = False,
-        cmap: str | matplotlib.colors.Colormap = 'viridis'
+        cmap: str | matplotlib.colors.Colormap = 'viridis',
+        diverging_colormap: bool = False,
+        normalize_min: float | None = None
     ) -> jaxtyping.UInt8[ndarray, 'n m rgb=3']
 
 View Source on GitHub
@@ -623,6 +646,14 @@ Parameters:
     (defaults to MATRIX_SAVE_NORMALIZE)
 -   cmap : str|Colormap the colormap to use for the matrix (defaults to
     MATRIX_SAVE_CMAP)
+-   diverging_colormap : bool if True and using a diverging colormap,
+    ensures 0 values map to the center of the colormap (defaults to
+    False)
+-   normalize_min : float|None if a float, then for normalize=True and
+    diverging_colormap=False, the minimum value to normalize to
+    (generally set this to zero?). if None, then the minimum value of
+    the matrix is used. if diverging_colormap=True OR normalize=False,
+    this must be None. (defaults to None)
 
 Returns:
 
@@ -658,7 +689,9 @@ def matrix_as_svg
     (
         matrix: jaxtyping.Float[ndarray, 'n m'],
         normalize: bool = False,
-        cmap='viridis'
+        cmap: str | matplotlib.colors.Colormap = 'viridis',
+        diverging_colormap: bool = False,
+        normalize_min: float | None = None
     ) -> str
 
 View Source on GitHub
@@ -674,6 +707,14 @@ Parameters:
     AssertionError (defaults to False)
 -   cmap : str the colormap to use for the matrix – will look up in
     matplotlib.colormaps if it’s a string (defaults to "viridis")
+-   diverging_colormap : bool if True and using a diverging colormap,
+    ensures 0 values map to the center of the colormap (defaults to
+    False)
+-   normalize_min : float|None if a float, then for normalize=True and
+    diverging_colormap=False, the minimum value to normalize to
+    (generally set this to zero?) if None, then the minimum value of the
+    matrix is used if diverging_colormap=True OR normalize=False, this
+    must be None (defaults to None)
 
 Returns:
 
@@ -686,7 +727,9 @@ def save_matrix_wrapper
         *args,
         fmt: Literal['png', 'svg', 'svgz'] = 'svgz',
         normalize: bool = False,
-        cmap='viridis'
+        cmap: str | matplotlib.colors.Colormap = 'viridis',
+        diverging_colormap: bool = False,
+        normalize_min: float | None = None
     ) -> Union[Callable[[jaxtyping.Float[ndarray, 'n_ctx n_ctx'], pathlib.Path], NoneType], Callable[[Callable[[jaxtyping.Float[ndarray, 'n_ctx n_ctx']], jaxtyping.Float[ndarray, 'n m']]], Callable[[jaxtyping.Float[ndarray, 'n_ctx n_ctx'], pathlib.Path], NoneType]]]
 
 View Source on GitHub
@@ -705,6 +748,14 @@ Parameters:
     range [0, 1]. Defaults to False.
 -   cmap : str, keyword-only The colormap to use for the matrix.
     Defaults to MATRIX_SVG_CMAP.
+-   diverging_colormap : bool if True and using a diverging colormap,
+    ensures 0 values map to the center of the colormap (defaults to
+    False)
+-   normalize_min : float|None if a float, then for normalize=True and
+    diverging_colormap=False, the minimum value to normalize to
+    (generally set this to zero?) if None, then the minimum value of the
+    matrix is used if diverging_colormap=True OR normalize=False, this
+    must be None (defaults to None)
 
 Returns:
 
@@ -730,7 +781,7 @@ Usage:
     def scale_matrix(matrix):
         return matrix * 2
 
-  docs for pattern_lens v0.1.0
+  docs for pattern_lens v0.2.0
 
 Contents
 
@@ -909,7 +960,7 @@ def main
 
 View Source on GitHub
 
-  docs for pattern_lens v0.1.0
+  docs for pattern_lens v0.2.0
 
 Contents
 
@@ -993,7 +1044,7 @@ View Source on GitHub
 
 writes an index.html file to the path
 
-  docs for pattern_lens v0.1.0
+  docs for pattern_lens v0.2.0
 
 Contents
 
@@ -1005,6 +1056,7 @@ API Documentation
 -   GetActivationsError
 -   ActivationsMissingError
 -   ActivationsMismatchError
+-   InvalidPromptError
 -   compare_prompt_to_loaded
 -   augment_prompt_with_hash
 -   load_activations
@@ -1080,6 +1132,25 @@ Inherited Members
 
 -   args
 
+class InvalidPromptError(GetActivationsError):
+
+View Source on GitHub
+
+error for invalid prompt – the prompt does not have fields “hash” or
+“text”
+
+raised by augment_prompt_with_hash
+
+Inherited Members
+
+-   ValueError
+
+-   with_traceback
+
+-   add_note
+
+-   args
+
 def compare_prompt_to_loaded
 
     (prompt: dict, prompt_loaded: dict) -> None
@@ -1108,6 +1179,8 @@ def augment_prompt_with_hash
 View Source on GitHub
 
 if a prompt does not have a hash, add one
+
+not having a “text” field is allowed, but only if “hash” is present
 
 Parameters:
 
@@ -1152,7 +1225,7 @@ Raises:
 -   ActivationsMissingError : if the activations file is missing
 -   ValueError : if return_fmt is not "torch" or "numpy"
 
-  docs for pattern_lens v0.1.0
+  docs for pattern_lens v0.2.0
 
 Contents
 
@@ -1198,7 +1271,7 @@ Returns:
     key with a string value, and some metadata. this is not guaranteed
     to be the same length as the input list!
 
-  docs for pattern_lens v0.1.0
+  docs for pattern_lens v0.2.0
 
 Contents
 

@@ -46,7 +46,7 @@
 </script></head>
 <body>
 <div class="package-version">
-    docs for <a href="https://github.com/mivanit/pattern-lens">pattern_lens</a> v0.1.0<br>
+    docs for <a href="https://github.com/mivanit/pattern-lens">pattern_lens</a> v0.2.0<br>
 </div>
     <nav class="pdoc">
         <label id="navtoggle" for="togglestate" class="pdoc-button">
@@ -80,7 +80,7 @@
     </nav>
     <main class="pdoc">
             <section class="module-info">
-                        <a class="pdoc-button git-button" href="https://github.com/mivanit/pattern-lens/blob/0.1.0/server.py">View Source on GitHub</a>
+                        <a class="pdoc-button git-button" href="https://github.com/mivanit/pattern-lens/blob/0.2.0/server.py">View Source on GitHub</a>
                     <h1 class="modulename">
 <a href="./../pattern_lens.html">pattern_lens</a><wbr>.server    </h1>
 
@@ -94,7 +94,7 @@
                         <div class="source-button-container">
             <label class="pdoc-button view-source-button" for="mod-server-view-source"><span>View Source</span></label>
             <div class="github-button-wrapper">
-                <a class="pdoc-button github-link-button" href="https://github.com/mivanit/pattern-lens/blob/0.1.0/server.py#L0-L54" target="_blank">
+                <a class="pdoc-button github-link-button" href="https://github.com/mivanit/pattern-lens/blob/0.2.0/server.py#L0-L54" target="_blank">
                     <span>View on GitHub</span>
                 </a>
             </div>
@@ -106,17 +106,17 @@
 </span><span id="L-3"><a href="#L-3"><span class="linenos"> 3</span></a><span class="sd">can also run with --rewrite-index to update the index.html file. this is useful for working on the ui.</span>
 </span><span id="L-4"><a href="#L-4"><span class="linenos"> 4</span></a><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="L-5"><a href="#L-5"><span class="linenos"> 5</span></a>
-</span><span id="L-6"><a href="#L-6"><span class="linenos"> 6</span></a><span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
-</span><span id="L-7"><a href="#L-7"><span class="linenos"> 7</span></a><span class="kn">import</span> <span class="nn">sys</span>
-</span><span id="L-8"><a href="#L-8"><span class="linenos"> 8</span></a><span class="kn">import</span> <span class="nn">os</span>
-</span><span id="L-9"><a href="#L-9"><span class="linenos"> 9</span></a><span class="kn">import</span> <span class="nn">argparse</span>
-</span><span id="L-10"><a href="#L-10"><span class="linenos">10</span></a><span class="kn">import</span> <span class="nn">http.server</span>
-</span><span id="L-11"><a href="#L-11"><span class="linenos">11</span></a><span class="kn">import</span> <span class="nn">socketserver</span>
+</span><span id="L-6"><a href="#L-6"><span class="linenos"> 6</span></a><span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+</span><span id="L-7"><a href="#L-7"><span class="linenos"> 7</span></a><span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
+</span><span id="L-8"><a href="#L-8"><span class="linenos"> 8</span></a><span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+</span><span id="L-9"><a href="#L-9"><span class="linenos"> 9</span></a><span class="kn">import</span><span class="w"> </span><span class="nn">argparse</span>
+</span><span id="L-10"><a href="#L-10"><span class="linenos">10</span></a><span class="kn">import</span><span class="w"> </span><span class="nn">http.server</span>
+</span><span id="L-11"><a href="#L-11"><span class="linenos">11</span></a><span class="kn">import</span><span class="w"> </span><span class="nn">socketserver</span>
 </span><span id="L-12"><a href="#L-12"><span class="linenos">12</span></a>
-</span><span id="L-13"><a href="#L-13"><span class="linenos">13</span></a><span class="kn">from</span> <span class="nn">pattern_lens.indexes</span> <span class="kn">import</span> <span class="n">write_html_index</span>
+</span><span id="L-13"><a href="#L-13"><span class="linenos">13</span></a><span class="kn">from</span><span class="w"> </span><span class="nn">pattern_lens.indexes</span><span class="w"> </span><span class="kn">import</span> <span class="n">write_html_index</span>
 </span><span id="L-14"><a href="#L-14"><span class="linenos">14</span></a>
 </span><span id="L-15"><a href="#L-15"><span class="linenos">15</span></a>
-</span><span id="L-16"><a href="#L-16"><span class="linenos">16</span></a><span class="k">def</span> <span class="nf">main</span><span class="p">(</span><span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">port</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">8000</span><span class="p">):</span>
+</span><span id="L-16"><a href="#L-16"><span class="linenos">16</span></a><span class="k">def</span><span class="w"> </span><span class="nf">main</span><span class="p">(</span><span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">port</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">8000</span><span class="p">):</span>
 </span><span id="L-17"><a href="#L-17"><span class="linenos">17</span></a>    <span class="n">os</span><span class="o">.</span><span class="n">chdir</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
 </span><span id="L-18"><a href="#L-18"><span class="linenos">18</span></a>    <span class="k">try</span><span class="p">:</span>
 </span><span id="L-19"><a href="#L-19"><span class="linenos">19</span></a>        <span class="k">with</span> <span class="n">socketserver</span><span class="o">.</span><span class="n">TCPServer</span><span class="p">(</span>
@@ -171,7 +171,7 @@
                 <div class="source-button-container">
             <label class="pdoc-button view-source-button" for="main-view-source"><span>View Source</span></label>
             <div class="github-button-wrapper">
-                <a class="pdoc-button github-link-button" href="https://github.com/mivanit/pattern-lens/blob/0.1.0/server.py#L16-L26" target="_blank">
+                <a class="pdoc-button github-link-button" href="https://github.com/mivanit/pattern-lens/blob/0.2.0/server.py#L16-L26" target="_blank">
                     <span>View on GitHub</span>
                 </a>
             </div>
@@ -179,7 +179,7 @@
 
     </div>
     <a class="headerlink" href="#main"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="main-17"><a href="#main-17"><span class="linenos">17</span></a><span class="k">def</span> <span class="nf">main</span><span class="p">(</span><span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">port</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">8000</span><span class="p">):</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="main-17"><a href="#main-17"><span class="linenos">17</span></a><span class="k">def</span><span class="w"> </span><span class="nf">main</span><span class="p">(</span><span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">port</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">8000</span><span class="p">):</span>
 </span><span id="main-18"><a href="#main-18"><span class="linenos">18</span></a>    <span class="n">os</span><span class="o">.</span><span class="n">chdir</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
 </span><span id="main-19"><a href="#main-19"><span class="linenos">19</span></a>    <span class="k">try</span><span class="p">:</span>
 </span><span id="main-20"><a href="#main-20"><span class="linenos">20</span></a>        <span class="k">with</span> <span class="n">socketserver</span><span class="o">.</span><span class="n">TCPServer</span><span class="p">(</span>

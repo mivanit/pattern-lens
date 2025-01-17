@@ -1,7 +1,22 @@
 > docs for [`pattern_lens`](https://github.com/mivanit/pattern-lens)
-> v0.1.0
+> v0.2.0
 
 ## Contents
+
+[![PyPI](https://img.shields.io/pypi/v/pattern-lens)](https://pypi.org/project/pattern-lens/)
+![PyPI - Downloads](https://img.shields.io/pypi/dm/pattern-lens)
+[![docs](https://img.shields.io/badge/docs-latest-blue)](https://miv.name/pattern-lens)
+[![Checks](https://github.com/mivanit/pattern-lens/actions/workflows/checks.yml/badge.svg)](https://github.com/mivanit/pattern-lens/actions/workflows/checks.yml)
+
+[![Coverage](data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz4NCjxzdmcgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB3aWR0aD0iOTkiIGhlaWdodD0iMjAiPg0KICAgIDxsaW5lYXJHcmFkaWVudCBpZD0iYiIgeDI9IjAiIHkyPSIxMDAlIj4NCiAgICAgICAgPHN0b3Agb2Zmc2V0PSIwIiBzdG9wLWNvbG9yPSIjYmJiIiBzdG9wLW9wYWNpdHk9Ii4xIi8+DQogICAgICAgIDxzdG9wIG9mZnNldD0iMSIgc3RvcC1vcGFjaXR5PSIuMSIvPg0KICAgIDwvbGluZWFyR3JhZGllbnQ+DQogICAgPG1hc2sgaWQ9ImEiPg0KICAgICAgICA8cmVjdCB3aWR0aD0iOTkiIGhlaWdodD0iMjAiIHJ4PSIzIiBmaWxsPSIjZmZmIi8+DQogICAgPC9tYXNrPg0KICAgIDxnIG1hc2s9InVybCgjYSkiPg0KICAgICAgICA8cGF0aCBmaWxsPSIjNTU1IiBkPSJNMCAwaDYzdjIwSDB6Ii8+DQogICAgICAgIDxwYXRoIGZpbGw9IiNhNGE2MWQiIGQ9Ik02MyAwaDM2djIwSDYzeiIvPg0KICAgICAgICA8cGF0aCBmaWxsPSJ1cmwoI2IpIiBkPSJNMCAwaDk5djIwSDB6Ii8+DQogICAgPC9nPg0KICAgIDxnIGZpbGw9IiNmZmYiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtZmFtaWx5PSJEZWphVnUgU2FucyxWZXJkYW5hLEdlbmV2YSxzYW5zLXNlcmlmIiBmb250LXNpemU9IjExIj4NCiAgICAgICAgPHRleHQgeD0iMzEuNSIgeT0iMTUiIGZpbGw9IiMwMTAxMDEiIGZpbGwtb3BhY2l0eT0iLjMiPmNvdmVyYWdlPC90ZXh0Pg0KICAgICAgICA8dGV4dCB4PSIzMS41IiB5PSIxNCI+Y292ZXJhZ2U8L3RleHQ+DQogICAgICAgIDx0ZXh0IHg9IjgwIiB5PSIxNSIgZmlsbD0iIzAxMDEwMSIgZmlsbC1vcGFjaXR5PSIuMyI+ODIlPC90ZXh0Pg0KICAgICAgICA8dGV4dCB4PSI4MCIgeT0iMTQiPjgyJTwvdGV4dD4NCiAgICA8L2c+DQo8L3N2Zz4NCg==)](docs/coverage/html/)
+![GitHub
+commits](https://img.shields.io/github/commit-activity/t/mivanit/pattern-lens)
+![GitHub commit
+activity](https://img.shields.io/github/commit-activity/m/mivanit/pattern-lens)
+![GitHub closed pull
+requests](https://img.shields.io/github/issues-pr-closed/mivanit/pattern-lens)
+![code size,
+bytes](https://img.shields.io/github/languages/code-size/mivanit/pattern-lens)
 
 # pattern-lens
 
@@ -65,17 +80,18 @@ first:
 
     python -m pattern_lens.activations --model gpt2 --prompts data/pile_1k.jsonl --save-path attn_data
 
-and then write+run a script/notebook that looks something like this (see
-`demo.ipynb` for a full example):
+and then write+run a script/notebook that looks something like this:
 
 ``` python
-# imports
 import numpy as np
 import matplotlib.pyplot as plt
 from scipy.linalg import svd
 
+# these functions simplify writing a function which saves a figure
 from pattern_lens.figure_util import matplotlib_figure_saver, save_matrix_wrapper
+# decorator to register your function, such that it will be run by `figures_main`
 from pattern_lens.attn_figure_funcs import register_attn_figure_func
+# runs the actual figure generation pipeline
 from pattern_lens.figures import figures_main
 
 # define your own functions
@@ -104,6 +120,8 @@ figures_main(
 )
 ```
 
+see `demo.ipynb` for a full example
+
 ## Submodules
 
 - [`activations`](#activations)
@@ -117,9 +135,24 @@ figures_main(
 - [`server`](#server)
 
 [View Source on
-GitHub](https://github.com/mivanit/pattern-lens/blob/0.1.0/__init__.py)
+GitHub](https://github.com/mivanit/pattern-lens/blob/0.2.0/__init__.py)
 
 # `pattern_lens`
+
+[![PyPI](https://img.shields.io/pypi/v/pattern-lens)](https://pypi.org/project/pattern-lens/)
+![PyPI - Downloads](https://img.shields.io/pypi/dm/pattern-lens)
+[![docs](https://img.shields.io/badge/docs-latest-blue)](https://miv.name/pattern-lens)
+[![Checks](https://github.com/mivanit/pattern-lens/actions/workflows/checks.yml/badge.svg)](https://github.com/mivanit/pattern-lens/actions/workflows/checks.yml)
+
+[![Coverage](data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz4NCjxzdmcgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB3aWR0aD0iOTkiIGhlaWdodD0iMjAiPg0KICAgIDxsaW5lYXJHcmFkaWVudCBpZD0iYiIgeDI9IjAiIHkyPSIxMDAlIj4NCiAgICAgICAgPHN0b3Agb2Zmc2V0PSIwIiBzdG9wLWNvbG9yPSIjYmJiIiBzdG9wLW9wYWNpdHk9Ii4xIi8+DQogICAgICAgIDxzdG9wIG9mZnNldD0iMSIgc3RvcC1vcGFjaXR5PSIuMSIvPg0KICAgIDwvbGluZWFyR3JhZGllbnQ+DQogICAgPG1hc2sgaWQ9ImEiPg0KICAgICAgICA8cmVjdCB3aWR0aD0iOTkiIGhlaWdodD0iMjAiIHJ4PSIzIiBmaWxsPSIjZmZmIi8+DQogICAgPC9tYXNrPg0KICAgIDxnIG1hc2s9InVybCgjYSkiPg0KICAgICAgICA8cGF0aCBmaWxsPSIjNTU1IiBkPSJNMCAwaDYzdjIwSDB6Ii8+DQogICAgICAgIDxwYXRoIGZpbGw9IiNhNGE2MWQiIGQ9Ik02MyAwaDM2djIwSDYzeiIvPg0KICAgICAgICA8cGF0aCBmaWxsPSJ1cmwoI2IpIiBkPSJNMCAwaDk5djIwSDB6Ii8+DQogICAgPC9nPg0KICAgIDxnIGZpbGw9IiNmZmYiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtZmFtaWx5PSJEZWphVnUgU2FucyxWZXJkYW5hLEdlbmV2YSxzYW5zLXNlcmlmIiBmb250LXNpemU9IjExIj4NCiAgICAgICAgPHRleHQgeD0iMzEuNSIgeT0iMTUiIGZpbGw9IiMwMTAxMDEiIGZpbGwtb3BhY2l0eT0iLjMiPmNvdmVyYWdlPC90ZXh0Pg0KICAgICAgICA8dGV4dCB4PSIzMS41IiB5PSIxNCI+Y292ZXJhZ2U8L3RleHQ+DQogICAgICAgIDx0ZXh0IHg9IjgwIiB5PSIxNSIgZmlsbD0iIzAxMDEwMSIgZmlsbC1vcGFjaXR5PSIuMyI+ODIlPC90ZXh0Pg0KICAgICAgICA8dGV4dCB4PSI4MCIgeT0iMTQiPjgyJTwvdGV4dD4NCiAgICA8L2c+DQo8L3N2Zz4NCg==)](docs/coverage/html/)
+![GitHub
+commits](https://img.shields.io/github/commit-activity/t/mivanit/pattern-lens)
+![GitHub commit
+activity](https://img.shields.io/github/commit-activity/m/mivanit/pattern-lens)
+![GitHub closed pull
+requests](https://img.shields.io/github/issues-pr-closed/mivanit/pattern-lens)
+![code size,
+bytes](https://img.shields.io/github/languages/code-size/mivanit/pattern-lens)
 
 ### pattern-lens
 
@@ -185,17 +218,18 @@ first:
 
     python -m <a href="pattern_lens/activations.html">pattern_lens.activations</a> --model gpt2 --prompts data/pile_1k.jsonl --save-path attn_data
 
-and then write+run a script/notebook that looks something like this (see
-`demo.ipynb` for a full example):
+and then write+run a script/notebook that looks something like this:
 
 ``` python
-### imports
 import numpy as np
 import matplotlib.pyplot as plt
 from scipy.linalg import svd
 
+### these functions simplify writing a function which saves a figure
 from <a href="pattern_lens/figure_util.html">pattern_lens.figure_util</a> import matplotlib_figure_saver, save_matrix_wrapper
+### decorator to register your function, such that it will be run by `figures_main`
 from <a href="pattern_lens/attn_figure_funcs.html">pattern_lens.attn_figure_funcs</a> import register_attn_figure_func
+### runs the actual figure generation pipeline
 from <a href="pattern_lens/figures.html">pattern_lens.figures</a> import figures_main
 
 ### define your own functions
@@ -224,11 +258,13 @@ figures_main(
 )
 ```
 
+see `demo.ipynb` for a full example
+
 [View Source on
-GitHub](https://github.com/mivanit/pattern-lens/blob/0.1.0/__init__.py#L0-L2)
+GitHub](https://github.com/mivanit/pattern-lens/blob/0.2.0/__init__.py#L0-L2)
 
 > docs for [`pattern_lens`](https://github.com/mivanit/pattern-lens)
-> v0.1.0
+> v0.2.0
 
 ## Contents
 
@@ -261,7 +297,7 @@ activations_main(
 - [`main`](#main)
 
 [View Source on
-GitHub](https://github.com/mivanit/pattern-lens/blob/0.1.0/activations.py)
+GitHub](https://github.com/mivanit/pattern-lens/blob/0.2.0/activations.py)
 
 # `pattern_lens.activations`
 
@@ -287,7 +323,7 @@ activations_main(
 ```
 
 [View Source on
-GitHub](https://github.com/mivanit/pattern-lens/blob/0.1.0/activations.py#L0-L454)
+GitHub](https://github.com/mivanit/pattern-lens/blob/0.2.0/activations.py#L0-L482)
 
 ### `def compute_activations`
 
@@ -302,7 +338,7 @@ GitHub](https://github.com/mivanit/pattern-lens/blob/0.1.0/activations.py#L0-L45
 ```
 
 [View Source on
-GitHub](https://github.com/mivanit/pattern-lens/blob/0.1.0/activations.py#L62-L142)
+GitHub](https://github.com/mivanit/pattern-lens/blob/0.2.0/activations.py#L62-L143)
 
 get activations for a given model and prompt, possibly from a cache
 
@@ -337,7 +373,7 @@ if from a cache, prompt_meta must be passed and contain the prompt hash
 ```
 
 [View Source on
-GitHub](https://github.com/mivanit/pattern-lens/blob/0.1.0/activations.py#L161-L222)
+GitHub](https://github.com/mivanit/pattern-lens/blob/0.2.0/activations.py#L162-L223)
 
 given a prompt and a model, save or load activations
 
@@ -372,12 +408,13 @@ given a prompt and a model, save or load activations
     force: bool,
     n_samples: int,
     no_index_html: bool,
-    shuffle: bool = False
+    shuffle: bool = False,
+    device: str | torch.device = 'cuda'
 ) -> None
 ```
 
 [View Source on
-GitHub](https://github.com/mivanit/pattern-lens/blob/0.1.0/activations.py#L225-L332)
+GitHub](https://github.com/mivanit/pattern-lens/blob/0.2.0/activations.py#L226-L350)
 
 main function for computing activations
 
@@ -396,6 +433,8 @@ main function for computing activations
 - `n_samples : int` maximum number of samples to process
 - `no_index_html : bool` whether to write an index.html file
 - `shuffle : bool` whether to shuffle the prompts (defaults to `False`)
+- `device : str | torch.device` the device to use. if a string, will be
+  passed to `torch.device`
 
 ### `def main`
 
@@ -404,10 +443,10 @@ main function for computing activations
 ```
 
 [View Source on
-GitHub](https://github.com/mivanit/pattern-lens/blob/0.1.0/activations.py#L335-L451)
+GitHub](https://github.com/mivanit/pattern-lens/blob/0.2.0/activations.py#L353-L479)
 
 > docs for [`pattern_lens`](https://github.com/mivanit/pattern-lens)
-> v0.1.0
+> v0.2.0
 
 ## Contents
 
@@ -427,7 +466,7 @@ function to `ATTENTION_MATRIX_FIGURE_FUNCS`
 - [`raw`](#raw)
 
 [View Source on
-GitHub](https://github.com/mivanit/pattern-lens/blob/0.1.0/attn_figure_funcs.py)
+GitHub](https://github.com/mivanit/pattern-lens/blob/0.2.0/attn_figure_funcs.py)
 
 # `pattern_lens.attn_figure_funcs`
 
@@ -441,7 +480,7 @@ recognize your function, you need to use the `register_attn_figure_func`
 decorator which adds your function to `ATTENTION_MATRIX_FIGURE_FUNCS`
 
 [View Source on
-GitHub](https://github.com/mivanit/pattern-lens/blob/0.1.0/attn_figure_funcs.py#L0-L80)
+GitHub](https://github.com/mivanit/pattern-lens/blob/0.2.0/attn_figure_funcs.py#L0-L98)
 
 - `ATTENTION_MATRIX_FIGURE_FUNCS: list[typing.Callable[[jaxtyping.Float[ndarray, 'n_ctx n_ctx'], pathlib.Path], NoneType]] = [<function raw>]`
 
@@ -454,7 +493,7 @@ GitHub](https://github.com/mivanit/pattern-lens/blob/0.1.0/attn_figure_funcs.py#
 ```
 
 [View Source on
-GitHub](https://github.com/mivanit/pattern-lens/blob/0.1.0/attn_figure_funcs.py#L23-L55)
+GitHub](https://github.com/mivanit/pattern-lens/blob/0.2.0/attn_figure_funcs.py#L24-L56)
 
 decorator for registering attention matrix figure function
 
@@ -490,10 +529,12 @@ def my_new_figure_func(attn_matrix: AttentionMatrix, path: Path) -> None:
 ```
 
 [View Source on
-GitHub](https://github.com/mivanit/pattern-lens/blob/0.1.0/attn_figure_funcs.py#L58-L61)
+GitHub](https://github.com/mivanit/pattern-lens/blob/0.2.0/attn_figure_funcs.py#L75-L79)
+
+raw attention matrix
 
 > docs for [`pattern_lens`](https://github.com/mivanit/pattern-lens)
-> v0.1.0
+> v0.2.0
 
 ## Contents
 
@@ -510,14 +551,14 @@ implements some constants and types
 - [`DIVIDER_S2`](#DIVIDER_S2)
 
 [View Source on
-GitHub](https://github.com/mivanit/pattern-lens/blob/0.1.0/consts.py)
+GitHub](https://github.com/mivanit/pattern-lens/blob/0.2.0/consts.py)
 
 # `pattern_lens.consts`
 
 implements some constants and types
 
 [View Source on
-GitHub](https://github.com/mivanit/pattern-lens/blob/0.1.0/consts.py#L0-L28)
+GitHub](https://github.com/mivanit/pattern-lens/blob/0.2.0/consts.py#L0-L28)
 
 - `AttentionMatrix = <class 'jaxtyping.Float[ndarray, 'n_ctx n_ctx']'>`
 
@@ -548,7 +589,7 @@ divider string for separating sections
 divider string for separating subsections
 
 > docs for [`pattern_lens`](https://github.com/mivanit/pattern-lens)
-> v0.1.0
+> v0.2.0
 
 ## Contents
 
@@ -577,7 +618,7 @@ notably, you can use the decorators `matplotlib_figure_saver`,
 - [`save_matrix_wrapper`](#save_matrix_wrapper)
 
 [View Source on
-GitHub](https://github.com/mivanit/pattern-lens/blob/0.1.0/figure_util.py)
+GitHub](https://github.com/mivanit/pattern-lens/blob/0.2.0/figure_util.py)
 
 # `pattern_lens.figure_util`
 
@@ -588,7 +629,7 @@ notably, you can use the decorators `matplotlib_figure_saver`,
 `save_matrix_wrapper` to make your functions save figures
 
 [View Source on
-GitHub](https://github.com/mivanit/pattern-lens/blob/0.1.0/figure_util.py#L0-L375)
+GitHub](https://github.com/mivanit/pattern-lens/blob/0.2.0/figure_util.py#L0-L447)
 
 - `AttentionMatrixFigureFunc = typing.Callable[[jaxtyping.Float[ndarray, 'n_ctx n_ctx'], pathlib.Path], NoneType]`
 
@@ -644,7 +685,7 @@ template for saving an `n` by `m` matrix as an svg/svgz
 ```
 
 [View Source on
-GitHub](https://github.com/mivanit/pattern-lens/blob/0.1.0/figure_util.py#L67-L127)
+GitHub](https://github.com/mivanit/pattern-lens/blob/0.2.0/figure_util.py#L67-L127)
 
 decorator for functions which take an attention matrix and predefined
 `ax` object, making it save a figure
@@ -678,12 +719,14 @@ def raw(attn_matrix: AttentionMatrix, ax: plt.Axes) -> None:
 (
     matrix: jaxtyping.Float[ndarray, 'n m'],
     normalize: bool = False,
-    cmap: str | matplotlib.colors.Colormap = 'viridis'
+    cmap: str | matplotlib.colors.Colormap = 'viridis',
+    diverging_colormap: bool = False,
+    normalize_min: float | None = None
 ) -> jaxtyping.UInt8[ndarray, 'n m rgb=3']
 ```
 
 [View Source on
-GitHub](https://github.com/mivanit/pattern-lens/blob/0.1.0/figure_util.py#L130-L189)
+GitHub](https://github.com/mivanit/pattern-lens/blob/0.2.0/figure_util.py#L130-L226)
 
 preprocess a 2D matrix into a plottable heatmap image
 
@@ -694,6 +737,13 @@ preprocess a 2D matrix into a plottable heatmap image
   (defaults to `MATRIX_SAVE_NORMALIZE`)
 - `cmap : str|Colormap` the colormap to use for the matrix (defaults to
   `MATRIX_SAVE_CMAP`)
+- `diverging_colormap : bool` if True and using a diverging colormap,
+  ensures 0 values map to the center of the colormap (defaults to False)
+- `normalize_min : float|None` if a float, then for `normalize=True` and
+  `diverging_colormap=False`, the minimum value to normalize to
+  (generally set this to zero?). if `None`, then the minimum value of
+  the matrix is used. if `diverging_colormap=True` OR `normalize=False`,
+  this **must** be `None`. (defaults to `None`)
 
 ### Returns:
 
@@ -709,7 +759,7 @@ preprocess a 2D matrix into a plottable heatmap image
 ```
 
 [View Source on
-GitHub](https://github.com/mivanit/pattern-lens/blob/0.1.0/figure_util.py#L196-L222)
+GitHub](https://github.com/mivanit/pattern-lens/blob/0.2.0/figure_util.py#L233-L259)
 
 Convert a `Matrix2Drgb` to valid PNG bytes via PIL
 
@@ -733,12 +783,14 @@ Convert a `Matrix2Drgb` to valid PNG bytes via PIL
 (
     matrix: jaxtyping.Float[ndarray, 'n m'],
     normalize: bool = False,
-    cmap='viridis'
+    cmap: str | matplotlib.colors.Colormap = 'viridis',
+    diverging_colormap: bool = False,
+    normalize_min: float | None = None
 ) -> str
 ```
 
 [View Source on
-GitHub](https://github.com/mivanit/pattern-lens/blob/0.1.0/figure_util.py#L225-L263)
+GitHub](https://github.com/mivanit/pattern-lens/blob/0.2.0/figure_util.py#L262-L315)
 
 quickly convert a 2D matrix to an SVG image, without matplotlib
 
@@ -751,6 +803,13 @@ quickly convert a 2D matrix to an SVG image, without matplotlib
   raise an `AssertionError` (defaults to `False`)
 - `cmap : str` the colormap to use for the matrix – will look up in
   `matplotlib.colormaps` if it’s a string (defaults to `"viridis"`)
+- `diverging_colormap : bool` if True and using a diverging colormap,
+  ensures 0 values map to the center of the colormap (defaults to False)
+- `normalize_min : float|None` if a float, then for `normalize=True` and
+  `diverging_colormap=False`, the minimum value to normalize to
+  (generally set this to zero?) if `None`, then the minimum value of the
+  matrix is used if `diverging_colormap=True` OR `normalize=False`, this
+  **must** be `None` (defaults to `None`)
 
 ### Returns:
 
@@ -764,12 +823,14 @@ quickly convert a 2D matrix to an SVG image, without matplotlib
     *args,
     fmt: Literal['png', 'svg', 'svgz'] = 'svgz',
     normalize: bool = False,
-    cmap='viridis'
+    cmap: str | matplotlib.colors.Colormap = 'viridis',
+    diverging_colormap: bool = False,
+    normalize_min: float | None = None
 ) -> Union[Callable[[jaxtyping.Float[ndarray, 'n_ctx n_ctx'], pathlib.Path], NoneType], Callable[[Callable[[jaxtyping.Float[ndarray, 'n_ctx n_ctx']], jaxtyping.Float[ndarray, 'n m']]], Callable[[jaxtyping.Float[ndarray, 'n_ctx n_ctx'], pathlib.Path], NoneType]]]
 ```
 
 [View Source on
-GitHub](https://github.com/mivanit/pattern-lens/blob/0.1.0/figure_util.py#L282-L376)
+GitHub](https://github.com/mivanit/pattern-lens/blob/0.2.0/figure_util.py#L338-L448)
 
 Decorator for functions that process an attention matrix and save it as
 an SVGZ image. Can handle both argumentless usage and with arguments.
@@ -785,6 +846,13 @@ an SVGZ image. Can handle both argumentless usage and with arguments.
   range \[0, 1\]. Defaults to `False`.
 - `cmap : str, keyword-only` The colormap to use for the matrix.
   Defaults to `MATRIX_SVG_CMAP`.
+- `diverging_colormap : bool` if True and using a diverging colormap,
+  ensures 0 values map to the center of the colormap (defaults to False)
+- `normalize_min : float|None` if a float, then for `normalize=True` and
+  `diverging_colormap=False`, the minimum value to normalize to
+  (generally set this to zero?) if `None`, then the minimum value of the
+  matrix is used if `diverging_colormap=True` OR `normalize=False`, this
+  **must** be `None` (defaults to `None`)
 
 ### Returns:
 
@@ -813,7 +881,7 @@ def scale_matrix(matrix):
 ```
 
 > docs for [`pattern_lens`](https://github.com/mivanit/pattern-lens)
-> v0.1.0
+> v0.2.0
 
 ## Contents
 
@@ -830,7 +898,7 @@ decorated with `register_attn_figure_func`
 - [`main`](#main)
 
 [View Source on
-GitHub](https://github.com/mivanit/pattern-lens/blob/0.1.0/figures.py)
+GitHub](https://github.com/mivanit/pattern-lens/blob/0.2.0/figures.py)
 
 # `pattern_lens.figures`
 
@@ -838,12 +906,12 @@ code for generating figures from attention patterns, using the functions
 decorated with `register_attn_figure_func`
 
 [View Source on
-GitHub](https://github.com/mivanit/pattern-lens/blob/0.1.0/figures.py#L0-L329)
+GitHub](https://github.com/mivanit/pattern-lens/blob/0.2.0/figures.py#L0-L329)
 
 ### `class HTConfigMock:`
 
 [View Source on
-GitHub](https://github.com/mivanit/pattern-lens/blob/0.1.0/figures.py#L32-L54)
+GitHub](https://github.com/mivanit/pattern-lens/blob/0.2.0/figures.py#L32-L54)
 
 Mock of `transformer_lens.HookedTransformerConfig` for type hinting and
 loading config json
@@ -859,7 +927,7 @@ them. does, however, require the following attributes: -
 ```
 
 [View Source on
-GitHub](https://github.com/mivanit/pattern-lens/blob/0.1.0/figures.py#L41-L45)
+GitHub](https://github.com/mivanit/pattern-lens/blob/0.2.0/figures.py#L41-L45)
 
 - `n_layers: int`
 
@@ -874,7 +942,7 @@ GitHub](https://github.com/mivanit/pattern-lens/blob/0.1.0/figures.py#L41-L45)
 ```
 
 [View Source on
-GitHub](https://github.com/mivanit/pattern-lens/blob/0.1.0/figures.py#L47-L49)
+GitHub](https://github.com/mivanit/pattern-lens/blob/0.2.0/figures.py#L47-L49)
 
 serialize the config to json. values which aren’t serializable will be
 converted via `muutils.json_serialize.json_serialize`
@@ -886,7 +954,7 @@ converted via `muutils.json_serialize.json_serialize`
 ```
 
 [View Source on
-GitHub](https://github.com/mivanit/pattern-lens/blob/0.1.0/figures.py#L51-L54)
+GitHub](https://github.com/mivanit/pattern-lens/blob/0.2.0/figures.py#L51-L54)
 
 try to load a config from a dict, using the `__init__` method
 
@@ -903,7 +971,7 @@ try to load a config from a dict, using the `__init__` method
 ```
 
 [View Source on
-GitHub](https://github.com/mivanit/pattern-lens/blob/0.1.0/figures.py#L57-L103)
+GitHub](https://github.com/mivanit/pattern-lens/blob/0.2.0/figures.py#L57-L103)
 
 process a single head’s attention pattern, running all the functions in
 `ATTENTION_MATRIX_FIGURE_FUNCS` on the attention pattern
@@ -938,7 +1006,7 @@ process a single head’s attention pattern, running all the functions in
 ```
 
 [View Source on
-GitHub](https://github.com/mivanit/pattern-lens/blob/0.1.0/figures.py#L106-L162)
+GitHub](https://github.com/mivanit/pattern-lens/blob/0.2.0/figures.py#L106-L162)
 
 compute and save figures for all heads in the model, using the functions
 in `ATTENTION_MATRIX_FIGURE_FUNCS`
@@ -967,7 +1035,7 @@ in `ATTENTION_MATRIX_FIGURE_FUNCS`
 ```
 
 [View Source on
-GitHub](https://github.com/mivanit/pattern-lens/blob/0.1.0/figures.py#L165-L196)
+GitHub](https://github.com/mivanit/pattern-lens/blob/0.2.0/figures.py#L165-L196)
 
 process a single prompt, loading the activations and computing and
 saving the figures
@@ -994,7 +1062,7 @@ basically just calls `load_activations` and then
 ```
 
 [View Source on
-GitHub](https://github.com/mivanit/pattern-lens/blob/0.1.0/figures.py#L199-L262)
+GitHub](https://github.com/mivanit/pattern-lens/blob/0.2.0/figures.py#L199-L262)
 
 main function for generating figures from attention patterns, using the
 functions in `ATTENTION_MATRIX_FIGURE_FUNCS`
@@ -1018,10 +1086,10 @@ functions in `ATTENTION_MATRIX_FIGURE_FUNCS`
 ```
 
 [View Source on
-GitHub](https://github.com/mivanit/pattern-lens/blob/0.1.0/figures.py#L265-L326)
+GitHub](https://github.com/mivanit/pattern-lens/blob/0.2.0/figures.py#L265-L326)
 
 > docs for [`pattern_lens`](https://github.com/mivanit/pattern-lens)
-> v0.1.0
+> v0.2.0
 
 ## Contents
 
@@ -1037,7 +1105,7 @@ record keeping
 - [`write_html_index`](#write_html_index)
 
 [View Source on
-GitHub](https://github.com/mivanit/pattern-lens/blob/0.1.0/indexes.py)
+GitHub](https://github.com/mivanit/pattern-lens/blob/0.2.0/indexes.py)
 
 # `pattern_lens.indexes`
 
@@ -1045,7 +1113,7 @@ writes indexes to the model directory for the frontend to use or for
 record keeping
 
 [View Source on
-GitHub](https://github.com/mivanit/pattern-lens/blob/0.1.0/indexes.py#L0-L118)
+GitHub](https://github.com/mivanit/pattern-lens/blob/0.2.0/indexes.py#L0-L121)
 
 ### `def generate_prompts_jsonl`
 
@@ -1054,7 +1122,7 @@ GitHub](https://github.com/mivanit/pattern-lens/blob/0.1.0/indexes.py#L0-L118)
 ```
 
 [View Source on
-GitHub](https://github.com/mivanit/pattern-lens/blob/0.1.0/indexes.py#L13-L29)
+GitHub](https://github.com/mivanit/pattern-lens/blob/0.2.0/indexes.py#L14-L30)
 
 creates a `prompts.jsonl` file with all the prompts in the model
 directory
@@ -1069,7 +1137,7 @@ file
 ```
 
 [View Source on
-GitHub](https://github.com/mivanit/pattern-lens/blob/0.1.0/indexes.py#L32-L45)
+GitHub](https://github.com/mivanit/pattern-lens/blob/0.2.0/indexes.py#L33-L46)
 
 creates a `models.jsonl` file with all the models
 
@@ -1080,7 +1148,7 @@ creates a `models.jsonl` file with all the models
 ```
 
 [View Source on
-GitHub](https://github.com/mivanit/pattern-lens/blob/0.1.0/indexes.py#L48-L79)
+GitHub](https://github.com/mivanit/pattern-lens/blob/0.2.0/indexes.py#L49-L80)
 
 get metadata for a function
 
@@ -1108,7 +1176,7 @@ get metadata for a function
 ```
 
 [View Source on
-GitHub](https://github.com/mivanit/pattern-lens/blob/0.1.0/indexes.py#L82-L108)
+GitHub](https://github.com/mivanit/pattern-lens/blob/0.2.0/indexes.py#L83-L109)
 
 unions all functions from file and current
 `ATTENTION_MATRIX_FIGURE_FUNCS` into a `functions.jsonl` file
@@ -1120,12 +1188,12 @@ unions all functions from file and current
 ```
 
 [View Source on
-GitHub](https://github.com/mivanit/pattern-lens/blob/0.1.0/indexes.py#L111-L119)
+GitHub](https://github.com/mivanit/pattern-lens/blob/0.2.0/indexes.py#L112-L122)
 
 writes an index.html file to the path
 
 > docs for [`pattern_lens`](https://github.com/mivanit/pattern-lens)
-> v0.1.0
+> v0.2.0
 
 ## Contents
 
@@ -1137,12 +1205,13 @@ classes
 - [`GetActivationsError`](#GetActivationsError)
 - [`ActivationsMissingError`](#ActivationsMissingError)
 - [`ActivationsMismatchError`](#ActivationsMismatchError)
+- [`InvalidPromptError`](#InvalidPromptError)
 - [`compare_prompt_to_loaded`](#compare_prompt_to_loaded)
 - [`augment_prompt_with_hash`](#augment_prompt_with_hash)
 - [`load_activations`](#load_activations)
 
 [View Source on
-GitHub](https://github.com/mivanit/pattern-lens/blob/0.1.0/load_activations.py)
+GitHub](https://github.com/mivanit/pattern-lens/blob/0.2.0/load_activations.py)
 
 # `pattern_lens.load_activations`
 
@@ -1150,12 +1219,12 @@ loading activations from .npz on disk. implements some custom Exception
 classes
 
 [View Source on
-GitHub](https://github.com/mivanit/pattern-lens/blob/0.1.0/load_activations.py#L0-L141)
+GitHub](https://github.com/mivanit/pattern-lens/blob/0.2.0/load_activations.py#L0-L156)
 
 ### `class GetActivationsError(builtins.ValueError):`
 
 [View Source on
-GitHub](https://github.com/mivanit/pattern-lens/blob/0.1.0/load_activations.py#L12-L15)
+GitHub](https://github.com/mivanit/pattern-lens/blob/0.2.0/load_activations.py#L12-L15)
 
 base class for errors in getting activations
 
@@ -1172,7 +1241,7 @@ base class for errors in getting activations
 ### `class ActivationsMissingError(GetActivationsError, builtins.FileNotFoundError):`
 
 [View Source on
-GitHub](https://github.com/mivanit/pattern-lens/blob/0.1.0/load_activations.py#L18-L21)
+GitHub](https://github.com/mivanit/pattern-lens/blob/0.2.0/load_activations.py#L18-L21)
 
 error for missing activations – can’t find the activations file
 
@@ -1201,7 +1270,7 @@ error for missing activations – can’t find the activations file
 ### `class ActivationsMismatchError(GetActivationsError):`
 
 [View Source on
-GitHub](https://github.com/mivanit/pattern-lens/blob/0.1.0/load_activations.py#L24-L30)
+GitHub](https://github.com/mivanit/pattern-lens/blob/0.2.0/load_activations.py#L24-L30)
 
 error for mismatched activations – the prompt text or hash do not match
 
@@ -1217,6 +1286,26 @@ raised by `compare_prompt_to_loaded`
 
 - [`args`](#ActivationsMismatchError.args)
 
+### `class InvalidPromptError(GetActivationsError):`
+
+[View Source on
+GitHub](https://github.com/mivanit/pattern-lens/blob/0.2.0/load_activations.py#L33-L39)
+
+error for invalid prompt – the prompt does not have fields “hash” or
+“text”
+
+raised by `augment_prompt_with_hash`
+
+### Inherited Members
+
+- [`ValueError`](#InvalidPromptError.__init__)
+
+- [`with_traceback`](#InvalidPromptError.with_traceback)
+
+- [`add_note`](#InvalidPromptError.add_note)
+
+- [`args`](#InvalidPromptError.args)
+
 ### `def compare_prompt_to_loaded`
 
 ``` python
@@ -1224,7 +1313,7 @@ raised by `compare_prompt_to_loaded`
 ```
 
 [View Source on
-GitHub](https://github.com/mivanit/pattern-lens/blob/0.1.0/load_activations.py#L33-L50)
+GitHub](https://github.com/mivanit/pattern-lens/blob/0.2.0/load_activations.py#L42-L59)
 
 compare a prompt to a loaded prompt, raise an error if they do not match
 
@@ -1248,9 +1337,11 @@ compare a prompt to a loaded prompt, raise an error if they do not match
 ```
 
 [View Source on
-GitHub](https://github.com/mivanit/pattern-lens/blob/0.1.0/load_activations.py#L53-L73)
+GitHub](https://github.com/mivanit/pattern-lens/blob/0.2.0/load_activations.py#L62-L88)
 
 if a prompt does not have a hash, add one
+
+not having a “text” field is allowed, but only if “hash” is present
 
 ### Parameters:
 
@@ -1276,7 +1367,7 @@ the input `prompt` dictionary, if it does not have a `"hash"` key
 ```
 
 [View Source on
-GitHub](https://github.com/mivanit/pattern-lens/blob/0.1.0/load_activations.py#L91-L142)
+GitHub](https://github.com/mivanit/pattern-lens/blob/0.2.0/load_activations.py#L106-L157)
 
 load activations for a prompt and model, from an npz file
 
@@ -1299,7 +1390,7 @@ load activations for a prompt and model, from an npz file
 - `ValueError` : if `return_fmt` is not `"torch"` or `"numpy"`
 
 > docs for [`pattern_lens`](https://github.com/mivanit/pattern-lens)
-> v0.1.0
+> v0.2.0
 
 ## Contents
 
@@ -1310,14 +1401,14 @@ implements `load_text_data` for loading prompts
 - [`load_text_data`](#load_text_data)
 
 [View Source on
-GitHub](https://github.com/mivanit/pattern-lens/blob/0.1.0/prompts.py)
+GitHub](https://github.com/mivanit/pattern-lens/blob/0.2.0/prompts.py)
 
 # `pattern_lens.prompts`
 
 implements `load_text_data` for loading prompts
 
 [View Source on
-GitHub](https://github.com/mivanit/pattern-lens/blob/0.1.0/prompts.py#L0-L80)
+GitHub](https://github.com/mivanit/pattern-lens/blob/0.2.0/prompts.py#L0-L80)
 
 ### `def load_text_data`
 
@@ -1331,7 +1422,7 @@ GitHub](https://github.com/mivanit/pattern-lens/blob/0.1.0/prompts.py#L0-L80)
 ```
 
 [View Source on
-GitHub](https://github.com/mivanit/pattern-lens/blob/0.1.0/prompts.py#L8-L81)
+GitHub](https://github.com/mivanit/pattern-lens/blob/0.2.0/prompts.py#L8-L81)
 
 given `fname`, the path to a jsonl file, split prompts up into more
 reasonable sizes
@@ -1351,7 +1442,7 @@ reasonable sizes
   be the same length as the input list!
 
 > docs for [`pattern_lens`](https://github.com/mivanit/pattern-lens)
-> v0.1.0
+> v0.2.0
 
 ## Contents
 
@@ -1365,7 +1456,7 @@ useful for working on the ui.
 - [`main`](#main)
 
 [View Source on
-GitHub](https://github.com/mivanit/pattern-lens/blob/0.1.0/server.py)
+GitHub](https://github.com/mivanit/pattern-lens/blob/0.2.0/server.py)
 
 # `pattern_lens.server`
 
@@ -1375,7 +1466,7 @@ can also run with –rewrite-index to update the index.html file. this is
 useful for working on the ui.
 
 [View Source on
-GitHub](https://github.com/mivanit/pattern-lens/blob/0.1.0/server.py#L0-L54)
+GitHub](https://github.com/mivanit/pattern-lens/blob/0.2.0/server.py#L0-L54)
 
 ### `def main`
 
@@ -1384,4 +1475,4 @@ GitHub](https://github.com/mivanit/pattern-lens/blob/0.1.0/server.py#L0-L54)
 ```
 
 [View Source on
-GitHub](https://github.com/mivanit/pattern-lens/blob/0.1.0/server.py#L16-L26)
+GitHub](https://github.com/mivanit/pattern-lens/blob/0.2.0/server.py#L16-L26)
