@@ -33,9 +33,6 @@ jobs:
       - name: print python version
         run: python --version
 
-      - name: check version
-        run: make version
-
       - name: check deps
         run: make dep-check
       
