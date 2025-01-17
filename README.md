@@ -1,3 +1,14 @@
+[![PyPI](https://img.shields.io/pypi/v/pattern-lens)](https://pypi.org/project/pattern-lens/)
+![PyPI - Downloads](https://img.shields.io/pypi/dm/pattern-lens)
+[![docs](https://img.shields.io/badge/docs-latest-blue)](https://miv.name/pattern-lens)
+[![Checks](https://github.com/mivanit/pattern-lens/actions/workflows/checks.yml/badge.svg)](https://github.com/mivanit/pattern-lens/actions/workflows/checks.yml)
+
+[![Coverage](docs/coverage/coverage.svg)](docs/coverage/html/)
+![GitHub commits](https://img.shields.io/github/commit-activity/t/mivanit/pattern-lens)
+![GitHub commit activity](https://img.shields.io/github/commit-activity/m/mivanit/pattern-lens)
+![GitHub closed pull requests](https://img.shields.io/github/issues-pr-closed/mivanit/pattern-lens)
+![code size, bytes](https://img.shields.io/github/languages/code-size/mivanit/pattern-lens)
+
 # pattern-lens
 
 visualization of LLM attention patterns and things computed about them
