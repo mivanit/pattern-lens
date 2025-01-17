@@ -9,6 +9,7 @@ which adds your function to `ATTENTION_MATRIX_FIGURE_FUNCS`
 
 """
 
+
 from pattern_lens.consts import AttentionMatrix
 from pattern_lens.figure_util import (
     AttentionMatrixFigureFunc,
@@ -53,6 +54,22 @@ def register_attn_figure_func(
     ATTENTION_MATRIX_FIGURE_FUNCS.append(func)
 
     return func
+
+
+# def register_attn_figure_multifunc(
+#     names: list[str],
+# ) -> Callable[[AttentionMatrixFigureFunc], AttentionMatrixFigureFunc]:
+
+#     def decorator(func: AttentionMatrixFigureFunc) -> AttentionMatrixFigureFunc:
+
+#         @functools.wraps(func)
+#         def wrapper(*args, **kwargs):
+#             return func(*args, **kwargs)
+
+#         for name in names:
+#             setattr(wrapper, name, True)
+
+#         return register_attn_figure_func(wrapper)
 
 
 @register_attn_figure_func

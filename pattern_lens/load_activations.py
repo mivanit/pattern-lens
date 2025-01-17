@@ -38,6 +38,7 @@ class InvalidPromptError(GetActivationsError):
 
     pass
 
+
 def compare_prompt_to_loaded(prompt: dict, prompt_loaded: dict) -> None:
     """compare a prompt to a loaded prompt, raise an error if they do not match
 
@@ -58,8 +59,6 @@ def compare_prompt_to_loaded(prompt: dict, prompt_loaded: dict) -> None:
             )
 
 
-
-
 def augment_prompt_with_hash(prompt: dict) -> dict:
     """if a prompt does not have a hash, add one
 
@@ -76,7 +75,9 @@ def augment_prompt_with_hash(prompt: dict) -> dict:
     """
     if "hash" not in prompt:
         if "text" not in prompt:
-            raise InvalidPromptError(f"Prompt does not have 'text' field or 'hash' field: {prompt}")
+            raise InvalidPromptError(
+                f"Prompt does not have 'text' field or 'hash' field: {prompt}"
+            )
         prompt_str: str = prompt["text"]
         prompt_hash: str = (
             base64.urlsafe_b64encode(hashlib.md5(prompt_str.encode()).digest())
