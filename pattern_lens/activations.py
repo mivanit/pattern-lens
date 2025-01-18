@@ -344,6 +344,9 @@ def get_activations(
 			if return_cache:
 				return path, cache
 			else:
+				# TODO: this basically does nothing, since we load the activations and then immediately get rid of them.
+				# maybe refactor this so that load_activations can take a parameter to simply assert that the cache exists?
+				# this will let us avoid loading it, which slows things down
 				return path, None
 		except ActivationsMissingError:
 			pass
@@ -371,6 +374,7 @@ def activations_main(
 	n_samples: int,
 	no_index_html: bool,
 	shuffle: bool = False,
+	stacked_heads: bool = False,
 	device: str | torch.device = "cuda" if torch.cuda.is_available() else "cpu",
 ) -> None:
 	"""main function for computing activations
@@ -396,6 +400,9 @@ def activations_main(
 	    whether to write an index.html file
 	 - `shuffle : bool`
 	    whether to shuffle the prompts
+	   (defaults to `False`)
+	 - `stacked_heads : bool`
+	    whether	to stack the heads in the output tensor. will save as `.npy` instead of `.npz` if `True`
 	   (defaults to `False`)
 	 - `device : str | torch.device`
 	    the device to use. if a string, will be passed to `torch.device`
@@ -471,6 +478,7 @@ def activations_main(
 					save_path=save_path_p,
 					allow_disk_cache=not force,
 					return_cache=None,
+					stacked_heads=stacked_heads,
 				),
 				prompts,
 			),
@@ -574,6 +582,13 @@ def main():
 			help="If passed, will shuffle the prompts",
 		)
 
+		# stack heads
+		arg_parser.add_argument(
+			"--stacked-heads",
+			action="store_true",
+			help="If passed, will stack the heads in the output tensor",
+		)
+
 		# device
 		arg_parser.add_argument(
 			"--device",
@@ -610,6 +625,7 @@ def main():
 			n_samples=args.n_samples,
 			no_index_html=args.no_index_html,
 			shuffle=args.shuffle,
+			stacked_heads=args.stacked_heads,
 			device=args.device,
 		)
 

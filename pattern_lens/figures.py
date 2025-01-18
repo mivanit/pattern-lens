@@ -8,10 +8,15 @@ import json
 import warnings
 from pathlib import Path
 
+import numpy as np
+from jaxtyping import Float
+
+# custom utils
 from muutils.json_serialize import json_serialize
 from muutils.spinner import SpinnerContext
 from muutils.parallel import run_maybe_parallel
 
+# pattern_lens
 from pattern_lens.attn_figure_funcs import ATTENTION_MATRIX_FIGURE_FUNCS
 from pattern_lens.consts import (
 	DATA_DIR,
@@ -106,7 +111,7 @@ def process_single_head(
 def compute_and_save_figures(
 	model_cfg: "HookedTransformerConfig|HTConfigMock",  # type: ignore[name-defined] # noqa: F821
 	activations_path: Path,
-	cache: ActivationCacheNp,
+	cache: ActivationCacheNp | Float[np.ndarray, "n_layers n_heads n_ctx n_ctx"],
 	save_path: Path = Path(DATA_DIR),
 	force_overwrite: bool = False,
 	track_results: bool = False,
@@ -115,7 +120,7 @@ def compute_and_save_figures(
 
 	# Parameters:
 	 - `model_cfg : HookedTransformerConfig|HTConfigMock`
-	 - `cache : ActivationCacheNp`
+	 - `cache : ActivationCacheNp | Float[np.ndarray, "n_layers n_heads n_ctx n_ctx"]`
 	 - `save_path : Path`
 	   (defaults to `Path(DATA_DIR)`)
 	 - `force_overwrite : bool`
@@ -140,9 +145,14 @@ def compute_and_save_figures(
 		range(model_cfg.n_layers),
 		range(model_cfg.n_heads),
 	):
-		attn_pattern: AttentionMatrix = cache[f"blocks.{layer_idx}.attn.hook_pattern"][
-			0, head_idx
-		]
+		attn_pattern: AttentionMatrix
+		if isinstance(cache, dict):
+			attn_pattern = cache[f"blocks.{layer_idx}.attn.hook_pattern"][0, head_idx]
+		elif isinstance(cache, np.ndarray):
+			attn_pattern = cache[layer_idx, head_idx]
+		else:
+			raise TypeError(f"cache must be a dict or np.ndarray, not {type(cache) = }\n{cache = }")
+
 		save_dir: Path = prompt_dir / f"L{layer_idx}" / f"H{head_idx}"
 		save_dir.mkdir(parents=True, exist_ok=True)
 		head_res: dict[str, bool | Exception] = process_single_head(
@@ -179,7 +189,7 @@ def process_prompt(
 	   (defaults to `False`)
 	"""
 	activations_path: Path
-	cache: ActivationCacheNp
+	cache: ActivationCacheNp | Float[np.ndarray, "n_layers n_heads n_ctx n_ctx"]
 	activations_path, cache = load_activations(
 		model_name=model_cfg.model_name,
 		prompt=prompt,
