@@ -278,7 +278,7 @@ def get_activations(
 	model: HookedTransformer | str,
 	save_path: Path = Path(DATA_DIR),
 	allow_disk_cache: bool = True,
-	return_cache: Literal[False] = False,
+	return_cache: ReturnCache = None,
 ) -> tuple[Path, None]: ...
 @overload
 def get_activations(
@@ -286,15 +286,23 @@ def get_activations(
 	model: HookedTransformer | str,
 	save_path: Path = Path(DATA_DIR),
 	allow_disk_cache: bool = True,
-	return_cache: Literal[True] = True,
+	return_cache: Literal["torch"] = "torch",
+) -> tuple[Path, ActivationCache]: ...
+@overload
+def get_activations(
+	prompt: dict,
+	model: HookedTransformer | str,
+	save_path: Path = Path(DATA_DIR),
+	allow_disk_cache: bool = True,
+	return_cache: Literal["numpy"] = "numpy",
 ) -> tuple[Path, ActivationCacheNp]: ...
 def get_activations(
 	prompt: dict,
 	model: HookedTransformer | str,
 	save_path: Path = Path(DATA_DIR),
 	allow_disk_cache: bool = True,
-	return_cache: bool = True,
-) -> tuple[Path, ActivationCacheNp | None]:
+	return_cache: ReturnCache = "numpy",
+) -> tuple[Path, ActivationCacheNp | ActivationCache | None]:
 	"""given a prompt and a model, save or load activations
 
 	# Parameters:
@@ -304,17 +312,17 @@ def get_activations(
 	    either a `HookedTransformer` or a string model name, to be loaded with `HookedTransformer.from_pretrained`
 	 - `save_path : Path`
 	    path to save the activations to (and load from)
-	   (defaults to `Path(DATA_DIR)`)
+		(defaults to `Path(DATA_DIR)`)
 	 - `allow_disk_cache : bool`
 	    whether to allow loading from disk cache
-	   (defaults to `True`)
-	 - `return_cache : bool`
-	    whether to return the cache. if `False`, will return `None` as the second element
-	   (defaults to `True`)
+		(defaults to `True`)
+	 - `return_cache : Literal[None, "numpy", "torch"]`
+	    whether to return the cache, and in what format
+		(defaults to `"numpy"`)
 
 	# Returns:
-	 - `tuple[Path, ActivationCacheNp | None]`
-	     the path to the activations and the cache if `return_cache` is `True`
+	 - `tuple[Path, ActivationCacheNp | ActivationCache | None]`
+		the path to the activations and the cache if `return_cache is not None`
 
 	"""
 	# add hash to prompt
@@ -348,7 +356,7 @@ def get_activations(
 		prompt=prompt,
 		model=model,
 		save_path=save_path,
-		return_cache=True,
+		return_cache=return_cache,
 	)
 
 
@@ -462,7 +470,7 @@ def activations_main(
 					model=model,
 					save_path=save_path_p,
 					allow_disk_cache=not force,
-					return_cache=False,
+					return_cache=None,
 				),
 				prompts,
 			),
