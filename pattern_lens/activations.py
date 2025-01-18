@@ -28,16 +28,21 @@ import json
 from dataclasses import asdict
 from pathlib import Path
 import re
-from typing import Callable, Literal, overload
+from typing import Callable, Literal, Union, overload
 
 import numpy as np
+from jaxtyping import Float
 import torch
 import tqdm
+from transformer_lens import HookedTransformer, HookedTransformerConfig, ActivationCache  # type: ignore[import-untyped]
+
+
+# custom utils
 from muutils.spinner import SpinnerContext
 from muutils.misc.numerical import shorten_numerical_to_str
 from muutils.json_serialize import json_serialize
-from transformer_lens import HookedTransformer, HookedTransformerConfig  # type: ignore[import-untyped]
 
+# pattern_lens
 from pattern_lens.consts import (
     ATTN_PATTERN_REGEX,
     DATA_DIR,
@@ -58,14 +63,75 @@ from pattern_lens.load_activations import (
 )
 from pattern_lens.prompts import load_text_data
 
+ReturnCache = Literal[None, "numpy", "torch"]
 
+
+# return nothing, but `stack_heads` still affects how we save the activations
+@overload
 def compute_activations(
     prompt: dict,
     model: HookedTransformer | None = None,
     save_path: Path = Path(DATA_DIR),
-    return_cache: bool = True,
     names_filter: Callable[[str], bool] | re.Pattern = ATTN_PATTERN_REGEX,
-) -> tuple[Path, ActivationCacheNp | None]:
+    return_cache: Literal[None] = None,
+    stack_heads: bool = False,
+) -> tuple[Path, None]: ...
+# return stacked heads in numpy or torch form
+@overload
+def compute_activations(
+    prompt: dict,
+    model: HookedTransformer | None = None,
+    save_path: Path = Path(DATA_DIR),
+    names_filter: Callable[[str], bool] | re.Pattern = ATTN_PATTERN_REGEX,
+    return_cache: Literal["torch"] = "torch",
+    stack_heads: Literal[True] = True,
+) -> tuple[Path, Float[torch.Tensor, "n_layers n_heads n_ctx n_ctx"]]: ...
+@overload
+def compute_activations(
+    prompt: dict,
+    model: HookedTransformer | None = None,
+    save_path: Path = Path(DATA_DIR),
+    names_filter: Callable[[str], bool] | re.Pattern = ATTN_PATTERN_REGEX,
+    return_cache: Literal["numpy"] = "numpy",
+    stack_heads: Literal[True] = True,
+) -> tuple[Path, Float[np.ndarray, "n_layers n_heads n_ctx n_ctx"]]: ...
+# return dicts in numpy or torch form
+@overload
+def compute_activations(
+    prompt: dict,
+    model: HookedTransformer | None = None,
+    save_path: Path = Path(DATA_DIR),
+    names_filter: Callable[[str], bool] | re.Pattern = ATTN_PATTERN_REGEX,
+    return_cache: Literal["numpy"] = "numpy",
+    stack_heads: Literal[False] = False,
+) -> tuple[Path, ActivationCacheNp]: ...
+@overload
+def compute_activations(
+    prompt: dict,
+    model: HookedTransformer | None = None,
+    save_path: Path = Path(DATA_DIR),
+    names_filter: Callable[[str], bool] | re.Pattern = ATTN_PATTERN_REGEX,
+    return_cache: Literal["torch"] = "torch",
+    stack_heads: Literal[False] = False,
+) -> tuple[Path, ActivationCache]: ...
+# actual function body
+def compute_activations(
+    prompt: dict,
+    model: HookedTransformer | None = None,
+    save_path: Path = Path(DATA_DIR),
+    names_filter: Callable[[str], bool] | re.Pattern = ATTN_PATTERN_REGEX,
+    return_cache: ReturnCache = "torch",
+    stack_heads: bool = False,
+) -> tuple[
+    Path,
+    Union[
+        ActivationCacheNp,
+        ActivationCache,
+        Float[np.ndarray, "n_layers n_heads n_ctx n_ctx"],
+        Float[torch.Tensor, "n_layers n_heads n_ctx n_ctx"],
+        None,
+    ],
+]:
     """get activations for a given model and prompt, possibly from a cache
 
     if from a cache, prompt_meta must be passed and contain the prompt hash
@@ -76,16 +142,32 @@ def compute_activations(
      - `model : HookedTransformer`
      - `save_path : Path`
        (defaults to `Path(DATA_DIR)`)
-     - `return_cache : bool`
-       will return `None` as the second element if `False`
-       (defaults to `True`)
      - `names_filter : Callable[[str], bool]|re.Pattern`
        a filter for the names of the activations to return. if an `re.Pattern`, will use `lambda key: names_filter.match(key) is not None`
        (defaults to `ATTN_PATTERN_REGEX`)
+     - `return_cache : Literal[None, "numpy", "torch"]`
+       will return `None` as the second element if `None`, otherwise will return the cache in the specified tensor format. `stack_heads` still affects whether it will be a dict (False) or a single tensor (True)
+       (defaults to `None`)
+     - `stack_heads : bool`
+        whether the heads should be stacked in the output. this causes a number of changes:
+        - `npy` file with a single `(n_layers, n_heads, n_ctx, n_ctx)` tensor saved for each prompt instead of `npz` file with dict by layer
+        - `cache` will be a single `(n_layers, n_heads, n_ctx, n_ctx)` tensor instead of a dict by layer if `return_cache` is `True`
+        - will assert that everything in the activation cache is only attention patterns, and is all of the attention patterns. raises an exception if not.
 
     # Returns:
-     - `tuple[Path, ActivationCacheNp|None]`
+    ```
+    tuple[
+        Path,
+        Union[
+            None,
+            ActivationCacheNp, ActivationCache,
+            Float[np.ndarray, "n_layers n_heads n_ctx n_ctx"], Float[torch.Tensor, "n_layers n_heads n_ctx n_ctx"],
+        ]
+    ]
+    ```
     """
+
+    # check inputs
     assert model is not None, "model must be passed"
     assert "text" in prompt, "prompt must contain 'text' key"
     prompt_str: str = prompt["text"]
@@ -116,31 +198,78 @@ def compute_activations(
         names_filter_fn = names_filter
 
     # compute activations
+    cache_torch: ActivationCache
     with torch.no_grad():
         model.eval()
         # TODO: batching?
-        _, cache = model.run_with_cache(
+        _, cache_torch = model.run_with_cache(
             prompt_str,
             names_filter=names_filter_fn,
             return_type=None,
         )
 
-    cache_np: ActivationCacheNp = {
-        k: v.detach().cpu().numpy() for k, v in cache.items()
-    }
-
     # save activations
     activations_path: Path = prompt_dir / "activations.npz"
-    np.savez_compressed(
-        activations_path,
-        **cache_np,
-    )
 
-    # return path and cache
-    if return_cache:
-        return activations_path, cache_np
+    # saving and returning
+    if stack_heads:
+        # check the keys are only attention heads
+        n_layers: int = model.cfg.n_layers
+        head_keys: list[str] = [
+            f"blocks.{i}.attn.hook_pattern" for i in range(n_layers)
+        ]
+        cache_torch_keys_set: set[str] = set(cache_torch.keys())
+        assert cache_torch_keys_set == set(head_keys), (
+            f"unexpected keys!\n{set(head_keys).symmetric_difference(cache_torch_keys_set) = }\n{cache_torch_keys_set} != {set(head_keys)}"
+        )
+
+        # stack heads
+        patterns_stacked: Float[torch.Tensor, "n_layers n_heads n_ctx n_ctx"] = (
+            torch.stack([cache_torch[k] for k in head_keys], dim=1)
+        )
+        # check shape
+        assert patterns_stacked.shape[:2] == (n_layers, model.cfg.n_heads), (
+            f"unexpected shape: {patterns_stacked.shape = }, expected {(n_layers, model.cfg.n_heads)}"
+        )
+
+        patterns_stacked_np: Float[np.ndarray, "n_layers n_heads n_ctx n_ctx"] = (
+            patterns_stacked.cpu().numpy()
+        )
+
+        # save
+        np.save(activations_path, patterns_stacked_np)
+
+        # return
+        match return_cache:
+            case "numpy":
+                return activations_path, patterns_stacked_np
+            case "torch":
+                return activations_path, patterns_stacked
+            case None:
+                return activations_path, None
+            case _:
+                raise ValueError(f"invalid return_cache: {return_cache = }")
     else:
-        return activations_path, None
+        # save
+        cache_np: ActivationCacheNp = {
+            k: v.detach().cpu().numpy() for k, v in cache_torch.items()
+        }
+
+        np.savez_compressed(
+            activations_path,
+            **cache_np,
+        )
+
+        # return
+        match return_cache:
+            case "numpy":
+                return activations_path, cache_np
+            case "torch":
+                return activations_path, cache_torch
+            case None:
+                return activations_path, None
+            case _:
+                raise ValueError(f"invalid return_cache: {return_cache = }")
 
 
 @overload
@@ -459,7 +588,7 @@ def main():
     n_models: int = len(models)
     for idx, model in enumerate(models):
         print(DIVIDER_S2)
-        print(f"processing model {idx+1} / {n_models}: {model}")
+        print(f"processing model {idx + 1} / {n_models}: {model}")
         print(DIVIDER_S2)
 
         activations_main(
