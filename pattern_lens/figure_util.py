@@ -164,9 +164,9 @@ def matrix_to_image_preprocess(
     assert matrix.size > 0, "Matrix cannot be empty"
 
     if normalize_min is not None:
-        assert (
-            not diverging_colormap
-        ), "normalize_min cannot be used with diverging_colormap=True"
+        assert not diverging_colormap, (
+            "normalize_min cannot be used with diverging_colormap=True"
+        )
         assert normalize, "normalize_min cannot be used with normalize=False"
 
     # Normalize the matrix to range [0, 1]
@@ -182,23 +182,23 @@ def matrix_to_image_preprocess(
             if normalize_min is not None:
                 min_val = normalize_min
                 assert min_val < max_val, "normalize_min must be less than matrix max"
-                assert (
-                    min_val >= matrix.min()
-                ), "normalize_min must less than matrix min"
+                assert min_val >= matrix.min(), (
+                    "normalize_min must less than matrix min"
+                )
             else:
                 min_val = matrix.min()
 
             normalized_matrix = (matrix - min_val) / (max_val - min_val)
     else:
         if diverging_colormap:
-            assert (
-                matrix.min() >= -1 and matrix.max() <= 1
-            ), "For diverging colormaps without normalization, matrix values must be in range [-1, 1]"
+            assert matrix.min() >= -1 and matrix.max() <= 1, (
+                "For diverging colormaps without normalization, matrix values must be in range [-1, 1]"
+            )
             normalized_matrix = matrix
         else:
-            assert (
-                matrix.min() >= 0 and matrix.max() <= 1
-            ), "Matrix values must be in range [0, 1], or normalize must be True"
+            assert matrix.min() >= 0 and matrix.max() <= 1, (
+                "Matrix values must be in range [0, 1], or normalize must be True"
+            )
             normalized_matrix = matrix
 
     # get the colormap

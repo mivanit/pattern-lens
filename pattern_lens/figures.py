@@ -314,7 +314,7 @@ def main():
     n_models: int = len(models)
     for idx, model in enumerate(models):
         print(DIVIDER_S2)
-        print(f"processing model {idx+1} / {n_models}: {model}")
+        print(f"processing model {idx + 1} / {n_models}: {model}")
         print(DIVIDER_S2)
         figures_main(
             model_name=model,

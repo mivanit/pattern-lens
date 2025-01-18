@@ -9,7 +9,6 @@ which adds your function to `ATTENTION_MATRIX_FIGURE_FUNCS`
 
 """
 
-
 from pattern_lens.consts import AttentionMatrix
 from pattern_lens.figure_util import (
     AttentionMatrixFigureFunc,

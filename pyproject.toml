@@ -66,6 +66,17 @@ build-backend = "hatchling.build"
 [tool.hatch.build.targets.wheel]
 packages = ["pattern_lens"]
 
+# ruff config
+[tool.ruff]
+exclude = ["__pycache__"]
+
+[tool.ruff.lint]
+ignore = ["F722"]
+
+# [tool.ruff.format]
+# indent-style = "tab"
+# skip-magic-trailing-comma = false
+
 # Custom export configurations
 [tool.uv-exports]
 args = [

@@ -176,9 +176,9 @@ def test_save_matrix_as_svgz_wrapper_no_normalization():
     pass_through(test_matrix, TEMP_DIR)
 
     saved_file = TEMP_DIR / "pass_through.svgz"
-    assert (
-        saved_file.exists()
-    ), "SVGZ file was not saved when normalization was not applied"
+    assert saved_file.exists(), (
+        "SVGZ file was not saved when normalization was not applied"
+    )
 
 
 # Test with a complex matrix
