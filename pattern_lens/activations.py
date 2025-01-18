@@ -278,7 +278,7 @@ def get_activations(
 	model: HookedTransformer | str,
 	save_path: Path = Path(DATA_DIR),
 	allow_disk_cache: bool = True,
-	return_cache: ReturnCache = None,
+	return_cache: Literal[None] = None,
 ) -> tuple[Path, None]: ...
 @overload
 def get_activations(
