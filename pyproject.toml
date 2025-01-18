@@ -73,9 +73,9 @@ exclude = ["__pycache__"]
 [tool.ruff.lint]
 ignore = ["F722"]
 
-# [tool.ruff.format]
-# indent-style = "tab"
-# skip-magic-trailing-comma = false
+[tool.ruff.format]
+indent-style = "tab"
+skip-magic-trailing-comma = false
 
 # Custom export configurations
 [tool.uv-exports]
