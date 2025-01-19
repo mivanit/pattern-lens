@@ -1,6 +1,7 @@
 """implements some constants and types"""
 
 import re
+from typing import Literal
 
 import numpy as np
 from jaxtyping import Float
@@ -31,3 +32,6 @@ DIVIDER_S1: str = "=" * 70
 
 DIVIDER_S2: str = "-" * 50
 "divider string for separating subsections"
+
+ReturnCache = Literal[None, "numpy", "torch"]
+"return type for a cache of activations"

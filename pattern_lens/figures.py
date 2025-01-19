@@ -41,6 +41,8 @@ class HTConfigMock:
 	- `n_layers: int`
 	- `n_heads: int`
 	- `model_name: str`
+
+	we do this to avoid having to import `torch` and `transformer_lens`, since this would have to be done for each process in the parallelization and probably slows things down significantly
 	"""
 
 	def __init__(self, **kwargs):
@@ -151,7 +153,9 @@ def compute_and_save_figures(
 		elif isinstance(cache, np.ndarray):
 			attn_pattern = cache[layer_idx, head_idx]
 		else:
-			raise TypeError(f"cache must be a dict or np.ndarray, not {type(cache) = }\n{cache = }")
+			raise TypeError(
+				f"cache must be a dict or np.ndarray, not {type(cache) = }\n{cache = }"
+			)
 
 		save_dir: Path = prompt_dir / f"L{layer_idx}" / f"H{head_idx}"
 		save_dir.mkdir(parents=True, exist_ok=True)

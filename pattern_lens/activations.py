@@ -50,6 +50,7 @@ from pattern_lens.consts import (
 	SPINNER_KWARGS,
 	DIVIDER_S1,
 	DIVIDER_S2,
+	ReturnCache,
 )
 from pattern_lens.indexes import (
 	generate_models_jsonl,
@@ -62,8 +63,6 @@ from pattern_lens.load_activations import (
 	load_activations,
 )
 from pattern_lens.prompts import load_text_data
-
-ReturnCache = Literal[None, "numpy", "torch"]
 
 
 # return nothing, but `stack_heads` still affects how we save the activations
@@ -208,16 +207,18 @@ def compute_activations(
 			return_type=None,
 		)
 
-	# save activations
-	activations_path: Path = prompt_dir / "activations.npz"
-
+	activations_path: Path
 	# saving and returning
 	if stack_heads:
-		# check the keys are only attention heads
 		n_layers: int = model.cfg.n_layers
-		head_keys: list[str] = [
-			f"blocks.{i}.attn.hook_pattern" for i in range(n_layers)
-		]
+		key_pattern: str = "blocks.{i}.attn.hook_pattern"
+		# NOTE: this only works for stacking heads at the moment
+		# activations_specifier: str = key_pattern.format(i=f'0-{n_layers}')
+		activations_specifier: str = key_pattern.format(i="-")
+		activations_path = prompt_dir / f"activations-{activations_specifier}.npy"
+
+		# check the keys are only attention heads
+		head_keys: list[str] = [key_pattern.format(i=i) for i in range(n_layers)]
 		cache_torch_keys_set: set[str] = set(cache_torch.keys())
 		assert cache_torch_keys_set == set(head_keys), (
 			f"unexpected keys!\n{set(head_keys).symmetric_difference(cache_torch_keys_set) = }\n{cache_torch_keys_set} != {set(head_keys)}"
@@ -250,6 +251,8 @@ def compute_activations(
 			case _:
 				raise ValueError(f"invalid return_cache: {return_cache = }")
 	else:
+		activations_path = prompt_dir / "activations.npz"
+
 		# save
 		cache_np: ActivationCacheNp = {
 			k: v.detach().cpu().numpy() for k, v in cache_torch.items()
@@ -468,6 +471,10 @@ def activations_main(
 		if not no_index_html:
 			write_html_index(save_path_p)
 
+	# TODO: not implemented yet
+	if stacked_heads:
+		raise NotImplementedError("stacked_heads not implemented yet")
+
 	# get activations
 	list(
 		tqdm.tqdm(
@@ -478,7 +485,7 @@ def activations_main(
 					save_path=save_path_p,
 					allow_disk_cache=not force,
 					return_cache=None,
-					stacked_heads=stacked_heads,
+					# stacked_heads=stacked_heads,
 				),
 				prompts,
 			),

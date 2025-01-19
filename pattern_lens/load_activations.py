@@ -8,6 +8,8 @@ from typing import Literal, overload
 
 import numpy as np
 
+from pattern_lens.consts import ReturnCache
+
 
 class GetActivationsError(ValueError):
 	"""base class for errors in getting activations"""
@@ -107,7 +109,7 @@ def load_activations(
 	model_name: str,
 	prompt: dict,
 	save_path: Path,
-	return_fmt: Literal["torch", "numpy"] = "torch",
+	return_fmt: ReturnCache = "torch",
 ) -> "tuple[Path, dict[str, torch.Tensor]|dict[str, np.ndarray]]":  # type: ignore[name-defined] # noqa: F821
 	"""load activations for a prompt and model, from an npz file
 
@@ -155,3 +157,6 @@ def load_activations(
 			cache = {k: torch.from_numpy(v) for k, v in npz_data.items()}
 
 	return activations_path, cache
+
+
+# def load_activations_stacked()
