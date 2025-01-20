@@ -5,3 +5,5 @@ __pycache__/**
 docs/**
 uv.lock
 data/pile_100.jsonl
+.github/requirements*
+.github/versions/*
