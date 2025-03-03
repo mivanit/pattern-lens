@@ -126,7 +126,11 @@ def compute_activations(
 	stack_heads: bool = False,
 ) -> tuple[
 	Path,
-	ActivationCacheNp | ActivationCache | Float[np.ndarray, "n_layers n_heads n_ctx n_ctx"] | Float[torch.Tensor, "n_layers n_heads n_ctx n_ctx"] | None,
+	ActivationCacheNp
+	| ActivationCache
+	| Float[np.ndarray, "n_layers n_heads n_ctx n_ctx"]
+	| Float[torch.Tensor, "n_layers n_heads n_ctx n_ctx"]
+	| None,
 ]:
 	"""get activations for a given model and prompt, possibly from a cache
 
@@ -419,7 +423,8 @@ def activations_main(
 
 	with SpinnerContext(message="loading model", **SPINNER_KWARGS):
 		model: HookedTransformer = HookedTransformer.from_pretrained(
-			model_name, device=device_,
+			model_name,
+			device=device_,
 		)
 		model.model_name = model_name
 		model.cfg.model_name = model_name
@@ -433,7 +438,8 @@ def activations_main(
 	save_path_p.mkdir(parents=True, exist_ok=True)
 	model_path: Path = save_path_p / model_name
 	with SpinnerContext(
-		message=f"saving model info to {model_path.as_posix()}", **SPINNER_KWARGS,
+		message=f"saving model info to {model_path.as_posix()}",
+		**SPINNER_KWARGS,
 	):
 		model_cfg: HookedTransformerConfig
 		model_cfg = model.cfg
@@ -443,7 +449,8 @@ def activations_main(
 
 	# load prompts
 	with SpinnerContext(
-		message=f"loading prompts from {prompts_path = }", **SPINNER_KWARGS,
+		message=f"loading prompts from {prompts_path = }",
+		**SPINNER_KWARGS,
 	):
 		prompts: list[dict]
 		if raw_prompts:
@@ -491,7 +498,8 @@ def activations_main(
 	)
 
 	with SpinnerContext(
-		message="updating jsonl metadata for models and prompts", **SPINNER_KWARGS,
+		message="updating jsonl metadata for models and prompts",
+		**SPINNER_KWARGS,
 	):
 		generate_models_jsonl(save_path_p)
 		generate_prompts_jsonl(save_path_p / model_name)

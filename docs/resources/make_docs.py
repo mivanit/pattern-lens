@@ -207,7 +207,8 @@ def set_global_config() -> None:
 def replace_heading(match: re.Match) -> str:
 	current_level: int = len(match.group(1))
 	new_level: int = min(
-		current_level + CONFIG.markdown_headings_increment, 6,
+		current_level + CONFIG.markdown_headings_increment,
+		6,
 	)  # Cap at h6
 	return "#" * new_level + match.group(2)
 
@@ -462,7 +463,8 @@ if __name__ == "__main__":
 		port: int = 8000
 		os.chdir(CONFIG.output_dir)
 		with socketserver.TCPServer(
-			("", port), http.server.SimpleHTTPRequestHandler,
+			("", port),
+			http.server.SimpleHTTPRequestHandler,
 		) as httpd:
 			print(f"Serving at http://localhost:{port}")
 			httpd.serve_forever()

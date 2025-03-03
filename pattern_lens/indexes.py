@@ -94,10 +94,12 @@ def get_func_metadata(func: Callable) -> list[dict[str, str | None]]:
 			for func_name in fig_names
 		]
 	else:
-		return [{
-			"name": func.__name__,
-			**output,
-		}]
+		return [
+			{
+				"name": func.__name__,
+				**output,
+			},
+		]
 
 
 def generate_functions_jsonl(path: Path):
@@ -112,9 +114,11 @@ def generate_functions_jsonl(path: Path):
 				existing_figures[func_data["name"]] = func_data
 
 	# Add any new functions from ALL_FUNCTIONS
-	new_functions_lst: list[dict] = list(itertools.chain.from_iterable(
-		get_func_metadata(func) for func in ATTENTION_MATRIX_FIGURE_FUNCS
-	))
+	new_functions_lst: list[dict] = list(
+		itertools.chain.from_iterable(
+			get_func_metadata(func) for func in ATTENTION_MATRIX_FIGURE_FUNCS
+		),
+	)
 	new_functions: dict[str, dict] = {func["name"]: func for func in new_functions_lst}
 
 	all_functions: list[dict] = list(

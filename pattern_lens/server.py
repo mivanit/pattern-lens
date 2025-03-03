@@ -18,7 +18,8 @@ def main(path: str, port: int = 8000):
 	os.chdir(path)
 	try:
 		with socketserver.TCPServer(
-			("", port), http.server.SimpleHTTPRequestHandler,
+			("", port),
+			http.server.SimpleHTTPRequestHandler,
 		) as httpd:
 			print(f"Serving at http://localhost:{port}")
 			httpd.serve_forever()

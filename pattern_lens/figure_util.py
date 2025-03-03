@@ -63,13 +63,20 @@ def matplotlib_figure_saver(
 	*args,
 	fmt: str = MATPLOTLIB_FIGURE_FMT,
 ) -> Callable[
-	[Callable[[AttentionMatrix, plt.Axes], None], str], AttentionMatrixFigureFunc,
+	[Callable[[AttentionMatrix, plt.Axes], None], str],
+	AttentionMatrixFigureFunc,
 ]: ...
 def matplotlib_figure_saver(
 	func: Callable[[AttentionMatrix, plt.Axes], None] | None = None,
 	*args,
 	fmt: str = MATPLOTLIB_FIGURE_FMT,
-) -> AttentionMatrixFigureFunc | Callable[[Callable[[AttentionMatrix, plt.Axes], None], str], AttentionMatrixFigureFunc]:
+) -> (
+	AttentionMatrixFigureFunc
+	| Callable[
+		[Callable[[AttentionMatrix, plt.Axes], None], str],
+		AttentionMatrixFigureFunc,
+	]
+):
 	"""decorator for functions which take an attention matrix and predefined `ax` object, making it save a figure
 
 	# Parameters:
@@ -157,7 +164,7 @@ def matplotlib_multifigure_saver(
 				plt.close(ax.figure)  # type: ignore[arg-type]
 
 		# it doesn't normally have this attribute, but we're adding it
-		wrapped.figure_save_fmt = fmt # type: ignore[attr-defined]
+		wrapped.figure_save_fmt = fmt  # type: ignore[attr-defined]
 
 		return wrapped
 
@@ -268,7 +275,8 @@ def matrix2drgb_to_png_bytes(matrix: Matrix2Drgb, buffer: None = None) -> bytes:
 @overload
 def matrix2drgb_to_png_bytes(matrix: Matrix2Drgb, buffer: io.BytesIO) -> None: ...
 def matrix2drgb_to_png_bytes(
-	matrix: Matrix2Drgb, buffer: io.BytesIO | None = None,
+	matrix: Matrix2Drgb,
+	buffer: io.BytesIO | None = None,
 ) -> bytes | None:
 	"""Convert a `Matrix2Drgb` to valid PNG bytes via PIL
 
