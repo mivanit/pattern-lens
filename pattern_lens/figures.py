@@ -45,7 +45,7 @@ class HTConfigMock:
 	we do this to avoid having to import `torch` and `transformer_lens`, since this would have to be done for each process in the parallelization and probably slows things down significantly
 	"""
 
-	def __init__(self, **kwargs):
+	def __init__(self, **kwargs) -> None:
 		self.n_layers: int
 		self.n_heads: int
 		self.model_name: str
@@ -107,7 +107,7 @@ def process_single_head(
 			error_file = save_dir / f"{func.__name__}.error.txt"
 			error_file.write_text(str(e))
 			warnings.warn(
-				f"Error in {func.__name__} for L{layer_idx}H{head_idx}: {e!s}",
+				f"Error in {func.__name__} for L{layer_idx}H{head_idx}: {e!s}", stacklevel=2,
 			)
 			funcs_status[func_name] = e
 
@@ -157,8 +157,9 @@ def compute_and_save_figures(
 		elif isinstance(cache, np.ndarray):
 			attn_pattern = cache[layer_idx, head_idx]
 		else:
+			msg = f"cache must be a dict or np.ndarray, not {type(cache) = }\n{cache = }"
 			raise TypeError(
-				f"cache must be a dict or np.ndarray, not {type(cache) = }\n{cache = }",
+				msg,
 			)
 
 		save_dir: Path = prompt_dir / f"L{layer_idx}" / f"H{head_idx}"
@@ -281,7 +282,7 @@ def figures_main(
 		generate_functions_jsonl(save_path_p)
 
 
-def main():
+def main() -> None:
 	print(DIVIDER_S1)
 	with SpinnerContext(message="parsing args", **SPINNER_KWARGS):
 		arg_parser: argparse.ArgumentParser = argparse.ArgumentParser()

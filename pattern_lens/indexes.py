@@ -15,7 +15,7 @@ from pattern_lens.attn_figure_funcs import (
 )
 
 
-def generate_prompts_jsonl(model_dir: Path):
+def generate_prompts_jsonl(model_dir: Path) -> None:
 	"""creates a `prompts.jsonl` file with all the prompts in the model directory
 
 	looks in all directories in `{model_dir}/prompts` for a `prompt.json` file
@@ -34,7 +34,7 @@ def generate_prompts_jsonl(model_dir: Path):
 			f.write("\n")
 
 
-def generate_models_jsonl(path: Path):
+def generate_models_jsonl(path: Path) -> None:
 	"""creates a `models.jsonl` file with all the models"""
 	models: list[dict] = list()
 	for model_dir in (path).iterdir():
@@ -102,7 +102,7 @@ def get_func_metadata(func: Callable) -> list[dict[str, str | None]]:
 		]
 
 
-def generate_functions_jsonl(path: Path):
+def generate_functions_jsonl(path: Path) -> None:
 	"unions all functions from `figures.jsonl` and `ATTENTION_MATRIX_FIGURE_FUNCS` into the file"
 	figures_file: Path = path / "figures.jsonl"
 	existing_figures: dict[str, dict] = dict()
@@ -134,7 +134,7 @@ def generate_functions_jsonl(path: Path):
 			f.write("\n")
 
 
-def write_html_index(path: Path):
+def write_html_index(path: Path) -> None:
 	"""writes an index.html file to the path"""
 	html_index: str = (
 		importlib.resources.files(pattern_lens)

@@ -11,7 +11,7 @@ from collections.abc import Callable, Sequence
 from pathlib import Path
 from typing import Literal, overload
 
-import matplotlib
+import matplotlib as mpl
 import matplotlib.pyplot as plt
 import numpy as np
 from jaxtyping import Float, UInt8
@@ -248,12 +248,13 @@ def matrix_to_image_preprocess(
 	# get the colormap
 	cmap_: Colormap
 	if isinstance(cmap, str):
-		cmap_ = matplotlib.colormaps[cmap]
+		cmap_ = mpl.colormaps[cmap]
 	elif isinstance(cmap, Colormap):
 		cmap_ = cmap
 	else:
+		msg = f"Invalid type for {cmap = }, {type(cmap) = }, must be str or Colormap"
 		raise TypeError(
-			f"Invalid type for {cmap = }, {type(cmap) = }, must be str or Colormap",
+			msg,
 		)
 
 	# Apply the colormap

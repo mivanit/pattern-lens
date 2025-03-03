@@ -56,8 +56,9 @@ def compare_prompt_to_loaded(prompt: dict, prompt_loaded: dict) -> None:
 	"""
 	for key in ("text", "hash"):
 		if prompt[key] != prompt_loaded[key]:
+			msg = f"Prompt file does not match prompt at key {key}:\n{prompt}\n{prompt_loaded}"
 			raise ActivationsMismatchError(
-				f"Prompt file does not match prompt at key {key}:\n{prompt}\n{prompt_loaded}",
+				msg,
 			)
 
 
@@ -77,8 +78,9 @@ def augment_prompt_with_hash(prompt: dict) -> dict:
 	"""
 	if "hash" not in prompt:
 		if "text" not in prompt:
+			msg = f"Prompt does not have 'text' field or 'hash' field: {prompt}"
 			raise InvalidPromptError(
-				f"Prompt does not have 'text' field or 'hash' field: {prompt}",
+				msg,
 			)
 		prompt_str: str = prompt["text"]
 		prompt_hash: str = (
@@ -130,8 +132,9 @@ def load_activations(
 	- `ValueError` : if `return_fmt` is not `"torch"` or `"numpy"`
 	"""
 	if return_fmt not in ("torch", "numpy"):
+		msg = f"Invalid return_fmt: {return_fmt}, expected 'torch' or 'numpy'"
 		raise ValueError(
-			f"Invalid return_fmt: {return_fmt}, expected 'torch' or 'numpy'",
+			msg,
 		)
 	if return_fmt == "torch":
 		import torch
@@ -141,7 +144,8 @@ def load_activations(
 	prompt_dir: Path = save_path / model_name / "prompts" / prompt["hash"]
 	prompt_file: Path = prompt_dir / "prompt.json"
 	if not prompt_file.exists():
-		raise ActivationsMissingError(f"Prompt file {prompt_file} does not exist")
+		msg = f"Prompt file {prompt_file} does not exist"
+		raise ActivationsMissingError(msg)
 	with open(prompt_dir / "prompt.json", "r") as f:
 		prompt_loaded: dict = json.load(f)
 		compare_prompt_to_loaded(prompt, prompt_loaded)
@@ -152,7 +156,7 @@ def load_activations(
 
 	with np.load(activations_path) as npz_data:
 		if return_fmt == "numpy":
-			cache = {k: v for k, v in npz_data.items()}
+			cache = dict(npz_data.items())
 		elif return_fmt == "torch":
 			cache = {k: torch.from_numpy(v) for k, v in npz_data.items()}
 

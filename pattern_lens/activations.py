@@ -249,7 +249,8 @@ def compute_activations(
 			case None:
 				return activations_path, None
 			case _:
-				raise ValueError(f"invalid return_cache: {return_cache = }")
+				msg = f"invalid return_cache: {return_cache = }"
+				raise ValueError(msg)
 	else:
 		activations_path = prompt_dir / "activations.npz"
 
@@ -272,7 +273,8 @@ def compute_activations(
 			case None:
 				return activations_path, None
 			case _:
-				raise ValueError(f"invalid return_cache: {return_cache = }")
+				msg = f"invalid return_cache: {return_cache = }"
+				raise ValueError(msg)
 
 
 @overload
@@ -417,7 +419,8 @@ def activations_main(
 	elif isinstance(device, str):
 		device_ = torch.device(device)
 	else:
-		raise ValueError(f"invalid device: {device}")
+		msg = f"invalid device: {device}"
+		raise ValueError(msg)
 
 	print(f"using device: {device_}")
 
@@ -432,7 +435,7 @@ def activations_main(
 	print(
 		f"loaded {model_name} with {shorten_numerical_to_str(n_params)} ({n_params}) parameters",
 	)
-	print(f"\tmodel devices: {set(p.device for p in model.parameters())}")
+	print(f"\tmodel devices: { {p.device for p in model.parameters()} }")
 
 	save_path_p: Path = Path(save_path)
 	save_path_p.mkdir(parents=True, exist_ok=True)
@@ -505,7 +508,7 @@ def activations_main(
 		generate_prompts_jsonl(save_path_p / model_name)
 
 
-def main():
+def main() -> None:
 	print(DIVIDER_S1)
 	with SpinnerContext(message="parsing args", **SPINNER_KWARGS):
 		arg_parser: argparse.ArgumentParser = argparse.ArgumentParser()

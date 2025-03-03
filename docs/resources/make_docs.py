@@ -66,7 +66,7 @@ _CONFIG_NOTEBOOKS_INDEX_TEMPLATE: str = r"""<!doctype html>
 	<link rel="stylesheet" href="../resources/css/theme.css">
 	<link rel="stylesheet" href="../resources/css/content.css">
 </head>
-<body>    
+<body>
 	<h1>Notebooks</h1>
 	<p>
 		You can find the source code for the notebooks at
@@ -96,7 +96,7 @@ def deep_get(
 	)
 
 	if warn_msg_on_default and output == default:
-		warnings.warn(warn_msg_on_default.format(path=path))
+		warnings.warn(warn_msg_on_default.format(path=path), stacklevel=2)
 
 	return output
 
@@ -256,9 +256,8 @@ def format_signature(sig: inspect.Signature, colon: bool) -> str:
 		anno += ":"
 
 	# Construct the full signature
-	rendered = f"`(`{params_str}`{anno}`"
+	return f"`(`{params_str}`{anno}`"
 
-	return rendered
 
 
 def markup_safe(sig: inspect.Signature) -> str:
