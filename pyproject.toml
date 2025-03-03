@@ -97,6 +97,9 @@
             "uv.lock",
             "LICENSE",
         ]
+        [tool.lmcat.glob_process]
+            "[mM]akefile" = "makefile_recipes"
+            "*.ipynb" = "ipynb_to_md"
 
 # for configuring this tool (makefile, make_docs.py)
 # ============================================================
@@ -107,6 +110,7 @@
     output_dir = "docs"
     no_clean = [
         ".nojekyll",
+        "demo",
     ]
     markdown_headings_increment = 2
     warnings_ignore = [
