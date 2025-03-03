@@ -860,14 +860,15 @@ wheels = [
 
 [[package]]
 name = "lmcat"
-version = "0.0.1"
+version = "0.2.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "igittigitt" },
+    { name = "muutils" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/e6/ea/8d9b8f051842b810895d9bba46001767992304d0baeb44ff139ab5ade80a/lmcat-0.0.1.tar.gz", hash = "sha256:ba5624b82854b900eeb6522fb5b193160760655d54976917698656217c8c7a55", size = 157127 }
+sdist = { url = "https://files.pythonhosted.org/packages/8c/89/9b1460d9a0cabb41d525d19a4d8f7f17a4354e365b7876d991f0e7fa90f3/lmcat-0.2.0.tar.gz", hash = "sha256:f83aaece9554620a04c59dfc8e9af0a022f59bc07a64d1ad4d8640bb3dca6599", size = 304948 }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/6c/27/860a4b62f8bd9ea5474e5b01c776c28cd4fa72de42840f76062c9bb6c47b/lmcat-0.0.1-py3-none-any.whl", hash = "sha256:e340638f9b2701a5a9fb6fb2f79a30a50a796afd07bf1842100758c07b706ead", size = 19461 },
+    { url = "https://files.pythonhosted.org/packages/8b/bc/376fed86f94fa0f59e31d1a7f11eab1b4873a236199b4d1c598c1bcb50a5/lmcat-0.2.0-py3-none-any.whl", hash = "sha256:776bd5ca877cc2e1bab63fb5c1d5249989b257e9991d2e579e4aac182cf80b57", size = 26178 },
 ]
 
 [[package]]
@@ -1044,11 +1045,11 @@ wheels = [
 
 [[package]]
 name = "muutils"
-version = "0.6.19"
+version = "0.8.3"
 source = { registry = "https://pypi.org/simple" }
-sdist = { url = "https://files.pythonhosted.org/packages/43/f3/97f51371e8427f276bc24fdc38ab6235c4f782cf9ac2a8cd121a3d574711/muutils-0.6.19.tar.gz", hash = "sha256:2b24c7b92a13539a39f25c5a683744ed2db0c38c653c1b12995aa184970840e9", size = 2120112 }
+sdist = { url = "https://files.pythonhosted.org/packages/21/47/45fd223b4352e02336ea88ee65146fc4a317f90d5513370c405fd7349d0c/muutils-0.8.3.tar.gz", hash = "sha256:4e32cf6dc0df6e6df3387555eaf6229b76b0a8972fcf8424b3afcfa207d3d6e1", size = 2485047 }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/93/20/77750365beaa748e801f010c496c291ed31a5a8b2fa628ce205c9e9a2b68/muutils-0.6.19-py3-none-any.whl", hash = "sha256:a22a782ea5eeceb267a2aa08359f542faf5fbf4ecbca2e23c42fcfc2e9301de9", size = 102562 },
+    { url = "https://files.pythonhosted.org/packages/00/77/9e33fc2d024d1892460bb91c6354f24288fdc5e340d96cd302931a305651/muutils-0.8.3-py3-none-any.whl", hash = "sha256:abc37da649b18e534e0fc7b0a47bac4aec395f6b057756bf30271d31e710e8e3", size = 110987 },
 ]
 
 [package.optional-dependencies]
@@ -1131,7 +1132,6 @@ name = "nvidia-cublas-cu12"
 version = "12.4.5.8"
 source = { registry = "https://pypi.org/simple" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/7f/7f/7fbae15a3982dc9595e49ce0f19332423b260045d0a6afe93cdbe2f1f624/nvidia_cublas_cu12-12.4.5.8-py3-none-manylinux2014_aarch64.whl", hash = "sha256:0f8aa1706812e00b9f19dfe0cdb3999b092ccb8ca168c0db5b8ea712456fd9b3", size = 363333771 },
     { url = "https://files.pythonhosted.org/packages/ae/71/1c91302526c45ab494c23f61c7a84aa568b8c1f9d196efa5993957faf906/nvidia_cublas_cu12-12.4.5.8-py3-none-manylinux2014_x86_64.whl", hash = "sha256:2fc8da60df463fdefa81e323eef2e36489e1c94335b5358bcb38360adf75ac9b", size = 363438805 },
 ]
 
@@ -1140,7 +1140,6 @@ name = "nvidia-cuda-cupti-cu12"
 version = "12.4.127"
 source = { registry = "https://pypi.org/simple" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/93/b5/9fb3d00386d3361b03874246190dfec7b206fd74e6e287b26a8fcb359d95/nvidia_cuda_cupti_cu12-12.4.127-py3-none-manylinux2014_aarch64.whl", hash = "sha256:79279b35cf6f91da114182a5ce1864997fd52294a87a16179ce275773799458a", size = 12354556 },
     { url = "https://files.pythonhosted.org/packages/67/42/f4f60238e8194a3106d06a058d494b18e006c10bb2b915655bd9f6ea4cb1/nvidia_cuda_cupti_cu12-12.4.127-py3-none-manylinux2014_x86_64.whl", hash = "sha256:9dec60f5ac126f7bb551c055072b69d85392b13311fcc1bcda2202d172df30fb", size = 13813957 },
 ]
 
@@ -1149,7 +1148,6 @@ name = "nvidia-cuda-nvrtc-cu12"
 version = "12.4.127"
 source = { registry = "https://pypi.org/simple" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/77/aa/083b01c427e963ad0b314040565ea396f914349914c298556484f799e61b/nvidia_cuda_nvrtc_cu12-12.4.127-py3-none-manylinux2014_aarch64.whl", hash = "sha256:0eedf14185e04b76aa05b1fea04133e59f465b6f960c0cbf4e37c3cb6b0ea198", size = 24133372 },
     { url = "https://files.pythonhosted.org/packages/2c/14/91ae57cd4db3f9ef7aa99f4019cfa8d54cb4caa7e00975df6467e9725a9f/nvidia_cuda_nvrtc_cu12-12.4.127-py3-none-manylinux2014_x86_64.whl", hash = "sha256:a178759ebb095827bd30ef56598ec182b85547f1508941a3d560eb7ea1fbf338", size = 24640306 },
 ]
 
@@ -1158,7 +1156,6 @@ name = "nvidia-cuda-runtime-cu12"
 version = "12.4.127"
 source = { registry = "https://pypi.org/simple" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/a1/aa/b656d755f474e2084971e9a297def515938d56b466ab39624012070cb773/nvidia_cuda_runtime_cu12-12.4.127-py3-none-manylinux2014_aarch64.whl", hash = "sha256:961fe0e2e716a2a1d967aab7caee97512f71767f852f67432d572e36cb3a11f3", size = 894177 },
     { url = "https://files.pythonhosted.org/packages/ea/27/1795d86fe88ef397885f2e580ac37628ed058a92ed2c39dc8eac3adf0619/nvidia_cuda_runtime_cu12-12.4.127-py3-none-manylinux2014_x86_64.whl", hash = "sha256:64403288fa2136ee8e467cdc9c9427e0434110899d07c779f25b5c068934faa5", size = 883737 },
 ]
 
@@ -1181,7 +1178,6 @@ dependencies = [
     { name = "nvidia-nvjitlink-cu12", marker = "sys_platform == 'linux'" },
 ]
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/7a/8a/0e728f749baca3fbeffad762738276e5df60851958be7783af121a7221e7/nvidia_cufft_cu12-11.2.1.3-py3-none-manylinux2014_aarch64.whl", hash = "sha256:5dad8008fc7f92f5ddfa2101430917ce2ffacd86824914c82e28990ad7f00399", size = 211422548 },
     { url = "https://files.pythonhosted.org/packages/27/94/3266821f65b92b3138631e9c8e7fe1fb513804ac934485a8d05776e1dd43/nvidia_cufft_cu12-11.2.1.3-py3-none-manylinux2014_x86_64.whl", hash = "sha256:f083fc24912aa410be21fa16d157fed2055dab1cc4b6934a0e03cba69eb242b9", size = 211459117 },
 ]
 
@@ -1190,7 +1186,6 @@ name = "nvidia-curand-cu12"
 version = "10.3.5.147"
 source = { registry = "https://pypi.org/simple" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/80/9c/a79180e4d70995fdf030c6946991d0171555c6edf95c265c6b2bf7011112/nvidia_curand_cu12-10.3.5.147-py3-none-manylinux2014_aarch64.whl", hash = "sha256:1f173f09e3e3c76ab084aba0de819c49e56614feae5c12f69883f4ae9bb5fad9", size = 56314811 },
     { url = "https://files.pythonhosted.org/packages/8a/6d/44ad094874c6f1b9c654f8ed939590bdc408349f137f9b98a3a23ccec411/nvidia_curand_cu12-10.3.5.147-py3-none-manylinux2014_x86_64.whl", hash = "sha256:a88f583d4e0bb643c49743469964103aa59f7f708d862c3ddb0fc07f851e3b8b", size = 56305206 },
 ]
 
@@ -1204,7 +1199,6 @@ dependencies = [
     { name = "nvidia-nvjitlink-cu12", marker = "sys_platform == 'linux'" },
 ]
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/46/6b/a5c33cf16af09166845345275c34ad2190944bcc6026797a39f8e0a282e0/nvidia_cusolver_cu12-11.6.1.9-py3-none-manylinux2014_aarch64.whl", hash = "sha256:d338f155f174f90724bbde3758b7ac375a70ce8e706d70b018dd3375545fc84e", size = 127634111 },
     { url = "https://files.pythonhosted.org/packages/3a/e1/5b9089a4b2a4790dfdea8b3a006052cfecff58139d5a4e34cb1a51df8d6f/nvidia_cusolver_cu12-11.6.1.9-py3-none-manylinux2014_x86_64.whl", hash = "sha256:19e33fa442bcfd085b3086c4ebf7e8debc07cfe01e11513cc6d332fd918ac260", size = 127936057 },
 ]
 
@@ -1216,7 +1210,6 @@ dependencies = [
     { name = "nvidia-nvjitlink-cu12", marker = "sys_platform == 'linux'" },
 ]
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/96/a9/c0d2f83a53d40a4a41be14cea6a0bf9e668ffcf8b004bd65633f433050c0/nvidia_cusparse_cu12-12.3.1.170-py3-none-manylinux2014_aarch64.whl", hash = "sha256:9d32f62896231ebe0480efd8a7f702e143c98cfaa0e8a76df3386c1ba2b54df3", size = 207381987 },
     { url = "https://files.pythonhosted.org/packages/db/f7/97a9ea26ed4bbbfc2d470994b8b4f338ef663be97b8f677519ac195e113d/nvidia_cusparse_cu12-12.3.1.170-py3-none-manylinux2014_x86_64.whl", hash = "sha256:ea4f11a2904e2a8dc4b1833cc1b5181cde564edd0d5cd33e3c168eff2d1863f1", size = 207454763 },
 ]
 
@@ -1233,7 +1226,6 @@ name = "nvidia-nvjitlink-cu12"
 version = "12.4.127"
 source = { registry = "https://pypi.org/simple" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/02/45/239d52c05074898a80a900f49b1615d81c07fceadd5ad6c4f86a987c0bc4/nvidia_nvjitlink_cu12-12.4.127-py3-none-manylinux2014_aarch64.whl", hash = "sha256:4abe7fef64914ccfa909bc2ba39739670ecc9e820c83ccc7a6ed414122599b83", size = 20552510 },
     { url = "https://files.pythonhosted.org/packages/ff/ff/847841bacfbefc97a00036e0fce5a0f086b640756dc38caea5e1bb002655/nvidia_nvjitlink_cu12-12.4.127-py3-none-manylinux2014_x86_64.whl", hash = "sha256:06b3b9b25bf3f8af351d664978ca26a16d2c5127dbd53c0497e28d1fb9611d57", size = 21066810 },
 ]
 
@@ -1242,7 +1234,6 @@ name = "nvidia-nvtx-cu12"
 version = "12.4.127"
 source = { registry = "https://pypi.org/simple" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/06/39/471f581edbb7804b39e8063d92fc8305bdc7a80ae5c07dbe6ea5c50d14a5/nvidia_nvtx_cu12-12.4.127-py3-none-manylinux2014_aarch64.whl", hash = "sha256:7959ad635db13edf4fc65c06a6e9f9e55fc2f92596db928d169c0bb031e88ef3", size = 100417 },
     { url = "https://files.pythonhosted.org/packages/87/20/199b8713428322a2f22b722c62b8cc278cc53dffa9705d744484b5035ee9/nvidia_nvtx_cu12-12.4.127-py3-none-manylinux2014_x86_64.whl", hash = "sha256:781e950d9b9f60d8241ccea575b32f5105a5baf4c2351cab5256a24869f12a1a", size = 99144 },
 ]
 
@@ -1364,7 +1355,7 @@ requires-dist = [
 [package.metadata.requires-dev]
 dev = [
     { name = "coverage-badge", specifier = ">=1.1.0" },
-    { name = "lmcat", specifier = ">=0.0.1" },
+    { name = "lmcat", marker = "python_full_version >= '3.11'", specifier = ">=0.2.0" },
     { name = "mypy", specifier = ">=1.0.1" },
     { name = "pdoc", specifier = ">=14.6.0" },
     { name = "pycln", specifier = ">=2.1.3" },
@@ -2476,13 +2467,13 @@ wheels = [
 
 [[package]]
 name = "zanj"
-version = "0.3.1"
+version = "0.4.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "muutils", extra = ["array"] },
     { name = "numpy" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/a2/90/e72fd26bb8ef5469feec2e587d555ac2667c6661f29c410e0f2cf6d9eabe/zanj-0.3.1.tar.gz", hash = "sha256:caedd60fc66174efb0dab5f757612114fb6157cd7c44200a4488bb65b0c8d9b1", size = 32664 }
+sdist = { url = "https://files.pythonhosted.org/packages/fe/da/5b0a50e1a388d900d0a13a906950009f63a9daaa4d0f3a70893bd46827a1/zanj-0.4.0.tar.gz", hash = "sha256:6a70478ac857086dcc490133a38f11d4f8e49e0b8fc9aded8b50bfdd2dba83a4", size = 1147679 }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/2a/b8/35a197ecddc0368228833c69018c148e3954210632d689b9ba6230ab0920/zanj-0.3.1-py3-none-any.whl", hash = "sha256:9a8ea449f95c49ee8823499e79311332c5fcc05e9a2ab46d413db8593a554e3f", size = 33438 },
+    { url = "https://files.pythonhosted.org/packages/56/0e/9b5d39ba122235334a1a94c565df9de94a775a8f293406be874b301a42ec/zanj-0.4.0-py3-none-any.whl", hash = "sha256:750ed1f833b842f37941e68bb7d2a1a81afaf9d26f32d59930b3cbb3f564a896", size = 31894 },
 ]

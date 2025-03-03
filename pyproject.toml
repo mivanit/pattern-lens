@@ -32,7 +32,7 @@
 [dependency-groups]
     dev = [
         # lmcat
-        "lmcat>=0.0.1",
+        "lmcat>=0.2.0; python_version >= '3.11'",
         # test
         "pytest>=8.2.2",
         # coverage

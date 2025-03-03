@@ -53,7 +53,7 @@ jupyterlab-widgets==3.0.13
 kiwisolver==1.4.8
 lib-detect-testenv==2.0.8
 libcst==1.6.0
-lmcat==0.0.1
+lmcat==0.2.0
 markdown-it-py==3.0.0
 markupsafe==3.0.2
 matplotlib==3.10.0
@@ -62,7 +62,7 @@ mdurl==0.1.2
 mpmath==1.3.0
 multidict==6.1.0
 multiprocess==0.70.15
-muutils==0.6.19
+muutils==0.8.3
 mypy==1.14.1
 mypy-extensions==1.0.0
 nest-asyncio==1.6.0
@@ -146,4 +146,4 @@ wcwidth==0.2.13
 widgetsnbextension==4.0.13
 xxhash==3.5.0
 yarl==1.18.3
-zanj==0.3.1
+zanj==0.4.0
