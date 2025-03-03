@@ -1,6 +1,7 @@
 """writes indexes to the model directory for the frontend to use or for record keeping"""
 
 import inspect
+import itertools
 import json
 from pathlib import Path
 import importlib.resources
@@ -111,9 +112,10 @@ def generate_functions_jsonl(path: Path):
 				existing_figures[func_data["name"]] = func_data
 
 	# Add any new functions from ALL_FUNCTIONS
-	new_functions: dict[str, dict] = {
-		func.__name__: get_func_metadata(func) for func in ATTENTION_MATRIX_FIGURE_FUNCS
-	}
+	new_functions_lst: list[dict] = itertools.chain.from_iterable(
+		get_func_metadata(func) for func in ATTENTION_MATRIX_FIGURE_FUNCS
+	)
+	new_functions: dict[str, dict] = {func["name"]: func for func in new_functions_lst}
 
 	all_functions: list[dict] = list(
 		{
