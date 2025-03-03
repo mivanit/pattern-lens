@@ -368,7 +368,10 @@ def get_activations(
 	)
 
 
-DEFAULT_DEVICE: torch.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+DEFAULT_DEVICE: torch.device = torch.device(
+	"cuda" if torch.cuda.is_available() else "cpu",
+)
+
 
 def activations_main(
 	model_name: str,
