@@ -1,7 +1,7 @@
 <blockquote>
 <p>docs for <a
 href="https://github.com/mivanit/pattern-lens"><code>pattern_lens</code></a>
-v0.2.0</p>
+v0.3.0</p>
 </blockquote>
 <h2 id="contents">Contents</h2>
 <p><a href="https://pypi.org/project/pattern-lens/"><img
@@ -13,7 +13,7 @@ href="https://github.com/mivanit/pattern-lens/actions/workflows/checks.yml"><img
 src="https://github.com/mivanit/pattern-lens/actions/workflows/checks.yml/badge.svg"
 alt="Checks" /></a></p>
 <p><a href="docs/coverage/html/"><img
-src="data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz4NCjxzdmcgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB3aWR0aD0iOTkiIGhlaWdodD0iMjAiPg0KICAgIDxsaW5lYXJHcmFkaWVudCBpZD0iYiIgeDI9IjAiIHkyPSIxMDAlIj4NCiAgICAgICAgPHN0b3Agb2Zmc2V0PSIwIiBzdG9wLWNvbG9yPSIjYmJiIiBzdG9wLW9wYWNpdHk9Ii4xIi8+DQogICAgICAgIDxzdG9wIG9mZnNldD0iMSIgc3RvcC1vcGFjaXR5PSIuMSIvPg0KICAgIDwvbGluZWFyR3JhZGllbnQ+DQogICAgPG1hc2sgaWQ9ImEiPg0KICAgICAgICA8cmVjdCB3aWR0aD0iOTkiIGhlaWdodD0iMjAiIHJ4PSIzIiBmaWxsPSIjZmZmIi8+DQogICAgPC9tYXNrPg0KICAgIDxnIG1hc2s9InVybCgjYSkiPg0KICAgICAgICA8cGF0aCBmaWxsPSIjNTU1IiBkPSJNMCAwaDYzdjIwSDB6Ii8+DQogICAgICAgIDxwYXRoIGZpbGw9IiNhNGE2MWQiIGQ9Ik02MyAwaDM2djIwSDYzeiIvPg0KICAgICAgICA8cGF0aCBmaWxsPSJ1cmwoI2IpIiBkPSJNMCAwaDk5djIwSDB6Ii8+DQogICAgPC9nPg0KICAgIDxnIGZpbGw9IiNmZmYiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtZmFtaWx5PSJEZWphVnUgU2FucyxWZXJkYW5hLEdlbmV2YSxzYW5zLXNlcmlmIiBmb250LXNpemU9IjExIj4NCiAgICAgICAgPHRleHQgeD0iMzEuNSIgeT0iMTUiIGZpbGw9IiMwMTAxMDEiIGZpbGwtb3BhY2l0eT0iLjMiPmNvdmVyYWdlPC90ZXh0Pg0KICAgICAgICA8dGV4dCB4PSIzMS41IiB5PSIxNCI+Y292ZXJhZ2U8L3RleHQ+DQogICAgICAgIDx0ZXh0IHg9IjgwIiB5PSIxNSIgZmlsbD0iIzAxMDEwMSIgZmlsbC1vcGFjaXR5PSIuMyI+ODIlPC90ZXh0Pg0KICAgICAgICA8dGV4dCB4PSI4MCIgeT0iMTQiPjgyJTwvdGV4dD4NCiAgICA8L2c+DQo8L3N2Zz4NCg=="
+src="data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz4NCjxzdmcgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB3aWR0aD0iOTkiIGhlaWdodD0iMjAiPg0KICAgIDxsaW5lYXJHcmFkaWVudCBpZD0iYiIgeDI9IjAiIHkyPSIxMDAlIj4NCiAgICAgICAgPHN0b3Agb2Zmc2V0PSIwIiBzdG9wLWNvbG9yPSIjYmJiIiBzdG9wLW9wYWNpdHk9Ii4xIi8+DQogICAgICAgIDxzdG9wIG9mZnNldD0iMSIgc3RvcC1vcGFjaXR5PSIuMSIvPg0KICAgIDwvbGluZWFyR3JhZGllbnQ+DQogICAgPG1hc2sgaWQ9ImEiPg0KICAgICAgICA8cmVjdCB3aWR0aD0iOTkiIGhlaWdodD0iMjAiIHJ4PSIzIiBmaWxsPSIjZmZmIi8+DQogICAgPC9tYXNrPg0KICAgIDxnIG1hc2s9InVybCgjYSkiPg0KICAgICAgICA8cGF0aCBmaWxsPSIjNTU1IiBkPSJNMCAwaDYzdjIwSDB6Ii8+DQogICAgICAgIDxwYXRoIGZpbGw9IiNkZmIzMTciIGQ9Ik02MyAwaDM2djIwSDYzeiIvPg0KICAgICAgICA8cGF0aCBmaWxsPSJ1cmwoI2IpIiBkPSJNMCAwaDk5djIwSDB6Ii8+DQogICAgPC9nPg0KICAgIDxnIGZpbGw9IiNmZmYiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtZmFtaWx5PSJEZWphVnUgU2FucyxWZXJkYW5hLEdlbmV2YSxzYW5zLXNlcmlmIiBmb250LXNpemU9IjExIj4NCiAgICAgICAgPHRleHQgeD0iMzEuNSIgeT0iMTUiIGZpbGw9IiMwMTAxMDEiIGZpbGwtb3BhY2l0eT0iLjMiPmNvdmVyYWdlPC90ZXh0Pg0KICAgICAgICA8dGV4dCB4PSIzMS41IiB5PSIxNCI+Y292ZXJhZ2U8L3RleHQ+DQogICAgICAgIDx0ZXh0IHg9IjgwIiB5PSIxNSIgZmlsbD0iIzAxMDEwMSIgZmlsbC1vcGFjaXR5PSIuMyI+NjklPC90ZXh0Pg0KICAgICAgICA8dGV4dCB4PSI4MCIgeT0iMTQiPjY5JTwvdGV4dD4NCiAgICA8L2c+DQo8L3N2Zz4NCg=="
 alt="Coverage" /></a> <img
 src="https://img.shields.io/github/commit-activity/t/mivanit/pattern-lens"
 alt="GitHub commits" /> <img
@@ -122,7 +122,7 @@ class="sourceCode python"><code class="sourceCode python"><span id="cb5-1"><a hr
 <li><a href="#server"><code>server</code></a></li>
 </ul>
 <p><a
-href="https://github.com/mivanit/pattern-lens/blob/0.2.0/__init__.py">View
+href="https://github.com/mivanit/pattern-lens/blob/0.3.0__init__.py">View
 Source on GitHub</a></p>
 <h1 id="pattern_lens"><code>pattern_lens</code></h1>
 <p><a href="https://pypi.org/project/pattern-lens/"><img
@@ -134,7 +134,7 @@ href="https://github.com/mivanit/pattern-lens/actions/workflows/checks.yml"><img
 src="https://github.com/mivanit/pattern-lens/actions/workflows/checks.yml/badge.svg"
 alt="Checks" /></a></p>
 <p><a href="docs/coverage/html/"><img
-src="data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz4NCjxzdmcgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB3aWR0aD0iOTkiIGhlaWdodD0iMjAiPg0KICAgIDxsaW5lYXJHcmFkaWVudCBpZD0iYiIgeDI9IjAiIHkyPSIxMDAlIj4NCiAgICAgICAgPHN0b3Agb2Zmc2V0PSIwIiBzdG9wLWNvbG9yPSIjYmJiIiBzdG9wLW9wYWNpdHk9Ii4xIi8+DQogICAgICAgIDxzdG9wIG9mZnNldD0iMSIgc3RvcC1vcGFjaXR5PSIuMSIvPg0KICAgIDwvbGluZWFyR3JhZGllbnQ+DQogICAgPG1hc2sgaWQ9ImEiPg0KICAgICAgICA8cmVjdCB3aWR0aD0iOTkiIGhlaWdodD0iMjAiIHJ4PSIzIiBmaWxsPSIjZmZmIi8+DQogICAgPC9tYXNrPg0KICAgIDxnIG1hc2s9InVybCgjYSkiPg0KICAgICAgICA8cGF0aCBmaWxsPSIjNTU1IiBkPSJNMCAwaDYzdjIwSDB6Ii8+DQogICAgICAgIDxwYXRoIGZpbGw9IiNhNGE2MWQiIGQ9Ik02MyAwaDM2djIwSDYzeiIvPg0KICAgICAgICA8cGF0aCBmaWxsPSJ1cmwoI2IpIiBkPSJNMCAwaDk5djIwSDB6Ii8+DQogICAgPC9nPg0KICAgIDxnIGZpbGw9IiNmZmYiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtZmFtaWx5PSJEZWphVnUgU2FucyxWZXJkYW5hLEdlbmV2YSxzYW5zLXNlcmlmIiBmb250LXNpemU9IjExIj4NCiAgICAgICAgPHRleHQgeD0iMzEuNSIgeT0iMTUiIGZpbGw9IiMwMTAxMDEiIGZpbGwtb3BhY2l0eT0iLjMiPmNvdmVyYWdlPC90ZXh0Pg0KICAgICAgICA8dGV4dCB4PSIzMS41IiB5PSIxNCI+Y292ZXJhZ2U8L3RleHQ+DQogICAgICAgIDx0ZXh0IHg9IjgwIiB5PSIxNSIgZmlsbD0iIzAxMDEwMSIgZmlsbC1vcGFjaXR5PSIuMyI+ODIlPC90ZXh0Pg0KICAgICAgICA8dGV4dCB4PSI4MCIgeT0iMTQiPjgyJTwvdGV4dD4NCiAgICA8L2c+DQo8L3N2Zz4NCg=="
+src="data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz4NCjxzdmcgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB3aWR0aD0iOTkiIGhlaWdodD0iMjAiPg0KICAgIDxsaW5lYXJHcmFkaWVudCBpZD0iYiIgeDI9IjAiIHkyPSIxMDAlIj4NCiAgICAgICAgPHN0b3Agb2Zmc2V0PSIwIiBzdG9wLWNvbG9yPSIjYmJiIiBzdG9wLW9wYWNpdHk9Ii4xIi8+DQogICAgICAgIDxzdG9wIG9mZnNldD0iMSIgc3RvcC1vcGFjaXR5PSIuMSIvPg0KICAgIDwvbGluZWFyR3JhZGllbnQ+DQogICAgPG1hc2sgaWQ9ImEiPg0KICAgICAgICA8cmVjdCB3aWR0aD0iOTkiIGhlaWdodD0iMjAiIHJ4PSIzIiBmaWxsPSIjZmZmIi8+DQogICAgPC9tYXNrPg0KICAgIDxnIG1hc2s9InVybCgjYSkiPg0KICAgICAgICA8cGF0aCBmaWxsPSIjNTU1IiBkPSJNMCAwaDYzdjIwSDB6Ii8+DQogICAgICAgIDxwYXRoIGZpbGw9IiNkZmIzMTciIGQ9Ik02MyAwaDM2djIwSDYzeiIvPg0KICAgICAgICA8cGF0aCBmaWxsPSJ1cmwoI2IpIiBkPSJNMCAwaDk5djIwSDB6Ii8+DQogICAgPC9nPg0KICAgIDxnIGZpbGw9IiNmZmYiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtZmFtaWx5PSJEZWphVnUgU2FucyxWZXJkYW5hLEdlbmV2YSxzYW5zLXNlcmlmIiBmb250LXNpemU9IjExIj4NCiAgICAgICAgPHRleHQgeD0iMzEuNSIgeT0iMTUiIGZpbGw9IiMwMTAxMDEiIGZpbGwtb3BhY2l0eT0iLjMiPmNvdmVyYWdlPC90ZXh0Pg0KICAgICAgICA8dGV4dCB4PSIzMS41IiB5PSIxNCI+Y292ZXJhZ2U8L3RleHQ+DQogICAgICAgIDx0ZXh0IHg9IjgwIiB5PSIxNSIgZmlsbD0iIzAxMDEwMSIgZmlsbC1vcGFjaXR5PSIuMyI+NjklPC90ZXh0Pg0KICAgICAgICA8dGV4dCB4PSI4MCIgeT0iMTQiPjY5JTwvdGV4dD4NCiAgICA8L2c+DQo8L3N2Zz4NCg=="
 alt="Coverage" /></a> <img
 src="https://img.shields.io/github/commit-activity/t/mivanit/pattern-lens"
 alt="GitHub commits" /> <img
@@ -232,12 +232,12 @@ class="sourceCode python"><code class="sourceCode python"><span id="cb10-1"><a h
 <span id="cb10-35"><a href="#cb10-35" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div>
 <p>see <code>demo.ipynb</code> for a full example</p>
 <p><a
-href="https://github.com/mivanit/pattern-lens/blob/0.2.0/__init__.py#L0-L2">View
+href="https://github.com/mivanit/pattern-lens/blob/0.3.0__init__.py#L0-L2">View
 Source on GitHub</a></p>
 <blockquote>
 <p>docs for <a
 href="https://github.com/mivanit/pattern-lens"><code>pattern_lens</code></a>
-v0.2.0</p>
+v0.3.0</p>
 </blockquote>
 <h2 id="contents-1">Contents</h2>
 <p>computing and saving activations given a model and prompts</p>
@@ -262,7 +262,7 @@ href="#compute_activations"><code>compute_activations</code></a></li>
 <li><a href="#main"><code>main</code></a></li>
 </ul>
 <p><a
-href="https://github.com/mivanit/pattern-lens/blob/0.2.0/activations.py">View
+href="https://github.com/mivanit/pattern-lens/blob/0.3.0activations.py">View
 Source on GitHub</a></p>
 <h1
 id="pattern_lens.activations"><code>pattern_lens.activations</code></h1>
@@ -280,7 +280,7 @@ class="sourceCode python"><code class="sourceCode python"><span id="cb14-1"><a h
 <span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>    prompts_path<span class="op">=</span><span class="st">&quot;data/pile_1k.jsonl&quot;</span>,</span>
 <span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div>
 <p><a
-href="https://github.com/mivanit/pattern-lens/blob/0.2.0/activations.py#L0-L482">View
+href="https://github.com/mivanit/pattern-lens/blob/0.3.0activations.py#L0-L642">View
 Source on GitHub</a></p>
 <h3 id="compute_activations"><code>def compute_activations</code></h3>
 <div class="sourceCode" id="cb15"><pre
@@ -288,11 +288,12 @@ class="sourceCode python"><code class="sourceCode python"><span id="cb15-1"><a h
 <span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>    prompt: <span class="bu">dict</span>,</span>
 <span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>    model: transformer_lens.HookedTransformer.HookedTransformer <span class="op">|</span> <span class="va">None</span> <span class="op">=</span> <span class="va">None</span>,</span>
 <span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>    save_path: pathlib.Path <span class="op">=</span> WindowsPath(<span class="st">&#39;attn_data&#39;</span>),</span>
-<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>    return_cache: <span class="bu">bool</span> <span class="op">=</span> <span class="va">True</span>,</span>
-<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a>    names_filter: Union[Callable[[<span class="bu">str</span>], <span class="bu">bool</span>], re.Pattern] <span class="op">=</span> re.<span class="bu">compile</span>(<span class="st">&#39;blocks</span><span class="ch">\\</span><span class="st">.(</span><span class="ch">\\</span><span class="st">d+)</span><span class="ch">\\</span><span class="st">.attn</span><span class="ch">\\</span><span class="st">.hook_pattern&#39;</span>)</span>
-<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a>) <span class="op">-&gt;</span> <span class="bu">tuple</span>[pathlib.Path, <span class="bu">dict</span>[<span class="bu">str</span>, numpy.ndarray] <span class="op">|</span> <span class="va">None</span>]</span></code></pre></div>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>    names_filter: Union[Callable[[<span class="bu">str</span>], <span class="bu">bool</span>], re.Pattern] <span class="op">=</span> re.<span class="bu">compile</span>(<span class="st">&#39;blocks</span><span class="ch">\\</span><span class="st">.(</span><span class="ch">\\</span><span class="st">d+)</span><span class="ch">\\</span><span class="st">.attn</span><span class="ch">\\</span><span class="st">.hook_pattern&#39;</span>),</span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a>    return_cache: Literal[<span class="va">None</span>, <span class="st">&#39;numpy&#39;</span>, <span class="st">&#39;torch&#39;</span>] <span class="op">=</span> <span class="st">&#39;torch&#39;</span>,</span>
+<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a>    stack_heads: <span class="bu">bool</span> <span class="op">=</span> <span class="va">False</span></span>
+<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a>) <span class="op">-&gt;</span> <span class="bu">tuple</span>[pathlib.Path, typing.Union[<span class="bu">dict</span>[<span class="bu">str</span>, numpy.ndarray], transformer_lens.ActivationCache.ActivationCache, jaxtyping.Float[ndarray, <span class="st">&#39;n_layers n_heads n_ctx n_ctx&#39;</span>], jaxtyping.Float[Tensor, <span class="st">&#39;n_layers n_heads n_ctx n_ctx&#39;</span>], NoneType]]</span></code></pre></div>
 <p><a
-href="https://github.com/mivanit/pattern-lens/blob/0.2.0/activations.py#L62-L143">View
+href="https://github.com/mivanit/pattern-lens/blob/0.3.0activations.py#L117-L275">View
 Source on GitHub</a></p>
 <p>get activations for a given model and prompt, possibly from a
 cache</p>
@@ -305,30 +306,50 @@ hash</p>
 <li><code>model : HookedTransformer</code></li>
 <li><code>save_path : Path</code> (defaults to
 <code>Path(DATA_DIR)</code>)</li>
-<li><code>return_cache : bool</code> will return <code>None</code> as
-the second element if <code>False</code> (defaults to
-<code>True</code>)</li>
 <li><code>names_filter : Callable[[str], bool]|re.Pattern</code> a
 filter for the names of the activations to return. if an
 <code>re.Pattern</code>, will use
 <code>lambda key: names_filter.match(key) is not None</code> (defaults
 to <code>ATTN_PATTERN_REGEX</code>)</li>
+<li><code>return_cache : Literal[None, "numpy", "torch"]</code> will
+return <code>None</code> as the second element if <code>None</code>,
+otherwise will return the cache in the specified tensor format.
+<code>stack_heads</code> still affects whether it will be a dict (False)
+or a single tensor (True) (defaults to <code>None</code>)</li>
+<li><code>stack_heads : bool</code> whether the heads should be stacked
+in the output. this causes a number of changes:
+<ul>
+<li><code>npy</code> file with a single
+<code>(n_layers, n_heads, n_ctx, n_ctx)</code> tensor saved for each
+prompt instead of <code>npz</code> file with dict by layer</li>
+<li><code>cache</code> will be a single
+<code>(n_layers, n_heads, n_ctx, n_ctx)</code> tensor instead of a dict
+by layer if <code>return_cache</code> is <code>True</code></li>
+<li>will assert that everything in the activation cache is only
+attention patterns, and is all of the attention patterns. raises an
+exception if not.</li>
+</ul></li>
 </ul>
 <h3 id="returns">Returns:</h3>
-<ul>
-<li><code>tuple[Path, ActivationCacheNp|None]</code></li>
-</ul>
+<pre><code>tuple[
+    Path,
+    Union[
+        None,
+        ActivationCacheNp, ActivationCache,
+        Float[np.ndarray, &quot;n_layers n_heads n_ctx n_ctx&quot;], Float[torch.Tensor, &quot;n_layers n_heads n_ctx n_ctx&quot;],
+    ]
+]</code></pre>
 <h3 id="get_activations"><code>def get_activations</code></h3>
-<div class="sourceCode" id="cb16"><pre
-class="sourceCode python"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>(</span>
-<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>    prompt: <span class="bu">dict</span>,</span>
-<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>    model: transformer_lens.HookedTransformer.HookedTransformer <span class="op">|</span> <span class="bu">str</span>,</span>
-<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>    save_path: pathlib.Path <span class="op">=</span> WindowsPath(<span class="st">&#39;attn_data&#39;</span>),</span>
-<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>    allow_disk_cache: <span class="bu">bool</span> <span class="op">=</span> <span class="va">True</span>,</span>
-<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a>    return_cache: <span class="bu">bool</span> <span class="op">=</span> <span class="va">True</span></span>
-<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a>) <span class="op">-&gt;</span> <span class="bu">tuple</span>[pathlib.Path, <span class="bu">dict</span>[<span class="bu">str</span>, numpy.ndarray] <span class="op">|</span> <span class="va">None</span>]</span></code></pre></div>
+<div class="sourceCode" id="cb17"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>(</span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>    prompt: <span class="bu">dict</span>,</span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>    model: transformer_lens.HookedTransformer.HookedTransformer <span class="op">|</span> <span class="bu">str</span>,</span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a>    save_path: pathlib.Path <span class="op">=</span> WindowsPath(<span class="st">&#39;attn_data&#39;</span>),</span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a>    allow_disk_cache: <span class="bu">bool</span> <span class="op">=</span> <span class="va">True</span>,</span>
+<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a>    return_cache: Literal[<span class="va">None</span>, <span class="st">&#39;numpy&#39;</span>, <span class="st">&#39;torch&#39;</span>] <span class="op">=</span> <span class="st">&#39;numpy&#39;</span></span>
+<span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a>) <span class="op">-&gt;</span> <span class="bu">tuple</span>[pathlib.Path, <span class="bu">dict</span>[<span class="bu">str</span>, numpy.ndarray] <span class="op">|</span> transformer_lens.ActivationCache.ActivationCache <span class="op">|</span> <span class="va">None</span>]</span></code></pre></div>
 <p><a
-href="https://github.com/mivanit/pattern-lens/blob/0.2.0/activations.py#L162-L223">View
+href="https://github.com/mivanit/pattern-lens/blob/0.3.0activations.py#L302-L366">View
 Source on GitHub</a></p>
 <p>given a prompt and a model, save or load activations</p>
 <h3 id="parameters-1">Parameters:</h3>
@@ -341,33 +362,34 @@ Source on GitHub</a></p>
 load from) (defaults to <code>Path(DATA_DIR)</code>)</li>
 <li><code>allow_disk_cache : bool</code> whether to allow loading from
 disk cache (defaults to <code>True</code>)</li>
-<li><code>return_cache : bool</code> whether to return the cache. if
-<code>False</code>, will return <code>None</code> as the second element
-(defaults to <code>True</code>)</li>
+<li><code>return_cache : Literal[None, "numpy", "torch"]</code> whether
+to return the cache, and in what format (defaults to
+<code>"numpy"</code>)</li>
 </ul>
 <h3 id="returns-1">Returns:</h3>
 <ul>
-<li><code>tuple[Path, ActivationCacheNp | None]</code> the path to the
-activations and the cache if <code>return_cache</code> is
-<code>True</code></li>
+<li><code>tuple[Path, ActivationCacheNp | ActivationCache | None]</code>
+the path to the activations and the cache if
+<code>return_cache is not None</code></li>
 </ul>
 <h3 id="activations_main"><code>def activations_main</code></h3>
-<div class="sourceCode" id="cb17"><pre
-class="sourceCode python"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>(</span>
-<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>    model_name: <span class="bu">str</span>,</span>
-<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>    save_path: <span class="bu">str</span>,</span>
-<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a>    prompts_path: <span class="bu">str</span>,</span>
-<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a>    raw_prompts: <span class="bu">bool</span>,</span>
-<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a>    min_chars: <span class="bu">int</span>,</span>
-<span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a>    max_chars: <span class="bu">int</span>,</span>
-<span id="cb17-8"><a href="#cb17-8" aria-hidden="true" tabindex="-1"></a>    force: <span class="bu">bool</span>,</span>
-<span id="cb17-9"><a href="#cb17-9" aria-hidden="true" tabindex="-1"></a>    n_samples: <span class="bu">int</span>,</span>
-<span id="cb17-10"><a href="#cb17-10" aria-hidden="true" tabindex="-1"></a>    no_index_html: <span class="bu">bool</span>,</span>
-<span id="cb17-11"><a href="#cb17-11" aria-hidden="true" tabindex="-1"></a>    shuffle: <span class="bu">bool</span> <span class="op">=</span> <span class="va">False</span>,</span>
-<span id="cb17-12"><a href="#cb17-12" aria-hidden="true" tabindex="-1"></a>    device: <span class="bu">str</span> <span class="op">|</span> torch.device <span class="op">=</span> <span class="st">&#39;cuda&#39;</span></span>
-<span id="cb17-13"><a href="#cb17-13" aria-hidden="true" tabindex="-1"></a>) <span class="op">-&gt;</span> <span class="va">None</span></span></code></pre></div>
+<div class="sourceCode" id="cb18"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>(</span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>    model_name: <span class="bu">str</span>,</span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>    save_path: <span class="bu">str</span>,</span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>    prompts_path: <span class="bu">str</span>,</span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a>    raw_prompts: <span class="bu">bool</span>,</span>
+<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a>    min_chars: <span class="bu">int</span>,</span>
+<span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a>    max_chars: <span class="bu">int</span>,</span>
+<span id="cb18-8"><a href="#cb18-8" aria-hidden="true" tabindex="-1"></a>    force: <span class="bu">bool</span>,</span>
+<span id="cb18-9"><a href="#cb18-9" aria-hidden="true" tabindex="-1"></a>    n_samples: <span class="bu">int</span>,</span>
+<span id="cb18-10"><a href="#cb18-10" aria-hidden="true" tabindex="-1"></a>    no_index_html: <span class="bu">bool</span>,</span>
+<span id="cb18-11"><a href="#cb18-11" aria-hidden="true" tabindex="-1"></a>    shuffle: <span class="bu">bool</span> <span class="op">=</span> <span class="va">False</span>,</span>
+<span id="cb18-12"><a href="#cb18-12" aria-hidden="true" tabindex="-1"></a>    stacked_heads: <span class="bu">bool</span> <span class="op">=</span> <span class="va">False</span>,</span>
+<span id="cb18-13"><a href="#cb18-13" aria-hidden="true" tabindex="-1"></a>    device: <span class="bu">str</span> <span class="op">|</span> torch.device <span class="op">=</span> <span class="st">&#39;cpu&#39;</span></span>
+<span id="cb18-14"><a href="#cb18-14" aria-hidden="true" tabindex="-1"></a>) <span class="op">-&gt;</span> <span class="va">None</span></span></code></pre></div>
 <p><a
-href="https://github.com/mivanit/pattern-lens/blob/0.2.0/activations.py#L226-L350">View
+href="https://github.com/mivanit/pattern-lens/blob/0.3.0activations.py#L369-L502">View
 Source on GitHub</a></p>
 <p>main function for computing activations</p>
 <h3 id="parameters-2">Parameters:</h3>
@@ -391,19 +413,23 @@ process</li>
 file</li>
 <li><code>shuffle : bool</code> whether to shuffle the prompts (defaults
 to <code>False</code>)</li>
+<li><code>stacked_heads : bool</code> whether to stack the heads in the
+output tensor. will save as <code>.npy</code> instead of
+<code>.npz</code> if <code>True</code> (defaults to
+<code>False</code>)</li>
 <li><code>device : str | torch.device</code> the device to use. if a
 string, will be passed to <code>torch.device</code></li>
 </ul>
 <h3 id="main"><code>def main</code></h3>
-<div class="sourceCode" id="cb18"><pre
-class="sourceCode python"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>()</span></code></pre></div>
+<div class="sourceCode" id="cb19"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>()</span></code></pre></div>
 <p><a
-href="https://github.com/mivanit/pattern-lens/blob/0.2.0/activations.py#L353-L479">View
+href="https://github.com/mivanit/pattern-lens/blob/0.3.0activations.py#L505-L639">View
 Source on GitHub</a></p>
 <blockquote>
 <p>docs for <a
 href="https://github.com/mivanit/pattern-lens"><code>pattern_lens</code></a>
-v0.2.0</p>
+v0.3.0</p>
 </blockquote>
 <h2 id="contents-2">Contents</h2>
 <p>default figure functions</p>
@@ -421,11 +447,15 @@ decorator which adds your function to
 <li><a
 href="#ATTENTION_MATRIX_FIGURE_FUNCS"><code>ATTENTION_MATRIX_FIGURE_FUNCS</code></a></li>
 <li><a
+href="#get_all_figure_names"><code>get_all_figure_names</code></a></li>
+<li><a
 href="#register_attn_figure_func"><code>register_attn_figure_func</code></a></li>
+<li><a
+href="#register_attn_figure_multifunc"><code>register_attn_figure_multifunc</code></a></li>
 <li><a href="#raw"><code>raw</code></a></li>
 </ul>
 <p><a
-href="https://github.com/mivanit/pattern-lens/blob/0.2.0/attn_figure_funcs.py">View
+href="https://github.com/mivanit/pattern-lens/blob/0.3.0attn_figure_funcs.py">View
 Source on GitHub</a></p>
 <h1
 id="pattern_lens.attn_figure_funcs"><code>pattern_lens.attn_figure_funcs</code></h1>
@@ -441,19 +471,26 @@ to recognize your function, you need to use the
 <code>register_attn_figure_func</code> decorator which adds your
 function to <code>ATTENTION_MATRIX_FIGURE_FUNCS</code></p>
 <p><a
-href="https://github.com/mivanit/pattern-lens/blob/0.2.0/attn_figure_funcs.py#L0-L98">View
+href="https://github.com/mivanit/pattern-lens/blob/0.3.0attn_figure_funcs.py#L0-L115">View
 Source on GitHub</a></p>
 <ul>
 <li><code>ATTENTION_MATRIX_FIGURE_FUNCS: list[typing.Callable[[jaxtyping.Float[ndarray, 'n_ctx n_ctx'], pathlib.Path], NoneType]] = [&lt;function raw&gt;]</code></li>
 </ul>
+<h3 id="get_all_figure_names"><code>def get_all_figure_names</code></h3>
+<div class="sourceCode" id="cb20"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>() <span class="op">-&gt;</span> <span class="bu">list</span>[<span class="bu">str</span>]</span></code></pre></div>
+<p><a
+href="https://github.com/mivanit/pattern-lens/blob/0.3.0attn_figure_funcs.py#L27-L38">View
+Source on GitHub</a></p>
+<p>get all figure names</p>
 <h3
 id="register_attn_figure_func"><code>def register_attn_figure_func</code></h3>
-<div class="sourceCode" id="cb19"><pre
-class="sourceCode python"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>(</span>
-<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>    func: Callable[[jaxtyping.Float[ndarray, <span class="st">&#39;n_ctx n_ctx&#39;</span>], pathlib.Path], NoneType]</span>
-<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>) <span class="op">-&gt;</span> Callable[[jaxtyping.Float[ndarray, <span class="st">&#39;n_ctx n_ctx&#39;</span>], pathlib.Path], NoneType]</span></code></pre></div>
+<div class="sourceCode" id="cb21"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>(</span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>    func: Callable[[jaxtyping.Float[ndarray, <span class="st">&#39;n_ctx n_ctx&#39;</span>], pathlib.Path], NoneType]</span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>) <span class="op">-&gt;</span> Callable[[jaxtyping.Float[ndarray, <span class="st">&#39;n_ctx n_ctx&#39;</span>], pathlib.Path], NoneType]</span></code></pre></div>
 <p><a
-href="https://github.com/mivanit/pattern-lens/blob/0.2.0/attn_figure_funcs.py#L24-L56">View
+href="https://github.com/mivanit/pattern-lens/blob/0.3.0attn_figure_funcs.py#L41-L73">View
 Source on GitHub</a></p>
 <p>decorator for registering attention matrix figure function</p>
 <p>if you want to add a new figure function, you should use this
@@ -466,28 +503,37 @@ decorator</p>
  - `AttentionMatrixFigureFunc`
    your function, after we add it to `ATTENTION_MATRIX_FIGURE_FUNCS`</code></pre>
 <h3 id="usage-4">Usage:</h3>
-<div class="sourceCode" id="cb21"><pre
-class="sourceCode python"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="at">@register_attn_figure_func</span></span>
-<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> my_new_figure_func(attn_matrix: AttentionMatrix, path: Path) <span class="op">-&gt;</span> <span class="va">None</span>:</span>
-<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>    fig, ax <span class="op">=</span> plt.subplots(figsize<span class="op">=</span>(<span class="dv">10</span>, <span class="dv">10</span>))</span>
-<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a>    ax.matshow(attn_matrix, cmap<span class="op">=</span><span class="st">&quot;viridis&quot;</span>)</span>
-<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a>    ax.set_title(<span class="st">&quot;My New Figure Function&quot;</span>)</span>
-<span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a>    ax.axis(<span class="st">&quot;off&quot;</span>)</span>
-<span id="cb21-7"><a href="#cb21-7" aria-hidden="true" tabindex="-1"></a>    plt.savefig(path <span class="op">/</span> <span class="st">&quot;my_new_figure_func&quot;</span>, <span class="bu">format</span><span class="op">=</span><span class="st">&quot;svgz&quot;</span>)</span>
-<span id="cb21-8"><a href="#cb21-8" aria-hidden="true" tabindex="-1"></a>    plt.close(fig)</span></code></pre></div>
-<h3 id="raw"><code>def raw</code></h3>
-<div class="sourceCode" id="cb22"><pre
-class="sourceCode python"><code class="sourceCode python"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>(</span>
-<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>    attn_matrix: jaxtyping.Float[ndarray, <span class="st">&#39;n_ctx n_ctx&#39;</span>]</span>
-<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>) <span class="op">-&gt;</span> jaxtyping.Float[ndarray, <span class="st">&#39;n m&#39;</span>]</span></code></pre></div>
+<div class="sourceCode" id="cb23"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="at">@register_attn_figure_func</span></span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> my_new_figure_func(attn_matrix: AttentionMatrix, path: Path) <span class="op">-&gt;</span> <span class="va">None</span>:</span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>    fig, ax <span class="op">=</span> plt.subplots(figsize<span class="op">=</span>(<span class="dv">10</span>, <span class="dv">10</span>))</span>
+<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a>    ax.matshow(attn_matrix, cmap<span class="op">=</span><span class="st">&quot;viridis&quot;</span>)</span>
+<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a>    ax.set_title(<span class="st">&quot;My New Figure Function&quot;</span>)</span>
+<span id="cb23-6"><a href="#cb23-6" aria-hidden="true" tabindex="-1"></a>    ax.axis(<span class="st">&quot;off&quot;</span>)</span>
+<span id="cb23-7"><a href="#cb23-7" aria-hidden="true" tabindex="-1"></a>    plt.savefig(path <span class="op">/</span> <span class="st">&quot;my_new_figure_func&quot;</span>, <span class="bu">format</span><span class="op">=</span><span class="st">&quot;svgz&quot;</span>)</span>
+<span id="cb23-8"><a href="#cb23-8" aria-hidden="true" tabindex="-1"></a>    plt.close(fig)</span></code></pre></div>
+<h3
+id="register_attn_figure_multifunc"><code>def register_attn_figure_multifunc</code></h3>
+<div class="sourceCode" id="cb24"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>(</span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>    names: Sequence[<span class="bu">str</span>]</span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>) <span class="op">-&gt;</span> Callable[[Callable[[jaxtyping.Float[ndarray, <span class="st">&#39;n_ctx n_ctx&#39;</span>], pathlib.Path], NoneType]], Callable[[jaxtyping.Float[ndarray, <span class="st">&#39;n_ctx n_ctx&#39;</span>], pathlib.Path], NoneType]]</span></code></pre></div>
 <p><a
-href="https://github.com/mivanit/pattern-lens/blob/0.2.0/attn_figure_funcs.py#L75-L79">View
+href="https://github.com/mivanit/pattern-lens/blob/0.3.0attn_figure_funcs.py#L76-L89">View
+Source on GitHub</a></p>
+<h3 id="raw"><code>def raw</code></h3>
+<div class="sourceCode" id="cb25"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>(</span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>    attn_matrix: jaxtyping.Float[ndarray, <span class="st">&#39;n_ctx n_ctx&#39;</span>]</span>
+<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a>) <span class="op">-&gt;</span> jaxtyping.Float[ndarray, <span class="st">&#39;n m&#39;</span>]</span></code></pre></div>
+<p><a
+href="https://github.com/mivanit/pattern-lens/blob/0.3.0attn_figure_funcs.py#L92-L96">View
 Source on GitHub</a></p>
 <p>raw attention matrix</p>
 <blockquote>
 <p>docs for <a
 href="https://github.com/mivanit/pattern-lens"><code>pattern_lens</code></a>
-v0.2.0</p>
+v0.3.0</p>
 </blockquote>
 <h2 id="contents-3">Contents</h2>
 <p>implements some constants and types</p>
@@ -495,20 +541,23 @@ v0.2.0</p>
 <ul>
 <li><a href="#AttentionMatrix"><code>AttentionMatrix</code></a></li>
 <li><a href="#ActivationCacheNp"><code>ActivationCacheNp</code></a></li>
+<li><a
+href="#ActivationCacheTorch"><code>ActivationCacheTorch</code></a></li>
 <li><a href="#DATA_DIR"><code>DATA_DIR</code></a></li>
 <li><a
 href="#ATTN_PATTERN_REGEX"><code>ATTN_PATTERN_REGEX</code></a></li>
 <li><a href="#SPINNER_KWARGS"><code>SPINNER_KWARGS</code></a></li>
 <li><a href="#DIVIDER_S1"><code>DIVIDER_S1</code></a></li>
 <li><a href="#DIVIDER_S2"><code>DIVIDER_S2</code></a></li>
+<li><a href="#ReturnCache"><code>ReturnCache</code></a></li>
 </ul>
 <p><a
-href="https://github.com/mivanit/pattern-lens/blob/0.2.0/consts.py">View
+href="https://github.com/mivanit/pattern-lens/blob/0.3.0consts.py">View
 Source on GitHub</a></p>
 <h1 id="pattern_lens.consts"><code>pattern_lens.consts</code></h1>
 <p>implements some constants and types</p>
 <p><a
-href="https://github.com/mivanit/pattern-lens/blob/0.2.0/consts.py#L0-L28">View
+href="https://github.com/mivanit/pattern-lens/blob/0.3.0consts.py#L0-L36">View
 Source on GitHub</a></p>
 <ul>
 <li><code>AttentionMatrix = &lt;class 'jaxtyping.Float[ndarray, 'n_ctx n_ctx']'&gt;</code></li>
@@ -517,8 +566,14 @@ Source on GitHub</a></p>
 <ul>
 <li><code>ActivationCacheNp = dict[str, numpy.ndarray]</code></li>
 </ul>
-<p>type alias for a cache of attention matrices, subset of
-ActivationCache</p>
+<p>type alias for a cache of activations, like a
+transformer_lens.ActivationCache</p>
+<ul>
+<li><code>ActivationCacheTorch = dict[str, torch.Tensor]</code></li>
+</ul>
+<p>type alias for a cache of activations, like a
+transformer_lens.ActivationCache but without the extras. useful for when
+loading from an npz file</p>
 <ul>
 <li><code>DATA_DIR: str = 'attn_data'</code></li>
 </ul>
@@ -539,10 +594,14 @@ ActivationCache</p>
 <li><code>DIVIDER_S2: str = '--------------------------------------------------'</code></li>
 </ul>
 <p>divider string for separating subsections</p>
+<ul>
+<li><code>ReturnCache = typing.Literal[None, 'numpy', 'torch']</code></li>
+</ul>
+<p>return type for a cache of activations</p>
 <blockquote>
 <p>docs for <a
 href="https://github.com/mivanit/pattern-lens"><code>pattern_lens</code></a>
-v0.2.0</p>
+v0.3.0</p>
 </blockquote>
 <h2 id="contents-4">Contents</h2>
 <p>implements a bunch of types, default values, and templates which are
@@ -570,6 +629,8 @@ href="#MATRIX_SAVE_SVG_TEMPLATE"><code>MATRIX_SAVE_SVG_TEMPLATE</code></a></li>
 <li><a
 href="#matplotlib_figure_saver"><code>matplotlib_figure_saver</code></a></li>
 <li><a
+href="#matplotlib_multifigure_saver"><code>matplotlib_multifigure_saver</code></a></li>
+<li><a
 href="#matrix_to_image_preprocess"><code>matrix_to_image_preprocess</code></a></li>
 <li><a
 href="#matrix2drgb_to_png_bytes"><code>matrix2drgb_to_png_bytes</code></a></li>
@@ -578,7 +639,7 @@ href="#matrix2drgb_to_png_bytes"><code>matrix2drgb_to_png_bytes</code></a></li>
 href="#save_matrix_wrapper"><code>save_matrix_wrapper</code></a></li>
 </ul>
 <p><a
-href="https://github.com/mivanit/pattern-lens/blob/0.2.0/figure_util.py">View
+href="https://github.com/mivanit/pattern-lens/blob/0.3.0figure_util.py">View
 Source on GitHub</a></p>
 <h1
 id="pattern_lens.figure_util"><code>pattern_lens.figure_util</code></h1>
@@ -588,13 +649,13 @@ useful for figure functions</p>
 <code>matplotlib_figure_saver</code>, <code>save_matrix_wrapper</code>
 to make your functions save figures</p>
 <p><a
-href="https://github.com/mivanit/pattern-lens/blob/0.2.0/figure_util.py#L0-L447">View
+href="https://github.com/mivanit/pattern-lens/blob/0.3.0figure_util.py#L0-L481">View
 Source on GitHub</a></p>
 <ul>
 <li><code>AttentionMatrixFigureFunc = typing.Callable[[jaxtyping.Float[ndarray, 'n_ctx n_ctx'], pathlib.Path], NoneType]</code></li>
 </ul>
-<p>Type alias for a function that, given an attention matrix, saves a
-figure</p>
+<p>Type alias for a function that, given an attention matrix, saves one
+or more figures</p>
 <ul>
 <li><code>Matrix2D = &lt;class 'jaxtyping.Float[ndarray, 'n m']'&gt;</code></li>
 </ul>
@@ -636,14 +697,14 @@ not matplotlib figure</p>
 svg/svgz</p>
 <h3
 id="matplotlib_figure_saver"><code>def matplotlib_figure_saver</code></h3>
-<div class="sourceCode" id="cb23"><pre
-class="sourceCode python"><code class="sourceCode python"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>(</span>
-<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>    func: Optional[Callable[[jaxtyping.Float[ndarray, <span class="st">&#39;n_ctx n_ctx&#39;</span>], matplotlib.axes._axes.Axes], NoneType]] <span class="op">=</span> <span class="va">None</span>,</span>
-<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>    <span class="op">*</span>args,</span>
-<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a>    fmt: <span class="bu">str</span> <span class="op">=</span> <span class="st">&#39;svgz&#39;</span></span>
-<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a>) <span class="op">-&gt;</span> Union[Callable[[jaxtyping.Float[ndarray, <span class="st">&#39;n_ctx n_ctx&#39;</span>], pathlib.Path], NoneType], Callable[[Callable[[jaxtyping.Float[ndarray, <span class="st">&#39;n_ctx n_ctx&#39;</span>], matplotlib.axes._axes.Axes], NoneType], <span class="bu">str</span>], Callable[[jaxtyping.Float[ndarray, <span class="st">&#39;n_ctx n_ctx&#39;</span>], pathlib.Path], NoneType]]]</span></code></pre></div>
+<div class="sourceCode" id="cb26"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>(</span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>    func: Optional[Callable[[jaxtyping.Float[ndarray, <span class="st">&#39;n_ctx n_ctx&#39;</span>], matplotlib.axes._axes.Axes], NoneType]] <span class="op">=</span> <span class="va">None</span>,</span>
+<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a>    <span class="op">*</span>args,</span>
+<span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a>    fmt: <span class="bu">str</span> <span class="op">=</span> <span class="st">&#39;svgz&#39;</span></span>
+<span id="cb26-5"><a href="#cb26-5" aria-hidden="true" tabindex="-1"></a>) <span class="op">-&gt;</span> Union[Callable[[jaxtyping.Float[ndarray, <span class="st">&#39;n_ctx n_ctx&#39;</span>], pathlib.Path], NoneType], Callable[[Callable[[jaxtyping.Float[ndarray, <span class="st">&#39;n_ctx n_ctx&#39;</span>], matplotlib.axes._axes.Axes], NoneType], <span class="bu">str</span>], Callable[[jaxtyping.Float[ndarray, <span class="st">&#39;n_ctx n_ctx&#39;</span>], pathlib.Path], NoneType]]]</span></code></pre></div>
 <p><a
-href="https://github.com/mivanit/pattern-lens/blob/0.2.0/figure_util.py#L67-L127">View
+href="https://github.com/mivanit/pattern-lens/blob/0.3.0figure_util.py#L67-L127">View
 Source on GitHub</a></p>
 <p>decorator for functions which take an attention matrix and predefined
 <code>ax</code> object, making it save a figure</p>
@@ -661,25 +722,35 @@ function, which should take an attention matrix and predefined
 it to save a figure</li>
 </ul>
 <h3 id="usage-5">Usage:</h3>
-<div class="sourceCode" id="cb24"><pre
-class="sourceCode python"><code class="sourceCode python"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="at">@register_attn_figure_func</span></span>
-<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a><span class="at">@matplotlib_figure_saver</span></span>
-<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> raw(attn_matrix: AttentionMatrix, ax: plt.Axes) <span class="op">-&gt;</span> <span class="va">None</span>:</span>
-<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a>    ax.matshow(attn_matrix, cmap<span class="op">=</span><span class="st">&quot;viridis&quot;</span>)</span>
-<span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a>    ax.set_title(<span class="st">&quot;Raw Attention Pattern&quot;</span>)</span>
-<span id="cb24-6"><a href="#cb24-6" aria-hidden="true" tabindex="-1"></a>    ax.axis(<span class="st">&quot;off&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb27"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="at">@register_attn_figure_func</span></span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a><span class="at">@matplotlib_figure_saver</span></span>
+<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> raw(attn_matrix: AttentionMatrix, ax: plt.Axes) <span class="op">-&gt;</span> <span class="va">None</span>:</span>
+<span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a>    ax.matshow(attn_matrix, cmap<span class="op">=</span><span class="st">&quot;viridis&quot;</span>)</span>
+<span id="cb27-5"><a href="#cb27-5" aria-hidden="true" tabindex="-1"></a>    ax.set_title(<span class="st">&quot;Raw Attention Pattern&quot;</span>)</span>
+<span id="cb27-6"><a href="#cb27-6" aria-hidden="true" tabindex="-1"></a>    ax.axis(<span class="st">&quot;off&quot;</span>)</span></code></pre></div>
+<h3
+id="matplotlib_multifigure_saver"><code>def matplotlib_multifigure_saver</code></h3>
+<div class="sourceCode" id="cb28"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a>(</span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a>    names: Sequence[<span class="bu">str</span>],</span>
+<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a>    fmt: <span class="bu">str</span> <span class="op">=</span> <span class="st">&#39;svgz&#39;</span></span>
+<span id="cb28-4"><a href="#cb28-4" aria-hidden="true" tabindex="-1"></a>) <span class="op">-&gt;</span> Callable[[Callable[[jaxtyping.Float[ndarray, <span class="st">&#39;n_ctx n_ctx&#39;</span>], <span class="bu">dict</span>[<span class="bu">str</span>, matplotlib.axes._axes.Axes]], NoneType]], Callable[[jaxtyping.Float[ndarray, <span class="st">&#39;n_ctx n_ctx&#39;</span>], pathlib.Path], NoneType]]</span></code></pre></div>
+<p><a
+href="https://github.com/mivanit/pattern-lens/blob/0.3.0figure_util.py#L130-L161">View
+Source on GitHub</a></p>
 <h3
 id="matrix_to_image_preprocess"><code>def matrix_to_image_preprocess</code></h3>
-<div class="sourceCode" id="cb25"><pre
-class="sourceCode python"><code class="sourceCode python"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>(</span>
-<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>    matrix: jaxtyping.Float[ndarray, <span class="st">&#39;n m&#39;</span>],</span>
-<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a>    normalize: <span class="bu">bool</span> <span class="op">=</span> <span class="va">False</span>,</span>
-<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a>    cmap: <span class="bu">str</span> <span class="op">|</span> matplotlib.colors.Colormap <span class="op">=</span> <span class="st">&#39;viridis&#39;</span>,</span>
-<span id="cb25-5"><a href="#cb25-5" aria-hidden="true" tabindex="-1"></a>    diverging_colormap: <span class="bu">bool</span> <span class="op">=</span> <span class="va">False</span>,</span>
-<span id="cb25-6"><a href="#cb25-6" aria-hidden="true" tabindex="-1"></a>    normalize_min: <span class="bu">float</span> <span class="op">|</span> <span class="va">None</span> <span class="op">=</span> <span class="va">None</span></span>
-<span id="cb25-7"><a href="#cb25-7" aria-hidden="true" tabindex="-1"></a>) <span class="op">-&gt;</span> jaxtyping.UInt8[ndarray, <span class="st">&#39;n m rgb=3&#39;</span>]</span></code></pre></div>
+<div class="sourceCode" id="cb29"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a>(</span>
+<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a>    matrix: jaxtyping.Float[ndarray, <span class="st">&#39;n m&#39;</span>],</span>
+<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a>    normalize: <span class="bu">bool</span> <span class="op">=</span> <span class="va">False</span>,</span>
+<span id="cb29-4"><a href="#cb29-4" aria-hidden="true" tabindex="-1"></a>    cmap: <span class="bu">str</span> <span class="op">|</span> matplotlib.colors.Colormap <span class="op">=</span> <span class="st">&#39;viridis&#39;</span>,</span>
+<span id="cb29-5"><a href="#cb29-5" aria-hidden="true" tabindex="-1"></a>    diverging_colormap: <span class="bu">bool</span> <span class="op">=</span> <span class="va">False</span>,</span>
+<span id="cb29-6"><a href="#cb29-6" aria-hidden="true" tabindex="-1"></a>    normalize_min: <span class="bu">float</span> <span class="op">|</span> <span class="va">None</span> <span class="op">=</span> <span class="va">None</span></span>
+<span id="cb29-7"><a href="#cb29-7" aria-hidden="true" tabindex="-1"></a>) <span class="op">-&gt;</span> jaxtyping.UInt8[ndarray, <span class="st">&#39;n m rgb=3&#39;</span>]</span></code></pre></div>
 <p><a
-href="https://github.com/mivanit/pattern-lens/blob/0.2.0/figure_util.py#L130-L226">View
+href="https://github.com/mivanit/pattern-lens/blob/0.3.0figure_util.py#L164-L260">View
 Source on GitHub</a></p>
 <p>preprocess a 2D matrix into a plottable heatmap image</p>
 <h3 id="parameters-4">Parameters:</h3>
@@ -706,13 +777,13 @@ this <strong>must</strong> be <code>None</code>. (defaults to
 </ul>
 <h3
 id="matrix2drgb_to_png_bytes"><code>def matrix2drgb_to_png_bytes</code></h3>
-<div class="sourceCode" id="cb26"><pre
-class="sourceCode python"><code class="sourceCode python"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>(</span>
-<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>    matrix: jaxtyping.UInt8[ndarray, <span class="st">&#39;n m rgb=3&#39;</span>],</span>
-<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a>    <span class="bu">buffer</span>: _io.BytesIO <span class="op">|</span> <span class="va">None</span> <span class="op">=</span> <span class="va">None</span></span>
-<span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a>) <span class="op">-&gt;</span> <span class="bu">bytes</span> <span class="op">|</span> <span class="va">None</span></span></code></pre></div>
+<div class="sourceCode" id="cb30"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a>(</span>
+<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a>    matrix: jaxtyping.UInt8[ndarray, <span class="st">&#39;n m rgb=3&#39;</span>],</span>
+<span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a>    <span class="bu">buffer</span>: _io.BytesIO <span class="op">|</span> <span class="va">None</span> <span class="op">=</span> <span class="va">None</span></span>
+<span id="cb30-4"><a href="#cb30-4" aria-hidden="true" tabindex="-1"></a>) <span class="op">-&gt;</span> <span class="bu">bytes</span> <span class="op">|</span> <span class="va">None</span></span></code></pre></div>
 <p><a
-href="https://github.com/mivanit/pattern-lens/blob/0.2.0/figure_util.py#L233-L259">View
+href="https://github.com/mivanit/pattern-lens/blob/0.3.0figure_util.py#L267-L293">View
 Source on GitHub</a></p>
 <p>Convert a <code>Matrix2Drgb</code> to valid PNG bytes via PIL</p>
 <ul>
@@ -733,16 +804,16 @@ bytes</li>
 <code>None</code>, otherwise <code>None</code></li>
 </ul>
 <h3 id="matrix_as_svg"><code>def matrix_as_svg</code></h3>
-<div class="sourceCode" id="cb27"><pre
-class="sourceCode python"><code class="sourceCode python"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a>(</span>
-<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>    matrix: jaxtyping.Float[ndarray, <span class="st">&#39;n m&#39;</span>],</span>
-<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a>    normalize: <span class="bu">bool</span> <span class="op">=</span> <span class="va">False</span>,</span>
-<span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a>    cmap: <span class="bu">str</span> <span class="op">|</span> matplotlib.colors.Colormap <span class="op">=</span> <span class="st">&#39;viridis&#39;</span>,</span>
-<span id="cb27-5"><a href="#cb27-5" aria-hidden="true" tabindex="-1"></a>    diverging_colormap: <span class="bu">bool</span> <span class="op">=</span> <span class="va">False</span>,</span>
-<span id="cb27-6"><a href="#cb27-6" aria-hidden="true" tabindex="-1"></a>    normalize_min: <span class="bu">float</span> <span class="op">|</span> <span class="va">None</span> <span class="op">=</span> <span class="va">None</span></span>
-<span id="cb27-7"><a href="#cb27-7" aria-hidden="true" tabindex="-1"></a>) <span class="op">-&gt;</span> <span class="bu">str</span></span></code></pre></div>
+<div class="sourceCode" id="cb31"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a>(</span>
+<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a>    matrix: jaxtyping.Float[ndarray, <span class="st">&#39;n m&#39;</span>],</span>
+<span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a>    normalize: <span class="bu">bool</span> <span class="op">=</span> <span class="va">False</span>,</span>
+<span id="cb31-4"><a href="#cb31-4" aria-hidden="true" tabindex="-1"></a>    cmap: <span class="bu">str</span> <span class="op">|</span> matplotlib.colors.Colormap <span class="op">=</span> <span class="st">&#39;viridis&#39;</span>,</span>
+<span id="cb31-5"><a href="#cb31-5" aria-hidden="true" tabindex="-1"></a>    diverging_colormap: <span class="bu">bool</span> <span class="op">=</span> <span class="va">False</span>,</span>
+<span id="cb31-6"><a href="#cb31-6" aria-hidden="true" tabindex="-1"></a>    normalize_min: <span class="bu">float</span> <span class="op">|</span> <span class="va">None</span> <span class="op">=</span> <span class="va">None</span></span>
+<span id="cb31-7"><a href="#cb31-7" aria-hidden="true" tabindex="-1"></a>) <span class="op">-&gt;</span> <span class="bu">str</span></span></code></pre></div>
 <p><a
-href="https://github.com/mivanit/pattern-lens/blob/0.2.0/figure_util.py#L262-L315">View
+href="https://github.com/mivanit/pattern-lens/blob/0.3.0figure_util.py#L296-L349">View
 Source on GitHub</a></p>
 <p>quickly convert a 2D matrix to an SVG image, without matplotlib</p>
 <h3 id="parameters-6">Parameters:</h3>
@@ -772,18 +843,18 @@ this <strong>must</strong> be <code>None</code> (defaults to
 <li><code>str</code> the SVG content for the matrix</li>
 </ul>
 <h3 id="save_matrix_wrapper"><code>def save_matrix_wrapper</code></h3>
-<div class="sourceCode" id="cb28"><pre
-class="sourceCode python"><code class="sourceCode python"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a>(</span>
-<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a>    func: Optional[Callable[[jaxtyping.Float[ndarray, <span class="st">&#39;n_ctx n_ctx&#39;</span>]], jaxtyping.Float[ndarray, <span class="st">&#39;n m&#39;</span>]]] <span class="op">=</span> <span class="va">None</span>,</span>
-<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a>    <span class="op">*</span>args,</span>
-<span id="cb28-4"><a href="#cb28-4" aria-hidden="true" tabindex="-1"></a>    fmt: Literal[<span class="st">&#39;png&#39;</span>, <span class="st">&#39;svg&#39;</span>, <span class="st">&#39;svgz&#39;</span>] <span class="op">=</span> <span class="st">&#39;svgz&#39;</span>,</span>
-<span id="cb28-5"><a href="#cb28-5" aria-hidden="true" tabindex="-1"></a>    normalize: <span class="bu">bool</span> <span class="op">=</span> <span class="va">False</span>,</span>
-<span id="cb28-6"><a href="#cb28-6" aria-hidden="true" tabindex="-1"></a>    cmap: <span class="bu">str</span> <span class="op">|</span> matplotlib.colors.Colormap <span class="op">=</span> <span class="st">&#39;viridis&#39;</span>,</span>
-<span id="cb28-7"><a href="#cb28-7" aria-hidden="true" tabindex="-1"></a>    diverging_colormap: <span class="bu">bool</span> <span class="op">=</span> <span class="va">False</span>,</span>
-<span id="cb28-8"><a href="#cb28-8" aria-hidden="true" tabindex="-1"></a>    normalize_min: <span class="bu">float</span> <span class="op">|</span> <span class="va">None</span> <span class="op">=</span> <span class="va">None</span></span>
-<span id="cb28-9"><a href="#cb28-9" aria-hidden="true" tabindex="-1"></a>) <span class="op">-&gt;</span> Union[Callable[[jaxtyping.Float[ndarray, <span class="st">&#39;n_ctx n_ctx&#39;</span>], pathlib.Path], NoneType], Callable[[Callable[[jaxtyping.Float[ndarray, <span class="st">&#39;n_ctx n_ctx&#39;</span>]], jaxtyping.Float[ndarray, <span class="st">&#39;n m&#39;</span>]]], Callable[[jaxtyping.Float[ndarray, <span class="st">&#39;n_ctx n_ctx&#39;</span>], pathlib.Path], NoneType]]]</span></code></pre></div>
+<div class="sourceCode" id="cb32"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a>(</span>
+<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a>    func: Optional[Callable[[jaxtyping.Float[ndarray, <span class="st">&#39;n_ctx n_ctx&#39;</span>]], jaxtyping.Float[ndarray, <span class="st">&#39;n m&#39;</span>]]] <span class="op">=</span> <span class="va">None</span>,</span>
+<span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a>    <span class="op">*</span>args,</span>
+<span id="cb32-4"><a href="#cb32-4" aria-hidden="true" tabindex="-1"></a>    fmt: Literal[<span class="st">&#39;png&#39;</span>, <span class="st">&#39;svg&#39;</span>, <span class="st">&#39;svgz&#39;</span>] <span class="op">=</span> <span class="st">&#39;svgz&#39;</span>,</span>
+<span id="cb32-5"><a href="#cb32-5" aria-hidden="true" tabindex="-1"></a>    normalize: <span class="bu">bool</span> <span class="op">=</span> <span class="va">False</span>,</span>
+<span id="cb32-6"><a href="#cb32-6" aria-hidden="true" tabindex="-1"></a>    cmap: <span class="bu">str</span> <span class="op">|</span> matplotlib.colors.Colormap <span class="op">=</span> <span class="st">&#39;viridis&#39;</span>,</span>
+<span id="cb32-7"><a href="#cb32-7" aria-hidden="true" tabindex="-1"></a>    diverging_colormap: <span class="bu">bool</span> <span class="op">=</span> <span class="va">False</span>,</span>
+<span id="cb32-8"><a href="#cb32-8" aria-hidden="true" tabindex="-1"></a>    normalize_min: <span class="bu">float</span> <span class="op">|</span> <span class="va">None</span> <span class="op">=</span> <span class="va">None</span></span>
+<span id="cb32-9"><a href="#cb32-9" aria-hidden="true" tabindex="-1"></a>) <span class="op">-&gt;</span> Union[Callable[[jaxtyping.Float[ndarray, <span class="st">&#39;n_ctx n_ctx&#39;</span>], pathlib.Path], NoneType], Callable[[Callable[[jaxtyping.Float[ndarray, <span class="st">&#39;n_ctx n_ctx&#39;</span>]], jaxtyping.Float[ndarray, <span class="st">&#39;n m&#39;</span>]]], Callable[[jaxtyping.Float[ndarray, <span class="st">&#39;n_ctx n_ctx&#39;</span>], pathlib.Path], NoneType]]]</span></code></pre></div>
 <p><a
-href="https://github.com/mivanit/pattern-lens/blob/0.2.0/figure_util.py#L338-L448">View
+href="https://github.com/mivanit/pattern-lens/blob/0.3.0figure_util.py#L372-L482">View
 Source on GitHub</a></p>
 <p>Decorator for functions that process an attention matrix and save it
 as an SVGZ image. Can handle both argumentless usage and with
@@ -820,22 +891,22 @@ if <code>func</code> is <code>None</code> – returns the decorator which
 will then be applied to the (with arguments case)</li>
 </ul>
 <h3 id="usage-6">Usage:</h3>
-<div class="sourceCode" id="cb29"><pre
-class="sourceCode python"><code class="sourceCode python"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="at">@save_matrix_wrapper</span></span>
-<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> identity_matrix(matrix):</span>
-<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> matrix</span>
-<span id="cb29-4"><a href="#cb29-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb29-5"><a href="#cb29-5" aria-hidden="true" tabindex="-1"></a><span class="at">@save_matrix_wrapper</span>(normalize<span class="op">=</span><span class="va">True</span>, fmt<span class="op">=</span><span class="st">&quot;png&quot;</span>)</span>
-<span id="cb29-6"><a href="#cb29-6" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> scale_matrix(matrix):</span>
-<span id="cb29-7"><a href="#cb29-7" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> matrix <span class="op">*</span> <span class="dv">2</span></span>
-<span id="cb29-8"><a href="#cb29-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb29-9"><a href="#cb29-9" aria-hidden="true" tabindex="-1"></a><span class="at">@save_matrix_wrapper</span>(normalize<span class="op">=</span><span class="va">True</span>, cmap<span class="op">=</span><span class="st">&quot;plasma&quot;</span>)</span>
-<span id="cb29-10"><a href="#cb29-10" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> scale_matrix(matrix):</span>
-<span id="cb29-11"><a href="#cb29-11" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> matrix <span class="op">*</span> <span class="dv">2</span></span></code></pre></div>
+<div class="sourceCode" id="cb33"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a><span class="at">@save_matrix_wrapper</span></span>
+<span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> identity_matrix(matrix):</span>
+<span id="cb33-3"><a href="#cb33-3" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> matrix</span>
+<span id="cb33-4"><a href="#cb33-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb33-5"><a href="#cb33-5" aria-hidden="true" tabindex="-1"></a><span class="at">@save_matrix_wrapper</span>(normalize<span class="op">=</span><span class="va">True</span>, fmt<span class="op">=</span><span class="st">&quot;png&quot;</span>)</span>
+<span id="cb33-6"><a href="#cb33-6" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> scale_matrix(matrix):</span>
+<span id="cb33-7"><a href="#cb33-7" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> matrix <span class="op">*</span> <span class="dv">2</span></span>
+<span id="cb33-8"><a href="#cb33-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb33-9"><a href="#cb33-9" aria-hidden="true" tabindex="-1"></a><span class="at">@save_matrix_wrapper</span>(normalize<span class="op">=</span><span class="va">True</span>, cmap<span class="op">=</span><span class="st">&quot;plasma&quot;</span>)</span>
+<span id="cb33-10"><a href="#cb33-10" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> scale_matrix(matrix):</span>
+<span id="cb33-11"><a href="#cb33-11" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> matrix <span class="op">*</span> <span class="dv">2</span></span></code></pre></div>
 <blockquote>
 <p>docs for <a
 href="https://github.com/mivanit/pattern-lens"><code>pattern_lens</code></a>
-v0.2.0</p>
+v0.3.0</p>
 </blockquote>
 <h2 id="contents-5">Contents</h2>
 <p>code for generating figures from attention patterns, using the
@@ -852,17 +923,17 @@ href="#compute_and_save_figures"><code>compute_and_save_figures</code></a></li>
 <li><a href="#main"><code>main</code></a></li>
 </ul>
 <p><a
-href="https://github.com/mivanit/pattern-lens/blob/0.2.0/figures.py">View
+href="https://github.com/mivanit/pattern-lens/blob/0.3.0figures.py">View
 Source on GitHub</a></p>
 <h1 id="pattern_lens.figures"><code>pattern_lens.figures</code></h1>
 <p>code for generating figures from attention patterns, using the
 functions decorated with <code>register_attn_figure_func</code></p>
 <p><a
-href="https://github.com/mivanit/pattern-lens/blob/0.2.0/figures.py#L0-L329">View
+href="https://github.com/mivanit/pattern-lens/blob/0.3.0figures.py#L0-L347">View
 Source on GitHub</a></p>
 <h3 id="HTConfigMock"><code>class HTConfigMock:</code></h3>
 <p><a
-href="https://github.com/mivanit/pattern-lens/blob/0.2.0/figures.py#L32-L54">View
+href="https://github.com/mivanit/pattern-lens/blob/0.3.0figures.py#L37-L61">View
 Source on GitHub</a></p>
 <p>Mock of <code>transformer_lens.HookedTransformerConfig</code> for
 type hinting and loading config json</p>
@@ -870,11 +941,15 @@ type hinting and loading config json</p>
 <code>__dict__</code> with them. does, however, require the following
 attributes: - <code>n_layers: int</code> - <code>n_heads: int</code> -
 <code>model_name: str</code></p>
+<p>we do this to avoid having to import <code>torch</code> and
+<code>transformer_lens</code>, since this would have to be done for each
+process in the parallelization and probably slows things down
+significantly</p>
 <h3 id="HTConfigMock.__init__"><code>HTConfigMock</code></h3>
-<div class="sourceCode" id="cb30"><pre
-class="sourceCode python"><code class="sourceCode python"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a>(<span class="op">**</span>kwargs)</span></code></pre></div>
+<div class="sourceCode" id="cb34"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a>(<span class="op">**</span>kwargs)</span></code></pre></div>
 <p><a
-href="https://github.com/mivanit/pattern-lens/blob/0.2.0/figures.py#L41-L45">View
+href="https://github.com/mivanit/pattern-lens/blob/0.3.0figures.py#L48-L52">View
 Source on GitHub</a></p>
 <ul>
 <li><p><code>n_layers: int</code></p></li>
@@ -882,36 +957,42 @@ Source on GitHub</a></p>
 <li><p><code>model_name: str</code></p></li>
 </ul>
 <h3 id="HTConfigMock.serialize"><code>def serialize</code></h3>
-<div class="sourceCode" id="cb31"><pre
-class="sourceCode python"><code class="sourceCode python"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a>(<span class="va">self</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb35"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a>(<span class="va">self</span>)</span></code></pre></div>
 <p><a
-href="https://github.com/mivanit/pattern-lens/blob/0.2.0/figures.py#L47-L49">View
+href="https://github.com/mivanit/pattern-lens/blob/0.3.0figures.py#L54-L56">View
 Source on GitHub</a></p>
 <p>serialize the config to json. values which aren’t serializable will
 be converted via <code>muutils.json_serialize.json_serialize</code></p>
 <h3 id="HTConfigMock.load"><code>def load</code></h3>
-<div class="sourceCode" id="cb32"><pre
-class="sourceCode python"><code class="sourceCode python"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a>(cls, data: <span class="bu">dict</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb36"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a>(cls, data: <span class="bu">dict</span>)</span></code></pre></div>
 <p><a
-href="https://github.com/mivanit/pattern-lens/blob/0.2.0/figures.py#L51-L54">View
+href="https://github.com/mivanit/pattern-lens/blob/0.3.0figures.py#L58-L61">View
 Source on GitHub</a></p>
 <p>try to load a config from a dict, using the <code>__init__</code>
 method</p>
 <h3 id="process_single_head"><code>def process_single_head</code></h3>
-<div class="sourceCode" id="cb33"><pre
-class="sourceCode python"><code class="sourceCode python"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a>(</span>
-<span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a>    layer_idx: <span class="bu">int</span>,</span>
-<span id="cb33-3"><a href="#cb33-3" aria-hidden="true" tabindex="-1"></a>    head_idx: <span class="bu">int</span>,</span>
-<span id="cb33-4"><a href="#cb33-4" aria-hidden="true" tabindex="-1"></a>    attn_pattern: jaxtyping.Float[ndarray, <span class="st">&#39;n_ctx n_ctx&#39;</span>],</span>
-<span id="cb33-5"><a href="#cb33-5" aria-hidden="true" tabindex="-1"></a>    save_dir: pathlib.Path,</span>
-<span id="cb33-6"><a href="#cb33-6" aria-hidden="true" tabindex="-1"></a>    force_overwrite: <span class="bu">bool</span> <span class="op">=</span> <span class="va">False</span></span>
-<span id="cb33-7"><a href="#cb33-7" aria-hidden="true" tabindex="-1"></a>) <span class="op">-&gt;</span> <span class="bu">dict</span>[<span class="bu">str</span>, <span class="bu">bool</span> <span class="op">|</span> <span class="pp">Exception</span>]</span></code></pre></div>
+<div class="sourceCode" id="cb37"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a>(</span>
+<span id="cb37-2"><a href="#cb37-2" aria-hidden="true" tabindex="-1"></a>    layer_idx: <span class="bu">int</span>,</span>
+<span id="cb37-3"><a href="#cb37-3" aria-hidden="true" tabindex="-1"></a>    head_idx: <span class="bu">int</span>,</span>
+<span id="cb37-4"><a href="#cb37-4" aria-hidden="true" tabindex="-1"></a>    attn_pattern: jaxtyping.Float[ndarray, <span class="st">&#39;n_ctx n_ctx&#39;</span>],</span>
+<span id="cb37-5"><a href="#cb37-5" aria-hidden="true" tabindex="-1"></a>    save_dir: pathlib.Path,</span>
+<span id="cb37-6"><a href="#cb37-6" aria-hidden="true" tabindex="-1"></a>    force_overwrite: <span class="bu">bool</span> <span class="op">=</span> <span class="va">False</span></span>
+<span id="cb37-7"><a href="#cb37-7" aria-hidden="true" tabindex="-1"></a>) <span class="op">-&gt;</span> <span class="bu">dict</span>[<span class="bu">str</span>, <span class="bu">bool</span> <span class="op">|</span> <span class="pp">Exception</span>]</span></code></pre></div>
 <p><a
-href="https://github.com/mivanit/pattern-lens/blob/0.2.0/figures.py#L57-L103">View
+href="https://github.com/mivanit/pattern-lens/blob/0.3.0figures.py#L64-L114">View
 Source on GitHub</a></p>
 <p>process a single head’s attention pattern, running all the functions
 in <code>ATTENTION_MATRIX_FIGURE_FUNCS</code> on the attention
 pattern</p>
+<blockquote>
+<p>[gotcha:] if <code>force_overwrite</code> is <code>False</code>, and
+we used a multi-figure function, it will skip all figures for that
+function if any are already saved and it assumes a format of
+<code>{func_name}.{figure_name}.{fmt}</code> for the saved figures</p>
+</blockquote>
 <h3 id="parameters-8">Parameters:</h3>
 <ul>
 <li><code>layer_idx : int</code></li>
@@ -931,24 +1012,24 @@ the value</li>
 </ul>
 <h3
 id="compute_and_save_figures"><code>def compute_and_save_figures</code></h3>
-<div class="sourceCode" id="cb34"><pre
-class="sourceCode python"><code class="sourceCode python"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a>(</span>
-<span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a>    model_cfg: <span class="st">&#39;HookedTransformerConfig|HTConfigMock&#39;</span>,</span>
-<span id="cb34-3"><a href="#cb34-3" aria-hidden="true" tabindex="-1"></a>    activations_path: pathlib.Path,</span>
-<span id="cb34-4"><a href="#cb34-4" aria-hidden="true" tabindex="-1"></a>    cache: <span class="bu">dict</span>[<span class="bu">str</span>, numpy.ndarray],</span>
-<span id="cb34-5"><a href="#cb34-5" aria-hidden="true" tabindex="-1"></a>    save_path: pathlib.Path <span class="op">=</span> WindowsPath(<span class="st">&#39;attn_data&#39;</span>),</span>
-<span id="cb34-6"><a href="#cb34-6" aria-hidden="true" tabindex="-1"></a>    force_overwrite: <span class="bu">bool</span> <span class="op">=</span> <span class="va">False</span>,</span>
-<span id="cb34-7"><a href="#cb34-7" aria-hidden="true" tabindex="-1"></a>    track_results: <span class="bu">bool</span> <span class="op">=</span> <span class="va">False</span></span>
-<span id="cb34-8"><a href="#cb34-8" aria-hidden="true" tabindex="-1"></a>) <span class="op">-&gt;</span> <span class="va">None</span></span></code></pre></div>
+<div class="sourceCode" id="cb38"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a>(</span>
+<span id="cb38-2"><a href="#cb38-2" aria-hidden="true" tabindex="-1"></a>    model_cfg: <span class="st">&#39;HookedTransformerConfig|HTConfigMock&#39;</span>,</span>
+<span id="cb38-3"><a href="#cb38-3" aria-hidden="true" tabindex="-1"></a>    activations_path: pathlib.Path,</span>
+<span id="cb38-4"><a href="#cb38-4" aria-hidden="true" tabindex="-1"></a>    cache: <span class="bu">dict</span>[<span class="bu">str</span>, numpy.ndarray] <span class="op">|</span> jaxtyping.Float[ndarray, <span class="st">&#39;n_layers n_heads n_ctx n_ctx&#39;</span>],</span>
+<span id="cb38-5"><a href="#cb38-5" aria-hidden="true" tabindex="-1"></a>    save_path: pathlib.Path <span class="op">=</span> WindowsPath(<span class="st">&#39;attn_data&#39;</span>),</span>
+<span id="cb38-6"><a href="#cb38-6" aria-hidden="true" tabindex="-1"></a>    force_overwrite: <span class="bu">bool</span> <span class="op">=</span> <span class="va">False</span>,</span>
+<span id="cb38-7"><a href="#cb38-7" aria-hidden="true" tabindex="-1"></a>    track_results: <span class="bu">bool</span> <span class="op">=</span> <span class="va">False</span></span>
+<span id="cb38-8"><a href="#cb38-8" aria-hidden="true" tabindex="-1"></a>) <span class="op">-&gt;</span> <span class="va">None</span></span></code></pre></div>
 <p><a
-href="https://github.com/mivanit/pattern-lens/blob/0.2.0/figures.py#L106-L162">View
+href="https://github.com/mivanit/pattern-lens/blob/0.3.0figures.py#L117-L180">View
 Source on GitHub</a></p>
 <p>compute and save figures for all heads in the model, using the
 functions in <code>ATTENTION_MATRIX_FIGURE_FUNCS</code></p>
 <h3 id="parameters-9">Parameters:</h3>
 <ul>
 <li><code>model_cfg : HookedTransformerConfig|HTConfigMock</code></li>
-<li><code>cache : ActivationCacheNp</code></li>
+<li><code>cache : ActivationCacheNp | Float[np.ndarray, "n_layers n_heads n_ctx n_ctx"]</code></li>
 <li><code>save_path : Path</code> (defaults to
 <code>Path(DATA_DIR)</code>)</li>
 <li><code>force_overwrite : bool</code> force overwrite of existing
@@ -959,15 +1040,15 @@ each function for each head. Isn’t used for anything yet, but this is a
 TODO (defaults to <code>False</code>)</li>
 </ul>
 <h3 id="process_prompt"><code>def process_prompt</code></h3>
-<div class="sourceCode" id="cb35"><pre
-class="sourceCode python"><code class="sourceCode python"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a>(</span>
-<span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a>    prompt: <span class="bu">dict</span>,</span>
-<span id="cb35-3"><a href="#cb35-3" aria-hidden="true" tabindex="-1"></a>    model_cfg: <span class="st">&#39;HookedTransformerConfig|HTConfigMock&#39;</span>,</span>
-<span id="cb35-4"><a href="#cb35-4" aria-hidden="true" tabindex="-1"></a>    save_path: pathlib.Path,</span>
-<span id="cb35-5"><a href="#cb35-5" aria-hidden="true" tabindex="-1"></a>    force_overwrite: <span class="bu">bool</span> <span class="op">=</span> <span class="va">False</span></span>
-<span id="cb35-6"><a href="#cb35-6" aria-hidden="true" tabindex="-1"></a>) <span class="op">-&gt;</span> <span class="va">None</span></span></code></pre></div>
+<div class="sourceCode" id="cb39"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a>(</span>
+<span id="cb39-2"><a href="#cb39-2" aria-hidden="true" tabindex="-1"></a>    prompt: <span class="bu">dict</span>,</span>
+<span id="cb39-3"><a href="#cb39-3" aria-hidden="true" tabindex="-1"></a>    model_cfg: <span class="st">&#39;HookedTransformerConfig|HTConfigMock&#39;</span>,</span>
+<span id="cb39-4"><a href="#cb39-4" aria-hidden="true" tabindex="-1"></a>    save_path: pathlib.Path,</span>
+<span id="cb39-5"><a href="#cb39-5" aria-hidden="true" tabindex="-1"></a>    force_overwrite: <span class="bu">bool</span> <span class="op">=</span> <span class="va">False</span></span>
+<span id="cb39-6"><a href="#cb39-6" aria-hidden="true" tabindex="-1"></a>) <span class="op">-&gt;</span> <span class="va">None</span></span></code></pre></div>
 <p><a
-href="https://github.com/mivanit/pattern-lens/blob/0.2.0/figures.py#L165-L196">View
+href="https://github.com/mivanit/pattern-lens/blob/0.3.0figures.py#L183-L214">View
 Source on GitHub</a></p>
 <p>process a single prompt, loading the activations and computing and
 saving the figures</p>
@@ -981,16 +1062,16 @@ saving the figures</p>
 <code>False</code>)</li>
 </ul>
 <h3 id="figures_main"><code>def figures_main</code></h3>
-<div class="sourceCode" id="cb36"><pre
-class="sourceCode python"><code class="sourceCode python"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a>(</span>
-<span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a>    model_name: <span class="bu">str</span>,</span>
-<span id="cb36-3"><a href="#cb36-3" aria-hidden="true" tabindex="-1"></a>    save_path: <span class="bu">str</span>,</span>
-<span id="cb36-4"><a href="#cb36-4" aria-hidden="true" tabindex="-1"></a>    n_samples: <span class="bu">int</span>,</span>
-<span id="cb36-5"><a href="#cb36-5" aria-hidden="true" tabindex="-1"></a>    force: <span class="bu">bool</span>,</span>
-<span id="cb36-6"><a href="#cb36-6" aria-hidden="true" tabindex="-1"></a>    parallel: <span class="bu">bool</span> <span class="op">|</span> <span class="bu">int</span> <span class="op">=</span> <span class="va">True</span></span>
-<span id="cb36-7"><a href="#cb36-7" aria-hidden="true" tabindex="-1"></a>) <span class="op">-&gt;</span> <span class="va">None</span></span></code></pre></div>
+<div class="sourceCode" id="cb40"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a>(</span>
+<span id="cb40-2"><a href="#cb40-2" aria-hidden="true" tabindex="-1"></a>    model_name: <span class="bu">str</span>,</span>
+<span id="cb40-3"><a href="#cb40-3" aria-hidden="true" tabindex="-1"></a>    save_path: <span class="bu">str</span>,</span>
+<span id="cb40-4"><a href="#cb40-4" aria-hidden="true" tabindex="-1"></a>    n_samples: <span class="bu">int</span>,</span>
+<span id="cb40-5"><a href="#cb40-5" aria-hidden="true" tabindex="-1"></a>    force: <span class="bu">bool</span>,</span>
+<span id="cb40-6"><a href="#cb40-6" aria-hidden="true" tabindex="-1"></a>    parallel: <span class="bu">bool</span> <span class="op">|</span> <span class="bu">int</span> <span class="op">=</span> <span class="va">True</span></span>
+<span id="cb40-7"><a href="#cb40-7" aria-hidden="true" tabindex="-1"></a>) <span class="op">-&gt;</span> <span class="va">None</span></span></code></pre></div>
 <p><a
-href="https://github.com/mivanit/pattern-lens/blob/0.2.0/figures.py#L199-L262">View
+href="https://github.com/mivanit/pattern-lens/blob/0.3.0figures.py#L217-L280">View
 Source on GitHub</a></p>
 <p>main function for generating figures from attention patterns, using
 the functions in <code>ATTENTION_MATRIX_FIGURE_FUNCS</code></p>
@@ -1009,15 +1090,15 @@ will run in serial. if an int, will try to use that many cores (defaults
 to <code>True</code>)</li>
 </ul>
 <h3 id="main"><code>def main</code></h3>
-<div class="sourceCode" id="cb37"><pre
-class="sourceCode python"><code class="sourceCode python"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a>()</span></code></pre></div>
+<div class="sourceCode" id="cb41"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a>()</span></code></pre></div>
 <p><a
-href="https://github.com/mivanit/pattern-lens/blob/0.2.0/figures.py#L265-L326">View
+href="https://github.com/mivanit/pattern-lens/blob/0.3.0figures.py#L283-L344">View
 Source on GitHub</a></p>
 <blockquote>
 <p>docs for <a
 href="https://github.com/mivanit/pattern-lens"><code>pattern_lens</code></a>
-v0.2.0</p>
+v0.3.0</p>
 </blockquote>
 <h2 id="contents-6">Contents</h2>
 <p>writes indexes to the model directory for the frontend to use or for
@@ -1034,20 +1115,20 @@ href="#generate_functions_jsonl"><code>generate_functions_jsonl</code></a></li>
 <li><a href="#write_html_index"><code>write_html_index</code></a></li>
 </ul>
 <p><a
-href="https://github.com/mivanit/pattern-lens/blob/0.2.0/indexes.py">View
+href="https://github.com/mivanit/pattern-lens/blob/0.3.0indexes.py">View
 Source on GitHub</a></p>
 <h1 id="pattern_lens.indexes"><code>pattern_lens.indexes</code></h1>
 <p>writes indexes to the model directory for the frontend to use or for
 record keeping</p>
 <p><a
-href="https://github.com/mivanit/pattern-lens/blob/0.2.0/indexes.py#L0-L121">View
+href="https://github.com/mivanit/pattern-lens/blob/0.3.0indexes.py#L0-L140">View
 Source on GitHub</a></p>
 <h3
 id="generate_prompts_jsonl"><code>def generate_prompts_jsonl</code></h3>
-<div class="sourceCode" id="cb38"><pre
-class="sourceCode python"><code class="sourceCode python"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a>(model_dir: pathlib.Path)</span></code></pre></div>
+<div class="sourceCode" id="cb42"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a>(model_dir: pathlib.Path)</span></code></pre></div>
 <p><a
-href="https://github.com/mivanit/pattern-lens/blob/0.2.0/indexes.py#L14-L30">View
+href="https://github.com/mivanit/pattern-lens/blob/0.3.0indexes.py#L17-L33">View
 Source on GitHub</a></p>
 <p>creates a <code>prompts.jsonl</code> file with all the prompts in the
 model directory</p>
@@ -1055,27 +1136,34 @@ model directory</p>
 <code>prompt.json</code> file</p>
 <h3
 id="generate_models_jsonl"><code>def generate_models_jsonl</code></h3>
-<div class="sourceCode" id="cb39"><pre
-class="sourceCode python"><code class="sourceCode python"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a>(path: pathlib.Path)</span></code></pre></div>
+<div class="sourceCode" id="cb43"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a>(path: pathlib.Path)</span></code></pre></div>
 <p><a
-href="https://github.com/mivanit/pattern-lens/blob/0.2.0/indexes.py#L33-L46">View
+href="https://github.com/mivanit/pattern-lens/blob/0.3.0indexes.py#L36-L49">View
 Source on GitHub</a></p>
 <p>creates a <code>models.jsonl</code> file with all the models</p>
 <h3 id="get_func_metadata"><code>def get_func_metadata</code></h3>
-<div class="sourceCode" id="cb40"><pre
-class="sourceCode python"><code class="sourceCode python"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a>(func: Callable) <span class="op">-&gt;</span> <span class="bu">dict</span>[<span class="bu">str</span>, <span class="bu">str</span> <span class="op">|</span> <span class="va">None</span>]</span></code></pre></div>
+<div class="sourceCode" id="cb44"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a>(func: Callable) <span class="op">-&gt;</span> <span class="bu">list</span>[<span class="bu">dict</span>[<span class="bu">str</span>, <span class="bu">str</span> <span class="op">|</span> <span class="va">None</span>]]</span></code></pre></div>
 <p><a
-href="https://github.com/mivanit/pattern-lens/blob/0.2.0/indexes.py#L49-L80">View
+href="https://github.com/mivanit/pattern-lens/blob/0.3.0indexes.py#L52-L99">View
 Source on GitHub</a></p>
 <p>get metadata for a function</p>
 <h3 id="parameters-12">Parameters:</h3>
 <ul>
-<li><code>func : Callable</code></li>
+<li><code>func : Callable</code> which has a
+<code>_FIGURE_NAMES_KEY</code> (by default <code>_figure_names</code>)
+attribute</li>
 </ul>
 <h3 id="returns-8">Returns:</h3>
-<p><code>dict[str, str | None]</code> dictionary:</p>
+<p><code>list[dict[str, str | None]]</code> each dictionary is for a
+function, containing:</p>
 <ul>
-<li><code>name : str</code> : the name of the function</li>
+<li><code>name : str</code> : the name of the figure</li>
+<li><code>func_name : str</code> the name of the function. if not a
+multi-figure function, this is identical to <code>name</code> if it is a
+multi-figure function, then <code>name</code> is
+<code>{func_name}.{figure_name}</code></li>
 <li><code>doc : str</code> : the docstring of the function</li>
 <li><code>figure_save_fmt : str | None</code> : the format of the figure
 that the function saves, using the <code>figure_save_fmt</code>
@@ -1088,25 +1176,25 @@ split by line. <code>None</code> if the source file cannot be read</li>
 </ul>
 <h3
 id="generate_functions_jsonl"><code>def generate_functions_jsonl</code></h3>
-<div class="sourceCode" id="cb41"><pre
-class="sourceCode python"><code class="sourceCode python"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a>(path: pathlib.Path)</span></code></pre></div>
+<div class="sourceCode" id="cb45"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a>(path: pathlib.Path)</span></code></pre></div>
 <p><a
-href="https://github.com/mivanit/pattern-lens/blob/0.2.0/indexes.py#L83-L109">View
+href="https://github.com/mivanit/pattern-lens/blob/0.3.0indexes.py#L102-L128">View
 Source on GitHub</a></p>
 <p>unions all functions from file and current
 <code>ATTENTION_MATRIX_FIGURE_FUNCS</code> into a
-<code>functions.jsonl</code> file</p>
+<code>figures.jsonl</code> file</p>
 <h3 id="write_html_index"><code>def write_html_index</code></h3>
-<div class="sourceCode" id="cb42"><pre
-class="sourceCode python"><code class="sourceCode python"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a>(path: pathlib.Path)</span></code></pre></div>
+<div class="sourceCode" id="cb46"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a>(path: pathlib.Path)</span></code></pre></div>
 <p><a
-href="https://github.com/mivanit/pattern-lens/blob/0.2.0/indexes.py#L112-L122">View
+href="https://github.com/mivanit/pattern-lens/blob/0.3.0indexes.py#L131-L141">View
 Source on GitHub</a></p>
 <p>writes an index.html file to the path</p>
 <blockquote>
 <p>docs for <a
 href="https://github.com/mivanit/pattern-lens"><code>pattern_lens</code></a>
-v0.2.0</p>
+v0.3.0</p>
 </blockquote>
 <h2 id="contents-7">Contents</h2>
 <p>loading activations from .npz on disk. implements some custom
@@ -1128,19 +1216,19 @@ href="#augment_prompt_with_hash"><code>augment_prompt_with_hash</code></a></li>
 <li><a href="#load_activations"><code>load_activations</code></a></li>
 </ul>
 <p><a
-href="https://github.com/mivanit/pattern-lens/blob/0.2.0/load_activations.py">View
+href="https://github.com/mivanit/pattern-lens/blob/0.3.0load_activations.py">View
 Source on GitHub</a></p>
 <h1
 id="pattern_lens.load_activations"><code>pattern_lens.load_activations</code></h1>
 <p>loading activations from .npz on disk. implements some custom
 Exception classes</p>
 <p><a
-href="https://github.com/mivanit/pattern-lens/blob/0.2.0/load_activations.py#L0-L156">View
+href="https://github.com/mivanit/pattern-lens/blob/0.3.0load_activations.py#L0-L161">View
 Source on GitHub</a></p>
 <h3
 id="GetActivationsError"><code>class GetActivationsError(builtins.ValueError):</code></h3>
 <p><a
-href="https://github.com/mivanit/pattern-lens/blob/0.2.0/load_activations.py#L12-L15">View
+href="https://github.com/mivanit/pattern-lens/blob/0.3.0load_activations.py#L14-L17">View
 Source on GitHub</a></p>
 <p>base class for errors in getting activations</p>
 <h3 id="inherited-members">Inherited Members</h3>
@@ -1157,7 +1245,7 @@ href="#GetActivationsError.args"><code>args</code></a></p></li>
 <h3
 id="ActivationsMissingError"><code>class ActivationsMissingError(GetActivationsError, builtins.FileNotFoundError):</code></h3>
 <p><a
-href="https://github.com/mivanit/pattern-lens/blob/0.2.0/load_activations.py#L18-L21">View
+href="https://github.com/mivanit/pattern-lens/blob/0.3.0load_activations.py#L20-L23">View
 Source on GitHub</a></p>
 <p>error for missing activations – can’t find the activations file</p>
 <h3 id="inherited-members-1">Inherited Members</h3>
@@ -1186,7 +1274,7 @@ href="#ActivationsMissingError.args"><code>args</code></a></p></li>
 <h3
 id="ActivationsMismatchError"><code>class ActivationsMismatchError(GetActivationsError):</code></h3>
 <p><a
-href="https://github.com/mivanit/pattern-lens/blob/0.2.0/load_activations.py#L24-L30">View
+href="https://github.com/mivanit/pattern-lens/blob/0.3.0load_activations.py#L26-L32">View
 Source on GitHub</a></p>
 <p>error for mismatched activations – the prompt text or hash do not
 match</p>
@@ -1205,7 +1293,7 @@ href="#ActivationsMismatchError.args"><code>args</code></a></p></li>
 <h3
 id="InvalidPromptError"><code>class InvalidPromptError(GetActivationsError):</code></h3>
 <p><a
-href="https://github.com/mivanit/pattern-lens/blob/0.2.0/load_activations.py#L33-L39">View
+href="https://github.com/mivanit/pattern-lens/blob/0.3.0load_activations.py#L35-L41">View
 Source on GitHub</a></p>
 <p>error for invalid prompt – the prompt does not have fields “hash” or
 “text”</p>
@@ -1222,10 +1310,10 @@ href="#InvalidPromptError.add_note"><code>add_note</code></a></p></li>
 </ul>
 <h3
 id="compare_prompt_to_loaded"><code>def compare_prompt_to_loaded</code></h3>
-<div class="sourceCode" id="cb43"><pre
-class="sourceCode python"><code class="sourceCode python"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a>(prompt: <span class="bu">dict</span>, prompt_loaded: <span class="bu">dict</span>) <span class="op">-&gt;</span> <span class="va">None</span></span></code></pre></div>
+<div class="sourceCode" id="cb47"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb47-1"><a href="#cb47-1" aria-hidden="true" tabindex="-1"></a>(prompt: <span class="bu">dict</span>, prompt_loaded: <span class="bu">dict</span>) <span class="op">-&gt;</span> <span class="va">None</span></span></code></pre></div>
 <p><a
-href="https://github.com/mivanit/pattern-lens/blob/0.2.0/load_activations.py#L42-L59">View
+href="https://github.com/mivanit/pattern-lens/blob/0.3.0load_activations.py#L44-L61">View
 Source on GitHub</a></p>
 <p>compare a prompt to a loaded prompt, raise an error if they do not
 match</p>
@@ -1245,10 +1333,10 @@ do not match</li>
 </ul>
 <h3
 id="augment_prompt_with_hash"><code>def augment_prompt_with_hash</code></h3>
-<div class="sourceCode" id="cb44"><pre
-class="sourceCode python"><code class="sourceCode python"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a>(prompt: <span class="bu">dict</span>) <span class="op">-&gt;</span> <span class="bu">dict</span></span></code></pre></div>
+<div class="sourceCode" id="cb48"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb48-1"><a href="#cb48-1" aria-hidden="true" tabindex="-1"></a>(prompt: <span class="bu">dict</span>) <span class="op">-&gt;</span> <span class="bu">dict</span></span></code></pre></div>
 <p><a
-href="https://github.com/mivanit/pattern-lens/blob/0.2.0/load_activations.py#L62-L88">View
+href="https://github.com/mivanit/pattern-lens/blob/0.3.0load_activations.py#L64-L90">View
 Source on GitHub</a></p>
 <p>if a prompt does not have a hash, add one</p>
 <p>not having a “text” field is allowed, but only if “hash” is
@@ -1265,15 +1353,15 @@ present</p>
 <p>the input <code>prompt</code> dictionary, if it does not have a
 <code>"hash"</code> key</p>
 <h3 id="load_activations"><code>def load_activations</code></h3>
-<div class="sourceCode" id="cb45"><pre
-class="sourceCode python"><code class="sourceCode python"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a>(</span>
-<span id="cb45-2"><a href="#cb45-2" aria-hidden="true" tabindex="-1"></a>    model_name: <span class="bu">str</span>,</span>
-<span id="cb45-3"><a href="#cb45-3" aria-hidden="true" tabindex="-1"></a>    prompt: <span class="bu">dict</span>,</span>
-<span id="cb45-4"><a href="#cb45-4" aria-hidden="true" tabindex="-1"></a>    save_path: pathlib.Path,</span>
-<span id="cb45-5"><a href="#cb45-5" aria-hidden="true" tabindex="-1"></a>    return_fmt: Literal[<span class="st">&#39;torch&#39;</span>, <span class="st">&#39;numpy&#39;</span>] <span class="op">=</span> <span class="st">&#39;torch&#39;</span></span>
-<span id="cb45-6"><a href="#cb45-6" aria-hidden="true" tabindex="-1"></a>) <span class="op">-&gt;</span> <span class="bu">tuple</span>[pathlib.Path, <span class="bu">dict</span>[<span class="bu">str</span>, torch.Tensor] <span class="op">|</span> <span class="bu">dict</span>[<span class="bu">str</span>, numpy.ndarray]]</span></code></pre></div>
+<div class="sourceCode" id="cb49"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb49-1"><a href="#cb49-1" aria-hidden="true" tabindex="-1"></a>(</span>
+<span id="cb49-2"><a href="#cb49-2" aria-hidden="true" tabindex="-1"></a>    model_name: <span class="bu">str</span>,</span>
+<span id="cb49-3"><a href="#cb49-3" aria-hidden="true" tabindex="-1"></a>    prompt: <span class="bu">dict</span>,</span>
+<span id="cb49-4"><a href="#cb49-4" aria-hidden="true" tabindex="-1"></a>    save_path: pathlib.Path,</span>
+<span id="cb49-5"><a href="#cb49-5" aria-hidden="true" tabindex="-1"></a>    return_fmt: Literal[<span class="va">None</span>, <span class="st">&#39;numpy&#39;</span>, <span class="st">&#39;torch&#39;</span>] <span class="op">=</span> <span class="st">&#39;torch&#39;</span></span>
+<span id="cb49-6"><a href="#cb49-6" aria-hidden="true" tabindex="-1"></a>) <span class="op">-&gt;</span> <span class="bu">tuple</span>[pathlib.Path, <span class="bu">dict</span>[<span class="bu">str</span>, torch.Tensor] <span class="op">|</span> <span class="bu">dict</span>[<span class="bu">str</span>, numpy.ndarray]]</span></code></pre></div>
 <p><a
-href="https://github.com/mivanit/pattern-lens/blob/0.2.0/load_activations.py#L106-L157">View
+href="https://github.com/mivanit/pattern-lens/blob/0.3.0load_activations.py#L108-L159">View
 Source on GitHub</a></p>
 <p>load activations for a prompt and model, from an npz file</p>
 <h3 id="parameters-15">Parameters:</h3>
@@ -1300,7 +1388,7 @@ missing</li>
 <blockquote>
 <p>docs for <a
 href="https://github.com/mivanit/pattern-lens"><code>pattern_lens</code></a>
-v0.2.0</p>
+v0.3.0</p>
 </blockquote>
 <h2 id="contents-8">Contents</h2>
 <p>implements <code>load_text_data</code> for loading prompts</p>
@@ -1309,23 +1397,23 @@ v0.2.0</p>
 <li><a href="#load_text_data"><code>load_text_data</code></a></li>
 </ul>
 <p><a
-href="https://github.com/mivanit/pattern-lens/blob/0.2.0/prompts.py">View
+href="https://github.com/mivanit/pattern-lens/blob/0.3.0prompts.py">View
 Source on GitHub</a></p>
 <h1 id="pattern_lens.prompts"><code>pattern_lens.prompts</code></h1>
 <p>implements <code>load_text_data</code> for loading prompts</p>
 <p><a
-href="https://github.com/mivanit/pattern-lens/blob/0.2.0/prompts.py#L0-L80">View
+href="https://github.com/mivanit/pattern-lens/blob/0.3.0prompts.py#L0-L80">View
 Source on GitHub</a></p>
 <h3 id="load_text_data"><code>def load_text_data</code></h3>
-<div class="sourceCode" id="cb46"><pre
-class="sourceCode python"><code class="sourceCode python"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a>(</span>
-<span id="cb46-2"><a href="#cb46-2" aria-hidden="true" tabindex="-1"></a>    fname: pathlib.Path,</span>
-<span id="cb46-3"><a href="#cb46-3" aria-hidden="true" tabindex="-1"></a>    min_chars: <span class="bu">int</span> <span class="op">|</span> <span class="va">None</span> <span class="op">=</span> <span class="va">None</span>,</span>
-<span id="cb46-4"><a href="#cb46-4" aria-hidden="true" tabindex="-1"></a>    max_chars: <span class="bu">int</span> <span class="op">|</span> <span class="va">None</span> <span class="op">=</span> <span class="va">None</span>,</span>
-<span id="cb46-5"><a href="#cb46-5" aria-hidden="true" tabindex="-1"></a>    shuffle: <span class="bu">bool</span> <span class="op">=</span> <span class="va">False</span></span>
-<span id="cb46-6"><a href="#cb46-6" aria-hidden="true" tabindex="-1"></a>) <span class="op">-&gt;</span> <span class="bu">list</span>[<span class="bu">dict</span>]</span></code></pre></div>
+<div class="sourceCode" id="cb50"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb50-1"><a href="#cb50-1" aria-hidden="true" tabindex="-1"></a>(</span>
+<span id="cb50-2"><a href="#cb50-2" aria-hidden="true" tabindex="-1"></a>    fname: pathlib.Path,</span>
+<span id="cb50-3"><a href="#cb50-3" aria-hidden="true" tabindex="-1"></a>    min_chars: <span class="bu">int</span> <span class="op">|</span> <span class="va">None</span> <span class="op">=</span> <span class="va">None</span>,</span>
+<span id="cb50-4"><a href="#cb50-4" aria-hidden="true" tabindex="-1"></a>    max_chars: <span class="bu">int</span> <span class="op">|</span> <span class="va">None</span> <span class="op">=</span> <span class="va">None</span>,</span>
+<span id="cb50-5"><a href="#cb50-5" aria-hidden="true" tabindex="-1"></a>    shuffle: <span class="bu">bool</span> <span class="op">=</span> <span class="va">False</span></span>
+<span id="cb50-6"><a href="#cb50-6" aria-hidden="true" tabindex="-1"></a>) <span class="op">-&gt;</span> <span class="bu">list</span>[<span class="bu">dict</span>]</span></code></pre></div>
 <p><a
-href="https://github.com/mivanit/pattern-lens/blob/0.2.0/prompts.py#L8-L81">View
+href="https://github.com/mivanit/pattern-lens/blob/0.3.0prompts.py#L8-L81">View
 Source on GitHub</a></p>
 <p>given <code>fname</code>, the path to a jsonl file, split prompts up
 into more reasonable sizes</p>
@@ -1348,7 +1436,7 @@ guaranteed to be the same length as the input list!</li>
 <blockquote>
 <p>docs for <a
 href="https://github.com/mivanit/pattern-lens"><code>pattern_lens</code></a>
-v0.2.0</p>
+v0.3.0</p>
 </blockquote>
 <h2 id="contents-9">Contents</h2>
 <p>cli for starting the server to show the web ui.</p>
@@ -1359,18 +1447,18 @@ is useful for working on the ui.</p>
 <li><a href="#main"><code>main</code></a></li>
 </ul>
 <p><a
-href="https://github.com/mivanit/pattern-lens/blob/0.2.0/server.py">View
+href="https://github.com/mivanit/pattern-lens/blob/0.3.0server.py">View
 Source on GitHub</a></p>
 <h1 id="pattern_lens.server"><code>pattern_lens.server</code></h1>
 <p>cli for starting the server to show the web ui.</p>
 <p>can also run with –rewrite-index to update the index.html file. this
 is useful for working on the ui.</p>
 <p><a
-href="https://github.com/mivanit/pattern-lens/blob/0.2.0/server.py#L0-L54">View
+href="https://github.com/mivanit/pattern-lens/blob/0.3.0server.py#L0-L54">View
 Source on GitHub</a></p>
 <h3 id="main"><code>def main</code></h3>
-<div class="sourceCode" id="cb47"><pre
-class="sourceCode python"><code class="sourceCode python"><span id="cb47-1"><a href="#cb47-1" aria-hidden="true" tabindex="-1"></a>(path: <span class="bu">str</span>, port: <span class="bu">int</span> <span class="op">=</span> <span class="dv">8000</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb51"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb51-1"><a href="#cb51-1" aria-hidden="true" tabindex="-1"></a>(path: <span class="bu">str</span>, port: <span class="bu">int</span> <span class="op">=</span> <span class="dv">8000</span>)</span></code></pre></div>
 <p><a
-href="https://github.com/mivanit/pattern-lens/blob/0.2.0/server.py#L16-L26">View
+href="https://github.com/mivanit/pattern-lens/blob/0.3.0server.py#L16-L26">View
 Source on GitHub</a></p>

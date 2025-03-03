@@ -1,4 +1,4 @@
-  docs for pattern_lens v0.2.0
+  docs for pattern_lens v0.3.0
 
 Contents
 
@@ -220,7 +220,7 @@ see demo.ipynb for a full example
 
 View Source on GitHub
 
-  docs for pattern_lens v0.2.0
+  docs for pattern_lens v0.3.0
 
 Contents
 
@@ -277,9 +277,10 @@ def compute_activations
         prompt: dict,
         model: transformer_lens.HookedTransformer.HookedTransformer | None = None,
         save_path: pathlib.Path = WindowsPath('attn_data'),
-        return_cache: bool = True,
-        names_filter: Union[Callable[[str], bool], re.Pattern] = re.compile('blocks\\.(\\d+)\\.attn\\.hook_pattern')
-    ) -> tuple[pathlib.Path, dict[str, numpy.ndarray] | None]
+        names_filter: Union[Callable[[str], bool], re.Pattern] = re.compile('blocks\\.(\\d+)\\.attn\\.hook_pattern'),
+        return_cache: Literal[None, 'numpy', 'torch'] = 'torch',
+        stack_heads: bool = False
+    ) -> tuple[pathlib.Path, typing.Union[dict[str, numpy.ndarray], transformer_lens.ActivationCache.ActivationCache, jaxtyping.Float[ndarray, 'n_layers n_heads n_ctx n_ctx'], jaxtyping.Float[Tensor, 'n_layers n_heads n_ctx n_ctx'], NoneType]]
 
 View Source on GitHub
 
@@ -292,16 +293,34 @@ Parameters:
 -   prompt : dict | None (defaults to None)
 -   model : HookedTransformer
 -   save_path : Path (defaults to Path(DATA_DIR))
--   return_cache : bool will return None as the second element if False
-    (defaults to True)
 -   names_filter : Callable[[str], bool]|re.Pattern a filter for the
     names of the activations to return. if an re.Pattern, will use
     lambda key: names_filter.match(key) is not None (defaults to
     ATTN_PATTERN_REGEX)
+-   return_cache : Literal[None, "numpy", "torch"] will return None as
+    the second element if None, otherwise will return the cache in the
+    specified tensor format. stack_heads still affects whether it will
+    be a dict (False) or a single tensor (True) (defaults to None)
+-   stack_heads : bool whether the heads should be stacked in the
+    output. this causes a number of changes:
+    -   npy file with a single (n_layers, n_heads, n_ctx, n_ctx) tensor
+        saved for each prompt instead of npz file with dict by layer
+    -   cache will be a single (n_layers, n_heads, n_ctx, n_ctx) tensor
+        instead of a dict by layer if return_cache is True
+    -   will assert that everything in the activation cache is only
+        attention patterns, and is all of the attention patterns. raises
+        an exception if not.
 
 Returns:
 
--   tuple[Path, ActivationCacheNp|None]
+    tuple[
+        Path,
+        Union[
+            None,
+            ActivationCacheNp, ActivationCache,
+            Float[np.ndarray, "n_layers n_heads n_ctx n_ctx"], Float[torch.Tensor, "n_layers n_heads n_ctx n_ctx"],
+        ]
+    ]
 
 def get_activations
 
@@ -310,8 +329,8 @@ def get_activations
         model: transformer_lens.HookedTransformer.HookedTransformer | str,
         save_path: pathlib.Path = WindowsPath('attn_data'),
         allow_disk_cache: bool = True,
-        return_cache: bool = True
-    ) -> tuple[pathlib.Path, dict[str, numpy.ndarray] | None]
+        return_cache: Literal[None, 'numpy', 'torch'] = 'numpy'
+    ) -> tuple[pathlib.Path, dict[str, numpy.ndarray] | transformer_lens.ActivationCache.ActivationCache | None]
 
 View Source on GitHub
 
@@ -327,13 +346,13 @@ Parameters:
     (defaults to Path(DATA_DIR))
 -   allow_disk_cache : bool whether to allow loading from disk cache
     (defaults to True)
--   return_cache : bool whether to return the cache. if False, will
-    return None as the second element (defaults to True)
+-   return_cache : Literal[None, "numpy", "torch"] whether to return the
+    cache, and in what format (defaults to "numpy")
 
 Returns:
 
--   tuple[Path, ActivationCacheNp | None] the path to the activations
-    and the cache if return_cache is True
+-   tuple[Path, ActivationCacheNp | ActivationCache | None] the path to
+    the activations and the cache if return_cache is not None
 
 def activations_main
 
@@ -348,7 +367,8 @@ def activations_main
         n_samples: int,
         no_index_html: bool,
         shuffle: bool = False,
-        device: str | torch.device = 'cuda'
+        stacked_heads: bool = False,
+        device: str | torch.device = 'cpu'
     ) -> None
 
 View Source on GitHub
@@ -370,6 +390,9 @@ Parameters:
 -   n_samples : int maximum number of samples to process
 -   no_index_html : bool whether to write an index.html file
 -   shuffle : bool whether to shuffle the prompts (defaults to False)
+-   stacked_heads : bool whether to stack the heads in the output
+    tensor. will save as .npy instead of .npz if True (defaults to
+    False)
 -   device : str | torch.device the device to use. if a string, will be
     passed to torch.device
 
@@ -379,7 +402,7 @@ def main
 
 View Source on GitHub
 
-  docs for pattern_lens v0.2.0
+  docs for pattern_lens v0.3.0
 
 Contents
 
@@ -395,7 +418,9 @@ to ATTENTION_MATRIX_FIGURE_FUNCS
 API Documentation
 
 -   ATTENTION_MATRIX_FIGURE_FUNCS
+-   get_all_figure_names
 -   register_attn_figure_func
+-   register_attn_figure_multifunc
 -   raw
 
 View Source on GitHub
@@ -414,6 +439,14 @@ decorator which adds your function to ATTENTION_MATRIX_FIGURE_FUNCS
 View Source on GitHub
 
 -   ATTENTION_MATRIX_FIGURE_FUNCS: list[typing.Callable[[jaxtyping.Float[ndarray, 'n_ctx n_ctx'], pathlib.Path], NoneType]] = [<function raw>]
+
+def get_all_figure_names
+
+    () -> list[str]
+
+View Source on GitHub
+
+get all figure names
 
 def register_attn_figure_func
 
@@ -446,6 +479,14 @@ Usage:
         plt.savefig(path / "my_new_figure_func", format="svgz")
         plt.close(fig)
 
+def register_attn_figure_multifunc
+
+    (
+        names: Sequence[str]
+    ) -> Callable[[Callable[[jaxtyping.Float[ndarray, 'n_ctx n_ctx'], pathlib.Path], NoneType]], Callable[[jaxtyping.Float[ndarray, 'n_ctx n_ctx'], pathlib.Path], NoneType]]
+
+View Source on GitHub
+
 def raw
 
     (
@@ -456,7 +497,7 @@ View Source on GitHub
 
 raw attention matrix
 
-  docs for pattern_lens v0.2.0
+  docs for pattern_lens v0.3.0
 
 Contents
 
@@ -466,11 +507,13 @@ API Documentation
 
 -   AttentionMatrix
 -   ActivationCacheNp
+-   ActivationCacheTorch
 -   DATA_DIR
 -   ATTN_PATTERN_REGEX
 -   SPINNER_KWARGS
 -   DIVIDER_S1
 -   DIVIDER_S2
+-   ReturnCache
 
 View Source on GitHub
 
@@ -486,7 +529,14 @@ type alias for attention matrix
 
 -   ActivationCacheNp = dict[str, numpy.ndarray]
 
-type alias for a cache of attention matrices, subset of ActivationCache
+type alias for a cache of activations, like a
+transformer_lens.ActivationCache
+
+-   ActivationCacheTorch = dict[str, torch.Tensor]
+
+type alias for a cache of activations, like a
+transformer_lens.ActivationCache but without the extras. useful for when
+loading from an npz file
 
 -   DATA_DIR: str = 'attn_data'
 
@@ -508,7 +558,11 @@ divider string for separating sections
 
 divider string for separating subsections
 
-  docs for pattern_lens v0.2.0
+-   ReturnCache = typing.Literal[None, 'numpy', 'torch']
+
+return type for a cache of activations
+
+  docs for pattern_lens v0.3.0
 
 Contents
 
@@ -531,6 +585,7 @@ API Documentation
 -   MATRIX_SAVE_FMT
 -   MATRIX_SAVE_SVG_TEMPLATE
 -   matplotlib_figure_saver
+-   matplotlib_multifigure_saver
 -   matrix_to_image_preprocess
 -   matrix2drgb_to_png_bytes
 -   matrix_as_svg
@@ -550,8 +605,8 @@ View Source on GitHub
 
 -   AttentionMatrixFigureFunc = typing.Callable[[jaxtyping.Float[ndarray, 'n_ctx n_ctx'], pathlib.Path], NoneType]
 
-Type alias for a function that, given an attention matrix, saves a
-figure
+Type alias for a function that, given an attention matrix, saves one or
+more figures
 
 -   Matrix2D = <class 'jaxtyping.Float[ndarray, 'n m']'>
 
@@ -624,6 +679,15 @@ Usage:
         ax.matshow(attn_matrix, cmap="viridis")
         ax.set_title("Raw Attention Pattern")
         ax.axis("off")
+
+def matplotlib_multifigure_saver
+
+    (
+        names: Sequence[str],
+        fmt: str = 'svgz'
+    ) -> Callable[[Callable[[jaxtyping.Float[ndarray, 'n_ctx n_ctx'], dict[str, matplotlib.axes._axes.Axes]], NoneType]], Callable[[jaxtyping.Float[ndarray, 'n_ctx n_ctx'], pathlib.Path], NoneType]]
+
+View Source on GitHub
 
 def matrix_to_image_preprocess
 
@@ -781,7 +845,7 @@ Usage:
     def scale_matrix(matrix):
         return matrix * 2
 
-  docs for pattern_lens v0.2.0
+  docs for pattern_lens v0.3.0
 
 Contents
 
@@ -816,6 +880,10 @@ loading config json
 can be initialized with any kwargs, and will update its __dict__ with
 them. does, however, require the following attributes: - n_layers: int -
 n_heads: int - model_name: str
+
+we do this to avoid having to import torch and transformer_lens, since
+this would have to be done for each process in the parallelization and
+probably slows things down significantly
 
 HTConfigMock
 
@@ -861,6 +929,11 @@ View Source on GitHub
 process a single head’s attention pattern, running all the functions in
 ATTENTION_MATRIX_FIGURE_FUNCS on the attention pattern
 
+  [gotcha:] if force_overwrite is False, and we used a multi-figure
+  function, it will skip all figures for that function if any are
+  already saved and it assumes a format of
+  {func_name}.{figure_name}.{fmt} for the saved figures
+
 Parameters:
 
 -   layer_idx : int
@@ -882,7 +955,7 @@ def compute_and_save_figures
     (
         model_cfg: 'HookedTransformerConfig|HTConfigMock',
         activations_path: pathlib.Path,
-        cache: dict[str, numpy.ndarray],
+        cache: dict[str, numpy.ndarray] | jaxtyping.Float[ndarray, 'n_layers n_heads n_ctx n_ctx'],
         save_path: pathlib.Path = WindowsPath('attn_data'),
         force_overwrite: bool = False,
         track_results: bool = False
@@ -896,7 +969,7 @@ in ATTENTION_MATRIX_FIGURE_FUNCS
 Parameters:
 
 -   model_cfg : HookedTransformerConfig|HTConfigMock
--   cache : ActivationCacheNp
+-   cache : ActivationCacheNp | Float[np.ndarray, "n_layers n_heads n_ctx n_ctx"]
 -   save_path : Path (defaults to Path(DATA_DIR))
 -   force_overwrite : bool force overwrite of existing figures. if
     False, will skip any functions which have already saved a figure
@@ -960,7 +1033,7 @@ def main
 
 View Source on GitHub
 
-  docs for pattern_lens v0.2.0
+  docs for pattern_lens v0.3.0
 
 Contents
 
@@ -1004,7 +1077,7 @@ creates a models.jsonl file with all the models
 
 def get_func_metadata
 
-    (func: Callable) -> dict[str, str | None]
+    (func: Callable) -> list[dict[str, str | None]]
 
 View Source on GitHub
 
@@ -1012,13 +1085,18 @@ get metadata for a function
 
 Parameters:
 
--   func : Callable
+-   func : Callable which has a _FIGURE_NAMES_KEY (by default
+    _figure_names) attribute
 
 Returns:
 
-dict[str, str | None] dictionary:
+list[dict[str, str | None]] each dictionary is for a function,
+containing:
 
--   name : str : the name of the function
+-   name : str : the name of the figure
+-   func_name : str the name of the function. if not a multi-figure
+    function, this is identical to name if it is a multi-figure
+    function, then name is {func_name}.{figure_name}
 -   doc : str : the docstring of the function
 -   figure_save_fmt : str | None : the format of the figure that the
     function saves, using the figure_save_fmt attribute of the function.
@@ -1034,7 +1112,7 @@ def generate_functions_jsonl
 View Source on GitHub
 
 unions all functions from file and current ATTENTION_MATRIX_FIGURE_FUNCS
-into a functions.jsonl file
+into a figures.jsonl file
 
 def write_html_index
 
@@ -1044,7 +1122,7 @@ View Source on GitHub
 
 writes an index.html file to the path
 
-  docs for pattern_lens v0.2.0
+  docs for pattern_lens v0.3.0
 
 Contents
 
@@ -1200,7 +1278,7 @@ def load_activations
         model_name: str,
         prompt: dict,
         save_path: pathlib.Path,
-        return_fmt: Literal['torch', 'numpy'] = 'torch'
+        return_fmt: Literal[None, 'numpy', 'torch'] = 'torch'
     ) -> tuple[pathlib.Path, dict[str, torch.Tensor] | dict[str, numpy.ndarray]]
 
 View Source on GitHub
@@ -1225,7 +1303,7 @@ Raises:
 -   ActivationsMissingError : if the activations file is missing
 -   ValueError : if return_fmt is not "torch" or "numpy"
 
-  docs for pattern_lens v0.2.0
+  docs for pattern_lens v0.3.0
 
 Contents
 
@@ -1271,7 +1349,7 @@ Returns:
     key with a string value, and some metadata. this is not guaranteed
     to be the same length as the input list!
 
-  docs for pattern_lens v0.2.0
+  docs for pattern_lens v0.3.0
 
 Contents
 

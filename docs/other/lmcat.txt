@@ -1,8 +1,8 @@
 # Stats
 - 20 files
-- 4922 (4.9K) lines
-- 184385 (184K) chars
-- 85564 (86K) `gpt2` tokens
+- 4923 (4.9K) lines
+- 184402 (184K) chars
+- 85576 (86K) `gpt2` tokens
 
 # File Tree
 
@@ -35,7 +35,7 @@ pattern-lens
 ├── README.md                 [  106L  3,862C  1,295T]
 ├── demo.ipynb                [  166L  4,797C  2,350T]
 ├── makefile                  [1,536L 46,205C 17,879T]
-├── pyproject.toml            [  160L  4,276C  2,131T]
+├── pyproject.toml            [  161L  4,293C  2,143T]
 ```
 
 # File Contents
@@ -4877,6 +4877,7 @@ summary:
     output_dir = "docs"
     no_clean = [
         ".nojekyll",
+        "demo",
     ]
     markdown_headings_increment = 2
     warnings_ignore = [
@@ -4884,7 +4885,7 @@ summary:
         ".*Private member.*",
     ]
     [tool.makefile.docs.notebooks]
-        enabled = true
+        enabled = false
         source_path = "notebooks"
         output_path_relative = "notebooks"
         # [tool.makefile.docs.notebooks.descriptions]
