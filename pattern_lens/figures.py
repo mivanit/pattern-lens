@@ -70,6 +70,10 @@ def process_single_head(
 ) -> dict[str, bool | Exception]:
 	"""process a single head's attention pattern, running all the functions in `ATTENTION_MATRIX_FIGURE_FUNCS` on the attention pattern
 
+	> [gotcha:] if `force_overwrite` is `False`, and we used a multi-figure function,
+	> it will skip all figures for that function if any are already saved
+	> and it assumes a format of `{func_name}.{figure_name}.{fmt}` for the saved figures
+
 	# Parameters:
 	 - `layer_idx : int`
 	 - `head_idx : int`

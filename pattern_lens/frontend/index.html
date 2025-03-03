@@ -1155,7 +1155,7 @@
                     });
                 },
                 async loadFunctions() {
-                    const functions = await fileOps.fetchJsonL(`${DATA_DIR}/functions.jsonl`);
+                    const functions = await fileOps.fetchJsonL(`${DATA_DIR}/figures.jsonl`);
                     console.log('Functions:', functions);
                     this.filters.available.functions = functions.reduce(
                         (acc, item) => {

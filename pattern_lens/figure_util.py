@@ -4,7 +4,7 @@ notably, you can use the decorators `matplotlib_figure_saver`, `save_matrix_wrap
 """
 
 from pathlib import Path
-from typing import Callable, Literal, overload, Union
+from typing import Callable, Literal, Sequence, overload, Union
 import functools
 import base64
 import gzip
@@ -20,7 +20,7 @@ from matplotlib.colors import Colormap
 from pattern_lens.consts import AttentionMatrix
 
 AttentionMatrixFigureFunc = Callable[[AttentionMatrix, Path], None]
-"Type alias for a function that, given an attention matrix, saves a figure"
+"Type alias for a function that, given an attention matrix, saves one or more figures"
 
 Matrix2D = Float[np.ndarray, "n m"]
 "Type alias for a 2D matrix (plottable)"
@@ -125,6 +125,41 @@ def matplotlib_figure_saver(
 	else:
 		# Handle arguments case
 		return decorator
+
+def matplotlib_multifigure_saver(
+	names: Sequence[str],
+	fmt: str = MATPLOTLIB_FIGURE_FMT,
+) -> Callable[
+	# decorator takes in function
+	# which takes a matrix and a dictionary of axes corresponding to the names
+	[Callable[[AttentionMatrix, dict[str, plt.Axes]], None]],
+	# returns the decorated function
+	AttentionMatrixFigureFunc,
+]:
+	def decorator(
+		func: Callable[[AttentionMatrix, dict[str, plt.Axes]], None],
+	) -> AttentionMatrixFigureFunc:
+		
+		func_name: str = func.__name__
+
+		@functools.wraps(func)
+		def wrapped(attn_matrix: AttentionMatrix, save_dir: Path) -> None:
+			# set up axes
+			axes_dict: dict[str, plt.Axes] = {
+				name: plt.subplots(figsize=(10, 10))[1] 
+				for name in names
+			}
+			# run the function, make plots
+			func(attn_matrix, axes_dict)
+
+			# save the figures
+			for name, ax in axes_dict.items():
+				fig_path: Path = save_dir / f"{func_name}.{name}.{fmt}"
+				ax.figure.tight_layout()
+				ax.figure.savefig(fig_path)
+				plt.close(ax.figure)
+
+		wrapped.figure_save_fmt = fmt
 
 
 def matrix_to_image_preprocess(
