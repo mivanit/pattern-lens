@@ -1,12 +1,12 @@
 """writes indexes to the model directory for the frontend to use or for record keeping"""
 
+import importlib.metadata
+import importlib.resources
 import inspect
 import itertools
 import json
+from collections.abc import Callable
 from pathlib import Path
-import importlib.resources
-import importlib.metadata
-from typing import Callable
 
 import pattern_lens
 from pattern_lens.attn_figure_funcs import (
@@ -121,7 +121,7 @@ def generate_functions_jsonl(path: Path):
 		{
 			**existing_figures,
 			**new_functions,
-		}.values()
+		}.values(),
 	)
 
 	with open(figures_file, "w") as f:

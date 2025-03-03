@@ -10,14 +10,14 @@ which adds your function to `ATTENTION_MATRIX_FIGURE_FUNCS`
 """
 
 import itertools
-from typing import Callable, Sequence
+from collections.abc import Callable, Sequence
+
 from pattern_lens.consts import AttentionMatrix
 from pattern_lens.figure_util import (
 	AttentionMatrixFigureFunc,
-	save_matrix_wrapper,
 	Matrix2D,
+	save_matrix_wrapper,
 )
-
 
 _FIGURE_NAMES_KEY: str = "_figure_names"
 
@@ -34,7 +34,7 @@ def get_all_figure_names() -> list[str]:
 				[func.__name__],
 			)
 			for func in ATTENTION_MATRIX_FIGURE_FUNCS
-		)
+		),
 	)
 
 

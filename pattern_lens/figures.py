@@ -1,11 +1,11 @@
 """code for generating figures from attention patterns, using the functions decorated with `register_attn_figure_func`"""
 
 import argparse
-from collections import defaultdict
 import functools
 import itertools
 import json
 import warnings
+from collections import defaultdict
 from pathlib import Path
 
 import numpy as np
@@ -13,18 +13,18 @@ from jaxtyping import Float
 
 # custom utils
 from muutils.json_serialize import json_serialize
-from muutils.spinner import SpinnerContext
 from muutils.parallel import run_maybe_parallel
+from muutils.spinner import SpinnerContext
 
 # pattern_lens
 from pattern_lens.attn_figure_funcs import ATTENTION_MATRIX_FIGURE_FUNCS
 from pattern_lens.consts import (
 	DATA_DIR,
-	AttentionMatrix,
-	SPINNER_KWARGS,
-	ActivationCacheNp,
 	DIVIDER_S1,
 	DIVIDER_S2,
+	SPINNER_KWARGS,
+	ActivationCacheNp,
+	AttentionMatrix,
 )
 from pattern_lens.indexes import (
 	generate_functions_jsonl,
@@ -107,7 +107,7 @@ def process_single_head(
 			error_file = save_dir / f"{func.__name__}.error.txt"
 			error_file.write_text(str(e))
 			warnings.warn(
-				f"Error in {func.__name__} for L{layer_idx}H{head_idx}: {str(e)}"
+				f"Error in {func.__name__} for L{layer_idx}H{head_idx}: {e!s}",
 			)
 			funcs_status[func_name] = e
 
@@ -158,7 +158,7 @@ def compute_and_save_figures(
 			attn_pattern = cache[layer_idx, head_idx]
 		else:
 			raise TypeError(
-				f"cache must be a dict or np.ndarray, not {type(cache) = }\n{cache = }"
+				f"cache must be a dict or np.ndarray, not {type(cache) = }\n{cache = }",
 			)
 
 		save_dir: Path = prompt_dir / f"L{layer_idx}" / f"H{head_idx}"
@@ -270,11 +270,11 @@ def figures_main(
 				desc="Making figures",
 				unit="prompt",
 			),
-		)
+		),
 	)
 
 	with SpinnerContext(
-		message="updating jsonl metadata for models and functions", **SPINNER_KWARGS
+		message="updating jsonl metadata for models and functions", **SPINNER_KWARGS,
 	):
 		generate_models_jsonl(save_path_p)
 		generate_functions_jsonl(save_path_p)

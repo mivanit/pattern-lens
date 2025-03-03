@@ -42,7 +42,7 @@ def load_text_data(
 			filter(
 				lambda x: len(x["text"]) >= min_chars,
 				data_raw,
-			)
+			),
 		)
 
 	# split up too-long samples
@@ -55,14 +55,14 @@ def load_text_data(
 					{
 						**d,
 						"text": d_text[:max_chars],
-					}
+					},
 				)
 				d_text = d_text[max_chars:]
 			data_new.append(
 				{
 					**d,
 					"text": d_text,
-				}
+				},
 			)
 		data_raw = data_new
 
@@ -72,7 +72,7 @@ def load_text_data(
 			filter(
 				lambda x: len(x["text"]) >= min_chars,
 				data_raw,
-			)
+			),
 		)
 
 	# shuffle

@@ -1,15 +1,14 @@
-import jaxtyping
-import pytest
-import numpy as np
-from pathlib import Path
-import gzip
-import re
 import base64
+import gzip
 import io
+import re
+from pathlib import Path
 
-from PIL import Image
+import jaxtyping
 import matplotlib.pyplot as plt
-
+import numpy as np
+import pytest
+from PIL import Image
 
 from pattern_lens.figure_util import (
 	MATPLOTLIB_FIGURE_FMT,
@@ -17,7 +16,6 @@ from pattern_lens.figure_util import (
 	matrix_as_svg,
 	save_matrix_wrapper,
 )
-
 
 TEMP_DIR: Path = Path("tests/_temp")
 

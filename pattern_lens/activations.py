@@ -1,6 +1,5 @@
 """computing and saving activations given a model and prompts
 
-
 # Usage:
 
 from the command line:
@@ -25,31 +24,35 @@ activations_main(
 import argparse
 import functools
 import json
+import re
+from collections.abc import Callable
 from dataclasses import asdict
 from pathlib import Path
-import re
-from typing import Callable, Literal, Union, overload
+from typing import Literal, overload
 
 import numpy as np
-from jaxtyping import Float
 import torch
 import tqdm
-from transformer_lens import HookedTransformer, HookedTransformerConfig, ActivationCache  # type: ignore[import-untyped]
-
+from jaxtyping import Float
+from muutils.json_serialize import json_serialize
+from muutils.misc.numerical import shorten_numerical_to_str
 
 # custom utils
 from muutils.spinner import SpinnerContext
-from muutils.misc.numerical import shorten_numerical_to_str
-from muutils.json_serialize import json_serialize
+from transformer_lens import (  # type: ignore[import-untyped]
+	ActivationCache,
+	HookedTransformer,
+	HookedTransformerConfig,
+)
 
 # pattern_lens
 from pattern_lens.consts import (
 	ATTN_PATTERN_REGEX,
 	DATA_DIR,
-	ActivationCacheNp,
-	SPINNER_KWARGS,
 	DIVIDER_S1,
 	DIVIDER_S2,
+	SPINNER_KWARGS,
+	ActivationCacheNp,
 	ReturnCache,
 )
 from pattern_lens.indexes import (
@@ -123,13 +126,7 @@ def compute_activations(
 	stack_heads: bool = False,
 ) -> tuple[
 	Path,
-	Union[
-		ActivationCacheNp,
-		ActivationCache,
-		Float[np.ndarray, "n_layers n_heads n_ctx n_ctx"],
-		Float[torch.Tensor, "n_layers n_heads n_ctx n_ctx"],
-		None,
-	],
+	ActivationCacheNp | ActivationCache | Float[np.ndarray, "n_layers n_heads n_ctx n_ctx"] | Float[torch.Tensor, "n_layers n_heads n_ctx n_ctx"] | None,
 ]:
 	"""get activations for a given model and prompt, possibly from a cache
 
@@ -165,7 +162,6 @@ def compute_activations(
 	]
 	```
 	"""
-
 	# check inputs
 	assert model is not None, "model must be passed"
 	assert "text" in prompt, "prompt must contain 'text' key"
@@ -180,7 +176,7 @@ def compute_activations(
 		dict(
 			n_tokens=len(prompt_tokenized),
 			tokens=prompt_tokenized,
-		)
+		),
 	)
 
 	# save metadata
@@ -410,7 +406,6 @@ def activations_main(
 	- `device : str | torch.device`
 		the device to use. if a string, will be passed to `torch.device`
 	"""
-
 	# figure out the device to use
 	device_: torch.device
 	if isinstance(device, torch.device):
@@ -424,13 +419,13 @@ def activations_main(
 
 	with SpinnerContext(message="loading model", **SPINNER_KWARGS):
 		model: HookedTransformer = HookedTransformer.from_pretrained(
-			model_name, device=device_
+			model_name, device=device_,
 		)
 		model.model_name = model_name
 		model.cfg.model_name = model_name
 		n_params: int = sum(p.numel() for p in model.parameters())
 	print(
-		f"loaded {model_name} with {shorten_numerical_to_str(n_params)} ({n_params}) parameters"
+		f"loaded {model_name} with {shorten_numerical_to_str(n_params)} ({n_params}) parameters",
 	)
 	print(f"\tmodel devices: {set(p.device for p in model.parameters())}")
 
@@ -438,7 +433,7 @@ def activations_main(
 	save_path_p.mkdir(parents=True, exist_ok=True)
 	model_path: Path = save_path_p / model_name
 	with SpinnerContext(
-		message=f"saving model info to {model_path.as_posix()}", **SPINNER_KWARGS
+		message=f"saving model info to {model_path.as_posix()}", **SPINNER_KWARGS,
 	):
 		model_cfg: HookedTransformerConfig
 		model_cfg = model.cfg
@@ -448,7 +443,7 @@ def activations_main(
 
 	# load prompts
 	with SpinnerContext(
-		message=f"loading prompts from {prompts_path = }", **SPINNER_KWARGS
+		message=f"loading prompts from {prompts_path = }", **SPINNER_KWARGS,
 	):
 		prompts: list[dict]
 		if raw_prompts:
@@ -492,11 +487,11 @@ def activations_main(
 			total=len(prompts),
 			desc="Computing activations",
 			unit="prompt",
-		)
+		),
 	)
 
 	with SpinnerContext(
-		message="updating jsonl metadata for models and prompts", **SPINNER_KWARGS
+		message="updating jsonl metadata for models and prompts", **SPINNER_KWARGS,
 	):
 		generate_models_jsonl(save_path_p)
 		generate_prompts_jsonl(save_path_p / model_name)

@@ -4,8 +4,8 @@ import re
 from typing import Literal
 
 import numpy as np
-from jaxtyping import Float
 import torch
+from jaxtyping import Float
 
 AttentionMatrix = Float[np.ndarray, "n_ctx n_ctx"]
 "type alias for attention matrix"

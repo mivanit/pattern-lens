@@ -1,5 +1,4 @@
-"""
-.. include:: ../README.md
+""".. include:: ../README.md
 """
 
 __all__ = [

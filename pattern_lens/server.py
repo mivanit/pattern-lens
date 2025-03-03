@@ -4,12 +4,12 @@ can also run with --rewrite-index to update the index.html file.
 this is useful for working on the ui.
 """
 
-from pathlib import Path
-import sys
-import os
 import argparse
 import http.server
+import os
 import socketserver
+import sys
+from pathlib import Path
 
 from pattern_lens.indexes import write_html_index
 
@@ -18,7 +18,7 @@ def main(path: str, port: int = 8000):
 	os.chdir(path)
 	try:
 		with socketserver.TCPServer(
-			("", port), http.server.SimpleHTTPRequestHandler
+			("", port), http.server.SimpleHTTPRequestHandler,
 		) as httpd:
 			print(f"Serving at http://localhost:{port}")
 			httpd.serve_forever()

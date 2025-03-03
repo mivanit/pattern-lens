@@ -98,6 +98,8 @@
                 "FURB129", # .readlines() is fine
                 "SIM108", # ternary operators can be hard to read, choose on a case-by-case basis
                 "PLR5501", # nested if else is fine, for readability
+                "D203", # docstring right after the class
+                "D213", # docstring on first line
             ]
             select = ["ALL"]
             # select = ["ICN001"]

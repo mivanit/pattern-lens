@@ -3,19 +3,20 @@
 notably, you can use the decorators `matplotlib_figure_saver`, `save_matrix_wrapper` to make your functions save figures
 """
 
-from pathlib import Path
-from typing import Callable, Literal, Sequence, overload, Union
-import functools
 import base64
+import functools
 import gzip
 import io
+from collections.abc import Callable, Sequence
+from pathlib import Path
+from typing import Literal, overload
 
-from PIL import Image
-import numpy as np
-from jaxtyping import Float, UInt8
 import matplotlib
 import matplotlib.pyplot as plt
+import numpy as np
+from jaxtyping import Float, UInt8
 from matplotlib.colors import Colormap
+from PIL import Image
 
 from pattern_lens.consts import AttentionMatrix
 
@@ -62,18 +63,13 @@ def matplotlib_figure_saver(
 	*args,
 	fmt: str = MATPLOTLIB_FIGURE_FMT,
 ) -> Callable[
-	[Callable[[AttentionMatrix, plt.Axes], None], str], AttentionMatrixFigureFunc
+	[Callable[[AttentionMatrix, plt.Axes], None], str], AttentionMatrixFigureFunc,
 ]: ...
 def matplotlib_figure_saver(
 	func: Callable[[AttentionMatrix, plt.Axes], None] | None = None,
 	*args,
 	fmt: str = MATPLOTLIB_FIGURE_FMT,
-) -> Union[
-	AttentionMatrixFigureFunc,
-	Callable[
-		[Callable[[AttentionMatrix, plt.Axes], None], str], AttentionMatrixFigureFunc
-	],
-]:
+) -> AttentionMatrixFigureFunc | Callable[[Callable[[AttentionMatrix, plt.Axes], None], str], AttentionMatrixFigureFunc]:
 	"""decorator for functions which take an attention matrix and predefined `ax` object, making it save a figure
 
 	# Parameters:
@@ -98,7 +94,6 @@ def matplotlib_figure_saver(
 	```
 
 	"""
-
 	assert len(args) == 0, "This decorator only supports keyword arguments"
 
 	def decorator(
@@ -165,7 +160,7 @@ def matplotlib_multifigure_saver(
 		wrapped.figure_save_fmt = fmt # type: ignore[attr-defined]
 
 		return wrapped
-	
+
 	return decorator
 
 
@@ -251,11 +246,11 @@ def matrix_to_image_preprocess(
 		cmap_ = cmap
 	else:
 		raise TypeError(
-			f"Invalid type for {cmap = }, {type(cmap) = }, must be str or Colormap"
+			f"Invalid type for {cmap = }, {type(cmap) = }, must be str or Colormap",
 		)
 
 	# Apply the colormap
-	rgb_matrix: Float[np.ndarray, "n m channels=3"] = (  # noqa: F722
+	rgb_matrix: Float[np.ndarray, "n m channels=3"] = (
 		cmap_(normalized_matrix)[:, :, :3] * 255
 	).astype(np.uint8)  # Drop alpha channel
 
@@ -273,7 +268,7 @@ def matrix2drgb_to_png_bytes(matrix: Matrix2Drgb, buffer: None = None) -> bytes:
 @overload
 def matrix2drgb_to_png_bytes(matrix: Matrix2Drgb, buffer: io.BytesIO) -> None: ...
 def matrix2drgb_to_png_bytes(
-	matrix: Matrix2Drgb, buffer: io.BytesIO | None = None
+	matrix: Matrix2Drgb, buffer: io.BytesIO | None = None,
 ) -> bytes | None:
 	"""Convert a `Matrix2Drgb` to valid PNG bytes via PIL
 
@@ -289,7 +284,6 @@ def matrix2drgb_to_png_bytes(
 	- `bytes|None`
 		`bytes` if `buffer` is `None`, otherwise `None`
 	"""
-
 	pil_img: Image.Image = Image.fromarray(matrix, mode="RGB")
 	if buffer is None:
 		buffer = io.BytesIO()
@@ -389,8 +383,7 @@ def save_matrix_wrapper(
 	AttentionMatrixFigureFunc
 	| Callable[[AttentionMatrixToMatrixFunc], AttentionMatrixFigureFunc]
 ):
-	"""
-	Decorator for functions that process an attention matrix and save it as an SVGZ image.
+	"""Decorator for functions that process an attention matrix and save it as an SVGZ image.
 	Can handle both argumentless usage and with arguments.
 
 	# Parameters:
@@ -436,7 +429,6 @@ def save_matrix_wrapper(
 
 	```
 	"""
-
 	assert len(args) == 0, "This decorator only supports keyword arguments"
 
 	assert (

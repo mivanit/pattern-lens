@@ -57,7 +57,7 @@ def compare_prompt_to_loaded(prompt: dict, prompt_loaded: dict) -> None:
 	for key in ("text", "hash"):
 		if prompt[key] != prompt_loaded[key]:
 			raise ActivationsMismatchError(
-				f"Prompt file does not match prompt at key {key}:\n{prompt}\n{prompt_loaded}"
+				f"Prompt file does not match prompt at key {key}:\n{prompt}\n{prompt_loaded}",
 			)
 
 
@@ -78,7 +78,7 @@ def augment_prompt_with_hash(prompt: dict) -> dict:
 	if "hash" not in prompt:
 		if "text" not in prompt:
 			raise InvalidPromptError(
-				f"Prompt does not have 'text' field or 'hash' field: {prompt}"
+				f"Prompt does not have 'text' field or 'hash' field: {prompt}",
 			)
 		prompt_str: str = prompt["text"]
 		prompt_hash: str = (
@@ -129,10 +129,9 @@ def load_activations(
 	- `ActivationsMissingError` : if the activations file is missing
 	- `ValueError` : if `return_fmt` is not `"torch"` or `"numpy"`
 	"""
-
 	if return_fmt not in ("torch", "numpy"):
 		raise ValueError(
-			f"Invalid return_fmt: {return_fmt}, expected 'torch' or 'numpy'"
+			f"Invalid return_fmt: {return_fmt}, expected 'torch' or 'numpy'",
 		)
 	if return_fmt == "torch":
 		import torch
