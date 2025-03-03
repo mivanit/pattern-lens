@@ -107,7 +107,8 @@ def process_single_head(
 			error_file = save_dir / f"{func.__name__}.error.txt"
 			error_file.write_text(str(e))
 			warnings.warn(
-				f"Error in {func.__name__} for L{layer_idx}H{head_idx}: {e!s}", stacklevel=2,
+				f"Error in {func.__name__} for L{layer_idx}H{head_idx}: {e!s}",
+				stacklevel=2,
 			)
 			funcs_status[func_name] = e
 
@@ -157,7 +158,9 @@ def compute_and_save_figures(
 		elif isinstance(cache, np.ndarray):
 			attn_pattern = cache[layer_idx, head_idx]
 		else:
-			msg = f"cache must be a dict or np.ndarray, not {type(cache) = }\n{cache = }"
+			msg = (
+				f"cache must be a dict or np.ndarray, not {type(cache) = }\n{cache = }"
+			)
 			raise TypeError(
 				msg,
 			)

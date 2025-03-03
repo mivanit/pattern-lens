@@ -259,7 +259,6 @@ def format_signature(sig: inspect.Signature, colon: bool) -> str:
 	return f"`(`{params_str}`{anno}`"
 
 
-
 def markup_safe(sig: inspect.Signature) -> str:
 	"mark some text as safe, no escaping needed"
 	output: str = str(sig)
