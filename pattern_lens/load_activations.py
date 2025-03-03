@@ -84,7 +84,8 @@ def augment_prompt_with_hash(prompt: dict) -> dict:
 			)
 		prompt_str: str = prompt["text"]
 		prompt_hash: str = (
-			base64.urlsafe_b64encode(hashlib.md5(prompt_str.encode()).digest())
+			# we don't need this to be a secure hash
+			base64.urlsafe_b64encode(hashlib.md5(prompt_str.encode()).digest()) # noqa: S324
 			.decode()
 			.rstrip("=")
 		)

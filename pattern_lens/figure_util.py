@@ -139,6 +139,21 @@ def matplotlib_multifigure_saver(
 	# returns the decorated function
 	AttentionMatrixFigureFunc,
 ]:
+	"""decorate a function such that it saves multiple figures, one for each name in `names`
+
+	# Parameters:
+	- `names : Sequence[str]`
+		the names of the figures to save
+	- `fmt : str`
+		format for saving matplotlib figures
+		(defaults to `MATPLOTLIB_FIGURE_FMT`)
+
+	# Returns:
+	- `Callable[[Callable[[AttentionMatrix, dict[str, plt.Axes]], None], AttentionMatrixFigureFunc]`
+		the decorator, which will then be applied to the function
+		we expect the decorated function to take an attention pattern, and a dict of axes corresponding to the names
+
+	"""
 	def decorator(
 		func: Callable[[AttentionMatrix, dict[str, plt.Axes]], None],
 	) -> AttentionMatrixFigureFunc:
@@ -201,8 +216,8 @@ def matrix_to_image_preprocess(
 	# Returns:
 	- `Matrix2Drgb`
 	"""
-	# check dims
-	assert matrix.ndim == 2, f"Matrix must be 2D, got {matrix.ndim = }"
+	# check dims (2 is not that magic of a value here, hence noqa)
+	assert matrix.ndim == 2, f"Matrix must be 2D, got {matrix.ndim = }" # noqa: PLR2004
 
 	# check matrix is not empty
 	assert matrix.size > 0, "Matrix cannot be empty"
@@ -235,12 +250,12 @@ def matrix_to_image_preprocess(
 			normalized_matrix = (matrix - min_val) / (max_val - min_val)
 	else:
 		if diverging_colormap:
-			assert matrix.min() >= -1 and matrix.max() <= 1, (
+			assert matrix.min() >= -1 and matrix.max() <= 1, ( # noqa: PT018
 				"For diverging colormaps without normalization, matrix values must be in range [-1, 1]"
 			)
 			normalized_matrix = matrix
 		else:
-			assert matrix.min() >= 0 and matrix.max() <= 1, (
+			assert matrix.min() >= 0 and matrix.max() <= 1, ( # noqa: PT018
 				"Matrix values must be in range [0, 1], or normalize must be True"
 			)
 			normalized_matrix = matrix
@@ -363,7 +378,7 @@ def matrix_as_svg(
 @overload  # with keyword arguments, returns decorator
 def save_matrix_wrapper(
 	func: None = None,
-	*args,
+	*args: tuple[()],
 	fmt: MatrixSaveFormat = MATRIX_SAVE_FMT,
 	normalize: bool = MATRIX_SAVE_NORMALIZE,
 	cmap: str | Colormap = MATRIX_SAVE_CMAP,
@@ -373,7 +388,7 @@ def save_matrix_wrapper(
 @overload  # without keyword arguments, returns decorated function
 def save_matrix_wrapper(
 	func: AttentionMatrixToMatrixFunc,
-	*args,
+	*args: tuple[()],
 	fmt: MatrixSaveFormat = MATRIX_SAVE_FMT,
 	normalize: bool = MATRIX_SAVE_NORMALIZE,
 	cmap: str | Colormap = MATRIX_SAVE_CMAP,
@@ -393,6 +408,7 @@ def save_matrix_wrapper(
 	| Callable[[AttentionMatrixToMatrixFunc], AttentionMatrixFigureFunc]
 ):
 	"""Decorator for functions that process an attention matrix and save it as an SVGZ image.
+
 	Can handle both argumentless usage and with arguments.
 
 	# Parameters:
@@ -435,8 +451,8 @@ def save_matrix_wrapper(
 	@save_matrix_wrapper(normalize=True, cmap="plasma")
 	def scale_matrix(matrix):
 		return matrix * 2
-
 	```
+
 	"""
 	assert len(args) == 0, "This decorator only supports keyword arguments"
 

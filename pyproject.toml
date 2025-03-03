@@ -101,6 +101,11 @@
                 "D203", # docstring right after the class
                 "D213", # docstring on first line
                 "NPY002", # legacy numpy generator is fine
+                "D401", # dont care about imperative mood
+                # todos:
+                "TD002", # dont care about author
+                "TD003", # `make todo` will give us a table where we can create issues
+                "PLR0913", # sometimes you have to have a lot of args
             ]
             select = ["ALL"]
             # select = ["ICN001"]

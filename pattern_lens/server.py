@@ -15,6 +15,7 @@ from pattern_lens.indexes import write_html_index
 
 
 def main(path: str, port: int = 8000) -> None:
+	"move to the given path and start the server"
 	os.chdir(path)
 	try:
 		with socketserver.TCPServer(

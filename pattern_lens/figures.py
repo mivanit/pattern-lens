@@ -45,18 +45,19 @@ class HTConfigMock:
 	we do this to avoid having to import `torch` and `transformer_lens`, since this would have to be done for each process in the parallelization and probably slows things down significantly
 	"""
 
-	def __init__(self, **kwargs) -> None:
+	def __init__(self, **kwargs: dict[str, str|int]) -> None:
+		"will pass all kwargs to `__dict__`"
 		self.n_layers: int
 		self.n_heads: int
 		self.model_name: str
 		self.__dict__.update(kwargs)
 
-	def serialize(self):
+	def serialize(self) -> dict:
 		"""serialize the config to json. values which aren't serializable will be converted via `muutils.json_serialize.json_serialize`"""
 		return json_serialize(self.__dict__)
 
 	@classmethod
-	def load(cls, data: dict):
+	def load(cls, data: dict) -> "HTConfigMock":
 		"try to load a config from a dict, using the `__init__` method"
 		return cls(**data)
 
@@ -103,7 +104,8 @@ def process_single_head(
 			func(attn_pattern, save_dir)
 			funcs_status[func_name] = True
 
-		except Exception as e:
+		# bling catch any exception
+		except Exception as e: # noqa: BLE001
 			error_file = save_dir / f"{func.__name__}.error.txt"
 			error_file.write_text(str(e))
 			warnings.warn(
@@ -286,6 +288,7 @@ def figures_main(
 
 
 def main() -> None:
+	"generates figures from the activations using the functions decorated with `register_attn_figure_func`"
 	print(DIVIDER_S1)
 	with SpinnerContext(message="parsing args", **SPINNER_KWARGS):
 		arg_parser: argparse.ArgumentParser = argparse.ArgumentParser()
