@@ -122,7 +122,8 @@ def load_activations(
 
 	# Returns:
 	- `tuple[Path, dict[str, torch.Tensor]|dict[str, np.ndarray]]`
-		the path to the activations file and the activations as a dictionary of numpy arrays or torch tensors, depending on `return_fmt`
+		the path to the activations file and the activations as a dictionary
+		of numpy arrays or torch tensors, depending on `return_fmt`
 
 	# Raises:
 	- `ActivationsMissingError` : if the activations file is missing

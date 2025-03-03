@@ -101,7 +101,7 @@ def get_func_metadata(func: Callable) -> list[dict[str, str | None]]:
 
 
 def generate_functions_jsonl(path: Path):
-	"unions all functions from file and current `ATTENTION_MATRIX_FIGURE_FUNCS` into a `figures.jsonl` file"
+	"unions all functions from `figures.jsonl` and `ATTENTION_MATRIX_FIGURE_FUNCS` into the file"
 	figures_file: Path = path / "figures.jsonl"
 	existing_figures: dict[str, dict] = dict()
 

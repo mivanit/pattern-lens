@@ -25,7 +25,8 @@ def load_text_data(
 
 	# Returns:
 	- `list[dict]`
-		new, processed list of prompts. Each prompt has a "text" key with a string value, and some metadata. this is not guaranteed to be the same length as the input list!
+		processed list of prompts. Each prompt has a "text" key w/ a string value and some metadata.
+		this is not guaranteed to be the same length as the input list!
 	"""
 	# read raw data
 	with open(fname, "r") as f:

@@ -72,16 +72,48 @@
     [tool.ruff]
         exclude = ["__pycache__"]
 
-    [tool.ruff.lint]
-        ignore = [
-            "F722", # doesn't like jaxtyping
-            "W191", # we like tabs
-        ]
-        select = ["E101"]
+        [tool.ruff.lint]
+            ignore = [
+                "F722", # doesn't like jaxtyping
+                "W191", # we like tabs
+                "D400", # missing-trailing-period
+                "D415", # missing-terminal-punctuation
+                "E501", # line-too-long
+                "S101", # assert is fine
+                "D403", # first-word-uncapitalized
+                "D206", # docstring-tab-indentation
+                "ERA001", # commented-out-code
+                "T201", # print is fine lmao
+                "C408", # calling dict() is fine
+                "UP015", # we like specifying the mode even if it's the default
+                "D300", # we like docstrings
+                # boolean positional arguments are fine
+                "FBT001", 
+                "FBT002",
+                "PTH123", # opening files is fine
+                "RET505", # else return is fine
+                "FIX002", # `make todo` will give us the TODO comments
+                "PIE790", # be explicit about when we pass
+                "EM101", # fine to have string literal exceptions
+                "FURB129", # .readlines() is fine
+                "SIM108", # ternary operators can be hard to read, choose on a case-by-case basis
+                "PLR5501", # nested if else is fine, for readability
+            ]
+            select = ["ALL"]
+            # select = ["ICN001"]
 
-    [tool.ruff.format]
-        indent-style = "tab"
-        skip-magic-trailing-comma = false
+            [tool.ruff.lint.per-file-ignores]
+                "**/tests/*" = [
+                    "D103", # dont need docstrings in test functions
+                    # dont need type annotations in test functions
+                    "ANN001",
+                    "ANN201", 
+                    "ANN202",
+                ]
+
+        [tool.ruff.format]
+            indent-style = "tab"
+            skip-magic-trailing-comma = false
 
     [tool.pytest.ini_options]
         addopts = "--jaxtyping-packages=pattern_lens,beartype.beartype"
