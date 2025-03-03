@@ -123,6 +123,11 @@
                     "TRY003", # long exception messages in tests are fine
                 ]
                 "docs/*" = ["ALL"] # not our problem
+                "**/*.ipynb" = [
+                    "D103", # dont need docstrings
+                    "PLR2004", # magic variables are fine
+                    "N806", # uppercase vars are fine
+                ]
 
         [tool.ruff.format]
             indent-style = "tab"
