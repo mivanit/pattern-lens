@@ -14,9 +14,9 @@ from a script:
 ```python
 from pattern_lens.activations import activations_main
 activations_main(
-    model_name="gpt2",
-    save_path="demo/"
-    prompts_path="data/pile_1k.jsonl",
+	model_name="gpt2",
+	save_path="demo/"
+	prompts_path="data/pile_1k.jsonl",
 )
 ```
 
@@ -136,32 +136,32 @@ def compute_activations(
 	if from a cache, prompt_meta must be passed and contain the prompt hash
 
 	# Parameters:
-	 - `prompt : dict | None`
-	   (defaults to `None`)
-	 - `model : HookedTransformer`
-	 - `save_path : Path`
-	   (defaults to `Path(DATA_DIR)`)
-	 - `names_filter : Callable[[str], bool]|re.Pattern`
-	   a filter for the names of the activations to return. if an `re.Pattern`, will use `lambda key: names_filter.match(key) is not None`
-	   (defaults to `ATTN_PATTERN_REGEX`)
-	 - `return_cache : Literal[None, "numpy", "torch"]`
-	   will return `None` as the second element if `None`, otherwise will return the cache in the specified tensor format. `stack_heads` still affects whether it will be a dict (False) or a single tensor (True)
-	   (defaults to `None`)
-	 - `stack_heads : bool`
-	    whether the heads should be stacked in the output. this causes a number of changes:
-	    - `npy` file with a single `(n_layers, n_heads, n_ctx, n_ctx)` tensor saved for each prompt instead of `npz` file with dict by layer
-	    - `cache` will be a single `(n_layers, n_heads, n_ctx, n_ctx)` tensor instead of a dict by layer if `return_cache` is `True`
-	    - will assert that everything in the activation cache is only attention patterns, and is all of the attention patterns. raises an exception if not.
+	- `prompt : dict | None`
+		(defaults to `None`)
+	- `model : HookedTransformer`
+	- `save_path : Path`
+		(defaults to `Path(DATA_DIR)`)
+	- `names_filter : Callable[[str], bool]|re.Pattern`
+		a filter for the names of the activations to return. if an `re.Pattern`, will use `lambda key: names_filter.match(key) is not None`
+		(defaults to `ATTN_PATTERN_REGEX`)
+	- `return_cache : Literal[None, "numpy", "torch"]`
+		will return `None` as the second element if `None`, otherwise will return the cache in the specified tensor format. `stack_heads` still affects whether it will be a dict (False) or a single tensor (True)
+		(defaults to `None`)
+	- `stack_heads : bool`
+		whether the heads should be stacked in the output. this causes a number of changes:
+	- `npy` file with a single `(n_layers, n_heads, n_ctx, n_ctx)` tensor saved for each prompt instead of `npz` file with dict by layer
+	- `cache` will be a single `(n_layers, n_heads, n_ctx, n_ctx)` tensor instead of a dict by layer if `return_cache` is `True`
+		will assert that everything in the activation cache is only attention patterns, and is all of the attention patterns. raises an exception if not.
 
 	# Returns:
 	```
 	tuple[
-	    Path,
-	    Union[
-	        None,
-	        ActivationCacheNp, ActivationCache,
-	        Float[np.ndarray, "n_layers n_heads n_ctx n_ctx"], Float[torch.Tensor, "n_layers n_heads n_ctx n_ctx"],
-	    ]
+		Path,
+		Union[
+			None,
+			ActivationCacheNp, ActivationCache,
+			Float[np.ndarray, "n_layers n_heads n_ctx n_ctx"], Float[torch.Tensor, "n_layers n_heads n_ctx n_ctx"],
+		]
 	]
 	```
 	"""
@@ -309,22 +309,22 @@ def get_activations(
 	"""given a prompt and a model, save or load activations
 
 	# Parameters:
-	 - `prompt : dict`
-	    expected to contain the 'text' key
-	 - `model : HookedTransformer | str`
-	    either a `HookedTransformer` or a string model name, to be loaded with `HookedTransformer.from_pretrained`
-	 - `save_path : Path`
-	    path to save the activations to (and load from)
+	- `prompt : dict`
+		expected to contain the 'text' key
+	- `model : HookedTransformer | str`
+		either a `HookedTransformer` or a string model name, to be loaded with `HookedTransformer.from_pretrained`
+	- `save_path : Path`
+		path to save the activations to (and load from)
 		(defaults to `Path(DATA_DIR)`)
-	 - `allow_disk_cache : bool`
-	    whether to allow loading from disk cache
+	- `allow_disk_cache : bool`
+		whether to allow loading from disk cache
 		(defaults to `True`)
-	 - `return_cache : Literal[None, "numpy", "torch"]`
-	    whether to return the cache, and in what format
+	- `return_cache : Literal[None, "numpy", "torch"]`
+		whether to return the cache, and in what format
 		(defaults to `"numpy"`)
 
 	# Returns:
-	 - `tuple[Path, ActivationCacheNp | ActivationCache | None]`
+	- `tuple[Path, ActivationCacheNp | ActivationCache | None]`
 		the path to the activations and the cache if `return_cache is not None`
 
 	"""
@@ -383,32 +383,32 @@ def activations_main(
 	"""main function for computing activations
 
 	# Parameters:
-	 - `model_name : str`
-	    name of a model to load with `HookedTransformer.from_pretrained`
-	 - `save_path : str`
-	    path to save the activations to
-	 - `prompts_path : str`
-	    path to the prompts file
-	 - `raw_prompts : bool`
-	    whether the prompts are raw, not filtered by length. `load_text_data` will be called if `True`, otherwise just load the "text" field from each line in `prompts_path`
-	 - `min_chars : int`
-	    minimum number of characters for a prompt
-	 - `max_chars : int`
-	    maximum number of characters for a prompt
-	 - `force : bool`
-	    whether to overwrite existing files
-	 - `n_samples : int`
-	    maximum number of samples to process
-	 - `no_index_html : bool`
-	    whether to write an index.html file
-	 - `shuffle : bool`
-	    whether to shuffle the prompts
-	   (defaults to `False`)
-	 - `stacked_heads : bool`
-	    whether	to stack the heads in the output tensor. will save as `.npy` instead of `.npz` if `True`
-	   (defaults to `False`)
-	 - `device : str | torch.device`
-	    the device to use. if a string, will be passed to `torch.device`
+	- `model_name : str`
+		name of a model to load with `HookedTransformer.from_pretrained`
+	- `save_path : str`
+		path to save the activations to
+	- `prompts_path : str`
+		path to the prompts file
+	- `raw_prompts : bool`
+		whether the prompts are raw, not filtered by length. `load_text_data` will be called if `True`, otherwise just load the "text" field from each line in `prompts_path`
+	- `min_chars : int`
+		minimum number of characters for a prompt
+	- `max_chars : int`
+		maximum number of characters for a prompt
+	- `force : bool`
+		whether to overwrite existing files
+	- `n_samples : int`
+		maximum number of samples to process
+	- `no_index_html : bool`
+		whether to write an index.html file
+	- `shuffle : bool`
+		whether to shuffle the prompts
+		(defaults to `False`)
+	- `stacked_heads : bool`
+		whether	to stack the heads in the output tensor. will save as `.npy` instead of `.npz` if `True`
+		(defaults to `False`)
+	- `device : str | torch.device`
+		the device to use. if a string, will be passed to `torch.device`
 	"""
 
 	# figure out the device to use

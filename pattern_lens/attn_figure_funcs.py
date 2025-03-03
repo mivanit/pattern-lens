@@ -45,24 +45,24 @@ def register_attn_figure_func(
 
 	if you want to add a new figure function, you should use this decorator
 
-	    # Parameters:
-	     - `func : AttentionMatrixFigureFunc`
-	       your function, which should take an attention matrix and path
+	# Parameters:
+	- `func : AttentionMatrixFigureFunc`
+		your function, which should take an attention matrix and path
 
-	    # Returns:
-	     - `AttentionMatrixFigureFunc`
-	       your function, after we add it to `ATTENTION_MATRIX_FIGURE_FUNCS`
+	# Returns:
+	- `AttentionMatrixFigureFunc`
+		your function, after we add it to `ATTENTION_MATRIX_FIGURE_FUNCS`
 
 	# Usage:
 	```python
 	@register_attn_figure_func
 	def my_new_figure_func(attn_matrix: AttentionMatrix, path: Path) -> None:
-	    fig, ax = plt.subplots(figsize=(10, 10))
-	    ax.matshow(attn_matrix, cmap="viridis")
-	    ax.set_title("My New Figure Function")
-	    ax.axis("off")
-	    plt.savefig(path / "my_new_figure_func", format="svgz")
-	    plt.close(fig)
+		fig, ax = plt.subplots(figsize=(10, 10))
+		ax.matshow(attn_matrix, cmap="viridis")
+		ax.set_title("My New Figure Function")
+		ax.axis("off")
+		plt.savefig(path / "my_new_figure_func", format="svgz")
+		plt.close(fig)
 	```
 
 	"""

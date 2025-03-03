@@ -45,14 +45,14 @@ def compare_prompt_to_loaded(prompt: dict, prompt_loaded: dict) -> None:
 	"""compare a prompt to a loaded prompt, raise an error if they do not match
 
 	# Parameters:
-	 - `prompt : dict`
-	 - `prompt_loaded : dict`
+	- `prompt : dict`
+	- `prompt_loaded : dict`
 
 	# Returns:
-	 - `None`
+	- `None`
 
 	# Raises:
-	 - `ActivationsMismatchError` : if the prompt text or hash do not match
+	- `ActivationsMismatchError` : if the prompt text or hash do not match
 	"""
 	for key in ("text", "hash"):
 		if prompt[key] != prompt_loaded[key]:
@@ -67,10 +67,10 @@ def augment_prompt_with_hash(prompt: dict) -> dict:
 	not having a "text" field is allowed, but only if "hash" is present
 
 	# Parameters:
-	 - `prompt : dict`
+	- `prompt : dict`
 
 	# Returns:
-	 - `dict`
+	- `dict`
 
 	# Modifies:
 	the input `prompt` dictionary, if it does not have a `"hash"` key
@@ -114,19 +114,19 @@ def load_activations(
 	"""load activations for a prompt and model, from an npz file
 
 	# Parameters:
-	 - `model_name : str`
-	 - `prompt : dict`
-	 - `save_path : Path`
-	 - `return_fmt : Literal["torch", "numpy"]`
-	   (defaults to `"torch"`)
+	- `model_name : str`
+	- `prompt : dict`
+	- `save_path : Path`
+	- `return_fmt : Literal["torch", "numpy"]`
+		(defaults to `"torch"`)
 
 	# Returns:
-	 - `tuple[Path, dict[str, torch.Tensor]|dict[str, np.ndarray]]`
-	     the path to the activations file and the activations as a dictionary of numpy arrays or torch tensors, depending on `return_fmt`
+	- `tuple[Path, dict[str, torch.Tensor]|dict[str, np.ndarray]]`
+		the path to the activations file and the activations as a dictionary of numpy arrays or torch tensors, depending on `return_fmt`
 
 	# Raises:
-	 - `ActivationsMissingError` : if the activations file is missing
-	 - `ValueError` : if `return_fmt` is not `"torch"` or `"numpy"`
+	- `ActivationsMissingError` : if the activations file is missing
+	- `ValueError` : if `return_fmt` is not `"torch"` or `"numpy"`
 	"""
 
 	if return_fmt not in ("torch", "numpy"):

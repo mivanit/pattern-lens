@@ -73,7 +73,11 @@
         exclude = ["__pycache__"]
 
     [tool.ruff.lint]
-        ignore = ["F722"]
+        ignore = [
+            "F722", # doesn't like jaxtyping
+            "W191", # we like tabs
+        ]
+        select = ["E101"]
 
     [tool.ruff.format]
         indent-style = "tab"
@@ -84,6 +88,9 @@
         filterwarnings = [
             "ignore: PEP 484 type hint*:beartype.roar._roarwarn.BeartypeDecorHintPep585DeprecationWarning",
         ]
+
+    [tool.mypy]
+        check_untyped_defs = true
 
     # `make lmcat` depends on the lmcat and can be configured here
     [tool.lmcat]
@@ -146,7 +153,7 @@
 	out_file = "docs/other/todo-inline.md"
 	context_lines = 2
 	extensions = ["py", "md"]
-	tags = ["CRIT", "TODO", "FIXME", "HACK", "BUG", "DOC"]
+	tags = ["CRIT", "TODO", "FIXME", "HACK", "BUG", "DOC", "TYPING"]
 	exclude = [
 		"docs/**",
 		".venv/**",

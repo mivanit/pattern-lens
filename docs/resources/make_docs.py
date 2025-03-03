@@ -219,10 +219,10 @@ def increment_markdown_headings(markdown_text: str) -> str:
 	Increment all Markdown headings in the given text by the specified amount.
 
 	Args:
-	    markdown_text (str): The input Markdown text.
+		markdown_text (str): The input Markdown text.
 
 	Returns:
-	    str: The Markdown text with incremented heading levels.
+		str: The Markdown text with incremented heading levels.
 	"""
 
 	# Regular expression to match Markdown headings
@@ -291,8 +291,9 @@ def use_markdown_format() -> None:
 # ============================================================
 def convert_notebooks() -> None:
 	try:
-		import nbformat
-		import nbconvert
+		# HACK: notebook docs not used in this repo
+		import nbformat  # type: ignore[import-not-found]
+		import nbconvert  # type: ignore[import-not-found]
 	except ImportError:
 		raise ImportError(
 			'nbformat and nbconvert are required to convert notebooks to HTML, add "nbconvert>=7.16.4" to dev/docs deps'

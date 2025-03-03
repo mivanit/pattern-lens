@@ -75,19 +75,19 @@ def process_single_head(
 	> and it assumes a format of `{func_name}.{figure_name}.{fmt}` for the saved figures
 
 	# Parameters:
-	 - `layer_idx : int`
-	 - `head_idx : int`
-	 - `attn_pattern : AttentionMatrix`
-	    attention pattern for the head
-	 - `save_dir : Path`
-	    directory to save the figures to
-	 - `force_overwrite : bool`
-	    whether to overwrite existing figures. if `False`, will skip any functions which have already saved a figure
-	   (defaults to `False`)
+	- `layer_idx : int`
+	- `head_idx : int`
+	- `attn_pattern : AttentionMatrix`
+		attention pattern for the head
+	- `save_dir : Path`
+		directory to save the figures to
+	- `force_overwrite : bool`
+		whether to overwrite existing figures. if `False`, will skip any functions which have already saved a figure
+		(defaults to `False`)
 
 	# Returns:
-	 - `dict[str, bool | Exception]`
-	    a dictionary of the status of each function, with the function name as the key and the status as the value
+	- `dict[str, bool | Exception]`
+		a dictionary of the status of each function, with the function name as the key and the status as the value
 	"""
 	funcs_status: dict[str, bool | Exception] = dict()
 
@@ -125,16 +125,16 @@ def compute_and_save_figures(
 	"""compute and save figures for all heads in the model, using the functions in `ATTENTION_MATRIX_FIGURE_FUNCS`
 
 	# Parameters:
-	 - `model_cfg : HookedTransformerConfig|HTConfigMock`
-	 - `cache : ActivationCacheNp | Float[np.ndarray, "n_layers n_heads n_ctx n_ctx"]`
-	 - `save_path : Path`
-	   (defaults to `Path(DATA_DIR)`)
-	 - `force_overwrite : bool`
-	    force overwrite of existing figures. if `False`, will skip any functions which have already saved a figure
-	   (defaults to `False`)
-	 - `track_results : bool`
-	    whether to track the results of each function for each head. Isn't used for anything yet, but this is a TODO
-	   (defaults to `False`)
+	- `model_cfg : HookedTransformerConfig|HTConfigMock`
+	- `cache : ActivationCacheNp | Float[np.ndarray, "n_layers n_heads n_ctx n_ctx"]`
+	- `save_path : Path`
+		(defaults to `Path(DATA_DIR)`)
+	- `force_overwrite : bool`
+		force overwrite of existing figures. if `False`, will skip any functions which have already saved a figure
+		(defaults to `False`)
+	- `track_results : bool`
+		whether to track the results of each function for each head. Isn't used for anything yet, but this is a TODO
+		(defaults to `False`)
 	"""
 	prompt_dir: Path = activations_path.parent
 
@@ -191,10 +191,10 @@ def process_prompt(
 	basically just calls `load_activations` and then `compute_and_save_figures`
 
 	# Parameters:
-	 - `prompt : dict`
-	 - `model_cfg : HookedTransformerConfig|HTConfigMock`
-	 - `force_overwrite : bool`
-	   (defaults to `False`)
+	- `prompt : dict`
+	- `model_cfg : HookedTransformerConfig|HTConfigMock`
+	- `force_overwrite : bool`
+		(defaults to `False`)
 	"""
 	activations_path: Path
 	cache: ActivationCacheNp | Float[np.ndarray, "n_layers n_heads n_ctx n_ctx"]
@@ -224,17 +224,17 @@ def figures_main(
 	"""main function for generating figures from attention patterns, using the functions in `ATTENTION_MATRIX_FIGURE_FUNCS`
 
 	# Parameters:
-	 - `model_name : str`
-	    model name to use, used for loading the model config, prompts, activations, and saving the figures
-	 - `save_path : str`
-	    base path to look in
-	 - `n_samples : int`
-	    max number of samples to process
-	 - `force : bool`
-	    force overwrite of existing figures. if `False`, will skip any functions which have already saved a figure
-	 - `parallel : bool | int`
-	    whether to run in parallel. if `True`, will use all available cores. if `False`, will run in serial. if an int, will try to use that many cores
-	   (defaults to `True`)
+	- `model_name : str`
+		model name to use, used for loading the model config, prompts, activations, and saving the figures
+	- `save_path : str`
+		base path to look in
+	- `n_samples : int`
+		max number of samples to process
+	- `force : bool`
+		force overwrite of existing figures. if `False`, will skip any functions which have already saved a figure
+	- `parallel : bool | int`
+		whether to run in parallel. if `True`, will use all available cores. if `False`, will run in serial. if an int, will try to use that many cores
+		(defaults to `True`)
 	"""
 	with SpinnerContext(message="setting up paths", **SPINNER_KWARGS):
 		# save model info or check if it exists

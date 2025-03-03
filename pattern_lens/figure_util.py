@@ -77,24 +77,24 @@ def matplotlib_figure_saver(
 	"""decorator for functions which take an attention matrix and predefined `ax` object, making it save a figure
 
 	# Parameters:
-	 - `func : Callable[[AttentionMatrix, plt.Axes], None]`
-	   your function, which should take an attention matrix and predefined `ax` object
-	 - `fmt : str`
-	   format for saving matplotlib figures
-	   (defaults to `MATPLOTLIB_FIGURE_FMT`)
+	- `func : Callable[[AttentionMatrix, plt.Axes], None]`
+		your function, which should take an attention matrix and predefined `ax` object
+	- `fmt : str`
+		format for saving matplotlib figures
+		(defaults to `MATPLOTLIB_FIGURE_FMT`)
 
 	# Returns:
-	 - `AttentionMatrixFigureFunc`
-	   your function, after we wrap it to save a figure
+	- `AttentionMatrixFigureFunc`
+		your function, after we wrap it to save a figure
 
 	# Usage:
 	```python
 	@register_attn_figure_func
 	@matplotlib_figure_saver
 	def raw(attn_matrix: AttentionMatrix, ax: plt.Axes) -> None:
-	    ax.matshow(attn_matrix, cmap="viridis")
-	    ax.set_title("Raw Attention Pattern")
-	    ax.axis("off")
+		ax.matshow(attn_matrix, cmap="viridis")
+		ax.set_title("Raw Attention Pattern")
+		ax.axis("off")
 	```
 
 	"""
@@ -154,11 +154,19 @@ def matplotlib_multifigure_saver(
 			# save the figures
 			for name, ax in axes_dict.items():
 				fig_path: Path = save_dir / f"{func_name}.{name}.{fmt}"
-				ax.figure.tight_layout()
-				ax.figure.savefig(fig_path)
-				plt.close(ax.figure)
+				# TYPING: error: Item "SubFigure" of "Figure | SubFigure" has no attribute "tight_layout"  [union-attr]
+				ax.figure.tight_layout()  # type: ignore[union-attr]
+				# TYPING: error: Item "SubFigure" of "Figure | SubFigure" has no attribute "savefig"  [union-attr]
+				ax.figure.savefig(fig_path)  # type: ignore[union-attr]
+				# TYPING: error: Argument 1 to "close" has incompatible type "Figure | SubFigure"; expected "int | str | Figure | Literal['all'] | None"  [arg-type]
+				plt.close(ax.figure)  # type: ignore[arg-type]
 
-		wrapped.figure_save_fmt = fmt
+		# it doesn't normally have this attribute, but we're adding it
+		wrapped.figure_save_fmt = fmt # type: ignore[attr-defined]
+
+		return wrapped
+	
+	return decorator
 
 
 def matrix_to_image_preprocess(
@@ -171,25 +179,25 @@ def matrix_to_image_preprocess(
 	"""preprocess a 2D matrix into a plottable heatmap image
 
 	# Parameters:
-	 - `matrix : Matrix2D`
-	    input matrix
-	 - `normalize : bool`
-	    whether to normalize the matrix to range [0, 1]
-	   (defaults to `MATRIX_SAVE_NORMALIZE`)
-	 - `cmap : str|Colormap`
-	    the colormap to use for the matrix
-	   (defaults to `MATRIX_SAVE_CMAP`)
-	 - `diverging_colormap : bool`
-	    if True and using a diverging colormap, ensures 0 values map to the center of the colormap
-	    (defaults to False)
-	 - `normalize_min : float|None`
-	    if a float, then for `normalize=True` and `diverging_colormap=False`, the minimum value to normalize to (generally set this to zero?).
-	    if `None`, then the minimum value of the matrix is used.
-	    if `diverging_colormap=True` OR `normalize=False`, this **must** be `None`.
-	    (defaults to `None`)
+	- `matrix : Matrix2D`
+		input matrix
+	- `normalize : bool`
+		whether to normalize the matrix to range [0, 1]
+		(defaults to `MATRIX_SAVE_NORMALIZE`)
+	- `cmap : str|Colormap`
+		the colormap to use for the matrix
+		(defaults to `MATRIX_SAVE_CMAP`)
+	- `diverging_colormap : bool`
+		if True and using a diverging colormap, ensures 0 values map to the center of the colormap
+		(defaults to False)
+	- `normalize_min : float|None`
+		if a float, then for `normalize=True` and `diverging_colormap=False`, the minimum value to normalize to (generally set this to zero?).
+		if `None`, then the minimum value of the matrix is used.
+		if `diverging_colormap=True` OR `normalize=False`, this **must** be `None`.
+		(defaults to `None`)
 
 	# Returns:
-	 - `Matrix2Drgb`
+	- `Matrix2Drgb`
 	"""
 	# check dims
 	assert matrix.ndim == 2, f"Matrix must be 2D, got {matrix.ndim = }"
@@ -273,13 +281,13 @@ def matrix2drgb_to_png_bytes(
 	- if `buffer` is not provided, it will return the PNG bytes
 
 	# Parameters:
-	 - `matrix : Matrix2Drgb`
-	 - `buffer : io.BytesIO | None`
-	   (defaults to `None`, in which case it will return the PNG bytes)
+	- `matrix : Matrix2Drgb`
+	- `buffer : io.BytesIO | None`
+		(defaults to `None`, in which case it will return the PNG bytes)
 
 	# Returns:
-	 - `bytes|None`
-	   `bytes` if `buffer` is `None`, otherwise `None`
+	- `bytes|None`
+		`bytes` if `buffer` is `None`, otherwise `None`
 	"""
 
 	pil_img: Image.Image = Image.fromarray(matrix, mode="RGB")
@@ -303,27 +311,27 @@ def matrix_as_svg(
 	"""quickly convert a 2D matrix to an SVG image, without matplotlib
 
 	# Parameters:
-	 - `matrix : Float[np.ndarray, 'n m']`
-	   a 2D matrix to convert to an SVG image
-	 - `normalize : bool`
-	   whether to normalize the matrix to range [0, 1]. if it's not in the range [0, 1], this must be `True` or it will raise an `AssertionError`
-	   (defaults to `False`)
-	 - `cmap : str`
-	   the colormap to use for the matrix -- will look up in `matplotlib.colormaps` if it's a string
-	   (defaults to `"viridis"`)
-	 - `diverging_colormap : bool`
-	    if True and using a diverging colormap, ensures 0 values map to the center of the colormap
-	    (defaults to False)
-	 - `normalize_min : float|None`
-	    if a float, then for `normalize=True` and `diverging_colormap=False`, the minimum value to normalize to (generally set this to zero?)
-	    if `None`, then the minimum value of the matrix is used
-	    if `diverging_colormap=True` OR `normalize=False`, this **must** be `None`
-	    (defaults to `None`)
+	- `matrix : Float[np.ndarray, 'n m']`
+		a 2D matrix to convert to an SVG image
+	- `normalize : bool`
+		whether to normalize the matrix to range [0, 1]. if it's not in the range [0, 1], this must be `True` or it will raise an `AssertionError`
+		(defaults to `False`)
+	- `cmap : str`
+		the colormap to use for the matrix -- will look up in `matplotlib.colormaps` if it's a string
+		(defaults to `"viridis"`)
+	- `diverging_colormap : bool`
+		if True and using a diverging colormap, ensures 0 values map to the center of the colormap
+		(defaults to False)
+	- `normalize_min : float|None`
+		if a float, then for `normalize=True` and `diverging_colormap=False`, the minimum value to normalize to (generally set this to zero?)
+		if `None`, then the minimum value of the matrix is used
+		if `diverging_colormap=True` OR `normalize=False`, this **must** be `None`
+		(defaults to `None`)
 
 
 	# Returns:
-	 - `str`
-	   the SVG content for the matrix
+	- `str`
+		the SVG content for the matrix
 	"""
 	# Get the dimensions of the matrix
 	m, n = matrix.shape
@@ -387,22 +395,22 @@ def save_matrix_wrapper(
 
 	# Parameters:
 
-	 - `func : AttentionMatrixToMatrixFunc|None`
-	    Either the function to decorate (in the no-arguments case) or `None` when used with arguments.
-	 - `fmt : MatrixSaveFormat, keyword-only`
-	    The format to save the matrix as. Defaults to `MATRIX_SAVE_FMT`.
-	 - `normalize : bool, keyword-only`
-	    Whether to normalize the matrix to range [0, 1]. Defaults to `False`.
-	 - `cmap : str, keyword-only`
-	    The colormap to use for the matrix. Defaults to `MATRIX_SVG_CMAP`.
-	 - `diverging_colormap : bool`
-	    if True and using a diverging colormap, ensures 0 values map to the center of the colormap
-	    (defaults to False)
-	 - `normalize_min : float|None`
-	    if a float, then for `normalize=True` and `diverging_colormap=False`, the minimum value to normalize to (generally set this to zero?)
-	    if `None`, then the minimum value of the matrix is used
-	    if `diverging_colormap=True` OR `normalize=False`, this **must** be `None`
-	    (defaults to `None`)
+	- `func : AttentionMatrixToMatrixFunc|None`
+		Either the function to decorate (in the no-arguments case) or `None` when used with arguments.
+	- `fmt : MatrixSaveFormat, keyword-only`
+		The format to save the matrix as. Defaults to `MATRIX_SAVE_FMT`.
+	- `normalize : bool, keyword-only`
+		Whether to normalize the matrix to range [0, 1]. Defaults to `False`.
+	- `cmap : str, keyword-only`
+		The colormap to use for the matrix. Defaults to `MATRIX_SVG_CMAP`.
+	- `diverging_colormap : bool`
+		if True and using a diverging colormap, ensures 0 values map to the center of the colormap
+		(defaults to False)
+	- `normalize_min : float|None`
+		if a float, then for `normalize=True` and `diverging_colormap=False`, the minimum value to normalize to (generally set this to zero?)
+		if `None`, then the minimum value of the matrix is used
+		if `diverging_colormap=True` OR `normalize=False`, this **must** be `None`
+		(defaults to `None`)
 
 	# Returns:
 
@@ -416,15 +424,15 @@ def save_matrix_wrapper(
 	```python
 	@save_matrix_wrapper
 	def identity_matrix(matrix):
-	    return matrix
+		return matrix
 
 	@save_matrix_wrapper(normalize=True, fmt="png")
 	def scale_matrix(matrix):
-	    return matrix * 2
+		return matrix * 2
 
 	@save_matrix_wrapper(normalize=True, cmap="plasma")
 	def scale_matrix(matrix):
-	    return matrix * 2
+		return matrix * 2
 
 	```
 	"""

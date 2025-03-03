@@ -54,7 +54,7 @@ def get_func_metadata(func: Callable) -> list[dict[str, str | None]]:
 	"""get metadata for a function
 
 	# Parameters:
-	 - `func : Callable` which has a `_FIGURE_NAMES_KEY` (by default `_figure_names`) attribute
+	- `func : Callable` which has a `_FIGURE_NAMES_KEY` (by default `_figure_names`) attribute
 
 	# Returns:
 
@@ -63,8 +63,8 @@ def get_func_metadata(func: Callable) -> list[dict[str, str | None]]:
 
 	- `name : str` : the name of the figure
 	- `func_name : str`
-	   the name of the function. if not a multi-figure function, this is identical to `name`
-	   if it is a multi-figure function, then `name` is `{func_name}.{figure_name}`
+		the name of the function. if not a multi-figure function, this is identical to `name`
+		if it is a multi-figure function, then `name` is `{func_name}.{figure_name}`
 	- `doc : str` : the docstring of the function
 	- `figure_save_fmt : str | None` : the format of the figure that the function saves, using the `figure_save_fmt` attribute of the function. `None` if the attribute does not exist
 	- `source : str | None` : the source file of the function
@@ -94,10 +94,10 @@ def get_func_metadata(func: Callable) -> list[dict[str, str | None]]:
 			for func_name in fig_names
 		]
 	else:
-		return {
+		return [{
 			"name": func.__name__,
 			**output,
-		}
+		}]
 
 
 def generate_functions_jsonl(path: Path):
@@ -112,9 +112,9 @@ def generate_functions_jsonl(path: Path):
 				existing_figures[func_data["name"]] = func_data
 
 	# Add any new functions from ALL_FUNCTIONS
-	new_functions_lst: list[dict] = itertools.chain.from_iterable(
+	new_functions_lst: list[dict] = list(itertools.chain.from_iterable(
 		get_func_metadata(func) for func in ATTENTION_MATRIX_FIGURE_FUNCS
-	)
+	))
 	new_functions: dict[str, dict] = {func["name"]: func for func in new_functions_lst}
 
 	all_functions: list[dict] = list(
