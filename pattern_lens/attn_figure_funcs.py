@@ -13,9 +13,9 @@ import itertools
 from typing import Callable, Sequence
 from pattern_lens.consts import AttentionMatrix
 from pattern_lens.figure_util import (
-    AttentionMatrixFigureFunc,
-    save_matrix_wrapper,
-    Matrix2D,
+	AttentionMatrixFigureFunc,
+	save_matrix_wrapper,
+	Matrix2D,
 )
 
 
@@ -23,79 +23,77 @@ _FIGURE_NAMES_KEY: str = "_figure_names"
 
 ATTENTION_MATRIX_FIGURE_FUNCS: list[AttentionMatrixFigureFunc] = list()
 
-def get_all_figure_names() -> list[str]:
-    """get all figure names"""
-    return list(itertools.chain.from_iterable(
-        getattr(
-            func,
-            _FIGURE_NAMES_KEY,
-            [func.__name__],
-        )
-        for func in ATTENTION_MATRIX_FIGURE_FUNCS
-    ))
 
+def get_all_figure_names() -> list[str]:
+	"""get all figure names"""
+	return list(
+		itertools.chain.from_iterable(
+			getattr(
+				func,
+				_FIGURE_NAMES_KEY,
+				[func.__name__],
+			)
+			for func in ATTENTION_MATRIX_FIGURE_FUNCS
+		)
+	)
 
 
 def register_attn_figure_func(
-    func: AttentionMatrixFigureFunc,
+	func: AttentionMatrixFigureFunc,
 ) -> AttentionMatrixFigureFunc:
-    """decorator for registering attention matrix figure function
+	"""decorator for registering attention matrix figure function
 
-    if you want to add a new figure function, you should use this decorator
+	if you want to add a new figure function, you should use this decorator
 
-        # Parameters:
-         - `func : AttentionMatrixFigureFunc`
-           your function, which should take an attention matrix and path
+	    # Parameters:
+	     - `func : AttentionMatrixFigureFunc`
+	       your function, which should take an attention matrix and path
 
-        # Returns:
-         - `AttentionMatrixFigureFunc`
-           your function, after we add it to `ATTENTION_MATRIX_FIGURE_FUNCS`
+	    # Returns:
+	     - `AttentionMatrixFigureFunc`
+	       your function, after we add it to `ATTENTION_MATRIX_FIGURE_FUNCS`
 
-    # Usage:
-    ```python
-    @register_attn_figure_func
-    def my_new_figure_func(attn_matrix: AttentionMatrix, path: Path) -> None:
-        fig, ax = plt.subplots(figsize=(10, 10))
-        ax.matshow(attn_matrix, cmap="viridis")
-        ax.set_title("My New Figure Function")
-        ax.axis("off")
-        plt.savefig(path / "my_new_figure_func", format="svgz")
-        plt.close(fig)
-    ```
+	# Usage:
+	```python
+	@register_attn_figure_func
+	def my_new_figure_func(attn_matrix: AttentionMatrix, path: Path) -> None:
+	    fig, ax = plt.subplots(figsize=(10, 10))
+	    ax.matshow(attn_matrix, cmap="viridis")
+	    ax.set_title("My New Figure Function")
+	    ax.axis("off")
+	    plt.savefig(path / "my_new_figure_func", format="svgz")
+	    plt.close(fig)
+	```
 
-    """
-    setattr(func, _FIGURE_NAMES_KEY, (func.__name__, ))
-    global ATTENTION_MATRIX_FIGURE_FUNCS
-    ATTENTION_MATRIX_FIGURE_FUNCS.append(func)
+	"""
+	setattr(func, _FIGURE_NAMES_KEY, (func.__name__,))
+	global ATTENTION_MATRIX_FIGURE_FUNCS
+	ATTENTION_MATRIX_FIGURE_FUNCS.append(func)
 
-    return func
+	return func
 
 
 def register_attn_figure_multifunc(
-    names: Sequence[str],
+	names: Sequence[str],
 ) -> Callable[[AttentionMatrixFigureFunc], AttentionMatrixFigureFunc]:
-    
-    def decorator(func: AttentionMatrixFigureFunc) -> AttentionMatrixFigureFunc:
-        setattr(
-            func,
-            _FIGURE_NAMES_KEY,
-            tuple([
-                f"{func.__name__}.{name}"
-                for name in names
-            ]),
-        )
-        global ATTENTION_MATRIX_FIGURE_FUNCS
-        ATTENTION_MATRIX_FIGURE_FUNCS.append(func)
-        return func
-    
-    return decorator
+	def decorator(func: AttentionMatrixFigureFunc) -> AttentionMatrixFigureFunc:
+		setattr(
+			func,
+			_FIGURE_NAMES_KEY,
+			tuple([f"{func.__name__}.{name}" for name in names]),
+		)
+		global ATTENTION_MATRIX_FIGURE_FUNCS
+		ATTENTION_MATRIX_FIGURE_FUNCS.append(func)
+		return func
+
+	return decorator
 
 
 @register_attn_figure_func
 @save_matrix_wrapper(fmt="png")
 def raw(attn_matrix: AttentionMatrix) -> Matrix2D:
-    "raw attention matrix"
-    return attn_matrix
+	"raw attention matrix"
+	return attn_matrix
 
 
 # some more examples:

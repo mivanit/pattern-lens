@@ -8,7 +8,10 @@ import importlib.metadata
 from typing import Callable
 
 import pattern_lens
-from pattern_lens.attn_figure_funcs import _FIGURE_NAMES_KEY, ATTENTION_MATRIX_FIGURE_FUNCS
+from pattern_lens.attn_figure_funcs import (
+	_FIGURE_NAMES_KEY,
+	ATTENTION_MATRIX_FIGURE_FUNCS,
+)
 
 
 def generate_prompts_jsonl(model_dir: Path):
@@ -80,7 +83,7 @@ def get_func_metadata(func: Callable) -> list[dict[str, str | None]]:
 	except OSError:
 		output["code"] = None
 
-	fig_names: list[str]|None = getattr(func, _FIGURE_NAMES_KEY, None)
+	fig_names: list[str] | None = getattr(func, _FIGURE_NAMES_KEY, None)
 	if fig_names:
 		return [
 			{

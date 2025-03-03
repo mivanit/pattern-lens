@@ -126,6 +126,7 @@ def matplotlib_figure_saver(
 		# Handle arguments case
 		return decorator
 
+
 def matplotlib_multifigure_saver(
 	names: Sequence[str],
 	fmt: str = MATPLOTLIB_FIGURE_FMT,
@@ -139,15 +140,13 @@ def matplotlib_multifigure_saver(
 	def decorator(
 		func: Callable[[AttentionMatrix, dict[str, plt.Axes]], None],
 	) -> AttentionMatrixFigureFunc:
-		
 		func_name: str = func.__name__
 
 		@functools.wraps(func)
 		def wrapped(attn_matrix: AttentionMatrix, save_dir: Path) -> None:
 			# set up axes
 			axes_dict: dict[str, plt.Axes] = {
-				name: plt.subplots(figsize=(10, 10))[1] 
-				for name in names
+				name: plt.subplots(figsize=(10, 10))[1] for name in names
 			}
 			# run the function, make plots
 			func(attn_matrix, axes_dict)
