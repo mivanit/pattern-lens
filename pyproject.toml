@@ -118,7 +118,7 @@
         ".*Private member.*",
     ]
     [tool.makefile.docs.notebooks]
-        enabled = true
+        enabled = false
         source_path = "notebooks"
         output_path_relative = "notebooks"
         # [tool.makefile.docs.notebooks.descriptions]
