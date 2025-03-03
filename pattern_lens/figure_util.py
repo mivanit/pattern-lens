@@ -54,13 +54,13 @@ MATRIX_SAVE_SVG_TEMPLATE: str = """<svg xmlns="http://www.w3.org/2000/svg" width
 @overload  # without keyword arguments, returns decorated function
 def matplotlib_figure_saver(
 	func: Callable[[AttentionMatrix, plt.Axes], None],
-	*args,
+	*args: tuple[()],
 	fmt: str = MATPLOTLIB_FIGURE_FMT,
 ) -> AttentionMatrixFigureFunc: ...
 @overload  # with keyword arguments, returns decorator
 def matplotlib_figure_saver(
 	func: None = None,
-	*args,
+	*args: tuple[()],
 	fmt: str = MATPLOTLIB_FIGURE_FMT,
 ) -> Callable[
 	[Callable[[AttentionMatrix, plt.Axes], None], str],
@@ -154,6 +154,7 @@ def matplotlib_multifigure_saver(
 		we expect the decorated function to take an attention pattern, and a dict of axes corresponding to the names
 
 	"""
+
 	def decorator(
 		func: Callable[[AttentionMatrix, dict[str, plt.Axes]], None],
 	) -> AttentionMatrixFigureFunc:
@@ -217,7 +218,7 @@ def matrix_to_image_preprocess(
 	- `Matrix2Drgb`
 	"""
 	# check dims (2 is not that magic of a value here, hence noqa)
-	assert matrix.ndim == 2, f"Matrix must be 2D, got {matrix.ndim = }" # noqa: PLR2004
+	assert matrix.ndim == 2, f"Matrix must be 2D, got {matrix.ndim = }"  # noqa: PLR2004
 
 	# check matrix is not empty
 	assert matrix.size > 0, "Matrix cannot be empty"
@@ -250,12 +251,12 @@ def matrix_to_image_preprocess(
 			normalized_matrix = (matrix - min_val) / (max_val - min_val)
 	else:
 		if diverging_colormap:
-			assert matrix.min() >= -1 and matrix.max() <= 1, ( # noqa: PT018
+			assert matrix.min() >= -1 and matrix.max() <= 1, (  # noqa: PT018
 				"For diverging colormaps without normalization, matrix values must be in range [-1, 1]"
 			)
 			normalized_matrix = matrix
 		else:
-			assert matrix.min() >= 0 and matrix.max() <= 1, ( # noqa: PT018
+			assert matrix.min() >= 0 and matrix.max() <= 1, (  # noqa: PT018
 				"Matrix values must be in range [0, 1], or normalize must be True"
 			)
 			normalized_matrix = matrix

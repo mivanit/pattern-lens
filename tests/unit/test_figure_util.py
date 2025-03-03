@@ -39,7 +39,7 @@ def test_matplotlib_figure_saver_exception():
 	TEMP_DIR.mkdir(parents=True, exist_ok=True)
 
 	@matplotlib_figure_saver
-	def faulty_plot(attn_matrix, ax): # noqa: ARG001
+	def faulty_plot(attn_matrix, ax):  # noqa: ARG001
 		raise ValueError("Intentional failure for testing")
 
 	attn_matrix = np.random.rand(10, 10).astype(np.float32)

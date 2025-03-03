@@ -67,7 +67,7 @@ def register_attn_figure_func(
 
 	"""
 	setattr(func, _FIGURE_NAMES_KEY, (func.__name__,))
-	global ATTENTION_MATRIX_FIGURE_FUNCS
+	global ATTENTION_MATRIX_FIGURE_FUNCS # noqa: PLW0602
 	ATTENTION_MATRIX_FIGURE_FUNCS.append(func)
 
 	return func
@@ -76,13 +76,14 @@ def register_attn_figure_func(
 def register_attn_figure_multifunc(
 	names: Sequence[str],
 ) -> Callable[[AttentionMatrixFigureFunc], AttentionMatrixFigureFunc]:
+	"decorator which registers a function as a multi-figure function"
 	def decorator(func: AttentionMatrixFigureFunc) -> AttentionMatrixFigureFunc:
 		setattr(
 			func,
 			_FIGURE_NAMES_KEY,
 			tuple([f"{func.__name__}.{name}" for name in names]),
 		)
-		global ATTENTION_MATRIX_FIGURE_FUNCS
+		global ATTENTION_MATRIX_FIGURE_FUNCS # noqa: PLW0602
 		ATTENTION_MATRIX_FIGURE_FUNCS.append(func)
 		return func
 

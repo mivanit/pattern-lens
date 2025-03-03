@@ -344,7 +344,7 @@ def convert_notebooks() -> None:
 # ============================================================
 
 
-def pdoc_combined(*modules, output_file: Path) -> None:
+def pdoc_combined(*modules: list, output_file: Path) -> None:
 	"""Render the documentation for a list of modules into a single HTML file.
 
 	Args:
@@ -380,6 +380,7 @@ def pdoc_combined(*modules, output_file: Path) -> None:
 
 
 def ignore_warnings() -> None:
+	"""Ignore warnings as specified in the configuration."""
 	# Process and apply the warning filters
 	for message in CONFIG.warnings_ignore:
 		warnings.filterwarnings("ignore", message=message)

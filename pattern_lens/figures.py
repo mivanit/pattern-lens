@@ -45,7 +45,7 @@ class HTConfigMock:
 	we do this to avoid having to import `torch` and `transformer_lens`, since this would have to be done for each process in the parallelization and probably slows things down significantly
 	"""
 
-	def __init__(self, **kwargs: dict[str, str|int]) -> None:
+	def __init__(self, **kwargs: dict[str, str | int]) -> None:
 		"will pass all kwargs to `__dict__`"
 		self.n_layers: int
 		self.n_heads: int
@@ -105,7 +105,7 @@ def process_single_head(
 			funcs_status[func_name] = True
 
 		# bling catch any exception
-		except Exception as e: # noqa: BLE001
+		except Exception as e:  # noqa: BLE001
 			error_file = save_dir / f"{func.__name__}.error.txt"
 			error_file.write_text(str(e))
 			warnings.warn(

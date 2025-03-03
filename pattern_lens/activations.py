@@ -368,6 +368,8 @@ def get_activations(
 	)
 
 
+DEFAULT_DEVICE: torch.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+
 def activations_main(
 	model_name: str,
 	save_path: str,
@@ -380,7 +382,7 @@ def activations_main(
 	no_index_html: bool,
 	shuffle: bool = False,
 	stacked_heads: bool = False,
-	device: str | torch.device = "cuda" if torch.cuda.is_available() else "cpu",
+	device: str | torch.device = DEFAULT_DEVICE,
 ) -> None:
 	"""main function for computing activations
 
@@ -420,7 +422,7 @@ def activations_main(
 		device_ = torch.device(device)
 	else:
 		msg = f"invalid device: {device}"
-		raise ValueError(msg)
+		raise TypeError(msg)
 
 	print(f"using device: {device_}")
 
@@ -509,6 +511,7 @@ def activations_main(
 
 
 def main() -> None:
+	"generate attention pattern activations for a model and prompts"
 	print(DIVIDER_S1)
 	with SpinnerContext(message="parsing args", **SPINNER_KWARGS):
 		arg_parser: argparse.ArgumentParser = argparse.ArgumentParser()
