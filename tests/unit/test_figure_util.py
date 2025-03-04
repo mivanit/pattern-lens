@@ -228,21 +228,19 @@ def test_save_matrix_as_svgz_wrapper_content():
 		assert "base64" in content
 
 
-def test_matplotlib_figure_saver_formats():
+@pytest.mark.parametrize("fmt", ["png", "pdf", "svg"])
+def test_matplotlib_figure_saver_formats(fmt):
 	TEMP_DIR.mkdir(parents=True, exist_ok=True)
-	formats = ["png", "pdf", "svg"]
 
-	for fmt in formats:
+	@matplotlib_figure_saver(fmt=fmt)
+	def plot_matrix(attn_matrix, ax):
+		ax.matshow(attn_matrix)
+		ax.axis("off")
 
-		@matplotlib_figure_saver(fmt=fmt)
-		def plot_matrix(attn_matrix, ax):
-			ax.matshow(attn_matrix)
-			ax.axis("off")
-
-		matrix = np.random.rand(5, 5)
-		plot_matrix(matrix, TEMP_DIR)
-		saved_file = TEMP_DIR / f"plot_matrix.{fmt}"
-		assert saved_file.exists(), f"File not saved for format {fmt}"
+	matrix = np.random.rand(5, 5)
+	plot_matrix(matrix, TEMP_DIR)
+	saved_file = TEMP_DIR / f"plot_matrix.{fmt}"
+	assert saved_file.exists(), f"File not saved for format {fmt}"
 
 
 def test_matrix_as_svg_empty():
