@@ -1340,20 +1340,18 @@ dep-clean:
 # checks (formatting/linting, typing, tests)
 # ==================================================
 
-# runs ruff and pycln to format the code
+# runs ruff to format the code
 .PHONY: format
 format:
 	@echo "format the source code"
 	$(PYTHON) -m ruff format --config $(PYPROJECT) .
 	$(PYTHON) -m ruff check --fix --config $(PYPROJECT) .
-	$(PYTHON) -m pycln --config $(PYPROJECT) --all .
 
 # runs ruff and pycln to check if the code is formatted correctly
 .PHONY: format-check
 format-check:
 	@echo "check if the source code is formatted correctly"
 	$(PYTHON) -m ruff check --config $(PYPROJECT) .
-	$(PYTHON) -m pycln --check --config $(PYPROJECT) .
 
 # runs type checks with mypy
 .PHONY: typing

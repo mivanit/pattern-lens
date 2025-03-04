@@ -60,7 +60,6 @@ jupyterlab-pygments==0.3.0
 jupyterlab-widgets==3.0.13
 kiwisolver==1.4.8
 lib-detect-testenv==2.0.8
-libcst==1.6.0
 lmcat==0.2.0
 markdown-it-py==3.0.0
 markupsafe==3.0.2
@@ -97,7 +96,6 @@ packaging==24.2
 pandas==2.2.3
 pandocfilters==1.5.1
 parso==0.8.4
-pathspec==0.12.1
 pdoc==15.0.1
 pexpect==4.9.0 ; sys_platform != 'emscripten' and sys_platform != 'win32'
 pillow==11.1.0
@@ -110,7 +108,6 @@ psutil==7.0.0
 ptyprocess==0.7.0 ; sys_platform != 'emscripten' and sys_platform != 'win32'
 pure-eval==0.2.3
 pyarrow==19.0.1
-pycln==2.5.0
 pycparser==2.22 ; implementation_name == 'pypy'
 pydantic==2.10.6
 pydantic-core==2.27.2
@@ -135,7 +132,6 @@ sentencepiece==0.2.0
 sentry-sdk==2.22.0
 setproctitle==1.3.5
 setuptools==75.8.2
-shellingham==1.5.4
 six==1.17.0
 smmap==5.0.2
 soupsieve==2.6
@@ -144,7 +140,6 @@ sympy==1.13.1
 tinycss2==1.4.0
 tokenizers==0.21.0
 tomli==2.2.1 ; python_full_version <= '3.11'
-tomlkit==0.13.2
 torch==2.6.0
 tornado==6.4.2
 tqdm==4.67.1
@@ -154,7 +149,6 @@ transformers==4.49.0
 transformers-stream-generator==0.0.5
 triton==3.2.0 ; platform_machine == 'x86_64' and sys_platform == 'linux'
 typeguard==4.4.2
-typer==0.15.2
 types-requests==2.32.0.20250301
 types-tqdm==4.67.0.20250301
 typing-extensions==4.12.2
