@@ -230,8 +230,8 @@ def compute_activations(  # noqa: PLR0915
 		)
 		# check shape
 		pattern_shape_no_ctx: tuple[int, int, int] = tuple(patterns_stacked.shape[:3])
-		assert pattern_shape_no_ctx == (n_layers, model.cfg.n_heads), (
-			f"unexpected shape: {patterns_stacked.shape[:3] = } ({pattern_shape_no_ctx = }), expected {(1, n_layers, model.cfg.n_heads)}"
+		assert pattern_shape_no_ctx == (1, n_layers, model.cfg.n_heads), (
+			f"unexpected shape: {patterns_stacked.shape[:3] = } ({pattern_shape_no_ctx = }), expected {(1, n_layers, model.cfg.n_heads) = }"
 		)
 
 		patterns_stacked_np: Float[np.ndarray, "n_layers n_heads n_ctx n_ctx"] = (
