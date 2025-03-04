@@ -123,27 +123,35 @@ def test_server_cli():
 	"""Test the server command line interface."""
 	test_args = [
 		"pattern_lens.server",
-		"--path",
-		"custom_path",
 		"--port",
 		"8080",
+		"--path",
+		"test_path",
 		"--rewrite-index",
 	]
 
 	with (
 		mock.patch.object(sys, "argv", test_args),
-		mock.patch("pattern_lens.server.main") as mock_server_main,
 		mock.patch("pattern_lens.server.write_html_index") as mock_write_html,
+		mock.patch("os.chdir") as mock_chdir,
+		mock.patch("socketserver.TCPServer") as mock_server,
 	):
-		# Mock to prevent actual server startup
-		mock_server_main.side_effect = KeyboardInterrupt()
+		# Set up the mock server to raise KeyboardInterrupt when serve_forever is called
+		mock_server_instance = mock_server.return_value.__enter__.return_value
+		mock_server_instance.serve_forever.side_effect = KeyboardInterrupt()
 
-		# Call main with the test arguments
-		with pytest.raises(KeyboardInterrupt):
-			server_main(None)
+		# Call server_main
+		with pytest.raises(SystemExit):
+			server_main()
 
 		# Check that write_html_index was called
 		mock_write_html.assert_called_once()
 
-		# Check that server_main was called with the right arguments
-		mock_server_main.assert_called_once_with(path="custom_path", port=8080)
+		# Check that chdir was called with the right path
+		mock_chdir.assert_called_once_with("test_path")
+
+		# Check that server was started with the right port
+		mock_server.assert_called_once_with(("", 8080), mock.ANY)
+
+		# Check that serve_forever was called
+		mock_server_instance.serve_forever.assert_called_once()

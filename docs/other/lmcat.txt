@@ -1,45 +1,48 @@
 # Stats
-- 24 files
-- 5581 (5.6K) lines
-- 204771 (205K) chars
-- 93760 (94K) `gpt2` tokens
+- 27 files
+- 6082 (6.1K) lines
+- 220215 (220K) chars
+- 99602 (100K) `gpt2` tokens
 
 # File Tree
 
 ```
-pattern-lens                       
-├── .github                        
-│   └── workflows                  
-│    └── checks.yml                [   85L  1,688C    844T]
-├── data                           
-│   └── pile_5.jsonl               [    5L 22,124C  6,858T]
-├── pattern_lens                   
-│   ├── frontend                   
-│   │   └── index.html             [1,733L 71,573C 43,359T]
-│   ├── __init__.py                [   13L    180C     83T]
-│   ├── activations.py             [  656L 18,382C  7,070T]
-│   ├── attn_figure_funcs.py       [  118L  3,127C  1,159T]
-│   ├── consts.py                  [   37L  1,093C    354T]
-│   ├── figure_util.py             [  509L 16,600C  6,139T]
-│   ├── figures.py                 [  356L 10,398C  3,894T]
-│   ├── indexes.py                 [  147L  4,398C  1,683T]
-│   ├── load_activations.py        [  167L  4,270C  1,579T]
-│   ├── prompts.py                 [   82L  1,721C    743T]
-│   ├── py.typed                   [    0L      0C      0T]
-│   └── server.py                  [   58L  1,334C    479T]
-├── tests                          
-│   ├── integration                
-│   │   └── test_pipeline.py       [   38L    835C    385T]
-│   └── unit                       
-│    ├── test_activations.py       [  176L  4,876C  1,835T]
-│    ├── test_figure_util.py       [  292L  8,530C  3,491T]
-│    ├── test_figures.py           [  156L  4,655C  1,772T]
-│    ├── test_load_activations.py  [  137L  3,809C  1,366T]
-│    └── test_server.py            [   35L  1,234C    415T]
-├── README.md                      [  106L  3,862C  1,295T]
-├── demo.ipynb                     [  165L  4,787C  2,343T]
-├── makefile                       [1,669L 50,890C 19,621T]
-├── pyproject.toml                 [  223L  7,116C  3,718T]
+pattern-lens                         
+├── .github                          
+│   └── workflows                    
+│    └── checks.yml                  [   86L  1,715C    862T]
+├── data                             
+│   └── pile_5.jsonl                 [    5L 22,124C  6,858T]
+├── pattern_lens                     
+│   ├── frontend                     
+│   │   └── index.html               [1,733L 71,573C 43,359T]
+│   ├── __init__.py                  [   13L    180C     83T]
+│   ├── activations.py               [  656L 18,377C  7,068T]
+│   ├── attn_figure_funcs.py         [  118L  3,127C  1,159T]
+│   ├── consts.py                    [   37L  1,093C    354T]
+│   ├── figure_util.py               [  509L 16,600C  6,139T]
+│   ├── figures.py                   [  357L 10,461C  3,916T]
+│   ├── indexes.py                   [  147L  4,398C  1,683T]
+│   ├── load_activations.py          [  167L  4,270C  1,579T]
+│   ├── prompts.py                   [   82L  1,721C    743T]
+│   ├── py.typed                     [    0L      0C      0T]
+│   └── server.py                    [   59L  1,372C    493T]
+├── tests                            
+│   ├── integration                  
+│   │   ├── test_clis.py             [  154L  4,163C  1,621T]
+│   │   └── test_pipeline.py         [   38L    835C    385T]
+│   └── unit                         
+│    ├── test_activations.py         [  176L  4,876C  1,835T]
+│    ├── test_activations_return.py  [  205L  6,032C  2,250T]
+│    ├── test_figure_util.py         [  290L  8,525C  3,490T]
+│    ├── test_figures.py             [  156L  4,655C  1,772T]
+│    ├── test_load_activations.py    [  137L  3,809C  1,366T]
+│    ├── test_multifig.py            [  125L  4,524C  1,581T]
+│    └── test_server.py              [   35L  1,234C    415T]
+├── README.md                        [  106L  3,862C  1,295T]
+├── demo.ipynb                       [  165L  4,787C  2,343T]
+├── makefile                         [1,669L 50,890C 19,621T]
+├── pyproject.toml                   [  224L  7,145C  3,738T]
 ```
 
 # File Contents
@@ -63,6 +66,7 @@ jobs:
     strategy:
       matrix:
         versions:
+          - python: "3.11"
           - python: "3.12"
           - python: "3.13"
     steps:
@@ -2125,7 +2129,7 @@ def compute_activations(  # noqa: PLR0915
 			torch.stack([cache_torch[k] for k in head_keys], dim=1)
 		)
 		# check shape
-		pattern_shape_no_ctx: tuple[int, int, int] = tuple(patterns_stacked.shape[:3])
+		pattern_shape_no_ctx: tuple[int, ...] = tuple(patterns_stacked.shape[:3])
 		assert pattern_shape_no_ctx == (1, n_layers, model.cfg.n_heads), (
 			f"unexpected shape: {patterns_stacked.shape[:3] = } ({pattern_shape_no_ctx = }), expected {(1, n_layers, model.cfg.n_heads) = }"
 		)
@@ -3286,7 +3290,8 @@ class HTConfigMock:
 
 	def serialize(self) -> dict:
 		"""serialize the config to json. values which aren't serializable will be converted via `muutils.json_serialize.json_serialize`"""
-		return json_serialize(self.__dict__)
+		# its fine, we know its a dict
+		return json_serialize(self.__dict__)  # type: ignore[return-value]
 
 	@classmethod
 	def load(cls, data: dict) -> "HTConfigMock":
@@ -4018,9 +4023,10 @@ from pathlib import Path
 from pattern_lens.indexes import write_html_index
 
 
-def main(path: str, port: int = 8000) -> None:
+def main(path: str | None = None, port: int = 8000) -> None:
 	"move to the given path and start the server"
-	os.chdir(path)
+	if path is not None:
+		os.chdir(path)
 	try:
 		with socketserver.TCPServer(
 			("", port),
@@ -4040,7 +4046,7 @@ if __name__ == "__main__":
 		type=str,
 		required=False,
 		help="The path to serve, defaults to the current directory",
-		default=".",
+		default=None,
 	)
 	arg_parser.add_argument(
 		"--port",
@@ -4062,6 +4068,164 @@ if __name__ == "__main__":
 	main(path=args.path, port=args.port)
 
 ``````{ end_of_file="pattern_lens/server.py" }
+
+``````{ path="tests/integration/test_clis.py"  }
+import sys
+from unittest import mock
+
+from pattern_lens.activations import main as activations_main
+from pattern_lens.figures import main as figures_main
+from pattern_lens.server import main as server_main
+
+
+def test_activations_cli():
+	"""Test the activations command line interface."""
+	test_args = [
+		"pattern_lens.activations",
+		"--model",
+		"gpt2",
+		"--prompts",
+		"test_prompts.jsonl",
+		"--save-path",
+		"test_data",
+		"--min-chars",
+		"100",
+		"--max-chars",
+		"1000",
+		"--n-samples",
+		"5",
+		"--force",
+		"--raw-prompts",
+		"--shuffle",
+		"--device",
+		"cpu",
+	]
+
+	with (
+		mock.patch.object(sys, "argv", test_args),
+		mock.patch(
+			"pattern_lens.activations.activations_main",
+		) as mock_activations_main,
+	):
+		# Mock SpinnerContext to prevent actual spinner during tests
+		with mock.patch("pattern_lens.activations.SpinnerContext"):
+			activations_main()
+
+		# Check that activations_main was called with the right arguments
+		mock_activations_main.assert_called_once()
+		args, kwargs = mock_activations_main.call_args
+
+		assert kwargs["model_name"] == "gpt2"
+		assert kwargs["prompts_path"] == "test_prompts.jsonl"
+		assert kwargs["save_path"] == "test_data"
+		assert kwargs["min_chars"] == 100
+		assert kwargs["max_chars"] == 1000
+		assert kwargs["n_samples"] == 5
+		assert kwargs["force"] is True
+		assert kwargs["raw_prompts"] is True
+		assert kwargs["shuffle"] is True
+		assert kwargs["device"] == "cpu"
+
+
+def test_figures_cli():
+	"""Test the figures command line interface."""
+	test_args = [
+		"pattern_lens.figures",
+		"--model",
+		"gpt2",
+		"--save-path",
+		"test_data",
+		"--n-samples",
+		"5",
+		"--force",
+		"True",
+	]
+
+	with (
+		mock.patch.object(sys, "argv", test_args),
+		mock.patch("pattern_lens.figures.figures_main") as mock_figures_main,
+	):
+		# Mock SpinnerContext to prevent actual spinner during tests
+		with mock.patch("pattern_lens.figures.SpinnerContext"):
+			figures_main()
+
+		# Check that figures_main was called with the right arguments
+		mock_figures_main.assert_called_once()
+		args, kwargs = mock_figures_main.call_args
+
+		assert kwargs["model_name"] == "gpt2"
+		assert kwargs["save_path"] == "test_data"
+		assert kwargs["n_samples"] == 5
+		assert kwargs["force"] is True
+
+
+def test_figures_cli_with_multiple_models():
+	"""Test the figures command line interface with multiple models."""
+	test_args = [
+		"pattern_lens.figures",
+		"--model",
+		"gpt2,pythia-70m",
+		"--save-path",
+		"test_data",
+	]
+
+	with (
+		mock.patch.object(sys, "argv", test_args),
+		mock.patch("pattern_lens.figures.figures_main") as mock_figures_main,
+	):
+		# Mock SpinnerContext to prevent actual spinner during tests
+		with mock.patch("pattern_lens.figures.SpinnerContext"):
+			figures_main()
+
+		# Check that figures_main was called for each model
+		assert mock_figures_main.call_count == 2
+
+		# First call should be for gpt2
+		args1, kwargs1 = mock_figures_main.call_args_list[0]
+		assert kwargs1["model_name"] == "gpt2"
+
+		# Second call should be for pythia-70m
+		args2, kwargs2 = mock_figures_main.call_args_list[1]
+		assert kwargs2["model_name"] == "pythia-70m"
+
+
+def test_server_cli():
+	"""Test the server command line interface."""
+	test_args = [
+		"pattern_lens.server",
+		"--port",
+		"8080",
+		"--path",
+		"test_path",
+		"--rewrite-index",
+	]
+
+	with (
+		mock.patch.object(sys, "argv", test_args),
+		mock.patch("pattern_lens.server.write_html_index") as mock_write_html,
+		mock.patch("os.chdir") as mock_chdir,
+		mock.patch("socketserver.TCPServer") as mock_server,
+	):
+		# Set up the mock server to raise KeyboardInterrupt when serve_forever is called
+		mock_server_instance = mock_server.return_value.__enter__.return_value
+		mock_server_instance.serve_forever.side_effect = KeyboardInterrupt()
+
+		# Call server_main
+		server_main()
+
+		# Check that write_html_index was called
+		mock_write_html.assert_called_once()
+
+		# Check that chdir was called with the right path
+		mock_chdir.assert_called_once_with("test_path")
+
+		# Check that server was started with the right port
+		mock_server.assert_called_once_with(("", 8080), mock.ANY)
+
+		# Check that serve_forever was called
+		mock_server_instance.serve_forever.assert_called_once()
+
+``````{ end_of_file="tests/integration/test_clis.py" }
 
 ``````{ path="tests/integration/test_pipeline.py"  }
 import pytest
@@ -4284,6 +4448,215 @@ def test_get_activations_missing():
 		assert kwargs["return_cache"] == "numpy"
 
 ``````{ end_of_file="tests/unit/test_activations.py" }
+
+``````{ path="tests/unit/test_activations_return.py"  }
+# tests/unit/test_activations_return.py
+import tempfile
+from pathlib import Path
+from unittest import mock
+
+import pytest
+import torch
+
+from pattern_lens.activations import compute_activations, get_activations
+
+
+class MockHookedTransformer:
+	"""Mock of HookedTransformer for testing compute_activations and get_activations."""
+
+	def __init__(self, model_name="test-model", n_layers=2, n_heads=2):
+		self.model_name = model_name
+		self.cfg = mock.MagicMock()
+		self.cfg.n_layers = n_layers
+		self.cfg.n_heads = n_heads
+		self.tokenizer = mock.MagicMock()
+		self.tokenizer.tokenize.return_value = ["test", "tokens"]
+
+	def eval(self):
+		return self
+
+	def run_with_cache(self, prompt_str, names_filter=None, return_type=None):  # noqa: ARG002
+		"""Mock run_with_cache to return fake attention patterns."""
+		# Create a mock activation cache with appropriately shaped attention patterns
+		cache = {}
+		for i in range(self.cfg.n_layers):
+			# [1, n_heads, n_ctx, n_ctx] tensor, where n_ctx is len(prompt_str)
+			n_ctx = len(prompt_str)
+			attn_pattern = torch.rand(
+				1,
+				self.cfg.n_heads,
+				n_ctx,
+				n_ctx,
+			).float()
+			cache[f"blocks.{i}.attn.hook_pattern"] = attn_pattern
+
+		return None, cache
+
+
+def test_compute_activations_torch_return():
+	"""Test compute_activations with return_cache="torch"."""
+	# Setup
+	temp_dir = Path(tempfile.mkdtemp())
+	model = MockHookedTransformer(n_layers=3, n_heads=4)
+	prompt = {"text": "test prompt", "hash": "testhash123"}
+
+	# Test with stack_heads=True
+	path, result = compute_activations(
+		prompt=prompt,
+		model=model,
+		save_path=temp_dir,
+		return_cache="torch",
+		stack_heads=True,
+	)
+
+	# Check return values
+	assert isinstance(result, torch.Tensor)
+	assert result.shape == (
+		1,
+		model.cfg.n_layers,
+		model.cfg.n_heads,
+		len(prompt["text"]),
+		len(prompt["text"]),
+	)
+
+	# Test with stack_heads=False
+	path, result = compute_activations(
+		prompt=prompt,
+		model=model,
+		save_path=temp_dir,
+		return_cache="torch",
+		stack_heads=False,
+	)
+
+	# Check return values
+	assert isinstance(result, dict)
+	for i in range(model.cfg.n_layers):
+		key = f"blocks.{i}.attn.hook_pattern"
+		assert key in result
+		assert isinstance(result[key], torch.Tensor)
+
+
+def test_compute_activations_invalid_return():
+	"""Test compute_activations with an invalid return_cache value."""
+	# Setup
+	temp_dir = Path(tempfile.mkdtemp())
+	model = MockHookedTransformer()
+	prompt = {"text": "test prompt", "hash": "testhash123"}
+
+	# Test with an invalid return_cache value
+	with pytest.raises(ValueError, match="invalid return_cache"):
+		compute_activations(
+			prompt=prompt,
+			model=model,
+			save_path=temp_dir,
+			return_cache="invalid",  # Invalid value
+			stack_heads=True,
+		)
+
+
+def test_get_activations_torch_return():
+	"""Test get_activations with return_cache="torch" and mocked load_activations."""
+	temp_dir = Path(tempfile.mkdtemp())
+	prompt = {"text": "test prompt", "hash": "testhash123"}
+	model = MockHookedTransformer(model_name="test-model")
+
+	# Create a mock for load_activations that returns torch tensors
+	with mock.patch("pattern_lens.activations.load_activations") as mock_load:
+		mock_cache = {
+			"blocks.0.attn.hook_pattern": torch.rand(
+				1,
+				2,
+				len(prompt["text"]),
+				len(prompt["text"]),
+			),
+			"blocks.1.attn.hook_pattern": torch.rand(
+				1,
+				2,
+				len(prompt["text"]),
+				len(prompt["text"]),
+			),
+		}
+		mock_load.return_value = (Path("mock/path"), mock_cache)
+
+		# Call get_activations with torch return format
+		path, cache = get_activations(
+			prompt=prompt,
+			model=model,
+			save_path=temp_dir,
+			return_cache="torch",
+		)
+
+		# Check that we got torch tensors back
+		assert isinstance(cache, dict)
+		for key, value in cache.items():
+			assert isinstance(key, str)
+			assert isinstance(value, torch.Tensor)
+
+
+def test_get_activations_none_return():
+	"""Test get_activations with return_cache=None."""
+	temp_dir = Path(tempfile.mkdtemp())
+	prompt = {"text": "test prompt", "hash": "testhash123"}
+	model = MockHookedTransformer(model_name="test-model")
+
+	# Create a mock for load_activations that returns a path but no cache
+	with mock.patch("pattern_lens.activations.load_activations") as mock_load:
+		mock_path = Path("mock/path")
+		mock_load.return_value = (mock_path, {})  # Cache will be ignored
+
+		# Call get_activations with None return format
+		path, cache = get_activations(
+			prompt=prompt,
+			model=model,
+			save_path=temp_dir,
+			return_cache=None,
+		)
+
+		# Check that we got the path but no cache
+		assert path == mock_path
+		assert cache is None
+
+
+def test_get_activations_compute_device():
+	"""Test that get_activations correctly handles device for computing activations."""
+	temp_dir = Path(tempfile.mkdtemp())
+	prompt = {"text": "test prompt", "hash": "testhash123"}
+
+	# Use a mock HookedTransformer.from_pretrained
+	with mock.patch("pattern_lens.activations.HookedTransformer") as mock_ht:
+		# Configure the mock to simulate compute_activations
+		mock_model = MockHookedTransformer(model_name="gpt2")
+		mock_ht.from_pretrained.return_value = mock_model
+
+		# Also mock load_activations to raise ActivationsMissingError
+		with mock.patch("pattern_lens.activations.load_activations") as mock_load:
+			from pattern_lens.load_activations import ActivationsMissingError
+
+			mock_load.side_effect = ActivationsMissingError("Not found")
+
+			# Mock compute_activations to return a simple result
+			with mock.patch(
+				"pattern_lens.activations.compute_activations",
+			) as mock_compute:
+				mock_compute.return_value = (Path("mock/path"), {})
+
+				# Call get_activations with a string model name
+				get_activations(
+					prompt=prompt,
+					model="gpt2",
+					save_path=temp_dir,
+					allow_disk_cache=True,
+				)
+
+				# Check that from_pretrained was called with the right model name
+				mock_ht.from_pretrained.assert_called_once_with("gpt2")
+
+				# Check that compute_activations was called with the model instance
+				mock_compute.assert_called_once()
+				args, kwargs = mock_compute.call_args
+				assert kwargs["model"] == mock_model
+
+``````{ end_of_file="tests/unit/test_activations_return.py" }
 
 ``````{ path="tests/unit/test_figure_util.py"  }
 import base64
@@ -4516,21 +4889,19 @@ def test_save_matrix_as_svgz_wrapper_content():
 		assert "base64" in content
 
 
-def test_matplotlib_figure_saver_formats():
+@pytest.mark.parametrize("fmt", ["png", "pdf", "svg"])
+def test_matplotlib_figure_saver_formats(fmt):
 	TEMP_DIR.mkdir(parents=True, exist_ok=True)
-	formats = ["png", "pdf", "svg"]
 
-	for fmt in formats:
+	@matplotlib_figure_saver(fmt=fmt)
+	def plot_matrix(attn_matrix, ax):
+		ax.matshow(attn_matrix)
+		ax.axis("off")
 
-		@matplotlib_figure_saver(fmt=fmt)
-		def plot_matrix(attn_matrix, ax):
-			ax.matshow(attn_matrix)
-			ax.axis("off")
-
-		matrix = np.random.rand(5, 5)
-		plot_matrix(matrix, TEMP_DIR)
-		saved_file = TEMP_DIR / f"plot_matrix.{fmt}"
-		assert saved_file.exists(), f"File not saved for format {fmt}"
+	matrix = np.random.rand(5, 5)
+	plot_matrix(matrix, TEMP_DIR)
+	saved_file = TEMP_DIR / f"plot_matrix.{fmt}"
+	assert saved_file.exists(), f"File not saved for format {fmt}"
 
 
 def test_matrix_as_svg_empty():
@@ -4881,6 +5252,135 @@ def test_load_activations_errors():
 		)
 
 ``````{ end_of_file="tests/unit/test_load_activations.py" }
+
+``````{ path="tests/unit/test_multifig.py"  }
+import tempfile
+from pathlib import Path
+
+import matplotlib.pyplot as plt
+import numpy as np
+
+from pattern_lens.figure_util import matplotlib_multifigure_saver
+
+
+def test_matplotlib_multifigure_saver():
+	"""Test the matplotlib_multifigure_saver decorator."""
+	# Create a temporary directory for saving figures
+	temp_dir = Path(tempfile.mkdtemp())
+
+	# Define a test function with the decorator
+	@matplotlib_multifigure_saver(names=["hist", "heatmap"])
+	def multi_plot(attn_matrix, axes_dict):
+		# Plot histogram
+		axes_dict["hist"].hist(attn_matrix.flatten(), bins=30)
+		axes_dict["hist"].set_title("Attention Values Histogram")
+
+		# Plot heatmap
+		im = axes_dict["heatmap"].matshow(attn_matrix, cmap="viridis")  # noqa: F841
+		axes_dict["heatmap"].set_title("Attention Heatmap")
+
+	# Generate a test attention matrix
+	attn_matrix = np.random.rand(10, 10).astype(np.float32)
+
+	# Call the decorated function
+	multi_plot(attn_matrix, temp_dir)
+
+	# Check that both figures were saved
+	hist_file = temp_dir / "multi_plot.hist.svgz"
+	heatmap_file = temp_dir / "multi_plot.heatmap.svgz"
+
+	assert hist_file.exists(), "Histogram figure file was not saved"
+	assert heatmap_file.exists(), "Heatmap figure file was not saved"
+
+	# Check that figure_save_fmt attribute was set correctly
+	assert hasattr(multi_plot, "figure_save_fmt")
+	assert multi_plot.figure_save_fmt == "svgz"
+
+
+def test_matplotlib_multifigure_saver_custom_format():
+	"""Test the matplotlib_multifigure_saver decorator with a custom format."""
+	# Create a temporary directory for saving figures
+	temp_dir = Path(tempfile.mkdtemp())
+
+	# Define a test function with the decorator and custom format
+	@matplotlib_multifigure_saver(names=["plot1", "plot2"], fmt="png")
+	def multi_plot_png(attn_matrix, axes_dict):
+		# Simple plots for each axis
+		axes_dict["plot1"].plot(attn_matrix.mean(axis=0))
+		axes_dict["plot1"].set_title("Mean by Column")
+
+		axes_dict["plot2"].plot(attn_matrix.mean(axis=1))
+		axes_dict["plot2"].set_title("Mean by Row")
+
+	# Generate a test attention matrix
+	attn_matrix = np.random.rand(10, 10).astype(np.float32)
+
+	# Call the decorated function
+	multi_plot_png(attn_matrix, temp_dir)
+
+	# Check that both figures were saved with the custom format
+	plot1_file = temp_dir / "multi_plot_png.plot1.png"
+	plot2_file = temp_dir / "multi_plot_png.plot2.png"
+
+	assert plot1_file.exists(), "Plot1 figure file was not saved"
+	assert plot2_file.exists(), "Plot2 figure file was not saved"
+
+	# Check that figure_save_fmt attribute was set correctly
+	assert hasattr(multi_plot_png, "figure_save_fmt")
+	assert multi_plot_png.figure_save_fmt == "png"
+
+
+def test_matplotlib_multifigure_saver_error_handling():
+	"""Test error handling in the matplotlib_multifigure_saver decorator."""
+	# Create a temporary directory for saving figures
+	temp_dir = Path(tempfile.mkdtemp())
+
+	# Define a test function that raises an error for one of the plots
+	@matplotlib_multifigure_saver(names=["good_plot", "error_plot"])
+	def plot_with_error(attn_matrix, axes_dict):
+		# This plot should work fine
+		axes_dict["good_plot"].matshow(attn_matrix)
+
+		# This plot will raise an error
+		axes_dict["error_plot"].plot(1 / 0)  # Division by zero
+
+	# Generate a test attention matrix
+	attn_matrix = np.random.rand(10, 10).astype(np.float32)
+
+	# Call the decorated function and expect an error
+	try:
+		plot_with_error(attn_matrix, temp_dir)
+		raise AssertionError("Expected ZeroDivisionError but no exception was raised")
+	except ZeroDivisionError:
+		# Check that the first figure was saved before the error
+		good_plot_file = temp_dir / "plot_with_error.good_plot.svgz"
+		assert good_plot_file.exists(), "Good plot file was not saved before the error"
+
+
+def test_matplotlib_multifigure_saver_cleanup():
+	"""Test that matplotlib_multifigure_saver properly closes figures."""
+	# Create a temporary directory for saving figures
+	temp_dir = Path(tempfile.mkdtemp())
+
+	# Count the number of open figures before the test
+	initial_figures = len(plt.get_fignums())
+
+	# Define a test function with the decorator
+	@matplotlib_multifigure_saver(names=["plot1", "plot2"])
+	def multi_plot_cleanup(attn_matrix, axes_dict):
+		axes_dict["plot1"].plot(attn_matrix[0])
+		axes_dict["plot2"].plot(attn_matrix[1])
+
+	# Generate a test attention matrix
+	attn_matrix = np.random.rand(10, 10).astype(np.float32)
+
+	# Call the decorated function
+	multi_plot_cleanup(attn_matrix, temp_dir)
+
+	# Check that no new figures remain open
+	assert len(plt.get_fignums()) == initial_figures, "Figures were not properly closed"
+
+``````{ end_of_file="tests/unit/test_multifig.py" }
 
 ``````{ path="tests/unit/test_server.py"  }
 # tests/unit/test_server.py
@@ -5366,7 +5866,7 @@ summary:
     version = "0.3.0"
     description = ""
     readme = "README.md"
-    requires-python = ">=3.12"
+    requires-python = ">=3.11"
     dependencies = [
         # standard
         "numpy>=1.26.1,<2.0.0",
@@ -5406,6 +5906,7 @@ summary:
         "types-tqdm",
         # docs
         'pdoc>=14.6.0',
+        "nbconvert>=7.16.4",
         # tomli since no tomlib in python < 3.11
         "tomli>=2.1.0; python_version < '3.11'",
         # lint

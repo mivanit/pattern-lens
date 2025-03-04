@@ -14,7 +14,7 @@ from pathlib import Path
 from pattern_lens.indexes import write_html_index
 
 
-def main(path: str | None, port: int = 8000) -> None:
+def main(path: str | None = None, port: int = 8000) -> None:
 	"move to the given path and start the server"
 	if path is not None:
 		os.chdir(path)

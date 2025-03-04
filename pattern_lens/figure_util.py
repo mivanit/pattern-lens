@@ -162,22 +162,32 @@ def matplotlib_multifigure_saver(
 
 		@functools.wraps(func)
 		def wrapped(attn_matrix: AttentionMatrix, save_dir: Path) -> None:
-			# set up axes
-			axes_dict: dict[str, plt.Axes] = {
-				name: plt.subplots(figsize=(10, 10))[1] for name in names
-			}
-			# run the function, make plots
-			func(attn_matrix, axes_dict)
+			# set up axes and corresponding figures
+			axes_dict: dict[str, plt.Axes] = {}
+			figs_dict: dict[str, plt.Figure] = {}
 
-			# save the figures
-			for name, ax in axes_dict.items():
-				fig_path: Path = save_dir / f"{func_name}.{name}.{fmt}"
-				# TYPING: error: Item "SubFigure" of "Figure | SubFigure" has no attribute "tight_layout"  [union-attr]
-				ax.figure.tight_layout()  # type: ignore[union-attr]
-				# TYPING: error: Item "SubFigure" of "Figure | SubFigure" has no attribute "savefig"  [union-attr]
-				ax.figure.savefig(fig_path)  # type: ignore[union-attr]
-				# TYPING: error: Argument 1 to "close" has incompatible type "Figure | SubFigure"; expected "int | str | Figure | Literal['all'] | None"  [arg-type]
-				plt.close(ax.figure)  # type: ignore[arg-type]
+			# Create all figures and axes
+			for name in names:
+				fig, ax = plt.subplots(figsize=(10, 10))
+				axes_dict[name] = ax
+				figs_dict[name] = fig
+
+			try:
+				# Run the function to make plots
+				func(attn_matrix, axes_dict)
+
+				# Save each figure
+				for name, fig_ in figs_dict.items():
+					fig_path: Path = save_dir / f"{func_name}.{name}.{fmt}"
+					# TYPING: error: Item "SubFigure" of "Figure | SubFigure" has no attribute "tight_layout"  [union-attr]
+					fig_.tight_layout()  # type: ignore[union-attr]
+					# TYPING: error: Item "SubFigure" of "Figure | SubFigure" has no attribute "savefig"  [union-attr]
+					fig_.savefig(fig_path)  # type: ignore[union-attr]
+			finally:
+				# Always clean up figures, even if an error occurred
+				for fig in figs_dict.values():
+					# TYPING: error: Argument 1 to "close" has incompatible type "Figure | SubFigure"; expected "int | str | Figure | Literal['all'] | None"  [arg-type]
+					plt.close(fig)  # type: ignore[arg-type]
 
 		# it doesn't normally have this attribute, but we're adding it
 		wrapped.figure_save_fmt = fmt  # type: ignore[attr-defined]
