@@ -2,7 +2,7 @@
 #| python project makefile template                                 |
 #| originally by Michael Ivanitskiy (mivanits@umich.edu)            |
 #| https://github.com/mivanit/python-project-makefile-template      |
-#| version: v0.3.0                                                  |
+#| version: v0.3.1                                                  |
 #| license: https://creativecommons.org/licenses/by-sa/4.0/         |
 #| modifications from the original should be denoted with `~~~~~`   |
 #| as this makes it easier to find edits when updating makefile     |
@@ -566,6 +566,7 @@ from __future__ import annotations
 import argparse
 import fnmatch
 import json
+import textwrap
 import urllib.parse
 import warnings
 from dataclasses import asdict, dataclass, field
@@ -601,7 +602,7 @@ _TEMPLATE_MD_LIST: str = """\
 ## [`{{ filepath }}`](/{{ filepath }})
 {% for itm in item_list %}
 - {{ itm.stripped_title }}  
-  local link: [`/{{ filepath }}#{{ itm.line_num }}`](/{{ filepath }}#{{ itm.line_num }}) 
+  local link: [`/{{ filepath }}:{{ itm.line_num }}`](/{{ filepath }}#L{{ itm.line_num }}) 
   | view on GitHub: [{{ itm.file }}#L{{ itm.line_num }}]({{ itm.code_url | safe }})
   | [Make Issue]({{ itm.issue_url | safe }})
 {% if itm.context %}
@@ -620,7 +621,7 @@ _TEMPLATE_MD_TABLE: str = """\
 
 | Location | Tag | Todo | GitHub | Issue |
 |:---------|:----|:-----|:-------|:------|
-{% for itm in all_items %}| [`{{ itm.file }}#{{ itm.line_num }}`](/{{ itm.file }}#{{ itm.line_num }}) | {{ itm.tag }} | {{ itm.stripped_title }} | [View]({{ itm.code_url | safe }}) | [Create]({{ itm.issue_url | safe }}) |
+{% for itm in all_items %}| [`{{ itm.file }}:{{ itm.line_num }}`](/{{ itm.file }}#L{{ itm.line_num }}) | {{ itm.tag }} | {{ itm.stripped_title_escaped }} | [View]({{ itm.code_url | safe }}) | [Create]({{ itm.issue_url | safe }}) |
 {% endfor %}
 """
 
@@ -793,7 +794,8 @@ class TodoItem:
 	@property
 	def context_indented(self) -> str:
 		"""Returns the context with each line indented"""
-		return "\n".join(f"  {line}" for line in self.context.splitlines())
+		dedented: str = textwrap.dedent(self.context)
+		return textwrap.indent(dedented, "  ")
 
 	@property
 	def code_url(self) -> str:
@@ -807,6 +809,11 @@ class TodoItem:
 	def stripped_title(self) -> str:
 		"""Returns the title of the issue, stripped of the tag"""
 		return self.content.split(self.tag, 1)[-1].lstrip(":").strip()
+
+	@property
+	def stripped_title_escaped(self) -> str:
+		"""Returns the title of the issue, stripped of the tag and escaped for markdown"""
+		return self.stripped_title.replace("|", "\\|")
 
 	@property
 	def issue_url(self) -> str:
