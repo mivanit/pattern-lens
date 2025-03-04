@@ -232,7 +232,7 @@ def test_save_matrix_as_svgz_wrapper_content():
 def test_matplotlib_figure_saver_formats(fmt):
 	TEMP_DIR.mkdir(parents=True, exist_ok=True)
 
-	@matplotlib_figure_saver(fmt=fmt)
+	@matplotlib_figure_saver(None, fmt=fmt)
 	def plot_matrix(attn_matrix, ax):
 		ax.matshow(attn_matrix)
 		ax.axis("off")

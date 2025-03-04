@@ -4,6 +4,7 @@ from unittest import mock
 
 import pytest
 import torch
+from transformer_lens import HookedTransformer
 
 from pattern_lens.activations import compute_activations, get_activations
 
@@ -89,7 +90,7 @@ def test_compute_activations_invalid_return():
 	"""Test compute_activations with an invalid return_cache value."""
 	# Setup
 	temp_dir = TEMP_DIR / "test_compute_activations_invalid_return"
-	model = MockHookedTransformer()
+	model = HookedTransformer.from_pretrained("pythia-14m")
 	prompt = {"text": "test prompt", "hash": "testhash123"}
 
 	# Test with an invalid return_cache value
