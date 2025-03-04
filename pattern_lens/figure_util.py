@@ -54,13 +54,9 @@ MATRIX_SAVE_SVG_TEMPLATE: str = """<svg xmlns="http://www.w3.org/2000/svg" width
 @overload  # without keyword arguments, returns decorated function
 def matplotlib_figure_saver(
 	func: Callable[[AttentionMatrix, plt.Axes], None],
-	*args: tuple[()],
-	fmt: str = MATPLOTLIB_FIGURE_FMT,
 ) -> AttentionMatrixFigureFunc: ...
 @overload  # with keyword arguments, returns decorator
 def matplotlib_figure_saver(
-	func: None = None,
-	*args: tuple[()],
 	fmt: str = MATPLOTLIB_FIGURE_FMT,
 ) -> Callable[
 	[Callable[[AttentionMatrix, plt.Axes], None], str],

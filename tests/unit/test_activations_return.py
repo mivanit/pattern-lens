@@ -4,7 +4,7 @@ from unittest import mock
 
 import pytest
 import torch
-from transformer_lens import HookedTransformer
+from transformer_lens import HookedTransformer  # type: ignore[import-untyped]
 
 from pattern_lens.activations import compute_activations, get_activations
 
@@ -99,7 +99,8 @@ def test_compute_activations_invalid_return():
 			prompt=prompt,
 			model=model,
 			save_path=temp_dir,
-			return_cache="invalid",  # Invalid value
+			# intentionally invalid
+			return_cache="invalid",  # type: ignore[call-overload]
 			stack_heads=True,
 		)
 

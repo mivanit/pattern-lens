@@ -3,7 +3,7 @@ from unittest import mock
 
 import numpy as np
 import torch
-from transformer_lens import HookedTransformer
+from transformer_lens import HookedTransformer  # type: ignore[import-untyped]
 
 from pattern_lens.activations import compute_activations, get_activations
 from pattern_lens.load_activations import ActivationsMissingError
