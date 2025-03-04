@@ -83,7 +83,7 @@
                 "D403", # first-word-uncapitalized
                 "D206", # docstring-tab-indentation
                 "ERA001", # commented-out-code
-                "T201", # print is fine lmao
+                "T201", # print is fine
                 "C408", # calling dict() is fine
                 "UP015", # we like specifying the mode even if it's the default
                 "D300", # we like docstrings
@@ -101,9 +101,9 @@
                 "D203", # docstring right after the class
                 "D213", # docstring on first line
                 "NPY002", # legacy numpy generator is fine
-                "D401", # dont care about imperative mood
+                "D401", # don't care about imperative mood
                 # todos:
-                "TD002", # dont care about author
+                "TD002", # don't care about author
                 "TD003", # `make todo` will give us a table where we can create issues
                 "PLR0913", # sometimes you have to have a lot of args
             ]
@@ -112,11 +112,11 @@
 
             [tool.ruff.lint.per-file-ignores]
                 "tests/*" = [
-                    # dont need docstrings in test functions or modules
+                    # don't need docstrings in test functions or modules
                     "D103", 
                     "D100",
-                    "INP001", # dont need __init__ either
-                    # dont need type annotations in test functions
+                    "INP001", # don't need __init__ either
+                    # don't need type annotations in test functions
                     "ANN001",
                     "ANN201", 
                     "ANN202",
@@ -124,7 +124,7 @@
                 ]
                 "docs/*" = ["ALL"] # not our problem
                 "**/*.ipynb" = [
-                    "D103", # dont need docstrings
+                    "D103", # don't need docstrings
                     "PLR2004", # magic variables are fine
                     "N806", # uppercase vars are fine
                 ]
@@ -134,7 +134,7 @@
             skip-magic-trailing-comma = false
 
     [tool.pytest.ini_options]
-        addopts = "--jaxtyping-packages=pattern_lens,beartype.beartype"
+        adopts = "--jaxtyping-packages=pattern_lens,beartype.beartype"
         filterwarnings = [
             "ignore: PEP 484 type hint*:beartype.roar._roarwarn.BeartypeDecorHintPep585DeprecationWarning",
         ]
@@ -200,7 +200,7 @@
 # configures `make todo`
 [tool.makefile.inline-todo]
 	search_dir = "."
-	out_file = "docs/other/todo-inline.md"
+	out_file_base = "docs/other/todo-inline.md"
 	context_lines = 2
 	extensions = ["py", "md"]
 	tags = ["CRIT", "TODO", "FIXME", "HACK", "BUG", "DOC", "TYPING"]

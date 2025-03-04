@@ -1,8 +1,8 @@
 # Stats
 - 20 files
-- 4923 (4.9K) lines
-- 184402 (184K) chars
-- 85576 (86K) `gpt2` tokens
+- 5050 (5.0K) lines
+- 189009 (189K) chars
+- 87686 (88K) `gpt2` tokens
 
 # File Tree
 
@@ -16,26 +16,26 @@ pattern-lens
 ├── pattern_lens              
 │   ├── frontend              
 │   │   └── index.html        [1,733L 71,573C 43,359T]
-│   ├── __init__.py           [    3L     34C     14T]
-│   ├── activations.py        [  643L 18,187C  7,000T]
-│   ├── attn_figure_funcs.py  [  116L  3,063C  1,157T]
+│   ├── __init__.py           [   13L    180C     83T]
+│   ├── activations.py        [  655L 18,249C  7,010T]
+│   ├── attn_figure_funcs.py  [  118L  3,127C  1,159T]
 │   ├── consts.py             [   37L  1,093C    354T]
-│   ├── figure_util.py        [  482L 15,371C  5,756T]
-│   ├── figures.py            [  348L 10,163C  3,804T]
-│   ├── indexes.py            [  141L  4,230C  1,609T]
-│   ├── load_activations.py   [  162L  4,190C  1,536T]
-│   ├── prompts.py            [   81L  1,739C    747T]
+│   ├── figure_util.py        [  508L 16,513C  6,104T]
+│   ├── figures.py            [  356L 10,398C  3,894T]
+│   ├── indexes.py            [  147L  4,398C  1,683T]
+│   ├── load_activations.py   [  167L  4,270C  1,579T]
+│   ├── prompts.py            [   82L  1,721C    743T]
 │   ├── py.typed              [    0L      0C      0T]
-│   └── server.py             [   55L  1,275C    457T]
+│   └── server.py             [   58L  1,334C    479T]
 ├── tests                     
 │   ├── integration           
 │   │   └── test_pipeline.py  [   38L    835C    385T]
 │   └── unit                  
-│    └── test_figure_util.py  [  294L  8,516C  3,483T]
+│    └── test_figure_util.py  [  292L  8,530C  3,491T]
 ├── README.md                 [  106L  3,862C  1,295T]
-├── demo.ipynb                [  166L  4,797C  2,350T]
-├── makefile                  [1,536L 46,205C 17,879T]
-├── pyproject.toml            [  161L  4,293C  2,143T]
+├── demo.ipynb                [  165L  4,787C  2,343T]
+├── makefile                  [1,662L 50,657C 19,543T]
+├── pyproject.toml            [  218L  6,949C  3,592T]
 ```
 
 # File Contents
@@ -1873,15 +1873,24 @@ jobs:
 ``````{ end_of_file="pattern_lens/frontend/index.html" }
 
 ``````{ path="pattern_lens/__init__.py"  }
-"""
-.. include:: ../README.md
-"""
+""".. include:: ../README.md"""
+
+__all__ = [
+	"activations",
+	"attn_figure_funcs",
+	"consts",
+	"figure_util",
+	"figures",
+	"indexes",
+	"load_activations",
+	"prompts",
+	"server",
+]
 
 ``````{ end_of_file="pattern_lens/__init__.py" }
 
 ``````{ path="pattern_lens/activations.py"  }
 """computing and saving activations given a model and prompts
-
 
 # Usage:
 
@@ -1896,9 +1905,9 @@ from a script:
 ```python
 from pattern_lens.activations import activations_main
 activations_main(
-    model_name="gpt2",
-    save_path="demo/"
-    prompts_path="data/pile_1k.jsonl",
+	model_name="gpt2",
+	save_path="demo/"
+	prompts_path="data/pile_1k.jsonl",
 )
 ```
 
@@ -1907,31 +1916,35 @@ activations_main(
 import argparse
 import functools
 import json
+import re
+from collections.abc import Callable
 from dataclasses import asdict
 from pathlib import Path
-import re
-from typing import Callable, Literal, Union, overload
+from typing import Literal, overload
 
 import numpy as np
-from jaxtyping import Float
 import torch
 import tqdm
-from transformer_lens import HookedTransformer, HookedTransformerConfig, ActivationCache  # type: ignore[import-untyped]
-
+from jaxtyping import Float
+from muutils.json_serialize import json_serialize
+from muutils.misc.numerical import shorten_numerical_to_str
 
 # custom utils
 from muutils.spinner import SpinnerContext
-from muutils.misc.numerical import shorten_numerical_to_str
-from muutils.json_serialize import json_serialize
+from transformer_lens import (  # type: ignore[import-untyped]
+	ActivationCache,
+	HookedTransformer,
+	HookedTransformerConfig,
+)
 
 # pattern_lens
 from pattern_lens.consts import (
 	ATTN_PATTERN_REGEX,
 	DATA_DIR,
-	ActivationCacheNp,
-	SPINNER_KWARGS,
 	DIVIDER_S1,
 	DIVIDER_S2,
+	SPINNER_KWARGS,
+	ActivationCacheNp,
 	ReturnCache,
 )
 from pattern_lens.indexes import (
@@ -2005,49 +2018,46 @@ def compute_activations(
 	stack_heads: bool = False,
 ) -> tuple[
 	Path,
-	Union[
-		ActivationCacheNp,
-		ActivationCache,
-		Float[np.ndarray, "n_layers n_heads n_ctx n_ctx"],
-		Float[torch.Tensor, "n_layers n_heads n_ctx n_ctx"],
-		None,
-	],
+	ActivationCacheNp
+	| ActivationCache
+	| Float[np.ndarray, "n_layers n_heads n_ctx n_ctx"]
+	| Float[torch.Tensor, "n_layers n_heads n_ctx n_ctx"]
+	| None,
 ]:
 	"""get activations for a given model and prompt, possibly from a cache
 
 	if from a cache, prompt_meta must be passed and contain the prompt hash
 
 	# Parameters:
-	 - `prompt : dict | None`
-	   (defaults to `None`)
-	 - `model : HookedTransformer`
-	 - `save_path : Path`
-	   (defaults to `Path(DATA_DIR)`)
-	 - `names_filter : Callable[[str], bool]|re.Pattern`
-	   a filter for the names of the activations to return. if an `re.Pattern`, will use `lambda key: names_filter.match(key) is not None`
-	   (defaults to `ATTN_PATTERN_REGEX`)
-	 - `return_cache : Literal[None, "numpy", "torch"]`
-	   will return `None` as the second element if `None`, otherwise will return the cache in the specified tensor format. `stack_heads` still affects whether it will be a dict (False) or a single tensor (True)
-	   (defaults to `None`)
-	 - `stack_heads : bool`
-	    whether the heads should be stacked in the output. this causes a number of changes:
-	    - `npy` file with a single `(n_layers, n_heads, n_ctx, n_ctx)` tensor saved for each prompt instead of `npz` file with dict by layer
-	    - `cache` will be a single `(n_layers, n_heads, n_ctx, n_ctx)` tensor instead of a dict by layer if `return_cache` is `True`
-	    - will assert that everything in the activation cache is only attention patterns, and is all of the attention patterns. raises an exception if not.
+	- `prompt : dict | None`
+		(defaults to `None`)
+	- `model : HookedTransformer`
+	- `save_path : Path`
+		(defaults to `Path(DATA_DIR)`)
+	- `names_filter : Callable[[str], bool]|re.Pattern`
+		a filter for the names of the activations to return. if an `re.Pattern`, will use `lambda key: names_filter.match(key) is not None`
+		(defaults to `ATTN_PATTERN_REGEX`)
+	- `return_cache : Literal[None, "numpy", "torch"]`
+		will return `None` as the second element if `None`, otherwise will return the cache in the specified tensor format. `stack_heads` still affects whether it will be a dict (False) or a single tensor (True)
+		(defaults to `None`)
+	- `stack_heads : bool`
+		whether the heads should be stacked in the output. this causes a number of changes:
+	- `npy` file with a single `(n_layers, n_heads, n_ctx, n_ctx)` tensor saved for each prompt instead of `npz` file with dict by layer
+	- `cache` will be a single `(n_layers, n_heads, n_ctx, n_ctx)` tensor instead of a dict by layer if `return_cache` is `True`
+		will assert that everything in the activation cache is only attention patterns, and is all of the attention patterns. raises an exception if not.
 
 	# Returns:
 	```
 	tuple[
-	    Path,
-	    Union[
-	        None,
-	        ActivationCacheNp, ActivationCache,
-	        Float[np.ndarray, "n_layers n_heads n_ctx n_ctx"], Float[torch.Tensor, "n_layers n_heads n_ctx n_ctx"],
-	    ]
+		Path,
+		Union[
+			None,
+			ActivationCacheNp, ActivationCache,
+			Float[np.ndarray, "n_layers n_heads n_ctx n_ctx"], Float[torch.Tensor, "n_layers n_heads n_ctx n_ctx"],
+		]
 	]
 	```
 	"""
-
 	# check inputs
 	assert model is not None, "model must be passed"
 	assert "text" in prompt, "prompt must contain 'text' key"
@@ -2062,7 +2072,7 @@ def compute_activations(
 		dict(
 			n_tokens=len(prompt_tokenized),
 			tokens=prompt_tokenized,
-		)
+		),
 	)
 
 	# save metadata
@@ -2131,7 +2141,8 @@ def compute_activations(
 			case None:
 				return activations_path, None
 			case _:
-				raise ValueError(f"invalid return_cache: {return_cache = }")
+				msg = f"invalid return_cache: {return_cache = }"
+				raise ValueError(msg)
 	else:
 		activations_path = prompt_dir / "activations.npz"
 
@@ -2154,7 +2165,8 @@ def compute_activations(
 			case None:
 				return activations_path, None
 			case _:
-				raise ValueError(f"invalid return_cache: {return_cache = }")
+				msg = f"invalid return_cache: {return_cache = }"
+				raise ValueError(msg)
 
 
 @overload
@@ -2191,22 +2203,22 @@ def get_activations(
 	"""given a prompt and a model, save or load activations
 
 	# Parameters:
-	 - `prompt : dict`
-	    expected to contain the 'text' key
-	 - `model : HookedTransformer | str`
-	    either a `HookedTransformer` or a string model name, to be loaded with `HookedTransformer.from_pretrained`
-	 - `save_path : Path`
-	    path to save the activations to (and load from)
+	- `prompt : dict`
+		expected to contain the 'text' key
+	- `model : HookedTransformer | str`
+		either a `HookedTransformer` or a string model name, to be loaded with `HookedTransformer.from_pretrained`
+	- `save_path : Path`
+		path to save the activations to (and load from)
 		(defaults to `Path(DATA_DIR)`)
-	 - `allow_disk_cache : bool`
-	    whether to allow loading from disk cache
+	- `allow_disk_cache : bool`
+		whether to allow loading from disk cache
 		(defaults to `True`)
-	 - `return_cache : Literal[None, "numpy", "torch"]`
-	    whether to return the cache, and in what format
+	- `return_cache : Literal[None, "numpy", "torch"]`
+		whether to return the cache, and in what format
 		(defaults to `"numpy"`)
 
 	# Returns:
-	 - `tuple[Path, ActivationCacheNp | ActivationCache | None]`
+	- `tuple[Path, ActivationCacheNp | ActivationCache | None]`
 		the path to the activations and the cache if `return_cache is not None`
 
 	"""
@@ -2248,6 +2260,11 @@ def get_activations(
 	)
 
 
+DEFAULT_DEVICE: torch.device = torch.device(
+	"cuda" if torch.cuda.is_available() else "cpu",
+)
+
+
 def activations_main(
 	model_name: str,
 	save_path: str,
@@ -2260,39 +2277,38 @@ def activations_main(
 	no_index_html: bool,
 	shuffle: bool = False,
 	stacked_heads: bool = False,
-	device: str | torch.device = "cuda" if torch.cuda.is_available() else "cpu",
+	device: str | torch.device = DEFAULT_DEVICE,
 ) -> None:
 	"""main function for computing activations
 
 	# Parameters:
-	 - `model_name : str`
-	    name of a model to load with `HookedTransformer.from_pretrained`
-	 - `save_path : str`
-	    path to save the activations to
-	 - `prompts_path : str`
-	    path to the prompts file
-	 - `raw_prompts : bool`
-	    whether the prompts are raw, not filtered by length. `load_text_data` will be called if `True`, otherwise just load the "text" field from each line in `prompts_path`
-	 - `min_chars : int`
-	    minimum number of characters for a prompt
-	 - `max_chars : int`
-	    maximum number of characters for a prompt
-	 - `force : bool`
-	    whether to overwrite existing files
-	 - `n_samples : int`
-	    maximum number of samples to process
-	 - `no_index_html : bool`
-	    whether to write an index.html file
-	 - `shuffle : bool`
-	    whether to shuffle the prompts
-	   (defaults to `False`)
-	 - `stacked_heads : bool`
-	    whether	to stack the heads in the output tensor. will save as `.npy` instead of `.npz` if `True`
-	   (defaults to `False`)
-	 - `device : str | torch.device`
-	    the device to use. if a string, will be passed to `torch.device`
+	- `model_name : str`
+		name of a model to load with `HookedTransformer.from_pretrained`
+	- `save_path : str`
+		path to save the activations to
+	- `prompts_path : str`
+		path to the prompts file
+	- `raw_prompts : bool`
+		whether the prompts are raw, not filtered by length. `load_text_data` will be called if `True`, otherwise just load the "text" field from each line in `prompts_path`
+	- `min_chars : int`
+		minimum number of characters for a prompt
+	- `max_chars : int`
+		maximum number of characters for a prompt
+	- `force : bool`
+		whether to overwrite existing files
+	- `n_samples : int`
+		maximum number of samples to process
+	- `no_index_html : bool`
+		whether to write an index.html file
+	- `shuffle : bool`
+		whether to shuffle the prompts
+		(defaults to `False`)
+	- `stacked_heads : bool`
+		whether	to stack the heads in the output tensor. will save as `.npy` instead of `.npz` if `True`
+		(defaults to `False`)
+	- `device : str | torch.device`
+		the device to use. if a string, will be passed to `torch.device`
 	"""
-
 	# figure out the device to use
 	device_: torch.device
 	if isinstance(device, torch.device):
@@ -2300,27 +2316,30 @@ def activations_main(
 	elif isinstance(device, str):
 		device_ = torch.device(device)
 	else:
-		raise ValueError(f"invalid device: {device}")
+		msg = f"invalid device: {device}"
+		raise TypeError(msg)
 
 	print(f"using device: {device_}")
 
 	with SpinnerContext(message="loading model", **SPINNER_KWARGS):
 		model: HookedTransformer = HookedTransformer.from_pretrained(
-			model_name, device=device_
+			model_name,
+			device=device_,
 		)
 		model.model_name = model_name
 		model.cfg.model_name = model_name
 		n_params: int = sum(p.numel() for p in model.parameters())
 	print(
-		f"loaded {model_name} with {shorten_numerical_to_str(n_params)} ({n_params}) parameters"
+		f"loaded {model_name} with {shorten_numerical_to_str(n_params)} ({n_params}) parameters",
 	)
-	print(f"\tmodel devices: {set(p.device for p in model.parameters())}")
+	print(f"\tmodel devices: { {p.device for p in model.parameters()} }")
 
 	save_path_p: Path = Path(save_path)
 	save_path_p.mkdir(parents=True, exist_ok=True)
 	model_path: Path = save_path_p / model_name
 	with SpinnerContext(
-		message=f"saving model info to {model_path.as_posix()}", **SPINNER_KWARGS
+		message=f"saving model info to {model_path.as_posix()}",
+		**SPINNER_KWARGS,
 	):
 		model_cfg: HookedTransformerConfig
 		model_cfg = model.cfg
@@ -2330,7 +2349,8 @@ def activations_main(
 
 	# load prompts
 	with SpinnerContext(
-		message=f"loading prompts from {prompts_path = }", **SPINNER_KWARGS
+		message=f"loading prompts from {prompts_path = }",
+		**SPINNER_KWARGS,
 	):
 		prompts: list[dict]
 		if raw_prompts:
@@ -2374,17 +2394,19 @@ def activations_main(
 			total=len(prompts),
 			desc="Computing activations",
 			unit="prompt",
-		)
+		),
 	)
 
 	with SpinnerContext(
-		message="updating jsonl metadata for models and prompts", **SPINNER_KWARGS
+		message="updating jsonl metadata for models and prompts",
+		**SPINNER_KWARGS,
 	):
 		generate_models_jsonl(save_path_p)
 		generate_prompts_jsonl(save_path_p / model_name)
 
 
-def main():
+def main() -> None:
+	"generate attention pattern activations for a model and prompts"
 	print(DIVIDER_S1)
 	with SpinnerContext(message="parsing args", **SPINNER_KWARGS):
 		arg_parser: argparse.ArgumentParser = argparse.ArgumentParser()
@@ -2539,14 +2561,14 @@ which adds your function to `ATTENTION_MATRIX_FIGURE_FUNCS`
 """
 
 import itertools
-from typing import Callable, Sequence
+from collections.abc import Callable, Sequence
+
 from pattern_lens.consts import AttentionMatrix
 from pattern_lens.figure_util import (
 	AttentionMatrixFigureFunc,
-	save_matrix_wrapper,
 	Matrix2D,
+	save_matrix_wrapper,
 )
-
 
 _FIGURE_NAMES_KEY: str = "_figure_names"
 
@@ -2563,7 +2585,7 @@ def get_all_figure_names() -> list[str]:
 				[func.__name__],
 			)
 			for func in ATTENTION_MATRIX_FIGURE_FUNCS
-		)
+		),
 	)
 
 
@@ -2574,29 +2596,29 @@ def register_attn_figure_func(
 
 	if you want to add a new figure function, you should use this decorator
 
-	    # Parameters:
-	     - `func : AttentionMatrixFigureFunc`
-	       your function, which should take an attention matrix and path
+	# Parameters:
+	- `func : AttentionMatrixFigureFunc`
+		your function, which should take an attention matrix and path
 
-	    # Returns:
-	     - `AttentionMatrixFigureFunc`
-	       your function, after we add it to `ATTENTION_MATRIX_FIGURE_FUNCS`
+	# Returns:
+	- `AttentionMatrixFigureFunc`
+		your function, after we add it to `ATTENTION_MATRIX_FIGURE_FUNCS`
 
 	# Usage:
 	```python
 	@register_attn_figure_func
 	def my_new_figure_func(attn_matrix: AttentionMatrix, path: Path) -> None:
-	    fig, ax = plt.subplots(figsize=(10, 10))
-	    ax.matshow(attn_matrix, cmap="viridis")
-	    ax.set_title("My New Figure Function")
-	    ax.axis("off")
-	    plt.savefig(path / "my_new_figure_func", format="svgz")
-	    plt.close(fig)
+		fig, ax = plt.subplots(figsize=(10, 10))
+		ax.matshow(attn_matrix, cmap="viridis")
+		ax.set_title("My New Figure Function")
+		ax.axis("off")
+		plt.savefig(path / "my_new_figure_func", format="svgz")
+		plt.close(fig)
 	```
 
 	"""
 	setattr(func, _FIGURE_NAMES_KEY, (func.__name__,))
-	global ATTENTION_MATRIX_FIGURE_FUNCS
+	global ATTENTION_MATRIX_FIGURE_FUNCS  # noqa: PLW0602
 	ATTENTION_MATRIX_FIGURE_FUNCS.append(func)
 
 	return func
@@ -2605,13 +2627,15 @@ def register_attn_figure_func(
 def register_attn_figure_multifunc(
 	names: Sequence[str],
 ) -> Callable[[AttentionMatrixFigureFunc], AttentionMatrixFigureFunc]:
+	"decorator which registers a function as a multi-figure function"
+
 	def decorator(func: AttentionMatrixFigureFunc) -> AttentionMatrixFigureFunc:
 		setattr(
 			func,
 			_FIGURE_NAMES_KEY,
 			tuple([f"{func.__name__}.{name}" for name in names]),
 		)
-		global ATTENTION_MATRIX_FIGURE_FUNCS
+		global ATTENTION_MATRIX_FIGURE_FUNCS  # noqa: PLW0602
 		ATTENTION_MATRIX_FIGURE_FUNCS.append(func)
 		return func
 
@@ -2653,8 +2677,8 @@ import re
 from typing import Literal
 
 import numpy as np
-from jaxtyping import Float
 import torch
+from jaxtyping import Float
 
 AttentionMatrix = Float[np.ndarray, "n_ctx n_ctx"]
 "type alias for attention matrix"
@@ -2693,19 +2717,20 @@ ReturnCache = Literal[None, "numpy", "torch"]
 notably, you can use the decorators `matplotlib_figure_saver`, `save_matrix_wrapper` to make your functions save figures
 """
 
-from pathlib import Path
-from typing import Callable, Literal, Sequence, overload, Union
-import functools
 import base64
+import functools
 import gzip
 import io
+from collections.abc import Callable, Sequence
+from pathlib import Path
+from typing import Literal, overload
 
-from PIL import Image
+import matplotlib as mpl
+import matplotlib.pyplot as plt
 import numpy as np
 from jaxtyping import Float, UInt8
-import matplotlib
-import matplotlib.pyplot as plt
 from matplotlib.colors import Colormap
+from PIL import Image
 
 from pattern_lens.consts import AttentionMatrix
 
@@ -2743,52 +2768,53 @@ MATRIX_SAVE_SVG_TEMPLATE: str = """<svg xmlns="http://www.w3.org/2000/svg" width
 @overload  # without keyword arguments, returns decorated function
 def matplotlib_figure_saver(
 	func: Callable[[AttentionMatrix, plt.Axes], None],
-	*args,
+	*args: tuple[()],
 	fmt: str = MATPLOTLIB_FIGURE_FMT,
 ) -> AttentionMatrixFigureFunc: ...
 @overload  # with keyword arguments, returns decorator
 def matplotlib_figure_saver(
 	func: None = None,
-	*args,
+	*args: tuple[()],
 	fmt: str = MATPLOTLIB_FIGURE_FMT,
 ) -> Callable[
-	[Callable[[AttentionMatrix, plt.Axes], None], str], AttentionMatrixFigureFunc
+	[Callable[[AttentionMatrix, plt.Axes], None], str],
+	AttentionMatrixFigureFunc,
 ]: ...
 def matplotlib_figure_saver(
 	func: Callable[[AttentionMatrix, plt.Axes], None] | None = None,
 	*args,
 	fmt: str = MATPLOTLIB_FIGURE_FMT,
-) -> Union[
-	AttentionMatrixFigureFunc,
-	Callable[
-		[Callable[[AttentionMatrix, plt.Axes], None], str], AttentionMatrixFigureFunc
-	],
-]:
+) -> (
+	AttentionMatrixFigureFunc
+	| Callable[
+		[Callable[[AttentionMatrix, plt.Axes], None], str],
+		AttentionMatrixFigureFunc,
+	]
+):
 	"""decorator for functions which take an attention matrix and predefined `ax` object, making it save a figure
 
 	# Parameters:
-	 - `func : Callable[[AttentionMatrix, plt.Axes], None]`
-	   your function, which should take an attention matrix and predefined `ax` object
-	 - `fmt : str`
-	   format for saving matplotlib figures
-	   (defaults to `MATPLOTLIB_FIGURE_FMT`)
+	- `func : Callable[[AttentionMatrix, plt.Axes], None]`
+		your function, which should take an attention matrix and predefined `ax` object
+	- `fmt : str`
+		format for saving matplotlib figures
+		(defaults to `MATPLOTLIB_FIGURE_FMT`)
 
 	# Returns:
-	 - `AttentionMatrixFigureFunc`
-	   your function, after we wrap it to save a figure
+	- `AttentionMatrixFigureFunc`
+		your function, after we wrap it to save a figure
 
 	# Usage:
 	```python
 	@register_attn_figure_func
 	@matplotlib_figure_saver
 	def raw(attn_matrix: AttentionMatrix, ax: plt.Axes) -> None:
-	    ax.matshow(attn_matrix, cmap="viridis")
-	    ax.set_title("Raw Attention Pattern")
-	    ax.axis("off")
+		ax.matshow(attn_matrix, cmap="viridis")
+		ax.set_title("Raw Attention Pattern")
+		ax.axis("off")
 	```
 
 	"""
-
 	assert len(args) == 0, "This decorator only supports keyword arguments"
 
 	def decorator(
@@ -2827,6 +2853,22 @@ def matplotlib_multifigure_saver(
 	# returns the decorated function
 	AttentionMatrixFigureFunc,
 ]:
+	"""decorate a function such that it saves multiple figures, one for each name in `names`
+
+	# Parameters:
+	- `names : Sequence[str]`
+		the names of the figures to save
+	- `fmt : str`
+		format for saving matplotlib figures
+		(defaults to `MATPLOTLIB_FIGURE_FMT`)
+
+	# Returns:
+	- `Callable[[Callable[[AttentionMatrix, dict[str, plt.Axes]], None], AttentionMatrixFigureFunc]`
+		the decorator, which will then be applied to the function
+		we expect the decorated function to take an attention pattern, and a dict of axes corresponding to the names
+
+	"""
+
 	def decorator(
 		func: Callable[[AttentionMatrix, dict[str, plt.Axes]], None],
 	) -> AttentionMatrixFigureFunc:
@@ -2844,11 +2886,19 @@ def matplotlib_multifigure_saver(
 			# save the figures
 			for name, ax in axes_dict.items():
 				fig_path: Path = save_dir / f"{func_name}.{name}.{fmt}"
-				ax.figure.tight_layout()
-				ax.figure.savefig(fig_path)
-				plt.close(ax.figure)
+				# TYPING: error: Item "SubFigure" of "Figure | SubFigure" has no attribute "tight_layout"  [union-attr]
+				ax.figure.tight_layout()  # type: ignore[union-attr]
+				# TYPING: error: Item "SubFigure" of "Figure | SubFigure" has no attribute "savefig"  [union-attr]
+				ax.figure.savefig(fig_path)  # type: ignore[union-attr]
+				# TYPING: error: Argument 1 to "close" has incompatible type "Figure | SubFigure"; expected "int | str | Figure | Literal['all'] | None"  [arg-type]
+				plt.close(ax.figure)  # type: ignore[arg-type]
 
-		wrapped.figure_save_fmt = fmt
+		# it doesn't normally have this attribute, but we're adding it
+		wrapped.figure_save_fmt = fmt  # type: ignore[attr-defined]
+
+		return wrapped
+
+	return decorator
 
 
 def matrix_to_image_preprocess(
@@ -2861,28 +2911,28 @@ def matrix_to_image_preprocess(
 	"""preprocess a 2D matrix into a plottable heatmap image
 
 	# Parameters:
-	 - `matrix : Matrix2D`
-	    input matrix
-	 - `normalize : bool`
-	    whether to normalize the matrix to range [0, 1]
-	   (defaults to `MATRIX_SAVE_NORMALIZE`)
-	 - `cmap : str|Colormap`
-	    the colormap to use for the matrix
-	   (defaults to `MATRIX_SAVE_CMAP`)
-	 - `diverging_colormap : bool`
-	    if True and using a diverging colormap, ensures 0 values map to the center of the colormap
-	    (defaults to False)
-	 - `normalize_min : float|None`
-	    if a float, then for `normalize=True` and `diverging_colormap=False`, the minimum value to normalize to (generally set this to zero?).
-	    if `None`, then the minimum value of the matrix is used.
-	    if `diverging_colormap=True` OR `normalize=False`, this **must** be `None`.
-	    (defaults to `None`)
+	- `matrix : Matrix2D`
+		input matrix
+	- `normalize : bool`
+		whether to normalize the matrix to range [0, 1]
+		(defaults to `MATRIX_SAVE_NORMALIZE`)
+	- `cmap : str|Colormap`
+		the colormap to use for the matrix
+		(defaults to `MATRIX_SAVE_CMAP`)
+	- `diverging_colormap : bool`
+		if True and using a diverging colormap, ensures 0 values map to the center of the colormap
+		(defaults to False)
+	- `normalize_min : float|None`
+		if a float, then for `normalize=True` and `diverging_colormap=False`, the minimum value to normalize to (generally set this to zero?).
+		if `None`, then the minimum value of the matrix is used.
+		if `diverging_colormap=True` OR `normalize=False`, this **must** be `None`.
+		(defaults to `None`)
 
 	# Returns:
-	 - `Matrix2Drgb`
+	- `Matrix2Drgb`
 	"""
-	# check dims
-	assert matrix.ndim == 2, f"Matrix must be 2D, got {matrix.ndim = }"
+	# check dims (2 is not that magic of a value here, hence noqa)
+	assert matrix.ndim == 2, f"Matrix must be 2D, got {matrix.ndim = }"  # noqa: PLR2004
 
 	# check matrix is not empty
 	assert matrix.size > 0, "Matrix cannot be empty"
@@ -2915,12 +2965,12 @@ def matrix_to_image_preprocess(
 			normalized_matrix = (matrix - min_val) / (max_val - min_val)
 	else:
 		if diverging_colormap:
-			assert matrix.min() >= -1 and matrix.max() <= 1, (
+			assert matrix.min() >= -1 and matrix.max() <= 1, (  # noqa: PT018
 				"For diverging colormaps without normalization, matrix values must be in range [-1, 1]"
 			)
 			normalized_matrix = matrix
 		else:
-			assert matrix.min() >= 0 and matrix.max() <= 1, (
+			assert matrix.min() >= 0 and matrix.max() <= 1, (  # noqa: PT018
 				"Matrix values must be in range [0, 1], or normalize must be True"
 			)
 			normalized_matrix = matrix
@@ -2928,16 +2978,17 @@ def matrix_to_image_preprocess(
 	# get the colormap
 	cmap_: Colormap
 	if isinstance(cmap, str):
-		cmap_ = matplotlib.colormaps[cmap]
+		cmap_ = mpl.colormaps[cmap]
 	elif isinstance(cmap, Colormap):
 		cmap_ = cmap
 	else:
+		msg = f"Invalid type for {cmap = }, {type(cmap) = }, must be str or Colormap"
 		raise TypeError(
-			f"Invalid type for {cmap = }, {type(cmap) = }, must be str or Colormap"
+			msg,
 		)
 
 	# Apply the colormap
-	rgb_matrix: Float[np.ndarray, "n m channels=3"] = (  # noqa: F722
+	rgb_matrix: Float[np.ndarray, "n m channels=3"] = (
 		cmap_(normalized_matrix)[:, :, :3] * 255
 	).astype(np.uint8)  # Drop alpha channel
 
@@ -2955,7 +3006,8 @@ def matrix2drgb_to_png_bytes(matrix: Matrix2Drgb, buffer: None = None) -> bytes:
 @overload
 def matrix2drgb_to_png_bytes(matrix: Matrix2Drgb, buffer: io.BytesIO) -> None: ...
 def matrix2drgb_to_png_bytes(
-	matrix: Matrix2Drgb, buffer: io.BytesIO | None = None
+	matrix: Matrix2Drgb,
+	buffer: io.BytesIO | None = None,
 ) -> bytes | None:
 	"""Convert a `Matrix2Drgb` to valid PNG bytes via PIL
 
@@ -2963,15 +3015,14 @@ def matrix2drgb_to_png_bytes(
 	- if `buffer` is not provided, it will return the PNG bytes
 
 	# Parameters:
-	 - `matrix : Matrix2Drgb`
-	 - `buffer : io.BytesIO | None`
-	   (defaults to `None`, in which case it will return the PNG bytes)
+	- `matrix : Matrix2Drgb`
+	- `buffer : io.BytesIO | None`
+		(defaults to `None`, in which case it will return the PNG bytes)
 
 	# Returns:
-	 - `bytes|None`
-	   `bytes` if `buffer` is `None`, otherwise `None`
+	- `bytes|None`
+		`bytes` if `buffer` is `None`, otherwise `None`
 	"""
-
 	pil_img: Image.Image = Image.fromarray(matrix, mode="RGB")
 	if buffer is None:
 		buffer = io.BytesIO()
@@ -2993,27 +3044,27 @@ def matrix_as_svg(
 	"""quickly convert a 2D matrix to an SVG image, without matplotlib
 
 	# Parameters:
-	 - `matrix : Float[np.ndarray, 'n m']`
-	   a 2D matrix to convert to an SVG image
-	 - `normalize : bool`
-	   whether to normalize the matrix to range [0, 1]. if it's not in the range [0, 1], this must be `True` or it will raise an `AssertionError`
-	   (defaults to `False`)
-	 - `cmap : str`
-	   the colormap to use for the matrix -- will look up in `matplotlib.colormaps` if it's a string
-	   (defaults to `"viridis"`)
-	 - `diverging_colormap : bool`
-	    if True and using a diverging colormap, ensures 0 values map to the center of the colormap
-	    (defaults to False)
-	 - `normalize_min : float|None`
-	    if a float, then for `normalize=True` and `diverging_colormap=False`, the minimum value to normalize to (generally set this to zero?)
-	    if `None`, then the minimum value of the matrix is used
-	    if `diverging_colormap=True` OR `normalize=False`, this **must** be `None`
-	    (defaults to `None`)
+	- `matrix : Float[np.ndarray, 'n m']`
+		a 2D matrix to convert to an SVG image
+	- `normalize : bool`
+		whether to normalize the matrix to range [0, 1]. if it's not in the range [0, 1], this must be `True` or it will raise an `AssertionError`
+		(defaults to `False`)
+	- `cmap : str`
+		the colormap to use for the matrix -- will look up in `matplotlib.colormaps` if it's a string
+		(defaults to `"viridis"`)
+	- `diverging_colormap : bool`
+		if True and using a diverging colormap, ensures 0 values map to the center of the colormap
+		(defaults to False)
+	- `normalize_min : float|None`
+		if a float, then for `normalize=True` and `diverging_colormap=False`, the minimum value to normalize to (generally set this to zero?)
+		if `None`, then the minimum value of the matrix is used
+		if `diverging_colormap=True` OR `normalize=False`, this **must** be `None`
+		(defaults to `None`)
 
 
 	# Returns:
-	 - `str`
-	   the SVG content for the matrix
+	- `str`
+		the SVG content for the matrix
 	"""
 	# Get the dimensions of the matrix
 	m, n = matrix.shape
@@ -3042,7 +3093,7 @@ def matrix_as_svg(
 @overload  # with keyword arguments, returns decorator
 def save_matrix_wrapper(
 	func: None = None,
-	*args,
+	*args: tuple[()],
 	fmt: MatrixSaveFormat = MATRIX_SAVE_FMT,
 	normalize: bool = MATRIX_SAVE_NORMALIZE,
 	cmap: str | Colormap = MATRIX_SAVE_CMAP,
@@ -3052,7 +3103,7 @@ def save_matrix_wrapper(
 @overload  # without keyword arguments, returns decorated function
 def save_matrix_wrapper(
 	func: AttentionMatrixToMatrixFunc,
-	*args,
+	*args: tuple[()],
 	fmt: MatrixSaveFormat = MATRIX_SAVE_FMT,
 	normalize: bool = MATRIX_SAVE_NORMALIZE,
 	cmap: str | Colormap = MATRIX_SAVE_CMAP,
@@ -3071,28 +3122,28 @@ def save_matrix_wrapper(
 	AttentionMatrixFigureFunc
 	| Callable[[AttentionMatrixToMatrixFunc], AttentionMatrixFigureFunc]
 ):
-	"""
-	Decorator for functions that process an attention matrix and save it as an SVGZ image.
+	"""Decorator for functions that process an attention matrix and save it as an SVGZ image.
+
 	Can handle both argumentless usage and with arguments.
 
 	# Parameters:
 
-	 - `func : AttentionMatrixToMatrixFunc|None`
-	    Either the function to decorate (in the no-arguments case) or `None` when used with arguments.
-	 - `fmt : MatrixSaveFormat, keyword-only`
-	    The format to save the matrix as. Defaults to `MATRIX_SAVE_FMT`.
-	 - `normalize : bool, keyword-only`
-	    Whether to normalize the matrix to range [0, 1]. Defaults to `False`.
-	 - `cmap : str, keyword-only`
-	    The colormap to use for the matrix. Defaults to `MATRIX_SVG_CMAP`.
-	 - `diverging_colormap : bool`
-	    if True and using a diverging colormap, ensures 0 values map to the center of the colormap
-	    (defaults to False)
-	 - `normalize_min : float|None`
-	    if a float, then for `normalize=True` and `diverging_colormap=False`, the minimum value to normalize to (generally set this to zero?)
-	    if `None`, then the minimum value of the matrix is used
-	    if `diverging_colormap=True` OR `normalize=False`, this **must** be `None`
-	    (defaults to `None`)
+	- `func : AttentionMatrixToMatrixFunc|None`
+		Either the function to decorate (in the no-arguments case) or `None` when used with arguments.
+	- `fmt : MatrixSaveFormat, keyword-only`
+		The format to save the matrix as. Defaults to `MATRIX_SAVE_FMT`.
+	- `normalize : bool, keyword-only`
+		Whether to normalize the matrix to range [0, 1]. Defaults to `False`.
+	- `cmap : str, keyword-only`
+		The colormap to use for the matrix. Defaults to `MATRIX_SVG_CMAP`.
+	- `diverging_colormap : bool`
+		if True and using a diverging colormap, ensures 0 values map to the center of the colormap
+		(defaults to False)
+	- `normalize_min : float|None`
+		if a float, then for `normalize=True` and `diverging_colormap=False`, the minimum value to normalize to (generally set this to zero?)
+		if `None`, then the minimum value of the matrix is used
+		if `diverging_colormap=True` OR `normalize=False`, this **must** be `None`
+		(defaults to `None`)
 
 	# Returns:
 
@@ -3106,19 +3157,18 @@ def save_matrix_wrapper(
 	```python
 	@save_matrix_wrapper
 	def identity_matrix(matrix):
-	    return matrix
+		return matrix
 
 	@save_matrix_wrapper(normalize=True, fmt="png")
 	def scale_matrix(matrix):
-	    return matrix * 2
+		return matrix * 2
 
 	@save_matrix_wrapper(normalize=True, cmap="plasma")
 	def scale_matrix(matrix):
-	    return matrix * 2
-
+		return matrix * 2
 	```
-	"""
 
+	"""
 	assert len(args) == 0, "This decorator only supports keyword arguments"
 
 	assert (
@@ -3177,11 +3227,11 @@ def save_matrix_wrapper(
 """code for generating figures from attention patterns, using the functions decorated with `register_attn_figure_func`"""
 
 import argparse
-from collections import defaultdict
 import functools
 import itertools
 import json
 import warnings
+from collections import defaultdict
 from pathlib import Path
 
 import numpy as np
@@ -3189,18 +3239,18 @@ from jaxtyping import Float
 
 # custom utils
 from muutils.json_serialize import json_serialize
-from muutils.spinner import SpinnerContext
 from muutils.parallel import run_maybe_parallel
+from muutils.spinner import SpinnerContext
 
 # pattern_lens
 from pattern_lens.attn_figure_funcs import ATTENTION_MATRIX_FIGURE_FUNCS
 from pattern_lens.consts import (
 	DATA_DIR,
-	AttentionMatrix,
-	SPINNER_KWARGS,
-	ActivationCacheNp,
 	DIVIDER_S1,
 	DIVIDER_S2,
+	SPINNER_KWARGS,
+	ActivationCacheNp,
+	AttentionMatrix,
 )
 from pattern_lens.indexes import (
 	generate_functions_jsonl,
@@ -3221,18 +3271,19 @@ class HTConfigMock:
 	we do this to avoid having to import `torch` and `transformer_lens`, since this would have to be done for each process in the parallelization and probably slows things down significantly
 	"""
 
-	def __init__(self, **kwargs):
+	def __init__(self, **kwargs: dict[str, str | int]) -> None:
+		"will pass all kwargs to `__dict__`"
 		self.n_layers: int
 		self.n_heads: int
 		self.model_name: str
 		self.__dict__.update(kwargs)
 
-	def serialize(self):
+	def serialize(self) -> dict:
 		"""serialize the config to json. values which aren't serializable will be converted via `muutils.json_serialize.json_serialize`"""
 		return json_serialize(self.__dict__)
 
 	@classmethod
-	def load(cls, data: dict):
+	def load(cls, data: dict) -> "HTConfigMock":
 		"try to load a config from a dict, using the `__init__` method"
 		return cls(**data)
 
@@ -3251,19 +3302,19 @@ def process_single_head(
 	> and it assumes a format of `{func_name}.{figure_name}.{fmt}` for the saved figures
 
 	# Parameters:
-	 - `layer_idx : int`
-	 - `head_idx : int`
-	 - `attn_pattern : AttentionMatrix`
-	    attention pattern for the head
-	 - `save_dir : Path`
-	    directory to save the figures to
-	 - `force_overwrite : bool`
-	    whether to overwrite existing figures. if `False`, will skip any functions which have already saved a figure
-	   (defaults to `False`)
+	- `layer_idx : int`
+	- `head_idx : int`
+	- `attn_pattern : AttentionMatrix`
+		attention pattern for the head
+	- `save_dir : Path`
+		directory to save the figures to
+	- `force_overwrite : bool`
+		whether to overwrite existing figures. if `False`, will skip any functions which have already saved a figure
+		(defaults to `False`)
 
 	# Returns:
-	 - `dict[str, bool | Exception]`
-	    a dictionary of the status of each function, with the function name as the key and the status as the value
+	- `dict[str, bool | Exception]`
+		a dictionary of the status of each function, with the function name as the key and the status as the value
 	"""
 	funcs_status: dict[str, bool | Exception] = dict()
 
@@ -3279,11 +3330,13 @@ def process_single_head(
 			func(attn_pattern, save_dir)
 			funcs_status[func_name] = True
 
-		except Exception as e:
+		# bling catch any exception
+		except Exception as e:  # noqa: BLE001
 			error_file = save_dir / f"{func.__name__}.error.txt"
 			error_file.write_text(str(e))
 			warnings.warn(
-				f"Error in {func.__name__} for L{layer_idx}H{head_idx}: {str(e)}"
+				f"Error in {func.__name__} for L{layer_idx}H{head_idx}: {e!s}",
+				stacklevel=2,
 			)
 			funcs_status[func_name] = e
 
@@ -3301,16 +3354,16 @@ def compute_and_save_figures(
 	"""compute and save figures for all heads in the model, using the functions in `ATTENTION_MATRIX_FIGURE_FUNCS`
 
 	# Parameters:
-	 - `model_cfg : HookedTransformerConfig|HTConfigMock`
-	 - `cache : ActivationCacheNp | Float[np.ndarray, "n_layers n_heads n_ctx n_ctx"]`
-	 - `save_path : Path`
-	   (defaults to `Path(DATA_DIR)`)
-	 - `force_overwrite : bool`
-	    force overwrite of existing figures. if `False`, will skip any functions which have already saved a figure
-	   (defaults to `False`)
-	 - `track_results : bool`
-	    whether to track the results of each function for each head. Isn't used for anything yet, but this is a TODO
-	   (defaults to `False`)
+	- `model_cfg : HookedTransformerConfig|HTConfigMock`
+	- `cache : ActivationCacheNp | Float[np.ndarray, "n_layers n_heads n_ctx n_ctx"]`
+	- `save_path : Path`
+		(defaults to `Path(DATA_DIR)`)
+	- `force_overwrite : bool`
+		force overwrite of existing figures. if `False`, will skip any functions which have already saved a figure
+		(defaults to `False`)
+	- `track_results : bool`
+		whether to track the results of each function for each head. Isn't used for anything yet, but this is a TODO
+		(defaults to `False`)
 	"""
 	prompt_dir: Path = activations_path.parent
 
@@ -3333,8 +3386,11 @@ def compute_and_save_figures(
 		elif isinstance(cache, np.ndarray):
 			attn_pattern = cache[layer_idx, head_idx]
 		else:
-			raise TypeError(
+			msg = (
 				f"cache must be a dict or np.ndarray, not {type(cache) = }\n{cache = }"
+			)
+			raise TypeError(
+				msg,
 			)
 
 		save_dir: Path = prompt_dir / f"L{layer_idx}" / f"H{head_idx}"
@@ -3367,10 +3423,10 @@ def process_prompt(
 	basically just calls `load_activations` and then `compute_and_save_figures`
 
 	# Parameters:
-	 - `prompt : dict`
-	 - `model_cfg : HookedTransformerConfig|HTConfigMock`
-	 - `force_overwrite : bool`
-	   (defaults to `False`)
+	- `prompt : dict`
+	- `model_cfg : HookedTransformerConfig|HTConfigMock`
+	- `force_overwrite : bool`
+		(defaults to `False`)
 	"""
 	activations_path: Path
 	cache: ActivationCacheNp | Float[np.ndarray, "n_layers n_heads n_ctx n_ctx"]
@@ -3400,17 +3456,17 @@ def figures_main(
 	"""main function for generating figures from attention patterns, using the functions in `ATTENTION_MATRIX_FIGURE_FUNCS`
 
 	# Parameters:
-	 - `model_name : str`
-	    model name to use, used for loading the model config, prompts, activations, and saving the figures
-	 - `save_path : str`
-	    base path to look in
-	 - `n_samples : int`
-	    max number of samples to process
-	 - `force : bool`
-	    force overwrite of existing figures. if `False`, will skip any functions which have already saved a figure
-	 - `parallel : bool | int`
-	    whether to run in parallel. if `True`, will use all available cores. if `False`, will run in serial. if an int, will try to use that many cores
-	   (defaults to `True`)
+	- `model_name : str`
+		model name to use, used for loading the model config, prompts, activations, and saving the figures
+	- `save_path : str`
+		base path to look in
+	- `n_samples : int`
+		max number of samples to process
+	- `force : bool`
+		force overwrite of existing figures. if `False`, will skip any functions which have already saved a figure
+	- `parallel : bool | int`
+		whether to run in parallel. if `True`, will use all available cores. if `False`, will run in serial. if an int, will try to use that many cores
+		(defaults to `True`)
 	"""
 	with SpinnerContext(message="setting up paths", **SPINNER_KWARGS):
 		# save model info or check if it exists
@@ -3446,17 +3502,19 @@ def figures_main(
 				desc="Making figures",
 				unit="prompt",
 			),
-		)
+		),
 	)
 
 	with SpinnerContext(
-		message="updating jsonl metadata for models and functions", **SPINNER_KWARGS
+		message="updating jsonl metadata for models and functions",
+		**SPINNER_KWARGS,
 	):
 		generate_models_jsonl(save_path_p)
 		generate_functions_jsonl(save_path_p)
 
 
-def main():
+def main() -> None:
+	"generates figures from the activations using the functions decorated with `register_attn_figure_func`"
 	print(DIVIDER_S1)
 	with SpinnerContext(message="parsing args", **SPINNER_KWARGS):
 		arg_parser: argparse.ArgumentParser = argparse.ArgumentParser()
@@ -3528,12 +3586,13 @@ if __name__ == "__main__":
 ``````{ path="pattern_lens/indexes.py"  }
 """writes indexes to the model directory for the frontend to use or for record keeping"""
 
-import inspect
-import json
-from pathlib import Path
-import importlib.resources
 import importlib.metadata
-from typing import Callable
+import importlib.resources
+import inspect
+import itertools
+import json
+from collections.abc import Callable
+from pathlib import Path
 
 import pattern_lens
 from pattern_lens.attn_figure_funcs import (
@@ -3542,7 +3601,7 @@ from pattern_lens.attn_figure_funcs import (
 )
 
 
-def generate_prompts_jsonl(model_dir: Path):
+def generate_prompts_jsonl(model_dir: Path) -> None:
 	"""creates a `prompts.jsonl` file with all the prompts in the model directory
 
 	looks in all directories in `{model_dir}/prompts` for a `prompt.json` file
@@ -3561,7 +3620,7 @@ def generate_prompts_jsonl(model_dir: Path):
 			f.write("\n")
 
 
-def generate_models_jsonl(path: Path):
+def generate_models_jsonl(path: Path) -> None:
 	"""creates a `models.jsonl` file with all the models"""
 	models: list[dict] = list()
 	for model_dir in (path).iterdir():
@@ -3581,7 +3640,7 @@ def get_func_metadata(func: Callable) -> list[dict[str, str | None]]:
 	"""get metadata for a function
 
 	# Parameters:
-	 - `func : Callable` which has a `_FIGURE_NAMES_KEY` (by default `_figure_names`) attribute
+	- `func : Callable` which has a `_FIGURE_NAMES_KEY` (by default `_figure_names`) attribute
 
 	# Returns:
 
@@ -3590,8 +3649,8 @@ def get_func_metadata(func: Callable) -> list[dict[str, str | None]]:
 
 	- `name : str` : the name of the figure
 	- `func_name : str`
-	   the name of the function. if not a multi-figure function, this is identical to `name`
-	   if it is a multi-figure function, then `name` is `{func_name}.{figure_name}`
+		the name of the function. if not a multi-figure function, this is identical to `name`
+		if it is a multi-figure function, then `name` is `{func_name}.{figure_name}`
 	- `doc : str` : the docstring of the function
 	- `figure_save_fmt : str | None` : the format of the figure that the function saves, using the `figure_save_fmt` attribute of the function. `None` if the attribute does not exist
 	- `source : str | None` : the source file of the function
@@ -3621,14 +3680,16 @@ def get_func_metadata(func: Callable) -> list[dict[str, str | None]]:
 			for func_name in fig_names
 		]
 	else:
-		return {
-			"name": func.__name__,
-			**output,
-		}
+		return [
+			{
+				"name": func.__name__,
+				**output,
+			},
+		]
 
 
-def generate_functions_jsonl(path: Path):
-	"unions all functions from file and current `ATTENTION_MATRIX_FIGURE_FUNCS` into a `figures.jsonl` file"
+def generate_functions_jsonl(path: Path) -> None:
+	"unions all functions from `figures.jsonl` and `ATTENTION_MATRIX_FIGURE_FUNCS` into the file"
 	figures_file: Path = path / "figures.jsonl"
 	existing_figures: dict[str, dict] = dict()
 
@@ -3639,15 +3700,18 @@ def generate_functions_jsonl(path: Path):
 				existing_figures[func_data["name"]] = func_data
 
 	# Add any new functions from ALL_FUNCTIONS
-	new_functions: dict[str, dict] = {
-		func.__name__: get_func_metadata(func) for func in ATTENTION_MATRIX_FIGURE_FUNCS
-	}
+	new_functions_lst: list[dict] = list(
+		itertools.chain.from_iterable(
+			get_func_metadata(func) for func in ATTENTION_MATRIX_FIGURE_FUNCS
+		),
+	)
+	new_functions: dict[str, dict] = {func["name"]: func for func in new_functions_lst}
 
 	all_functions: list[dict] = list(
 		{
 			**existing_figures,
 			**new_functions,
-		}.values()
+		}.values(),
 	)
 
 	with open(figures_file, "w") as f:
@@ -3656,7 +3720,7 @@ def generate_functions_jsonl(path: Path):
 			f.write("\n")
 
 
-def write_html_index(path: Path):
+def write_html_index(path: Path) -> None:
 	"""writes an index.html file to the path"""
 	html_index: str = (
 		importlib.resources.files(pattern_lens)
@@ -3718,19 +3782,20 @@ def compare_prompt_to_loaded(prompt: dict, prompt_loaded: dict) -> None:
 	"""compare a prompt to a loaded prompt, raise an error if they do not match
 
 	# Parameters:
-	 - `prompt : dict`
-	 - `prompt_loaded : dict`
+	- `prompt : dict`
+	- `prompt_loaded : dict`
 
 	# Returns:
-	 - `None`
+	- `None`
 
 	# Raises:
-	 - `ActivationsMismatchError` : if the prompt text or hash do not match
+	- `ActivationsMismatchError` : if the prompt text or hash do not match
 	"""
 	for key in ("text", "hash"):
 		if prompt[key] != prompt_loaded[key]:
+			msg = f"Prompt file does not match prompt at key {key}:\n{prompt}\n{prompt_loaded}"
 			raise ActivationsMismatchError(
-				f"Prompt file does not match prompt at key {key}:\n{prompt}\n{prompt_loaded}"
+				msg,
 			)
 
 
@@ -3740,22 +3805,24 @@ def augment_prompt_with_hash(prompt: dict) -> dict:
 	not having a "text" field is allowed, but only if "hash" is present
 
 	# Parameters:
-	 - `prompt : dict`
+	- `prompt : dict`
 
 	# Returns:
-	 - `dict`
+	- `dict`
 
 	# Modifies:
 	the input `prompt` dictionary, if it does not have a `"hash"` key
 	"""
 	if "hash" not in prompt:
 		if "text" not in prompt:
+			msg = f"Prompt does not have 'text' field or 'hash' field: {prompt}"
 			raise InvalidPromptError(
-				f"Prompt does not have 'text' field or 'hash' field: {prompt}"
+				msg,
 			)
 		prompt_str: str = prompt["text"]
 		prompt_hash: str = (
-			base64.urlsafe_b64encode(hashlib.md5(prompt_str.encode()).digest())
+			# we don't need this to be a secure hash
+			base64.urlsafe_b64encode(hashlib.md5(prompt_str.encode()).digest())  # noqa: S324
 			.decode()
 			.rstrip("=")
 		)
@@ -3787,24 +3854,25 @@ def load_activations(
 	"""load activations for a prompt and model, from an npz file
 
 	# Parameters:
-	 - `model_name : str`
-	 - `prompt : dict`
-	 - `save_path : Path`
-	 - `return_fmt : Literal["torch", "numpy"]`
-	   (defaults to `"torch"`)
+	- `model_name : str`
+	- `prompt : dict`
+	- `save_path : Path`
+	- `return_fmt : Literal["torch", "numpy"]`
+		(defaults to `"torch"`)
 
 	# Returns:
-	 - `tuple[Path, dict[str, torch.Tensor]|dict[str, np.ndarray]]`
-	     the path to the activations file and the activations as a dictionary of numpy arrays or torch tensors, depending on `return_fmt`
+	- `tuple[Path, dict[str, torch.Tensor]|dict[str, np.ndarray]]`
+		the path to the activations file and the activations as a dictionary
+		of numpy arrays or torch tensors, depending on `return_fmt`
 
 	# Raises:
-	 - `ActivationsMissingError` : if the activations file is missing
-	 - `ValueError` : if `return_fmt` is not `"torch"` or `"numpy"`
+	- `ActivationsMissingError` : if the activations file is missing
+	- `ValueError` : if `return_fmt` is not `"torch"` or `"numpy"`
 	"""
-
 	if return_fmt not in ("torch", "numpy"):
+		msg = f"Invalid return_fmt: {return_fmt}, expected 'torch' or 'numpy'"
 		raise ValueError(
-			f"Invalid return_fmt: {return_fmt}, expected 'torch' or 'numpy'"
+			msg,
 		)
 	if return_fmt == "torch":
 		import torch
@@ -3814,7 +3882,8 @@ def load_activations(
 	prompt_dir: Path = save_path / model_name / "prompts" / prompt["hash"]
 	prompt_file: Path = prompt_dir / "prompt.json"
 	if not prompt_file.exists():
-		raise ActivationsMissingError(f"Prompt file {prompt_file} does not exist")
+		msg = f"Prompt file {prompt_file} does not exist"
+		raise ActivationsMissingError(msg)
 	with open(prompt_dir / "prompt.json", "r") as f:
 		prompt_loaded: dict = json.load(f)
 		compare_prompt_to_loaded(prompt, prompt_loaded)
@@ -3825,7 +3894,7 @@ def load_activations(
 
 	with np.load(activations_path) as npz_data:
 		if return_fmt == "numpy":
-			cache = {k: v for k, v in npz_data.items()}
+			cache = dict(npz_data.items())
 		elif return_fmt == "torch":
 			cache = {k: torch.from_numpy(v) for k, v in npz_data.items()}
 
@@ -3853,18 +3922,19 @@ def load_text_data(
 	"""given `fname`, the path to a jsonl file, split prompts up into more reasonable sizes
 
 	# Parameters:
-	 - `fname : Path`
-	    jsonl file with prompts. Expects a list of dicts with a "text" key
-	 - `min_chars : int | None`
-	   (defaults to `None`)
-	 - `max_chars : int | None`
-	   (defaults to `None`)
-	 - `shuffle : bool`
-	   (defaults to `False`)
+	- `fname : Path`
+		jsonl file with prompts. Expects a list of dicts with a "text" key
+	- `min_chars : int | None`
+		(defaults to `None`)
+	- `max_chars : int | None`
+		(defaults to `None`)
+	- `shuffle : bool`
+		(defaults to `False`)
 
 	# Returns:
-	 - `list[dict]`
-	   new, processed list of prompts. Each prompt has a "text" key with a string value, and some metadata. this is not guaranteed to be the same length as the input list!
+	- `list[dict]`
+		processed list of prompts. Each prompt has a "text" key w/ a string value and some metadata.
+		this is not guaranteed to be the same length as the input list!
 	"""
 	# read raw data
 	with open(fname, "r") as f:
@@ -3880,7 +3950,7 @@ def load_text_data(
 			filter(
 				lambda x: len(x["text"]) >= min_chars,
 				data_raw,
-			)
+			),
 		)
 
 	# split up too-long samples
@@ -3893,14 +3963,14 @@ def load_text_data(
 					{
 						**d,
 						"text": d_text[:max_chars],
-					}
+					},
 				)
 				d_text = d_text[max_chars:]
 			data_new.append(
 				{
 					**d,
 					"text": d_text,
-				}
+				},
 			)
 		data_raw = data_new
 
@@ -3910,7 +3980,7 @@ def load_text_data(
 			filter(
 				lambda x: len(x["text"]) >= min_chars,
 				data_raw,
-			)
+			),
 		)
 
 	# shuffle
@@ -3928,24 +3998,27 @@ def load_text_data(
 ``````{ path="pattern_lens/server.py"  }
 """cli for starting the server to show the web ui.
 
-can also run with --rewrite-index to update the index.html file. this is useful for working on the ui.
+can also run with --rewrite-index to update the index.html file.
+this is useful for working on the ui.
 """
 
-from pathlib import Path
-import sys
-import os
 import argparse
 import http.server
+import os
 import socketserver
+import sys
+from pathlib import Path
 
 from pattern_lens.indexes import write_html_index
 
 
-def main(path: str, port: int = 8000):
+def main(path: str, port: int = 8000) -> None:
+	"move to the given path and start the server"
 	os.chdir(path)
 	try:
 		with socketserver.TCPServer(
-			("", port), http.server.SimpleHTTPRequestHandler
+			("", port),
+			http.server.SimpleHTTPRequestHandler,
 		) as httpd:
 			print(f"Serving at http://localhost:{port}")
 			httpd.serve_forever()
@@ -4027,18 +4100,17 @@ def test_pipeline(model_name: str):
 ``````{ end_of_file="tests/integration/test_pipeline.py" }
 
 ``````{ path="tests/unit/test_figure_util.py"  }
-import jaxtyping
-import pytest
-import numpy as np
-from pathlib import Path
-import gzip
-import re
 import base64
+import gzip
 import io
+import re
+from pathlib import Path
 
-from PIL import Image
+import jaxtyping
 import matplotlib.pyplot as plt
-
+import numpy as np
+import pytest
+from PIL import Image
 
 from pattern_lens.figure_util import (
 	MATPLOTLIB_FIGURE_FMT,
@@ -4046,7 +4118,6 @@ from pattern_lens.figure_util import (
 	matrix_as_svg,
 	save_matrix_wrapper,
 )
-
 
 TEMP_DIR: Path = Path("tests/_temp")
 
@@ -4070,7 +4141,7 @@ def test_matplotlib_figure_saver_exception():
 	TEMP_DIR.mkdir(parents=True, exist_ok=True)
 
 	@matplotlib_figure_saver
-	def faulty_plot(attn_matrix, ax):
+	def faulty_plot(attn_matrix, ax):  # noqa: ARG001
 		raise ValueError("Intentional failure for testing")
 
 	attn_matrix = np.random.rand(10, 10).astype(np.float32)
@@ -4437,12 +4508,12 @@ see `demo.ipynb` for a full example
 ```python
 from pathlib import Path
 
-import numpy as np
 import matplotlib.pyplot as plt
+import numpy as np
 from scipy.linalg import svd
 
-from pattern_lens.figure_util import matplotlib_figure_saver, save_matrix_wrapper
 from pattern_lens.attn_figure_funcs import register_attn_figure_func
+from pattern_lens.figure_util import matplotlib_figure_saver, save_matrix_wrapper
 from pattern_lens.figures import figures_main
 ```
 
@@ -4474,7 +4545,6 @@ def attention_flow(attn_matrix: np.ndarray, path: Path) -> None:
 	Creates a simplified Sankey-style diagram where line thickness and color
 	intensity represent attention strength.
 	"""
-
 	fig, ax = plt.subplots(figsize=(6, 6))
 	n_tokens: int = attn_matrix.shape[0]
 
@@ -4839,18 +4909,75 @@ summary:
     [tool.ruff]
         exclude = ["__pycache__"]
 
-    [tool.ruff.lint]
-        ignore = ["F722"]
+        [tool.ruff.lint]
+            ignore = [
+                "F722", # doesn't like jaxtyping
+                "W191", # we like tabs
+                "D400", # missing-trailing-period
+                "D415", # missing-terminal-punctuation
+                "E501", # line-too-long
+                "S101", # assert is fine
+                "D403", # first-word-uncapitalized
+                "D206", # docstring-tab-indentation
+                "ERA001", # commented-out-code
+                "T201", # print is fine lmao
+                "C408", # calling dict() is fine
+                "UP015", # we like specifying the mode even if it's the default
+                "D300", # we like docstrings
+                # boolean positional arguments are fine
+                "FBT001", 
+                "FBT002",
+                "PTH123", # opening files is fine
+                "RET505", # else return is fine
+                "FIX002", # `make todo` will give us the TODO comments
+                "PIE790", # be explicit about when we pass
+                "EM101", # fine to have string literal exceptions
+                "FURB129", # .readlines() is fine
+                "SIM108", # ternary operators can be hard to read, choose on a case-by-case basis
+                "PLR5501", # nested if else is fine, for readability
+                "D203", # docstring right after the class
+                "D213", # docstring on first line
+                "NPY002", # legacy numpy generator is fine
+                "D401", # dont care about imperative mood
+                # todos:
+                "TD002", # dont care about author
+                "TD003", # `make todo` will give us a table where we can create issues
+                "PLR0913", # sometimes you have to have a lot of args
+            ]
+            select = ["ALL"]
+            # select = ["ICN001"]
 
-    [tool.ruff.format]
-        indent-style = "tab"
-        skip-magic-trailing-comma = false
+            [tool.ruff.lint.per-file-ignores]
+                "tests/*" = [
+                    # dont need docstrings in test functions or modules
+                    "D103", 
+                    "D100",
+                    "INP001", # dont need __init__ either
+                    # dont need type annotations in test functions
+                    "ANN001",
+                    "ANN201", 
+                    "ANN202",
+                    "TRY003", # long exception messages in tests are fine
+                ]
+                "docs/*" = ["ALL"] # not our problem
+                "**/*.ipynb" = [
+                    "D103", # dont need docstrings
+                    "PLR2004", # magic variables are fine
+                    "N806", # uppercase vars are fine
+                ]
+
+        [tool.ruff.format]
+            indent-style = "tab"
+            skip-magic-trailing-comma = false
 
     [tool.pytest.ini_options]
-        addopts = "--jaxtyping-packages=pattern_lens,beartype.beartype"
+        adopts = "--jaxtyping-packages=pattern_lens,beartype.beartype"
         filterwarnings = [
             "ignore: PEP 484 type hint*:beartype.roar._roarwarn.BeartypeDecorHintPep585DeprecationWarning",
         ]
+
+    [tool.mypy]
+        check_untyped_defs = true
 
     # `make lmcat` depends on the lmcat and can be configured here
     [tool.lmcat]
@@ -4910,10 +5037,10 @@ summary:
 # configures `make todo`
 [tool.makefile.inline-todo]
 	search_dir = "."
-	out_file = "docs/other/todo-inline.md"
+	out_file_base = "docs/other/todo-inline.md"
 	context_lines = 2
 	extensions = ["py", "md"]
-	tags = ["CRIT", "TODO", "FIXME", "HACK", "BUG", "DOC"]
+	tags = ["CRIT", "TODO", "FIXME", "HACK", "BUG", "DOC", "TYPING"]
 	exclude = [
 		"docs/**",
 		".venv/**",

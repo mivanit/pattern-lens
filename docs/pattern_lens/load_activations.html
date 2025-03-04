@@ -136,7 +136,7 @@
                         <div class="source-button-container">
             <label class="pdoc-button view-source-button" for="mod-load_activations-view-source"><span>View Source</span></label>
             <div class="github-button-wrapper">
-                <a class="pdoc-button github-link-button" href="https://github.com/mivanit/pattern-lens/blob/0.3.0load_activations.py#L0-L161" target="_blank">
+                <a class="pdoc-button github-link-button" href="https://github.com/mivanit/pattern-lens/blob/0.3.0load_activations.py#L0-L166" target="_blank">
                     <span>View on GitHub</span>
                 </a>
             </div>
@@ -190,121 +190,126 @@
 </span><span id="L-45"><a href="#L-45"><span class="linenos"> 45</span></a><span class="w">	</span><span class="sd">&quot;&quot;&quot;compare a prompt to a loaded prompt, raise an error if they do not match</span>
 </span><span id="L-46"><a href="#L-46"><span class="linenos"> 46</span></a>
 </span><span id="L-47"><a href="#L-47"><span class="linenos"> 47</span></a><span class="sd">	# Parameters:</span>
-</span><span id="L-48"><a href="#L-48"><span class="linenos"> 48</span></a><span class="sd">	 - `prompt : dict`</span>
-</span><span id="L-49"><a href="#L-49"><span class="linenos"> 49</span></a><span class="sd">	 - `prompt_loaded : dict`</span>
+</span><span id="L-48"><a href="#L-48"><span class="linenos"> 48</span></a><span class="sd">	- `prompt : dict`</span>
+</span><span id="L-49"><a href="#L-49"><span class="linenos"> 49</span></a><span class="sd">	- `prompt_loaded : dict`</span>
 </span><span id="L-50"><a href="#L-50"><span class="linenos"> 50</span></a>
 </span><span id="L-51"><a href="#L-51"><span class="linenos"> 51</span></a><span class="sd">	# Returns:</span>
-</span><span id="L-52"><a href="#L-52"><span class="linenos"> 52</span></a><span class="sd">	 - `None`</span>
+</span><span id="L-52"><a href="#L-52"><span class="linenos"> 52</span></a><span class="sd">	- `None`</span>
 </span><span id="L-53"><a href="#L-53"><span class="linenos"> 53</span></a>
 </span><span id="L-54"><a href="#L-54"><span class="linenos"> 54</span></a><span class="sd">	# Raises:</span>
-</span><span id="L-55"><a href="#L-55"><span class="linenos"> 55</span></a><span class="sd">	 - `ActivationsMismatchError` : if the prompt text or hash do not match</span>
+</span><span id="L-55"><a href="#L-55"><span class="linenos"> 55</span></a><span class="sd">	- `ActivationsMismatchError` : if the prompt text or hash do not match</span>
 </span><span id="L-56"><a href="#L-56"><span class="linenos"> 56</span></a><span class="sd">	&quot;&quot;&quot;</span>
 </span><span id="L-57"><a href="#L-57"><span class="linenos"> 57</span></a>	<span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">&quot;text&quot;</span><span class="p">,</span> <span class="s2">&quot;hash&quot;</span><span class="p">):</span>
 </span><span id="L-58"><a href="#L-58"><span class="linenos"> 58</span></a>		<span class="k">if</span> <span class="n">prompt</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">!=</span> <span class="n">prompt_loaded</span><span class="p">[</span><span class="n">key</span><span class="p">]:</span>
-</span><span id="L-59"><a href="#L-59"><span class="linenos"> 59</span></a>			<span class="k">raise</span> <span class="n">ActivationsMismatchError</span><span class="p">(</span>
-</span><span id="L-60"><a href="#L-60"><span class="linenos"> 60</span></a>				<span class="sa">f</span><span class="s2">&quot;Prompt file does not match prompt at key </span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2">:</span><span class="se">\n</span><span class="si">{</span><span class="n">prompt</span><span class="si">}</span><span class="se">\n</span><span class="si">{</span><span class="n">prompt_loaded</span><span class="si">}</span><span class="s2">&quot;</span>
-</span><span id="L-61"><a href="#L-61"><span class="linenos"> 61</span></a>			<span class="p">)</span>
-</span><span id="L-62"><a href="#L-62"><span class="linenos"> 62</span></a>
+</span><span id="L-59"><a href="#L-59"><span class="linenos"> 59</span></a>			<span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Prompt file does not match prompt at key </span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2">:</span><span class="se">\n</span><span class="si">{</span><span class="n">prompt</span><span class="si">}</span><span class="se">\n</span><span class="si">{</span><span class="n">prompt_loaded</span><span class="si">}</span><span class="s2">&quot;</span>
+</span><span id="L-60"><a href="#L-60"><span class="linenos"> 60</span></a>			<span class="k">raise</span> <span class="n">ActivationsMismatchError</span><span class="p">(</span>
+</span><span id="L-61"><a href="#L-61"><span class="linenos"> 61</span></a>				<span class="n">msg</span><span class="p">,</span>
+</span><span id="L-62"><a href="#L-62"><span class="linenos"> 62</span></a>			<span class="p">)</span>
 </span><span id="L-63"><a href="#L-63"><span class="linenos"> 63</span></a>
-</span><span id="L-64"><a href="#L-64"><span class="linenos"> 64</span></a><span class="k">def</span><span class="w"> </span><span class="nf">augment_prompt_with_hash</span><span class="p">(</span><span class="n">prompt</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
-</span><span id="L-65"><a href="#L-65"><span class="linenos"> 65</span></a><span class="w">	</span><span class="sd">&quot;&quot;&quot;if a prompt does not have a hash, add one</span>
-</span><span id="L-66"><a href="#L-66"><span class="linenos"> 66</span></a>
-</span><span id="L-67"><a href="#L-67"><span class="linenos"> 67</span></a><span class="sd">	not having a &quot;text&quot; field is allowed, but only if &quot;hash&quot; is present</span>
-</span><span id="L-68"><a href="#L-68"><span class="linenos"> 68</span></a>
-</span><span id="L-69"><a href="#L-69"><span class="linenos"> 69</span></a><span class="sd">	# Parameters:</span>
-</span><span id="L-70"><a href="#L-70"><span class="linenos"> 70</span></a><span class="sd">	 - `prompt : dict`</span>
-</span><span id="L-71"><a href="#L-71"><span class="linenos"> 71</span></a>
-</span><span id="L-72"><a href="#L-72"><span class="linenos"> 72</span></a><span class="sd">	# Returns:</span>
-</span><span id="L-73"><a href="#L-73"><span class="linenos"> 73</span></a><span class="sd">	 - `dict`</span>
-</span><span id="L-74"><a href="#L-74"><span class="linenos"> 74</span></a>
-</span><span id="L-75"><a href="#L-75"><span class="linenos"> 75</span></a><span class="sd">	# Modifies:</span>
-</span><span id="L-76"><a href="#L-76"><span class="linenos"> 76</span></a><span class="sd">	the input `prompt` dictionary, if it does not have a `&quot;hash&quot;` key</span>
-</span><span id="L-77"><a href="#L-77"><span class="linenos"> 77</span></a><span class="sd">	&quot;&quot;&quot;</span>
-</span><span id="L-78"><a href="#L-78"><span class="linenos"> 78</span></a>	<span class="k">if</span> <span class="s2">&quot;hash&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">prompt</span><span class="p">:</span>
-</span><span id="L-79"><a href="#L-79"><span class="linenos"> 79</span></a>		<span class="k">if</span> <span class="s2">&quot;text&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">prompt</span><span class="p">:</span>
-</span><span id="L-80"><a href="#L-80"><span class="linenos"> 80</span></a>			<span class="k">raise</span> <span class="n">InvalidPromptError</span><span class="p">(</span>
-</span><span id="L-81"><a href="#L-81"><span class="linenos"> 81</span></a>				<span class="sa">f</span><span class="s2">&quot;Prompt does not have &#39;text&#39; field or &#39;hash&#39; field: </span><span class="si">{</span><span class="n">prompt</span><span class="si">}</span><span class="s2">&quot;</span>
-</span><span id="L-82"><a href="#L-82"><span class="linenos"> 82</span></a>			<span class="p">)</span>
-</span><span id="L-83"><a href="#L-83"><span class="linenos"> 83</span></a>		<span class="n">prompt_str</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">prompt</span><span class="p">[</span><span class="s2">&quot;text&quot;</span><span class="p">]</span>
-</span><span id="L-84"><a href="#L-84"><span class="linenos"> 84</span></a>		<span class="n">prompt_hash</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="p">(</span>
-</span><span id="L-85"><a href="#L-85"><span class="linenos"> 85</span></a>			<span class="n">base64</span><span class="o">.</span><span class="n">urlsafe_b64encode</span><span class="p">(</span><span class="n">hashlib</span><span class="o">.</span><span class="n">md5</span><span class="p">(</span><span class="n">prompt_str</span><span class="o">.</span><span class="n">encode</span><span class="p">())</span><span class="o">.</span><span class="n">digest</span><span class="p">())</span>
-</span><span id="L-86"><a href="#L-86"><span class="linenos"> 86</span></a>			<span class="o">.</span><span class="n">decode</span><span class="p">()</span>
-</span><span id="L-87"><a href="#L-87"><span class="linenos"> 87</span></a>			<span class="o">.</span><span class="n">rstrip</span><span class="p">(</span><span class="s2">&quot;=&quot;</span><span class="p">)</span>
-</span><span id="L-88"><a href="#L-88"><span class="linenos"> 88</span></a>		<span class="p">)</span>
-</span><span id="L-89"><a href="#L-89"><span class="linenos"> 89</span></a>		<span class="n">prompt</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="nb">hash</span><span class="o">=</span><span class="n">prompt_hash</span><span class="p">)</span>
-</span><span id="L-90"><a href="#L-90"><span class="linenos"> 90</span></a>	<span class="k">return</span> <span class="n">prompt</span>
-</span><span id="L-91"><a href="#L-91"><span class="linenos"> 91</span></a>
-</span><span id="L-92"><a href="#L-92"><span class="linenos"> 92</span></a>
-</span><span id="L-93"><a href="#L-93"><span class="linenos"> 93</span></a><span class="nd">@overload</span>
-</span><span id="L-94"><a href="#L-94"><span class="linenos"> 94</span></a><span class="k">def</span><span class="w"> </span><span class="nf">load_activations</span><span class="p">(</span>
-</span><span id="L-95"><a href="#L-95"><span class="linenos"> 95</span></a>	<span class="n">model_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-</span><span id="L-96"><a href="#L-96"><span class="linenos"> 96</span></a>	<span class="n">prompt</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span>
-</span><span id="L-97"><a href="#L-97"><span class="linenos"> 97</span></a>	<span class="n">save_path</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span>
-</span><span id="L-98"><a href="#L-98"><span class="linenos"> 98</span></a>	<span class="n">return_fmt</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;torch&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;torch&quot;</span><span class="p">,</span>
-</span><span id="L-99"><a href="#L-99"><span class="linenos"> 99</span></a><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;tuple[Path, dict[str, torch.Tensor]]&quot;</span><span class="p">:</span>  <span class="c1"># type: ignore[name-defined] # noqa: F821</span>
-</span><span id="L-100"><a href="#L-100"><span class="linenos">100</span></a>	<span class="o">...</span>
-</span><span id="L-101"><a href="#L-101"><span class="linenos">101</span></a><span class="nd">@overload</span>
-</span><span id="L-102"><a href="#L-102"><span class="linenos">102</span></a><span class="k">def</span><span class="w"> </span><span class="nf">load_activations</span><span class="p">(</span>
-</span><span id="L-103"><a href="#L-103"><span class="linenos">103</span></a>	<span class="n">model_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-</span><span id="L-104"><a href="#L-104"><span class="linenos">104</span></a>	<span class="n">prompt</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span>
-</span><span id="L-105"><a href="#L-105"><span class="linenos">105</span></a>	<span class="n">save_path</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span>
-</span><span id="L-106"><a href="#L-106"><span class="linenos">106</span></a>	<span class="n">return_fmt</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;numpy&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;numpy&quot;</span><span class="p">,</span>
-</span><span id="L-107"><a href="#L-107"><span class="linenos">107</span></a><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;tuple[Path, dict[str, np.ndarray]]&quot;</span><span class="p">:</span> <span class="o">...</span>
-</span><span id="L-108"><a href="#L-108"><span class="linenos">108</span></a><span class="k">def</span><span class="w"> </span><span class="nf">load_activations</span><span class="p">(</span>
-</span><span id="L-109"><a href="#L-109"><span class="linenos">109</span></a>	<span class="n">model_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-</span><span id="L-110"><a href="#L-110"><span class="linenos">110</span></a>	<span class="n">prompt</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span>
-</span><span id="L-111"><a href="#L-111"><span class="linenos">111</span></a>	<span class="n">save_path</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span>
-</span><span id="L-112"><a href="#L-112"><span class="linenos">112</span></a>	<span class="n">return_fmt</span><span class="p">:</span> <span class="n">ReturnCache</span> <span class="o">=</span> <span class="s2">&quot;torch&quot;</span><span class="p">,</span>
-</span><span id="L-113"><a href="#L-113"><span class="linenos">113</span></a><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;tuple[Path, dict[str, torch.Tensor]|dict[str, np.ndarray]]&quot;</span><span class="p">:</span>  <span class="c1"># type: ignore[name-defined] # noqa: F821</span>
-</span><span id="L-114"><a href="#L-114"><span class="linenos">114</span></a><span class="w">	</span><span class="sd">&quot;&quot;&quot;load activations for a prompt and model, from an npz file</span>
-</span><span id="L-115"><a href="#L-115"><span class="linenos">115</span></a>
-</span><span id="L-116"><a href="#L-116"><span class="linenos">116</span></a><span class="sd">	# Parameters:</span>
-</span><span id="L-117"><a href="#L-117"><span class="linenos">117</span></a><span class="sd">	 - `model_name : str`</span>
-</span><span id="L-118"><a href="#L-118"><span class="linenos">118</span></a><span class="sd">	 - `prompt : dict`</span>
-</span><span id="L-119"><a href="#L-119"><span class="linenos">119</span></a><span class="sd">	 - `save_path : Path`</span>
-</span><span id="L-120"><a href="#L-120"><span class="linenos">120</span></a><span class="sd">	 - `return_fmt : Literal[&quot;torch&quot;, &quot;numpy&quot;]`</span>
-</span><span id="L-121"><a href="#L-121"><span class="linenos">121</span></a><span class="sd">	   (defaults to `&quot;torch&quot;`)</span>
-</span><span id="L-122"><a href="#L-122"><span class="linenos">122</span></a>
-</span><span id="L-123"><a href="#L-123"><span class="linenos">123</span></a><span class="sd">	# Returns:</span>
-</span><span id="L-124"><a href="#L-124"><span class="linenos">124</span></a><span class="sd">	 - `tuple[Path, dict[str, torch.Tensor]|dict[str, np.ndarray]]`</span>
-</span><span id="L-125"><a href="#L-125"><span class="linenos">125</span></a><span class="sd">	     the path to the activations file and the activations as a dictionary of numpy arrays or torch tensors, depending on `return_fmt`</span>
-</span><span id="L-126"><a href="#L-126"><span class="linenos">126</span></a>
-</span><span id="L-127"><a href="#L-127"><span class="linenos">127</span></a><span class="sd">	# Raises:</span>
-</span><span id="L-128"><a href="#L-128"><span class="linenos">128</span></a><span class="sd">	 - `ActivationsMissingError` : if the activations file is missing</span>
-</span><span id="L-129"><a href="#L-129"><span class="linenos">129</span></a><span class="sd">	 - `ValueError` : if `return_fmt` is not `&quot;torch&quot;` or `&quot;numpy&quot;`</span>
-</span><span id="L-130"><a href="#L-130"><span class="linenos">130</span></a><span class="sd">	&quot;&quot;&quot;</span>
-</span><span id="L-131"><a href="#L-131"><span class="linenos">131</span></a>
-</span><span id="L-132"><a href="#L-132"><span class="linenos">132</span></a>	<span class="k">if</span> <span class="n">return_fmt</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">&quot;torch&quot;</span><span class="p">,</span> <span class="s2">&quot;numpy&quot;</span><span class="p">):</span>
-</span><span id="L-133"><a href="#L-133"><span class="linenos">133</span></a>		<span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-</span><span id="L-134"><a href="#L-134"><span class="linenos">134</span></a>			<span class="sa">f</span><span class="s2">&quot;Invalid return_fmt: </span><span class="si">{</span><span class="n">return_fmt</span><span class="si">}</span><span class="s2">, expected &#39;torch&#39; or &#39;numpy&#39;&quot;</span>
-</span><span id="L-135"><a href="#L-135"><span class="linenos">135</span></a>		<span class="p">)</span>
-</span><span id="L-136"><a href="#L-136"><span class="linenos">136</span></a>	<span class="k">if</span> <span class="n">return_fmt</span> <span class="o">==</span> <span class="s2">&quot;torch&quot;</span><span class="p">:</span>
-</span><span id="L-137"><a href="#L-137"><span class="linenos">137</span></a>		<span class="kn">import</span><span class="w"> </span><span class="nn">torch</span>
-</span><span id="L-138"><a href="#L-138"><span class="linenos">138</span></a>
-</span><span id="L-139"><a href="#L-139"><span class="linenos">139</span></a>	<span class="n">augment_prompt_with_hash</span><span class="p">(</span><span class="n">prompt</span><span class="p">)</span>
-</span><span id="L-140"><a href="#L-140"><span class="linenos">140</span></a>
-</span><span id="L-141"><a href="#L-141"><span class="linenos">141</span></a>	<span class="n">prompt_dir</span><span class="p">:</span> <span class="n">Path</span> <span class="o">=</span> <span class="n">save_path</span> <span class="o">/</span> <span class="n">model_name</span> <span class="o">/</span> <span class="s2">&quot;prompts&quot;</span> <span class="o">/</span> <span class="n">prompt</span><span class="p">[</span><span class="s2">&quot;hash&quot;</span><span class="p">]</span>
-</span><span id="L-142"><a href="#L-142"><span class="linenos">142</span></a>	<span class="n">prompt_file</span><span class="p">:</span> <span class="n">Path</span> <span class="o">=</span> <span class="n">prompt_dir</span> <span class="o">/</span> <span class="s2">&quot;prompt.json&quot;</span>
-</span><span id="L-143"><a href="#L-143"><span class="linenos">143</span></a>	<span class="k">if</span> <span class="ow">not</span> <span class="n">prompt_file</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
-</span><span id="L-144"><a href="#L-144"><span class="linenos">144</span></a>		<span class="k">raise</span> <span class="n">ActivationsMissingError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Prompt file </span><span class="si">{</span><span class="n">prompt_file</span><span class="si">}</span><span class="s2"> does not exist&quot;</span><span class="p">)</span>
-</span><span id="L-145"><a href="#L-145"><span class="linenos">145</span></a>	<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">prompt_dir</span> <span class="o">/</span> <span class="s2">&quot;prompt.json&quot;</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
-</span><span id="L-146"><a href="#L-146"><span class="linenos">146</span></a>		<span class="n">prompt_loaded</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
-</span><span id="L-147"><a href="#L-147"><span class="linenos">147</span></a>		<span class="n">compare_prompt_to_loaded</span><span class="p">(</span><span class="n">prompt</span><span class="p">,</span> <span class="n">prompt_loaded</span><span class="p">)</span>
-</span><span id="L-148"><a href="#L-148"><span class="linenos">148</span></a>
-</span><span id="L-149"><a href="#L-149"><span class="linenos">149</span></a>	<span class="n">activations_path</span><span class="p">:</span> <span class="n">Path</span> <span class="o">=</span> <span class="n">prompt_dir</span> <span class="o">/</span> <span class="s2">&quot;activations.npz&quot;</span>
-</span><span id="L-150"><a href="#L-150"><span class="linenos">150</span></a>
-</span><span id="L-151"><a href="#L-151"><span class="linenos">151</span></a>	<span class="n">cache</span><span class="p">:</span> <span class="nb">dict</span>
-</span><span id="L-152"><a href="#L-152"><span class="linenos">152</span></a>
-</span><span id="L-153"><a href="#L-153"><span class="linenos">153</span></a>	<span class="k">with</span> <span class="n">np</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">activations_path</span><span class="p">)</span> <span class="k">as</span> <span class="n">npz_data</span><span class="p">:</span>
-</span><span id="L-154"><a href="#L-154"><span class="linenos">154</span></a>		<span class="k">if</span> <span class="n">return_fmt</span> <span class="o">==</span> <span class="s2">&quot;numpy&quot;</span><span class="p">:</span>
-</span><span id="L-155"><a href="#L-155"><span class="linenos">155</span></a>			<span class="n">cache</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">v</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">npz_data</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
-</span><span id="L-156"><a href="#L-156"><span class="linenos">156</span></a>		<span class="k">elif</span> <span class="n">return_fmt</span> <span class="o">==</span> <span class="s2">&quot;torch&quot;</span><span class="p">:</span>
-</span><span id="L-157"><a href="#L-157"><span class="linenos">157</span></a>			<span class="n">cache</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">from_numpy</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">npz_data</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
-</span><span id="L-158"><a href="#L-158"><span class="linenos">158</span></a>
-</span><span id="L-159"><a href="#L-159"><span class="linenos">159</span></a>	<span class="k">return</span> <span class="n">activations_path</span><span class="p">,</span> <span class="n">cache</span>
-</span><span id="L-160"><a href="#L-160"><span class="linenos">160</span></a>
-</span><span id="L-161"><a href="#L-161"><span class="linenos">161</span></a>
-</span><span id="L-162"><a href="#L-162"><span class="linenos">162</span></a><span class="c1"># def load_activations_stacked()</span>
+</span><span id="L-64"><a href="#L-64"><span class="linenos"> 64</span></a>
+</span><span id="L-65"><a href="#L-65"><span class="linenos"> 65</span></a><span class="k">def</span><span class="w"> </span><span class="nf">augment_prompt_with_hash</span><span class="p">(</span><span class="n">prompt</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+</span><span id="L-66"><a href="#L-66"><span class="linenos"> 66</span></a><span class="w">	</span><span class="sd">&quot;&quot;&quot;if a prompt does not have a hash, add one</span>
+</span><span id="L-67"><a href="#L-67"><span class="linenos"> 67</span></a>
+</span><span id="L-68"><a href="#L-68"><span class="linenos"> 68</span></a><span class="sd">	not having a &quot;text&quot; field is allowed, but only if &quot;hash&quot; is present</span>
+</span><span id="L-69"><a href="#L-69"><span class="linenos"> 69</span></a>
+</span><span id="L-70"><a href="#L-70"><span class="linenos"> 70</span></a><span class="sd">	# Parameters:</span>
+</span><span id="L-71"><a href="#L-71"><span class="linenos"> 71</span></a><span class="sd">	- `prompt : dict`</span>
+</span><span id="L-72"><a href="#L-72"><span class="linenos"> 72</span></a>
+</span><span id="L-73"><a href="#L-73"><span class="linenos"> 73</span></a><span class="sd">	# Returns:</span>
+</span><span id="L-74"><a href="#L-74"><span class="linenos"> 74</span></a><span class="sd">	- `dict`</span>
+</span><span id="L-75"><a href="#L-75"><span class="linenos"> 75</span></a>
+</span><span id="L-76"><a href="#L-76"><span class="linenos"> 76</span></a><span class="sd">	# Modifies:</span>
+</span><span id="L-77"><a href="#L-77"><span class="linenos"> 77</span></a><span class="sd">	the input `prompt` dictionary, if it does not have a `&quot;hash&quot;` key</span>
+</span><span id="L-78"><a href="#L-78"><span class="linenos"> 78</span></a><span class="sd">	&quot;&quot;&quot;</span>
+</span><span id="L-79"><a href="#L-79"><span class="linenos"> 79</span></a>	<span class="k">if</span> <span class="s2">&quot;hash&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">prompt</span><span class="p">:</span>
+</span><span id="L-80"><a href="#L-80"><span class="linenos"> 80</span></a>		<span class="k">if</span> <span class="s2">&quot;text&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">prompt</span><span class="p">:</span>
+</span><span id="L-81"><a href="#L-81"><span class="linenos"> 81</span></a>			<span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Prompt does not have &#39;text&#39; field or &#39;hash&#39; field: </span><span class="si">{</span><span class="n">prompt</span><span class="si">}</span><span class="s2">&quot;</span>
+</span><span id="L-82"><a href="#L-82"><span class="linenos"> 82</span></a>			<span class="k">raise</span> <span class="n">InvalidPromptError</span><span class="p">(</span>
+</span><span id="L-83"><a href="#L-83"><span class="linenos"> 83</span></a>				<span class="n">msg</span><span class="p">,</span>
+</span><span id="L-84"><a href="#L-84"><span class="linenos"> 84</span></a>			<span class="p">)</span>
+</span><span id="L-85"><a href="#L-85"><span class="linenos"> 85</span></a>		<span class="n">prompt_str</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">prompt</span><span class="p">[</span><span class="s2">&quot;text&quot;</span><span class="p">]</span>
+</span><span id="L-86"><a href="#L-86"><span class="linenos"> 86</span></a>		<span class="n">prompt_hash</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="p">(</span>
+</span><span id="L-87"><a href="#L-87"><span class="linenos"> 87</span></a>			<span class="c1"># we don&#39;t need this to be a secure hash</span>
+</span><span id="L-88"><a href="#L-88"><span class="linenos"> 88</span></a>			<span class="n">base64</span><span class="o">.</span><span class="n">urlsafe_b64encode</span><span class="p">(</span><span class="n">hashlib</span><span class="o">.</span><span class="n">md5</span><span class="p">(</span><span class="n">prompt_str</span><span class="o">.</span><span class="n">encode</span><span class="p">())</span><span class="o">.</span><span class="n">digest</span><span class="p">())</span>  <span class="c1"># noqa: S324</span>
+</span><span id="L-89"><a href="#L-89"><span class="linenos"> 89</span></a>			<span class="o">.</span><span class="n">decode</span><span class="p">()</span>
+</span><span id="L-90"><a href="#L-90"><span class="linenos"> 90</span></a>			<span class="o">.</span><span class="n">rstrip</span><span class="p">(</span><span class="s2">&quot;=&quot;</span><span class="p">)</span>
+</span><span id="L-91"><a href="#L-91"><span class="linenos"> 91</span></a>		<span class="p">)</span>
+</span><span id="L-92"><a href="#L-92"><span class="linenos"> 92</span></a>		<span class="n">prompt</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="nb">hash</span><span class="o">=</span><span class="n">prompt_hash</span><span class="p">)</span>
+</span><span id="L-93"><a href="#L-93"><span class="linenos"> 93</span></a>	<span class="k">return</span> <span class="n">prompt</span>
+</span><span id="L-94"><a href="#L-94"><span class="linenos"> 94</span></a>
+</span><span id="L-95"><a href="#L-95"><span class="linenos"> 95</span></a>
+</span><span id="L-96"><a href="#L-96"><span class="linenos"> 96</span></a><span class="nd">@overload</span>
+</span><span id="L-97"><a href="#L-97"><span class="linenos"> 97</span></a><span class="k">def</span><span class="w"> </span><span class="nf">load_activations</span><span class="p">(</span>
+</span><span id="L-98"><a href="#L-98"><span class="linenos"> 98</span></a>	<span class="n">model_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+</span><span id="L-99"><a href="#L-99"><span class="linenos"> 99</span></a>	<span class="n">prompt</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span>
+</span><span id="L-100"><a href="#L-100"><span class="linenos">100</span></a>	<span class="n">save_path</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span>
+</span><span id="L-101"><a href="#L-101"><span class="linenos">101</span></a>	<span class="n">return_fmt</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;torch&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;torch&quot;</span><span class="p">,</span>
+</span><span id="L-102"><a href="#L-102"><span class="linenos">102</span></a><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;tuple[Path, dict[str, torch.Tensor]]&quot;</span><span class="p">:</span>  <span class="c1"># type: ignore[name-defined] # noqa: F821</span>
+</span><span id="L-103"><a href="#L-103"><span class="linenos">103</span></a>	<span class="o">...</span>
+</span><span id="L-104"><a href="#L-104"><span class="linenos">104</span></a><span class="nd">@overload</span>
+</span><span id="L-105"><a href="#L-105"><span class="linenos">105</span></a><span class="k">def</span><span class="w"> </span><span class="nf">load_activations</span><span class="p">(</span>
+</span><span id="L-106"><a href="#L-106"><span class="linenos">106</span></a>	<span class="n">model_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+</span><span id="L-107"><a href="#L-107"><span class="linenos">107</span></a>	<span class="n">prompt</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span>
+</span><span id="L-108"><a href="#L-108"><span class="linenos">108</span></a>	<span class="n">save_path</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span>
+</span><span id="L-109"><a href="#L-109"><span class="linenos">109</span></a>	<span class="n">return_fmt</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;numpy&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;numpy&quot;</span><span class="p">,</span>
+</span><span id="L-110"><a href="#L-110"><span class="linenos">110</span></a><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;tuple[Path, dict[str, np.ndarray]]&quot;</span><span class="p">:</span> <span class="o">...</span>
+</span><span id="L-111"><a href="#L-111"><span class="linenos">111</span></a><span class="k">def</span><span class="w"> </span><span class="nf">load_activations</span><span class="p">(</span>
+</span><span id="L-112"><a href="#L-112"><span class="linenos">112</span></a>	<span class="n">model_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+</span><span id="L-113"><a href="#L-113"><span class="linenos">113</span></a>	<span class="n">prompt</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span>
+</span><span id="L-114"><a href="#L-114"><span class="linenos">114</span></a>	<span class="n">save_path</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span>
+</span><span id="L-115"><a href="#L-115"><span class="linenos">115</span></a>	<span class="n">return_fmt</span><span class="p">:</span> <span class="n">ReturnCache</span> <span class="o">=</span> <span class="s2">&quot;torch&quot;</span><span class="p">,</span>
+</span><span id="L-116"><a href="#L-116"><span class="linenos">116</span></a><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;tuple[Path, dict[str, torch.Tensor]|dict[str, np.ndarray]]&quot;</span><span class="p">:</span>  <span class="c1"># type: ignore[name-defined] # noqa: F821</span>
+</span><span id="L-117"><a href="#L-117"><span class="linenos">117</span></a><span class="w">	</span><span class="sd">&quot;&quot;&quot;load activations for a prompt and model, from an npz file</span>
+</span><span id="L-118"><a href="#L-118"><span class="linenos">118</span></a>
+</span><span id="L-119"><a href="#L-119"><span class="linenos">119</span></a><span class="sd">	# Parameters:</span>
+</span><span id="L-120"><a href="#L-120"><span class="linenos">120</span></a><span class="sd">	- `model_name : str`</span>
+</span><span id="L-121"><a href="#L-121"><span class="linenos">121</span></a><span class="sd">	- `prompt : dict`</span>
+</span><span id="L-122"><a href="#L-122"><span class="linenos">122</span></a><span class="sd">	- `save_path : Path`</span>
+</span><span id="L-123"><a href="#L-123"><span class="linenos">123</span></a><span class="sd">	- `return_fmt : Literal[&quot;torch&quot;, &quot;numpy&quot;]`</span>
+</span><span id="L-124"><a href="#L-124"><span class="linenos">124</span></a><span class="sd">		(defaults to `&quot;torch&quot;`)</span>
+</span><span id="L-125"><a href="#L-125"><span class="linenos">125</span></a>
+</span><span id="L-126"><a href="#L-126"><span class="linenos">126</span></a><span class="sd">	# Returns:</span>
+</span><span id="L-127"><a href="#L-127"><span class="linenos">127</span></a><span class="sd">	- `tuple[Path, dict[str, torch.Tensor]|dict[str, np.ndarray]]`</span>
+</span><span id="L-128"><a href="#L-128"><span class="linenos">128</span></a><span class="sd">		the path to the activations file and the activations as a dictionary</span>
+</span><span id="L-129"><a href="#L-129"><span class="linenos">129</span></a><span class="sd">		of numpy arrays or torch tensors, depending on `return_fmt`</span>
+</span><span id="L-130"><a href="#L-130"><span class="linenos">130</span></a>
+</span><span id="L-131"><a href="#L-131"><span class="linenos">131</span></a><span class="sd">	# Raises:</span>
+</span><span id="L-132"><a href="#L-132"><span class="linenos">132</span></a><span class="sd">	- `ActivationsMissingError` : if the activations file is missing</span>
+</span><span id="L-133"><a href="#L-133"><span class="linenos">133</span></a><span class="sd">	- `ValueError` : if `return_fmt` is not `&quot;torch&quot;` or `&quot;numpy&quot;`</span>
+</span><span id="L-134"><a href="#L-134"><span class="linenos">134</span></a><span class="sd">	&quot;&quot;&quot;</span>
+</span><span id="L-135"><a href="#L-135"><span class="linenos">135</span></a>	<span class="k">if</span> <span class="n">return_fmt</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">&quot;torch&quot;</span><span class="p">,</span> <span class="s2">&quot;numpy&quot;</span><span class="p">):</span>
+</span><span id="L-136"><a href="#L-136"><span class="linenos">136</span></a>		<span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Invalid return_fmt: </span><span class="si">{</span><span class="n">return_fmt</span><span class="si">}</span><span class="s2">, expected &#39;torch&#39; or &#39;numpy&#39;&quot;</span>
+</span><span id="L-137"><a href="#L-137"><span class="linenos">137</span></a>		<span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+</span><span id="L-138"><a href="#L-138"><span class="linenos">138</span></a>			<span class="n">msg</span><span class="p">,</span>
+</span><span id="L-139"><a href="#L-139"><span class="linenos">139</span></a>		<span class="p">)</span>
+</span><span id="L-140"><a href="#L-140"><span class="linenos">140</span></a>	<span class="k">if</span> <span class="n">return_fmt</span> <span class="o">==</span> <span class="s2">&quot;torch&quot;</span><span class="p">:</span>
+</span><span id="L-141"><a href="#L-141"><span class="linenos">141</span></a>		<span class="kn">import</span><span class="w"> </span><span class="nn">torch</span>
+</span><span id="L-142"><a href="#L-142"><span class="linenos">142</span></a>
+</span><span id="L-143"><a href="#L-143"><span class="linenos">143</span></a>	<span class="n">augment_prompt_with_hash</span><span class="p">(</span><span class="n">prompt</span><span class="p">)</span>
+</span><span id="L-144"><a href="#L-144"><span class="linenos">144</span></a>
+</span><span id="L-145"><a href="#L-145"><span class="linenos">145</span></a>	<span class="n">prompt_dir</span><span class="p">:</span> <span class="n">Path</span> <span class="o">=</span> <span class="n">save_path</span> <span class="o">/</span> <span class="n">model_name</span> <span class="o">/</span> <span class="s2">&quot;prompts&quot;</span> <span class="o">/</span> <span class="n">prompt</span><span class="p">[</span><span class="s2">&quot;hash&quot;</span><span class="p">]</span>
+</span><span id="L-146"><a href="#L-146"><span class="linenos">146</span></a>	<span class="n">prompt_file</span><span class="p">:</span> <span class="n">Path</span> <span class="o">=</span> <span class="n">prompt_dir</span> <span class="o">/</span> <span class="s2">&quot;prompt.json&quot;</span>
+</span><span id="L-147"><a href="#L-147"><span class="linenos">147</span></a>	<span class="k">if</span> <span class="ow">not</span> <span class="n">prompt_file</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+</span><span id="L-148"><a href="#L-148"><span class="linenos">148</span></a>		<span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Prompt file </span><span class="si">{</span><span class="n">prompt_file</span><span class="si">}</span><span class="s2"> does not exist&quot;</span>
+</span><span id="L-149"><a href="#L-149"><span class="linenos">149</span></a>		<span class="k">raise</span> <span class="n">ActivationsMissingError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+</span><span id="L-150"><a href="#L-150"><span class="linenos">150</span></a>	<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">prompt_dir</span> <span class="o">/</span> <span class="s2">&quot;prompt.json&quot;</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+</span><span id="L-151"><a href="#L-151"><span class="linenos">151</span></a>		<span class="n">prompt_loaded</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+</span><span id="L-152"><a href="#L-152"><span class="linenos">152</span></a>		<span class="n">compare_prompt_to_loaded</span><span class="p">(</span><span class="n">prompt</span><span class="p">,</span> <span class="n">prompt_loaded</span><span class="p">)</span>
+</span><span id="L-153"><a href="#L-153"><span class="linenos">153</span></a>
+</span><span id="L-154"><a href="#L-154"><span class="linenos">154</span></a>	<span class="n">activations_path</span><span class="p">:</span> <span class="n">Path</span> <span class="o">=</span> <span class="n">prompt_dir</span> <span class="o">/</span> <span class="s2">&quot;activations.npz&quot;</span>
+</span><span id="L-155"><a href="#L-155"><span class="linenos">155</span></a>
+</span><span id="L-156"><a href="#L-156"><span class="linenos">156</span></a>	<span class="n">cache</span><span class="p">:</span> <span class="nb">dict</span>
+</span><span id="L-157"><a href="#L-157"><span class="linenos">157</span></a>
+</span><span id="L-158"><a href="#L-158"><span class="linenos">158</span></a>	<span class="k">with</span> <span class="n">np</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">activations_path</span><span class="p">)</span> <span class="k">as</span> <span class="n">npz_data</span><span class="p">:</span>
+</span><span id="L-159"><a href="#L-159"><span class="linenos">159</span></a>		<span class="k">if</span> <span class="n">return_fmt</span> <span class="o">==</span> <span class="s2">&quot;numpy&quot;</span><span class="p">:</span>
+</span><span id="L-160"><a href="#L-160"><span class="linenos">160</span></a>			<span class="n">cache</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">npz_data</span><span class="o">.</span><span class="n">items</span><span class="p">())</span>
+</span><span id="L-161"><a href="#L-161"><span class="linenos">161</span></a>		<span class="k">elif</span> <span class="n">return_fmt</span> <span class="o">==</span> <span class="s2">&quot;torch&quot;</span><span class="p">:</span>
+</span><span id="L-162"><a href="#L-162"><span class="linenos">162</span></a>			<span class="n">cache</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">from_numpy</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">npz_data</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
+</span><span id="L-163"><a href="#L-163"><span class="linenos">163</span></a>
+</span><span id="L-164"><a href="#L-164"><span class="linenos">164</span></a>	<span class="k">return</span> <span class="n">activations_path</span><span class="p">,</span> <span class="n">cache</span>
+</span><span id="L-165"><a href="#L-165"><span class="linenos">165</span></a>
+</span><span id="L-166"><a href="#L-166"><span class="linenos">166</span></a>
+</span><span id="L-167"><a href="#L-167"><span class="linenos">167</span></a><span class="c1"># def load_activations_stacked()</span>
 </span></pre></div>
 
 
@@ -519,7 +524,7 @@
                 <div class="source-button-container">
             <label class="pdoc-button view-source-button" for="compare_prompt_to_loaded-view-source"><span>View Source</span></label>
             <div class="github-button-wrapper">
-                <a class="pdoc-button github-link-button" href="https://github.com/mivanit/pattern-lens/blob/0.3.0load_activations.py#L44-L61" target="_blank">
+                <a class="pdoc-button github-link-button" href="https://github.com/mivanit/pattern-lens/blob/0.3.0load_activations.py#L44-L62" target="_blank">
                     <span>View on GitHub</span>
                 </a>
             </div>
@@ -531,20 +536,21 @@
 </span><span id="compare_prompt_to_loaded-46"><a href="#compare_prompt_to_loaded-46"><span class="linenos">46</span></a><span class="w">	</span><span class="sd">&quot;&quot;&quot;compare a prompt to a loaded prompt, raise an error if they do not match</span>
 </span><span id="compare_prompt_to_loaded-47"><a href="#compare_prompt_to_loaded-47"><span class="linenos">47</span></a>
 </span><span id="compare_prompt_to_loaded-48"><a href="#compare_prompt_to_loaded-48"><span class="linenos">48</span></a><span class="sd">	# Parameters:</span>
-</span><span id="compare_prompt_to_loaded-49"><a href="#compare_prompt_to_loaded-49"><span class="linenos">49</span></a><span class="sd">	 - `prompt : dict`</span>
-</span><span id="compare_prompt_to_loaded-50"><a href="#compare_prompt_to_loaded-50"><span class="linenos">50</span></a><span class="sd">	 - `prompt_loaded : dict`</span>
+</span><span id="compare_prompt_to_loaded-49"><a href="#compare_prompt_to_loaded-49"><span class="linenos">49</span></a><span class="sd">	- `prompt : dict`</span>
+</span><span id="compare_prompt_to_loaded-50"><a href="#compare_prompt_to_loaded-50"><span class="linenos">50</span></a><span class="sd">	- `prompt_loaded : dict`</span>
 </span><span id="compare_prompt_to_loaded-51"><a href="#compare_prompt_to_loaded-51"><span class="linenos">51</span></a>
 </span><span id="compare_prompt_to_loaded-52"><a href="#compare_prompt_to_loaded-52"><span class="linenos">52</span></a><span class="sd">	# Returns:</span>
-</span><span id="compare_prompt_to_loaded-53"><a href="#compare_prompt_to_loaded-53"><span class="linenos">53</span></a><span class="sd">	 - `None`</span>
+</span><span id="compare_prompt_to_loaded-53"><a href="#compare_prompt_to_loaded-53"><span class="linenos">53</span></a><span class="sd">	- `None`</span>
 </span><span id="compare_prompt_to_loaded-54"><a href="#compare_prompt_to_loaded-54"><span class="linenos">54</span></a>
 </span><span id="compare_prompt_to_loaded-55"><a href="#compare_prompt_to_loaded-55"><span class="linenos">55</span></a><span class="sd">	# Raises:</span>
-</span><span id="compare_prompt_to_loaded-56"><a href="#compare_prompt_to_loaded-56"><span class="linenos">56</span></a><span class="sd">	 - `ActivationsMismatchError` : if the prompt text or hash do not match</span>
+</span><span id="compare_prompt_to_loaded-56"><a href="#compare_prompt_to_loaded-56"><span class="linenos">56</span></a><span class="sd">	- `ActivationsMismatchError` : if the prompt text or hash do not match</span>
 </span><span id="compare_prompt_to_loaded-57"><a href="#compare_prompt_to_loaded-57"><span class="linenos">57</span></a><span class="sd">	&quot;&quot;&quot;</span>
 </span><span id="compare_prompt_to_loaded-58"><a href="#compare_prompt_to_loaded-58"><span class="linenos">58</span></a>	<span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">&quot;text&quot;</span><span class="p">,</span> <span class="s2">&quot;hash&quot;</span><span class="p">):</span>
 </span><span id="compare_prompt_to_loaded-59"><a href="#compare_prompt_to_loaded-59"><span class="linenos">59</span></a>		<span class="k">if</span> <span class="n">prompt</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">!=</span> <span class="n">prompt_loaded</span><span class="p">[</span><span class="n">key</span><span class="p">]:</span>
-</span><span id="compare_prompt_to_loaded-60"><a href="#compare_prompt_to_loaded-60"><span class="linenos">60</span></a>			<span class="k">raise</span> <span class="n">ActivationsMismatchError</span><span class="p">(</span>
-</span><span id="compare_prompt_to_loaded-61"><a href="#compare_prompt_to_loaded-61"><span class="linenos">61</span></a>				<span class="sa">f</span><span class="s2">&quot;Prompt file does not match prompt at key </span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2">:</span><span class="se">\n</span><span class="si">{</span><span class="n">prompt</span><span class="si">}</span><span class="se">\n</span><span class="si">{</span><span class="n">prompt_loaded</span><span class="si">}</span><span class="s2">&quot;</span>
-</span><span id="compare_prompt_to_loaded-62"><a href="#compare_prompt_to_loaded-62"><span class="linenos">62</span></a>			<span class="p">)</span>
+</span><span id="compare_prompt_to_loaded-60"><a href="#compare_prompt_to_loaded-60"><span class="linenos">60</span></a>			<span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Prompt file does not match prompt at key </span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2">:</span><span class="se">\n</span><span class="si">{</span><span class="n">prompt</span><span class="si">}</span><span class="se">\n</span><span class="si">{</span><span class="n">prompt_loaded</span><span class="si">}</span><span class="s2">&quot;</span>
+</span><span id="compare_prompt_to_loaded-61"><a href="#compare_prompt_to_loaded-61"><span class="linenos">61</span></a>			<span class="k">raise</span> <span class="n">ActivationsMismatchError</span><span class="p">(</span>
+</span><span id="compare_prompt_to_loaded-62"><a href="#compare_prompt_to_loaded-62"><span class="linenos">62</span></a>				<span class="n">msg</span><span class="p">,</span>
+</span><span id="compare_prompt_to_loaded-63"><a href="#compare_prompt_to_loaded-63"><span class="linenos">63</span></a>			<span class="p">)</span>
 </span></pre></div>
 
 
@@ -582,7 +588,7 @@
                 <div class="source-button-container">
             <label class="pdoc-button view-source-button" for="augment_prompt_with_hash-view-source"><span>View Source</span></label>
             <div class="github-button-wrapper">
-                <a class="pdoc-button github-link-button" href="https://github.com/mivanit/pattern-lens/blob/0.3.0load_activations.py#L64-L90" target="_blank">
+                <a class="pdoc-button github-link-button" href="https://github.com/mivanit/pattern-lens/blob/0.3.0load_activations.py#L65-L93" target="_blank">
                     <span>View on GitHub</span>
                 </a>
             </div>
@@ -590,33 +596,35 @@
 
     </div>
     <a class="headerlink" href="#augment_prompt_with_hash"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="augment_prompt_with_hash-65"><a href="#augment_prompt_with_hash-65"><span class="linenos">65</span></a><span class="k">def</span><span class="w"> </span><span class="nf">augment_prompt_with_hash</span><span class="p">(</span><span class="n">prompt</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
-</span><span id="augment_prompt_with_hash-66"><a href="#augment_prompt_with_hash-66"><span class="linenos">66</span></a><span class="w">	</span><span class="sd">&quot;&quot;&quot;if a prompt does not have a hash, add one</span>
-</span><span id="augment_prompt_with_hash-67"><a href="#augment_prompt_with_hash-67"><span class="linenos">67</span></a>
-</span><span id="augment_prompt_with_hash-68"><a href="#augment_prompt_with_hash-68"><span class="linenos">68</span></a><span class="sd">	not having a &quot;text&quot; field is allowed, but only if &quot;hash&quot; is present</span>
-</span><span id="augment_prompt_with_hash-69"><a href="#augment_prompt_with_hash-69"><span class="linenos">69</span></a>
-</span><span id="augment_prompt_with_hash-70"><a href="#augment_prompt_with_hash-70"><span class="linenos">70</span></a><span class="sd">	# Parameters:</span>
-</span><span id="augment_prompt_with_hash-71"><a href="#augment_prompt_with_hash-71"><span class="linenos">71</span></a><span class="sd">	 - `prompt : dict`</span>
-</span><span id="augment_prompt_with_hash-72"><a href="#augment_prompt_with_hash-72"><span class="linenos">72</span></a>
-</span><span id="augment_prompt_with_hash-73"><a href="#augment_prompt_with_hash-73"><span class="linenos">73</span></a><span class="sd">	# Returns:</span>
-</span><span id="augment_prompt_with_hash-74"><a href="#augment_prompt_with_hash-74"><span class="linenos">74</span></a><span class="sd">	 - `dict`</span>
-</span><span id="augment_prompt_with_hash-75"><a href="#augment_prompt_with_hash-75"><span class="linenos">75</span></a>
-</span><span id="augment_prompt_with_hash-76"><a href="#augment_prompt_with_hash-76"><span class="linenos">76</span></a><span class="sd">	# Modifies:</span>
-</span><span id="augment_prompt_with_hash-77"><a href="#augment_prompt_with_hash-77"><span class="linenos">77</span></a><span class="sd">	the input `prompt` dictionary, if it does not have a `&quot;hash&quot;` key</span>
-</span><span id="augment_prompt_with_hash-78"><a href="#augment_prompt_with_hash-78"><span class="linenos">78</span></a><span class="sd">	&quot;&quot;&quot;</span>
-</span><span id="augment_prompt_with_hash-79"><a href="#augment_prompt_with_hash-79"><span class="linenos">79</span></a>	<span class="k">if</span> <span class="s2">&quot;hash&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">prompt</span><span class="p">:</span>
-</span><span id="augment_prompt_with_hash-80"><a href="#augment_prompt_with_hash-80"><span class="linenos">80</span></a>		<span class="k">if</span> <span class="s2">&quot;text&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">prompt</span><span class="p">:</span>
-</span><span id="augment_prompt_with_hash-81"><a href="#augment_prompt_with_hash-81"><span class="linenos">81</span></a>			<span class="k">raise</span> <span class="n">InvalidPromptError</span><span class="p">(</span>
-</span><span id="augment_prompt_with_hash-82"><a href="#augment_prompt_with_hash-82"><span class="linenos">82</span></a>				<span class="sa">f</span><span class="s2">&quot;Prompt does not have &#39;text&#39; field or &#39;hash&#39; field: </span><span class="si">{</span><span class="n">prompt</span><span class="si">}</span><span class="s2">&quot;</span>
-</span><span id="augment_prompt_with_hash-83"><a href="#augment_prompt_with_hash-83"><span class="linenos">83</span></a>			<span class="p">)</span>
-</span><span id="augment_prompt_with_hash-84"><a href="#augment_prompt_with_hash-84"><span class="linenos">84</span></a>		<span class="n">prompt_str</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">prompt</span><span class="p">[</span><span class="s2">&quot;text&quot;</span><span class="p">]</span>
-</span><span id="augment_prompt_with_hash-85"><a href="#augment_prompt_with_hash-85"><span class="linenos">85</span></a>		<span class="n">prompt_hash</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="p">(</span>
-</span><span id="augment_prompt_with_hash-86"><a href="#augment_prompt_with_hash-86"><span class="linenos">86</span></a>			<span class="n">base64</span><span class="o">.</span><span class="n">urlsafe_b64encode</span><span class="p">(</span><span class="n">hashlib</span><span class="o">.</span><span class="n">md5</span><span class="p">(</span><span class="n">prompt_str</span><span class="o">.</span><span class="n">encode</span><span class="p">())</span><span class="o">.</span><span class="n">digest</span><span class="p">())</span>
-</span><span id="augment_prompt_with_hash-87"><a href="#augment_prompt_with_hash-87"><span class="linenos">87</span></a>			<span class="o">.</span><span class="n">decode</span><span class="p">()</span>
-</span><span id="augment_prompt_with_hash-88"><a href="#augment_prompt_with_hash-88"><span class="linenos">88</span></a>			<span class="o">.</span><span class="n">rstrip</span><span class="p">(</span><span class="s2">&quot;=&quot;</span><span class="p">)</span>
-</span><span id="augment_prompt_with_hash-89"><a href="#augment_prompt_with_hash-89"><span class="linenos">89</span></a>		<span class="p">)</span>
-</span><span id="augment_prompt_with_hash-90"><a href="#augment_prompt_with_hash-90"><span class="linenos">90</span></a>		<span class="n">prompt</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="nb">hash</span><span class="o">=</span><span class="n">prompt_hash</span><span class="p">)</span>
-</span><span id="augment_prompt_with_hash-91"><a href="#augment_prompt_with_hash-91"><span class="linenos">91</span></a>	<span class="k">return</span> <span class="n">prompt</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="augment_prompt_with_hash-66"><a href="#augment_prompt_with_hash-66"><span class="linenos">66</span></a><span class="k">def</span><span class="w"> </span><span class="nf">augment_prompt_with_hash</span><span class="p">(</span><span class="n">prompt</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+</span><span id="augment_prompt_with_hash-67"><a href="#augment_prompt_with_hash-67"><span class="linenos">67</span></a><span class="w">	</span><span class="sd">&quot;&quot;&quot;if a prompt does not have a hash, add one</span>
+</span><span id="augment_prompt_with_hash-68"><a href="#augment_prompt_with_hash-68"><span class="linenos">68</span></a>
+</span><span id="augment_prompt_with_hash-69"><a href="#augment_prompt_with_hash-69"><span class="linenos">69</span></a><span class="sd">	not having a &quot;text&quot; field is allowed, but only if &quot;hash&quot; is present</span>
+</span><span id="augment_prompt_with_hash-70"><a href="#augment_prompt_with_hash-70"><span class="linenos">70</span></a>
+</span><span id="augment_prompt_with_hash-71"><a href="#augment_prompt_with_hash-71"><span class="linenos">71</span></a><span class="sd">	# Parameters:</span>
+</span><span id="augment_prompt_with_hash-72"><a href="#augment_prompt_with_hash-72"><span class="linenos">72</span></a><span class="sd">	- `prompt : dict`</span>
+</span><span id="augment_prompt_with_hash-73"><a href="#augment_prompt_with_hash-73"><span class="linenos">73</span></a>
+</span><span id="augment_prompt_with_hash-74"><a href="#augment_prompt_with_hash-74"><span class="linenos">74</span></a><span class="sd">	# Returns:</span>
+</span><span id="augment_prompt_with_hash-75"><a href="#augment_prompt_with_hash-75"><span class="linenos">75</span></a><span class="sd">	- `dict`</span>
+</span><span id="augment_prompt_with_hash-76"><a href="#augment_prompt_with_hash-76"><span class="linenos">76</span></a>
+</span><span id="augment_prompt_with_hash-77"><a href="#augment_prompt_with_hash-77"><span class="linenos">77</span></a><span class="sd">	# Modifies:</span>
+</span><span id="augment_prompt_with_hash-78"><a href="#augment_prompt_with_hash-78"><span class="linenos">78</span></a><span class="sd">	the input `prompt` dictionary, if it does not have a `&quot;hash&quot;` key</span>
+</span><span id="augment_prompt_with_hash-79"><a href="#augment_prompt_with_hash-79"><span class="linenos">79</span></a><span class="sd">	&quot;&quot;&quot;</span>
+</span><span id="augment_prompt_with_hash-80"><a href="#augment_prompt_with_hash-80"><span class="linenos">80</span></a>	<span class="k">if</span> <span class="s2">&quot;hash&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">prompt</span><span class="p">:</span>
+</span><span id="augment_prompt_with_hash-81"><a href="#augment_prompt_with_hash-81"><span class="linenos">81</span></a>		<span class="k">if</span> <span class="s2">&quot;text&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">prompt</span><span class="p">:</span>
+</span><span id="augment_prompt_with_hash-82"><a href="#augment_prompt_with_hash-82"><span class="linenos">82</span></a>			<span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Prompt does not have &#39;text&#39; field or &#39;hash&#39; field: </span><span class="si">{</span><span class="n">prompt</span><span class="si">}</span><span class="s2">&quot;</span>
+</span><span id="augment_prompt_with_hash-83"><a href="#augment_prompt_with_hash-83"><span class="linenos">83</span></a>			<span class="k">raise</span> <span class="n">InvalidPromptError</span><span class="p">(</span>
+</span><span id="augment_prompt_with_hash-84"><a href="#augment_prompt_with_hash-84"><span class="linenos">84</span></a>				<span class="n">msg</span><span class="p">,</span>
+</span><span id="augment_prompt_with_hash-85"><a href="#augment_prompt_with_hash-85"><span class="linenos">85</span></a>			<span class="p">)</span>
+</span><span id="augment_prompt_with_hash-86"><a href="#augment_prompt_with_hash-86"><span class="linenos">86</span></a>		<span class="n">prompt_str</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">prompt</span><span class="p">[</span><span class="s2">&quot;text&quot;</span><span class="p">]</span>
+</span><span id="augment_prompt_with_hash-87"><a href="#augment_prompt_with_hash-87"><span class="linenos">87</span></a>		<span class="n">prompt_hash</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="p">(</span>
+</span><span id="augment_prompt_with_hash-88"><a href="#augment_prompt_with_hash-88"><span class="linenos">88</span></a>			<span class="c1"># we don&#39;t need this to be a secure hash</span>
+</span><span id="augment_prompt_with_hash-89"><a href="#augment_prompt_with_hash-89"><span class="linenos">89</span></a>			<span class="n">base64</span><span class="o">.</span><span class="n">urlsafe_b64encode</span><span class="p">(</span><span class="n">hashlib</span><span class="o">.</span><span class="n">md5</span><span class="p">(</span><span class="n">prompt_str</span><span class="o">.</span><span class="n">encode</span><span class="p">())</span><span class="o">.</span><span class="n">digest</span><span class="p">())</span>  <span class="c1"># noqa: S324</span>
+</span><span id="augment_prompt_with_hash-90"><a href="#augment_prompt_with_hash-90"><span class="linenos">90</span></a>			<span class="o">.</span><span class="n">decode</span><span class="p">()</span>
+</span><span id="augment_prompt_with_hash-91"><a href="#augment_prompt_with_hash-91"><span class="linenos">91</span></a>			<span class="o">.</span><span class="n">rstrip</span><span class="p">(</span><span class="s2">&quot;=&quot;</span><span class="p">)</span>
+</span><span id="augment_prompt_with_hash-92"><a href="#augment_prompt_with_hash-92"><span class="linenos">92</span></a>		<span class="p">)</span>
+</span><span id="augment_prompt_with_hash-93"><a href="#augment_prompt_with_hash-93"><span class="linenos">93</span></a>		<span class="n">prompt</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="nb">hash</span><span class="o">=</span><span class="n">prompt_hash</span><span class="p">)</span>
+</span><span id="augment_prompt_with_hash-94"><a href="#augment_prompt_with_hash-94"><span class="linenos">94</span></a>	<span class="k">return</span> <span class="n">prompt</span>
 </span></pre></div>
 
 
@@ -653,7 +661,7 @@
                 <div class="source-button-container">
             <label class="pdoc-button view-source-button" for="load_activations-view-source"><span>View Source</span></label>
             <div class="github-button-wrapper">
-                <a class="pdoc-button github-link-button" href="https://github.com/mivanit/pattern-lens/blob/0.3.0load_activations.py#L108-L159" target="_blank">
+                <a class="pdoc-button github-link-button" href="https://github.com/mivanit/pattern-lens/blob/0.3.0load_activations.py#L111-L164" target="_blank">
                     <span>View on GitHub</span>
                 </a>
             </div>
@@ -661,58 +669,60 @@
 
     </div>
     <a class="headerlink" href="#load_activations"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="load_activations-109"><a href="#load_activations-109"><span class="linenos">109</span></a><span class="k">def</span><span class="w"> </span><span class="nf">load_activations</span><span class="p">(</span>
-</span><span id="load_activations-110"><a href="#load_activations-110"><span class="linenos">110</span></a>	<span class="n">model_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-</span><span id="load_activations-111"><a href="#load_activations-111"><span class="linenos">111</span></a>	<span class="n">prompt</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span>
-</span><span id="load_activations-112"><a href="#load_activations-112"><span class="linenos">112</span></a>	<span class="n">save_path</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span>
-</span><span id="load_activations-113"><a href="#load_activations-113"><span class="linenos">113</span></a>	<span class="n">return_fmt</span><span class="p">:</span> <span class="n">ReturnCache</span> <span class="o">=</span> <span class="s2">&quot;torch&quot;</span><span class="p">,</span>
-</span><span id="load_activations-114"><a href="#load_activations-114"><span class="linenos">114</span></a><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;tuple[Path, dict[str, torch.Tensor]|dict[str, np.ndarray]]&quot;</span><span class="p">:</span>  <span class="c1"># type: ignore[name-defined] # noqa: F821</span>
-</span><span id="load_activations-115"><a href="#load_activations-115"><span class="linenos">115</span></a><span class="w">	</span><span class="sd">&quot;&quot;&quot;load activations for a prompt and model, from an npz file</span>
-</span><span id="load_activations-116"><a href="#load_activations-116"><span class="linenos">116</span></a>
-</span><span id="load_activations-117"><a href="#load_activations-117"><span class="linenos">117</span></a><span class="sd">	# Parameters:</span>
-</span><span id="load_activations-118"><a href="#load_activations-118"><span class="linenos">118</span></a><span class="sd">	 - `model_name : str`</span>
-</span><span id="load_activations-119"><a href="#load_activations-119"><span class="linenos">119</span></a><span class="sd">	 - `prompt : dict`</span>
-</span><span id="load_activations-120"><a href="#load_activations-120"><span class="linenos">120</span></a><span class="sd">	 - `save_path : Path`</span>
-</span><span id="load_activations-121"><a href="#load_activations-121"><span class="linenos">121</span></a><span class="sd">	 - `return_fmt : Literal[&quot;torch&quot;, &quot;numpy&quot;]`</span>
-</span><span id="load_activations-122"><a href="#load_activations-122"><span class="linenos">122</span></a><span class="sd">	   (defaults to `&quot;torch&quot;`)</span>
-</span><span id="load_activations-123"><a href="#load_activations-123"><span class="linenos">123</span></a>
-</span><span id="load_activations-124"><a href="#load_activations-124"><span class="linenos">124</span></a><span class="sd">	# Returns:</span>
-</span><span id="load_activations-125"><a href="#load_activations-125"><span class="linenos">125</span></a><span class="sd">	 - `tuple[Path, dict[str, torch.Tensor]|dict[str, np.ndarray]]`</span>
-</span><span id="load_activations-126"><a href="#load_activations-126"><span class="linenos">126</span></a><span class="sd">	     the path to the activations file and the activations as a dictionary of numpy arrays or torch tensors, depending on `return_fmt`</span>
-</span><span id="load_activations-127"><a href="#load_activations-127"><span class="linenos">127</span></a>
-</span><span id="load_activations-128"><a href="#load_activations-128"><span class="linenos">128</span></a><span class="sd">	# Raises:</span>
-</span><span id="load_activations-129"><a href="#load_activations-129"><span class="linenos">129</span></a><span class="sd">	 - `ActivationsMissingError` : if the activations file is missing</span>
-</span><span id="load_activations-130"><a href="#load_activations-130"><span class="linenos">130</span></a><span class="sd">	 - `ValueError` : if `return_fmt` is not `&quot;torch&quot;` or `&quot;numpy&quot;`</span>
-</span><span id="load_activations-131"><a href="#load_activations-131"><span class="linenos">131</span></a><span class="sd">	&quot;&quot;&quot;</span>
-</span><span id="load_activations-132"><a href="#load_activations-132"><span class="linenos">132</span></a>
-</span><span id="load_activations-133"><a href="#load_activations-133"><span class="linenos">133</span></a>	<span class="k">if</span> <span class="n">return_fmt</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">&quot;torch&quot;</span><span class="p">,</span> <span class="s2">&quot;numpy&quot;</span><span class="p">):</span>
-</span><span id="load_activations-134"><a href="#load_activations-134"><span class="linenos">134</span></a>		<span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-</span><span id="load_activations-135"><a href="#load_activations-135"><span class="linenos">135</span></a>			<span class="sa">f</span><span class="s2">&quot;Invalid return_fmt: </span><span class="si">{</span><span class="n">return_fmt</span><span class="si">}</span><span class="s2">, expected &#39;torch&#39; or &#39;numpy&#39;&quot;</span>
-</span><span id="load_activations-136"><a href="#load_activations-136"><span class="linenos">136</span></a>		<span class="p">)</span>
-</span><span id="load_activations-137"><a href="#load_activations-137"><span class="linenos">137</span></a>	<span class="k">if</span> <span class="n">return_fmt</span> <span class="o">==</span> <span class="s2">&quot;torch&quot;</span><span class="p">:</span>
-</span><span id="load_activations-138"><a href="#load_activations-138"><span class="linenos">138</span></a>		<span class="kn">import</span><span class="w"> </span><span class="nn">torch</span>
-</span><span id="load_activations-139"><a href="#load_activations-139"><span class="linenos">139</span></a>
-</span><span id="load_activations-140"><a href="#load_activations-140"><span class="linenos">140</span></a>	<span class="n">augment_prompt_with_hash</span><span class="p">(</span><span class="n">prompt</span><span class="p">)</span>
-</span><span id="load_activations-141"><a href="#load_activations-141"><span class="linenos">141</span></a>
-</span><span id="load_activations-142"><a href="#load_activations-142"><span class="linenos">142</span></a>	<span class="n">prompt_dir</span><span class="p">:</span> <span class="n">Path</span> <span class="o">=</span> <span class="n">save_path</span> <span class="o">/</span> <span class="n">model_name</span> <span class="o">/</span> <span class="s2">&quot;prompts&quot;</span> <span class="o">/</span> <span class="n">prompt</span><span class="p">[</span><span class="s2">&quot;hash&quot;</span><span class="p">]</span>
-</span><span id="load_activations-143"><a href="#load_activations-143"><span class="linenos">143</span></a>	<span class="n">prompt_file</span><span class="p">:</span> <span class="n">Path</span> <span class="o">=</span> <span class="n">prompt_dir</span> <span class="o">/</span> <span class="s2">&quot;prompt.json&quot;</span>
-</span><span id="load_activations-144"><a href="#load_activations-144"><span class="linenos">144</span></a>	<span class="k">if</span> <span class="ow">not</span> <span class="n">prompt_file</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
-</span><span id="load_activations-145"><a href="#load_activations-145"><span class="linenos">145</span></a>		<span class="k">raise</span> <span class="n">ActivationsMissingError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Prompt file </span><span class="si">{</span><span class="n">prompt_file</span><span class="si">}</span><span class="s2"> does not exist&quot;</span><span class="p">)</span>
-</span><span id="load_activations-146"><a href="#load_activations-146"><span class="linenos">146</span></a>	<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">prompt_dir</span> <span class="o">/</span> <span class="s2">&quot;prompt.json&quot;</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
-</span><span id="load_activations-147"><a href="#load_activations-147"><span class="linenos">147</span></a>		<span class="n">prompt_loaded</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
-</span><span id="load_activations-148"><a href="#load_activations-148"><span class="linenos">148</span></a>		<span class="n">compare_prompt_to_loaded</span><span class="p">(</span><span class="n">prompt</span><span class="p">,</span> <span class="n">prompt_loaded</span><span class="p">)</span>
-</span><span id="load_activations-149"><a href="#load_activations-149"><span class="linenos">149</span></a>
-</span><span id="load_activations-150"><a href="#load_activations-150"><span class="linenos">150</span></a>	<span class="n">activations_path</span><span class="p">:</span> <span class="n">Path</span> <span class="o">=</span> <span class="n">prompt_dir</span> <span class="o">/</span> <span class="s2">&quot;activations.npz&quot;</span>
-</span><span id="load_activations-151"><a href="#load_activations-151"><span class="linenos">151</span></a>
-</span><span id="load_activations-152"><a href="#load_activations-152"><span class="linenos">152</span></a>	<span class="n">cache</span><span class="p">:</span> <span class="nb">dict</span>
-</span><span id="load_activations-153"><a href="#load_activations-153"><span class="linenos">153</span></a>
-</span><span id="load_activations-154"><a href="#load_activations-154"><span class="linenos">154</span></a>	<span class="k">with</span> <span class="n">np</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">activations_path</span><span class="p">)</span> <span class="k">as</span> <span class="n">npz_data</span><span class="p">:</span>
-</span><span id="load_activations-155"><a href="#load_activations-155"><span class="linenos">155</span></a>		<span class="k">if</span> <span class="n">return_fmt</span> <span class="o">==</span> <span class="s2">&quot;numpy&quot;</span><span class="p">:</span>
-</span><span id="load_activations-156"><a href="#load_activations-156"><span class="linenos">156</span></a>			<span class="n">cache</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">v</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">npz_data</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
-</span><span id="load_activations-157"><a href="#load_activations-157"><span class="linenos">157</span></a>		<span class="k">elif</span> <span class="n">return_fmt</span> <span class="o">==</span> <span class="s2">&quot;torch&quot;</span><span class="p">:</span>
-</span><span id="load_activations-158"><a href="#load_activations-158"><span class="linenos">158</span></a>			<span class="n">cache</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">from_numpy</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">npz_data</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
-</span><span id="load_activations-159"><a href="#load_activations-159"><span class="linenos">159</span></a>
-</span><span id="load_activations-160"><a href="#load_activations-160"><span class="linenos">160</span></a>	<span class="k">return</span> <span class="n">activations_path</span><span class="p">,</span> <span class="n">cache</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="load_activations-112"><a href="#load_activations-112"><span class="linenos">112</span></a><span class="k">def</span><span class="w"> </span><span class="nf">load_activations</span><span class="p">(</span>
+</span><span id="load_activations-113"><a href="#load_activations-113"><span class="linenos">113</span></a>	<span class="n">model_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+</span><span id="load_activations-114"><a href="#load_activations-114"><span class="linenos">114</span></a>	<span class="n">prompt</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span>
+</span><span id="load_activations-115"><a href="#load_activations-115"><span class="linenos">115</span></a>	<span class="n">save_path</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span>
+</span><span id="load_activations-116"><a href="#load_activations-116"><span class="linenos">116</span></a>	<span class="n">return_fmt</span><span class="p">:</span> <span class="n">ReturnCache</span> <span class="o">=</span> <span class="s2">&quot;torch&quot;</span><span class="p">,</span>
+</span><span id="load_activations-117"><a href="#load_activations-117"><span class="linenos">117</span></a><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;tuple[Path, dict[str, torch.Tensor]|dict[str, np.ndarray]]&quot;</span><span class="p">:</span>  <span class="c1"># type: ignore[name-defined] # noqa: F821</span>
+</span><span id="load_activations-118"><a href="#load_activations-118"><span class="linenos">118</span></a><span class="w">	</span><span class="sd">&quot;&quot;&quot;load activations for a prompt and model, from an npz file</span>
+</span><span id="load_activations-119"><a href="#load_activations-119"><span class="linenos">119</span></a>
+</span><span id="load_activations-120"><a href="#load_activations-120"><span class="linenos">120</span></a><span class="sd">	# Parameters:</span>
+</span><span id="load_activations-121"><a href="#load_activations-121"><span class="linenos">121</span></a><span class="sd">	- `model_name : str`</span>
+</span><span id="load_activations-122"><a href="#load_activations-122"><span class="linenos">122</span></a><span class="sd">	- `prompt : dict`</span>
+</span><span id="load_activations-123"><a href="#load_activations-123"><span class="linenos">123</span></a><span class="sd">	- `save_path : Path`</span>
+</span><span id="load_activations-124"><a href="#load_activations-124"><span class="linenos">124</span></a><span class="sd">	- `return_fmt : Literal[&quot;torch&quot;, &quot;numpy&quot;]`</span>
+</span><span id="load_activations-125"><a href="#load_activations-125"><span class="linenos">125</span></a><span class="sd">		(defaults to `&quot;torch&quot;`)</span>
+</span><span id="load_activations-126"><a href="#load_activations-126"><span class="linenos">126</span></a>
+</span><span id="load_activations-127"><a href="#load_activations-127"><span class="linenos">127</span></a><span class="sd">	# Returns:</span>
+</span><span id="load_activations-128"><a href="#load_activations-128"><span class="linenos">128</span></a><span class="sd">	- `tuple[Path, dict[str, torch.Tensor]|dict[str, np.ndarray]]`</span>
+</span><span id="load_activations-129"><a href="#load_activations-129"><span class="linenos">129</span></a><span class="sd">		the path to the activations file and the activations as a dictionary</span>
+</span><span id="load_activations-130"><a href="#load_activations-130"><span class="linenos">130</span></a><span class="sd">		of numpy arrays or torch tensors, depending on `return_fmt`</span>
+</span><span id="load_activations-131"><a href="#load_activations-131"><span class="linenos">131</span></a>
+</span><span id="load_activations-132"><a href="#load_activations-132"><span class="linenos">132</span></a><span class="sd">	# Raises:</span>
+</span><span id="load_activations-133"><a href="#load_activations-133"><span class="linenos">133</span></a><span class="sd">	- `ActivationsMissingError` : if the activations file is missing</span>
+</span><span id="load_activations-134"><a href="#load_activations-134"><span class="linenos">134</span></a><span class="sd">	- `ValueError` : if `return_fmt` is not `&quot;torch&quot;` or `&quot;numpy&quot;`</span>
+</span><span id="load_activations-135"><a href="#load_activations-135"><span class="linenos">135</span></a><span class="sd">	&quot;&quot;&quot;</span>
+</span><span id="load_activations-136"><a href="#load_activations-136"><span class="linenos">136</span></a>	<span class="k">if</span> <span class="n">return_fmt</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">&quot;torch&quot;</span><span class="p">,</span> <span class="s2">&quot;numpy&quot;</span><span class="p">):</span>
+</span><span id="load_activations-137"><a href="#load_activations-137"><span class="linenos">137</span></a>		<span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Invalid return_fmt: </span><span class="si">{</span><span class="n">return_fmt</span><span class="si">}</span><span class="s2">, expected &#39;torch&#39; or &#39;numpy&#39;&quot;</span>
+</span><span id="load_activations-138"><a href="#load_activations-138"><span class="linenos">138</span></a>		<span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+</span><span id="load_activations-139"><a href="#load_activations-139"><span class="linenos">139</span></a>			<span class="n">msg</span><span class="p">,</span>
+</span><span id="load_activations-140"><a href="#load_activations-140"><span class="linenos">140</span></a>		<span class="p">)</span>
+</span><span id="load_activations-141"><a href="#load_activations-141"><span class="linenos">141</span></a>	<span class="k">if</span> <span class="n">return_fmt</span> <span class="o">==</span> <span class="s2">&quot;torch&quot;</span><span class="p">:</span>
+</span><span id="load_activations-142"><a href="#load_activations-142"><span class="linenos">142</span></a>		<span class="kn">import</span><span class="w"> </span><span class="nn">torch</span>
+</span><span id="load_activations-143"><a href="#load_activations-143"><span class="linenos">143</span></a>
+</span><span id="load_activations-144"><a href="#load_activations-144"><span class="linenos">144</span></a>	<span class="n">augment_prompt_with_hash</span><span class="p">(</span><span class="n">prompt</span><span class="p">)</span>
+</span><span id="load_activations-145"><a href="#load_activations-145"><span class="linenos">145</span></a>
+</span><span id="load_activations-146"><a href="#load_activations-146"><span class="linenos">146</span></a>	<span class="n">prompt_dir</span><span class="p">:</span> <span class="n">Path</span> <span class="o">=</span> <span class="n">save_path</span> <span class="o">/</span> <span class="n">model_name</span> <span class="o">/</span> <span class="s2">&quot;prompts&quot;</span> <span class="o">/</span> <span class="n">prompt</span><span class="p">[</span><span class="s2">&quot;hash&quot;</span><span class="p">]</span>
+</span><span id="load_activations-147"><a href="#load_activations-147"><span class="linenos">147</span></a>	<span class="n">prompt_file</span><span class="p">:</span> <span class="n">Path</span> <span class="o">=</span> <span class="n">prompt_dir</span> <span class="o">/</span> <span class="s2">&quot;prompt.json&quot;</span>
+</span><span id="load_activations-148"><a href="#load_activations-148"><span class="linenos">148</span></a>	<span class="k">if</span> <span class="ow">not</span> <span class="n">prompt_file</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+</span><span id="load_activations-149"><a href="#load_activations-149"><span class="linenos">149</span></a>		<span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Prompt file </span><span class="si">{</span><span class="n">prompt_file</span><span class="si">}</span><span class="s2"> does not exist&quot;</span>
+</span><span id="load_activations-150"><a href="#load_activations-150"><span class="linenos">150</span></a>		<span class="k">raise</span> <span class="n">ActivationsMissingError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+</span><span id="load_activations-151"><a href="#load_activations-151"><span class="linenos">151</span></a>	<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">prompt_dir</span> <span class="o">/</span> <span class="s2">&quot;prompt.json&quot;</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+</span><span id="load_activations-152"><a href="#load_activations-152"><span class="linenos">152</span></a>		<span class="n">prompt_loaded</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+</span><span id="load_activations-153"><a href="#load_activations-153"><span class="linenos">153</span></a>		<span class="n">compare_prompt_to_loaded</span><span class="p">(</span><span class="n">prompt</span><span class="p">,</span> <span class="n">prompt_loaded</span><span class="p">)</span>
+</span><span id="load_activations-154"><a href="#load_activations-154"><span class="linenos">154</span></a>
+</span><span id="load_activations-155"><a href="#load_activations-155"><span class="linenos">155</span></a>	<span class="n">activations_path</span><span class="p">:</span> <span class="n">Path</span> <span class="o">=</span> <span class="n">prompt_dir</span> <span class="o">/</span> <span class="s2">&quot;activations.npz&quot;</span>
+</span><span id="load_activations-156"><a href="#load_activations-156"><span class="linenos">156</span></a>
+</span><span id="load_activations-157"><a href="#load_activations-157"><span class="linenos">157</span></a>	<span class="n">cache</span><span class="p">:</span> <span class="nb">dict</span>
+</span><span id="load_activations-158"><a href="#load_activations-158"><span class="linenos">158</span></a>
+</span><span id="load_activations-159"><a href="#load_activations-159"><span class="linenos">159</span></a>	<span class="k">with</span> <span class="n">np</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">activations_path</span><span class="p">)</span> <span class="k">as</span> <span class="n">npz_data</span><span class="p">:</span>
+</span><span id="load_activations-160"><a href="#load_activations-160"><span class="linenos">160</span></a>		<span class="k">if</span> <span class="n">return_fmt</span> <span class="o">==</span> <span class="s2">&quot;numpy&quot;</span><span class="p">:</span>
+</span><span id="load_activations-161"><a href="#load_activations-161"><span class="linenos">161</span></a>			<span class="n">cache</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">npz_data</span><span class="o">.</span><span class="n">items</span><span class="p">())</span>
+</span><span id="load_activations-162"><a href="#load_activations-162"><span class="linenos">162</span></a>		<span class="k">elif</span> <span class="n">return_fmt</span> <span class="o">==</span> <span class="s2">&quot;torch&quot;</span><span class="p">:</span>
+</span><span id="load_activations-163"><a href="#load_activations-163"><span class="linenos">163</span></a>			<span class="n">cache</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">from_numpy</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">npz_data</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
+</span><span id="load_activations-164"><a href="#load_activations-164"><span class="linenos">164</span></a>
+</span><span id="load_activations-165"><a href="#load_activations-165"><span class="linenos">165</span></a>	<span class="k">return</span> <span class="n">activations_path</span><span class="p">,</span> <span class="n">cache</span>
 </span></pre></div>
 
 
@@ -732,7 +742,8 @@
 
 <ul>
 <li><code>tuple[Path, dict[str, torch.Tensor]|dict[str, np.ndarray]]</code>
-the path to the activations file and the activations as a dictionary of numpy arrays or torch tensors, depending on <code>return_fmt</code></li>
+the path to the activations file and the activations as a dictionary
+of numpy arrays or torch tensors, depending on <code>return_fmt</code></li>
 </ul>
 
 <h1 id="raises">Raises:</h1>
