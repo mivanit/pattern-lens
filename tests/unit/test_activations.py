@@ -72,6 +72,7 @@ def test_compute_activations_stack_heads():
 	assert path.exists()
 	loaded = np.load(path)
 	assert loaded.shape == (
+		1,
 		model.cfg.n_layers,
 		model.cfg.n_heads,
 		len(prompt["text"]),
@@ -90,6 +91,7 @@ def test_compute_activations_stack_heads():
 	# Check return values
 	assert isinstance(result, np.ndarray)
 	assert result.shape == (
+		1,
 		model.cfg.n_layers,
 		model.cfg.n_heads,
 		len(prompt["text"]),
