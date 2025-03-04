@@ -90,6 +90,18 @@
 
 ## [`pattern_lens/figure_util.py`](/pattern_lens/figure_util.py)
 
+- mypy hates it when we dont pass func=None or None as the first arg  
+  local link: [`/pattern_lens/figure_util.py:54`](/pattern_lens/figure_util.py#L54) 
+  | view on GitHub: [pattern_lens/figure_util.py#L54](https://github.com/mivanit/pattern-lens/blob/main/pattern_lens/figure_util.py#L54)
+  | [Make Issue](https://github.com/mivanit/pattern-lens/issues/new?title=mypy%20hates%20it%20when%20we%20dont%20pass%20func%3DNone%20or%20None%20as%20the%20first%20arg&body=%23%20source%0A%0A%5B%60pattern_lens%2Ffigure_util.py%23L54%60%5D%28https%3A%2F%2Fgithub.com%2Fmivanit%2Fpattern-lens%2Fblob%2Fmain%2Fpattern_lens%2Ffigure_util.py%23L54%29%0A%0A%23%20context%0A%60%60%60python%0A%23%20TYPING%3A%20mypy%20hates%20it%20when%20we%20dont%20pass%20func%3DNone%20or%20None%20as%20the%20first%20arg%0A%40overload%20%20%23%20without%20keyword%20arguments%2C%20returns%20decorated%20function%0Adef%20matplotlib_figure_saver%28%0A%60%60%60&labels=TYPING)
+
+  ```python
+  # TYPING: mypy hates it when we dont pass func=None or None as the first arg
+  @overload  # without keyword arguments, returns decorated function
+  def matplotlib_figure_saver(
+  ```
+
+
 - error: Item "SubFigure" of "Figure | SubFigure" has no attribute "tight_layout"  [union-attr]  
   local link: [`/pattern_lens/figure_util.py:178`](/pattern_lens/figure_util.py#L178) 
   | view on GitHub: [pattern_lens/figure_util.py#L178](https://github.com/mivanit/pattern-lens/blob/main/pattern_lens/figure_util.py#L178)
@@ -128,6 +140,24 @@
   for fig in figs_dict.values():
   	# TYPING: error: Argument 1 to "close" has incompatible type "Figure | SubFigure"; expected "int | str | Figure | Literal['all'] | None"  [arg-type]
   	plt.close(fig)  # type: ignore[arg-type]
+  ```
+
+
+
+
+## [`tests/unit/test_figure_util.py`](/tests/unit/test_figure_util.py)
+
+- error: Too few arguments  [call-arg]  
+  local link: [`/tests/unit/test_figure_util.py:235`](/tests/unit/test_figure_util.py#L235) 
+  | view on GitHub: [tests/unit/test_figure_util.py#L235](https://github.com/mivanit/pattern-lens/blob/main/tests/unit/test_figure_util.py#L235)
+  | [Make Issue](https://github.com/mivanit/pattern-lens/issues/new?title=error%3A%20Too%20few%20arguments%20%20%5Bcall-arg%5D&body=%23%20source%0A%0A%5B%60tests%2Funit%2Ftest_figure_util.py%23L235%60%5D%28https%3A%2F%2Fgithub.com%2Fmivanit%2Fpattern-lens%2Fblob%2Fmain%2Ftests%2Funit%2Ftest_figure_util.py%23L235%29%0A%0A%23%20context%0A%60%60%60python%0A%09TEMP_DIR.mkdir%28parents%3DTrue%2C%20exist_ok%3DTrue%29%0A%0A%09%23%20TYPING%3A%20error%3A%20Too%20few%20arguments%20%20%5Bcall-arg%5D%0A%09%40matplotlib_figure_saver%28None%2C%20fmt%3Dfmt%29%20%20%23%20type%3A%20ignore%5Bcall-arg%5D%0A%09def%20plot_matrix%28attn_matrix%2C%20ax%29%3A%0A%60%60%60&labels=TYPING)
+
+  ```python
+  TEMP_DIR.mkdir(parents=True, exist_ok=True)
+
+  # TYPING: error: Too few arguments  [call-arg]
+  @matplotlib_figure_saver(None, fmt=fmt)  # type: ignore[call-arg]
+  def plot_matrix(attn_matrix, ax):
   ```
 
 

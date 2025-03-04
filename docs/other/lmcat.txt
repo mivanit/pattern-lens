@@ -1,8 +1,8 @@
 # Stats
 - 27 files
-- 6056 (6.1K) lines
-- 219597 (220K) chars
-- 99416 (99K) `gpt2` tokens
+- 6055 (6.1K) lines
+- 219633 (220K) chars
+- 99414 (99K) `gpt2` tokens
 
 # File Tree
 
@@ -10,7 +10,7 @@
 pattern-lens                         
 ├── .github                          
 │   └── workflows                    
-│    └── checks.yml                  [   87L  1,742C    880T]
+│    └── checks.yml                  [   85L  1,688C    844T]
 ├── data                             
 │   └── pile_5.jsonl                 [    5L 22,124C  6,858T]
 ├── pattern_lens                     
@@ -20,7 +20,7 @@ pattern-lens
 │   ├── activations.py               [  656L 18,385C  7,072T]
 │   ├── attn_figure_funcs.py         [  118L  3,127C  1,159T]
 │   ├── consts.py                    [   37L  1,093C    354T]
-│   ├── figure_util.py               [  515L 16,772C  6,206T]
+│   ├── figure_util.py               [  515L 16,788C  6,213T]
 │   ├── figures.py                   [  357L 10,461C  3,916T]
 │   ├── indexes.py                   [  147L  4,398C  1,683T]
 │   ├── load_activations.py          [  167L  4,270C  1,579T]
@@ -34,7 +34,7 @@ pattern-lens
 │   └── unit                         
 │    ├── test_activations.py         [  170L  4,691C  1,774T]
 │    ├── test_activations_return.py  [  168L  4,804C  1,820T]
-│    ├── test_figure_util.py         [  290L  8,531C  3,491T]
+│    ├── test_figure_util.py         [  291L  8,605C  3,519T]
 │    ├── test_figures.py             [  157L  4,736C  1,807T]
 │    ├── test_load_activations.py    [  138L  3,866C  1,389T]
 │    ├── test_multifig.py            [  130L  4,851C  1,720T]
@@ -67,8 +67,6 @@ jobs:
       matrix:
         versions:
           - python: "3.11"
-          - python: "3.12"
-          - python: "3.13"
     steps:
       - uses: actions/checkout@v4
         with:
@@ -2775,12 +2773,14 @@ MATRIX_SAVE_SVG_TEMPLATE: str = """<svg xmlns="http://www.w3.org/2000/svg" width
 "template for saving an `n` by `m` matrix as an svg/svgz"
 
 
+# TYPING: mypy hates it when we dont pass func=None or None as the first arg
 @overload  # without keyword arguments, returns decorated function
 def matplotlib_figure_saver(
 	func: Callable[[AttentionMatrix, plt.Axes], None],
 ) -> AttentionMatrixFigureFunc: ...
 @overload  # with keyword arguments, returns decorator
 def matplotlib_figure_saver(
+	func: None = None,
 	fmt: str = MATPLOTLIB_FIGURE_FMT,
 ) -> Callable[
 	[Callable[[AttentionMatrix, plt.Axes], None], str],
@@ -2788,7 +2788,6 @@ def matplotlib_figure_saver(
 ]: ...
 def matplotlib_figure_saver(
 	func: Callable[[AttentionMatrix, plt.Axes], None] | None = None,
-	*args,
 	fmt: str = MATPLOTLIB_FIGURE_FMT,
 ) -> (
 	AttentionMatrixFigureFunc
@@ -2821,7 +2820,6 @@ def matplotlib_figure_saver(
 	```
 
 	"""
-	assert len(args) == 0, "This decorator only supports keyword arguments"
 
 	def decorator(
 		func: Callable[[AttentionMatrix, plt.Axes], None],
@@ -4861,7 +4859,8 @@ def test_save_matrix_as_svgz_wrapper_content():
 def test_matplotlib_figure_saver_formats(fmt):
 	TEMP_DIR.mkdir(parents=True, exist_ok=True)
 
-	@matplotlib_figure_saver(None, fmt=fmt)
+	# TYPING: error: Too few arguments  [call-arg]
+	@matplotlib_figure_saver(None, fmt=fmt)  # type: ignore[call-arg]
 	def plot_matrix(attn_matrix, ax):
 		ax.matshow(attn_matrix)
 		ax.axis("off")
