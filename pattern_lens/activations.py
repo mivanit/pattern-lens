@@ -184,7 +184,7 @@ def compute_activations(  # noqa: PLR0915
 	)
 
 	# save metadata
-	prompt_dir: Path = save_path / model.model_name / "prompts" / prompt["hash"]
+	prompt_dir: Path = save_path / model.cfg.model_name / "prompts" / prompt["hash"]
 	prompt_dir.mkdir(parents=True, exist_ok=True)
 	with open(prompt_dir / "prompt.json", "w") as f:
 		json.dump(prompt, f)
@@ -335,9 +335,8 @@ def get_activations(
 	augment_prompt_with_hash(prompt)
 
 	# get the model
-	print(f"{HookedTransformer = }, {type(HookedTransformer) = }")
 	model_name: str = (
-		model.model_name if isinstance(model, HookedTransformer) else model
+		model.cfg.model_name if isinstance(model, HookedTransformer) else model
 	)
 
 	# from cache
