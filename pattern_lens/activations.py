@@ -335,8 +335,11 @@ def get_activations(
 	augment_prompt_with_hash(prompt)
 
 	# get the model
+	print(f"{HookedTransformer = }, {type(HookedTransformer) = }")
 	model_name: str = (
-		model.model_name if isinstance(model, HookedTransformer) else model
+		model.model_name
+		if isinstance(model, HookedTransformer)
+		else model
 	)
 
 	# from cache

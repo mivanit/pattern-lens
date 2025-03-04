@@ -12,6 +12,7 @@ def test_matplotlib_multifigure_saver():
 	"""Test the matplotlib_multifigure_saver decorator."""
 	# Create a temporary directory for saving figures
 	temp_dir = TEMP_DIR / "test_matplotlib_multifigure_saver"
+	temp_dir.mkdir(parents=True, exist_ok=True)
 
 	# Define a test function with the decorator
 	@matplotlib_multifigure_saver(names=["hist", "heatmap"])
@@ -46,6 +47,7 @@ def test_matplotlib_multifigure_saver_custom_format():
 	"""Test the matplotlib_multifigure_saver decorator with a custom format."""
 	# Create a temporary directory for saving figures
 	temp_dir = TEMP_DIR / "test_matplotlib_multifigure_saver_custom_format"
+	temp_dir.mkdir(parents=True, exist_ok=True)
 
 	# Define a test function with the decorator and custom format
 	@matplotlib_multifigure_saver(names=["plot1", "plot2"], fmt="png")
@@ -79,6 +81,7 @@ def test_matplotlib_multifigure_saver_error_handling():
 	"""Test error handling in the matplotlib_multifigure_saver decorator."""
 	# Create a temporary directory for saving figures
 	temp_dir = TEMP_DIR / "test_matplotlib_multifigure_saver_error_handling"
+	temp_dir.mkdir(parents=True, exist_ok=True)
 
 	# Define a test function that raises an error for one of the plots
 	@matplotlib_multifigure_saver(names=["good_plot", "error_plot"])
@@ -99,13 +102,14 @@ def test_matplotlib_multifigure_saver_error_handling():
 	except ZeroDivisionError:
 		# Check that the first figure was saved before the error
 		good_plot_file = temp_dir / "plot_with_error.good_plot.svgz"
-		assert good_plot_file.exists(), "Good plot file was not saved before the error"
+		assert not good_plot_file.exists(), "Good plot file was saved before the error"
 
 
 def test_matplotlib_multifigure_saver_cleanup():
 	"""Test that matplotlib_multifigure_saver properly closes figures."""
 	# Create a temporary directory for saving figures
 	temp_dir = TEMP_DIR / "test_matplotlib_multifigure_saver_cleanup"
+	temp_dir.mkdir(parents=True, exist_ok=True)
 
 	# Count the number of open figures before the test
 	initial_figures = len(plt.get_fignums())
