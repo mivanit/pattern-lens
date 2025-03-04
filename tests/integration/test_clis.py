@@ -140,7 +140,7 @@ def test_server_cli():
 
 		# Call main with the test arguments
 		with pytest.raises(KeyboardInterrupt):
-			server_main()
+			server_main(None)
 
 		# Check that write_html_index was called
 		mock_write_html.assert_called_once()

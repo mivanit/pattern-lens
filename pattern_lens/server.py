@@ -14,9 +14,10 @@ from pathlib import Path
 from pattern_lens.indexes import write_html_index
 
 
-def main(path: str, port: int = 8000) -> None:
+def main(path: str | None, port: int = 8000) -> None:
 	"move to the given path and start the server"
-	os.chdir(path)
+	if path is not None:
+		os.chdir(path)
 	try:
 		with socketserver.TCPServer(
 			("", port),
@@ -36,7 +37,7 @@ if __name__ == "__main__":
 		type=str,
 		required=False,
 		help="The path to serve, defaults to the current directory",
-		default=".",
+		default=None,
 	)
 	arg_parser.add_argument(
 		"--port",
