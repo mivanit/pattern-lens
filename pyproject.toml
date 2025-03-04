@@ -43,6 +43,7 @@
         "types-tqdm",
         # docs
         'pdoc>=14.6.0',
+        "nbconvert>=7.16.4",
         # tomli since no tomlib in python < 3.11
         "tomli>=2.1.0; python_version < '3.11'",
         # lint
