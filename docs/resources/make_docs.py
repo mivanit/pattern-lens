@@ -1,4 +1,5 @@
-"""python project makefile template -- docs generation script
+"""
+python project makefile template -- docs generation script
 originally by Michael Ivanitskiy (mivanits@umich.edu)
 https://github.com/mivanit/python-project-makefile-template
 license: https://creativecommons.org/licenses/by-sa/4.0/
@@ -7,13 +8,13 @@ as this makes it easier to find edits when updating
 """
 
 import argparse
-import inspect
-import re
-import warnings
 from dataclasses import dataclass, field
 from functools import reduce
+import inspect
+import re
+from typing import Any, Dict, List, Optional
+import warnings
 from pathlib import Path
-from typing import Any
 
 try:
 	import tomllib  # type: ignore[import-not-found]
@@ -27,6 +28,7 @@ import pdoc.extract  # type: ignore[import-not-found]
 import pdoc.render  # type: ignore[import-not-found]
 import pdoc.render_helpers  # type: ignore[import-not-found]
 from markupsafe import Markup
+
 
 """
  ######  ######## ######## ##     ## ########
@@ -43,7 +45,7 @@ from markupsafe import Markup
 CONFIG_PATH: Path = Path("pyproject.toml")
 TOOL_PATH: str = "tool.makefile.docs"
 
-HTML_TO_MD_MAP: dict[str, str] = {
+HTML_TO_MD_MAP: Dict[str, str] = {
 	"&gt;": ">",
 	"&lt;": "<",
 	"&amp;": "&",
@@ -66,7 +68,7 @@ _CONFIG_NOTEBOOKS_INDEX_TEMPLATE: str = r"""<!doctype html>
 	<link rel="stylesheet" href="../resources/css/theme.css">
 	<link rel="stylesheet" href="../resources/css/content.css">
 </head>
-<body>
+<body>    
 	<h1>Notebooks</h1>
 	<p>
 		You can find the source code for the notebooks at
@@ -87,8 +89,9 @@ def deep_get(
 	path: str,
 	default: Any = None,
 	sep: str = ".",
-	warn_msg_on_default: str | None = None,
+	warn_msg_on_default: Optional[str] = None,
 ) -> Any:
+	"Get a value from a nested dictionary"
 	output: Any = reduce(
 		lambda x, y: x.get(y, default) if isinstance(x, dict) else default,  # function
 		path.split(sep) if isinstance(path, str) else path,  # sequence
@@ -96,7 +99,7 @@ def deep_get(
 	)
 
 	if warn_msg_on_default and output == default:
-		warnings.warn(warn_msg_on_default.format(path=path), stacklevel=2)
+		warnings.warn(warn_msg_on_default.format(path=path))
 
 	return output
 
@@ -207,22 +210,22 @@ def set_global_config() -> None:
 def replace_heading(match: re.Match) -> str:
 	current_level: int = len(match.group(1))
 	new_level: int = min(
-		current_level + CONFIG.markdown_headings_increment,
-		6,
+		current_level + CONFIG.markdown_headings_increment, 6
 	)  # Cap at h6
 	return "#" * new_level + match.group(2)
 
 
 def increment_markdown_headings(markdown_text: str) -> str:
-	"""Increment all Markdown headings in the given text by the specified amount.
+	"""
+	Increment all Markdown headings in the given text by the specified amount.
 
 	Args:
-		markdown_text (str): The input Markdown text.
+	    markdown_text (str): The input Markdown text.
 
 	Returns:
-		str: The Markdown text with incremented heading levels.
-
+	    str: The Markdown text with incremented heading levels.
 	"""
+
 	# Regular expression to match Markdown headings
 	heading_pattern: re.Pattern = re.compile(r"^(#{1,6})(.+)$", re.MULTILINE)
 
@@ -256,7 +259,9 @@ def format_signature(sig: inspect.Signature, colon: bool) -> str:
 		anno += ":"
 
 	# Construct the full signature
-	return f"`(`{params_str}`{anno}`"
+	rendered = f"`(`{params_str}`{anno}`"
+
+	return rendered
 
 
 def markup_safe(sig: inspect.Signature) -> str:
@@ -287,12 +292,11 @@ def use_markdown_format() -> None:
 # ============================================================
 def convert_notebooks() -> None:
 	try:
-		# HACK: notebook docs not used in this repo
-		import nbconvert  # type: ignore[import-not-found]
-		import nbformat  # type: ignore[import-not-found]
+		import nbformat
+		import nbconvert
 	except ImportError:
 		raise ImportError(
-			'nbformat and nbconvert are required to convert notebooks to HTML, add "nbconvert>=7.16.4" to dev/docs deps',
+			'nbformat and nbconvert are required to convert notebooks to HTML, add "nbconvert>=7.16.4" to dev/docs deps'
 		)
 
 	# create output directory
@@ -344,7 +348,7 @@ def convert_notebooks() -> None:
 # ============================================================
 
 
-def pdoc_combined(*modules: list, output_file: Path) -> None:
+def pdoc_combined(*modules, output_file: Path) -> None:
 	"""Render the documentation for a list of modules into a single HTML file.
 
 	Args:
@@ -358,15 +362,14 @@ def pdoc_combined(*modules: list, output_file: Path) -> None:
 	4. Write the combined documentation to the specified output file.
 
 	Rendering options can be configured by calling `pdoc.render.configure` in advance.
-
 	"""
 	# Extract all modules and submodules
-	all_modules: dict[str, pdoc.doc.Module] = {}
+	all_modules: Dict[str, pdoc.doc.Module] = {}
 	for module_name in pdoc.extract.walk_specs(modules):
 		all_modules[module_name] = pdoc.doc.Module.from_name(module_name)
 
 	# Generate HTML content for each module
-	module_contents: list[str] = []
+	module_contents: List[str] = []
 	for module in all_modules.values():
 		module_html = pdoc.render.html_module(module, all_modules)
 		module_contents.append(module_html)
@@ -380,7 +383,6 @@ def pdoc_combined(*modules: list, output_file: Path) -> None:
 
 
 def ignore_warnings() -> None:
-	"""Ignore warnings as specified in the configuration."""
 	# Process and apply the warning filters
 	for message in CONFIG.warnings_ignore:
 		warnings.filterwarnings("ignore", message=message)
@@ -462,8 +464,7 @@ if __name__ == "__main__":
 		port: int = 8000
 		os.chdir(CONFIG.output_dir)
 		with socketserver.TCPServer(
-			("", port),
-			http.server.SimpleHTTPRequestHandler,
+			("", port), http.server.SimpleHTTPRequestHandler
 		) as httpd:
 			print(f"Serving at http://localhost:{port}")
 			httpd.serve_forever()
