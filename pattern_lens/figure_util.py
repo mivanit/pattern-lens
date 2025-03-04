@@ -353,6 +353,7 @@ def matrix_as_svg(
 		the SVG content for the matrix
 	"""
 	# Get the dimensions of the matrix
+	assert matrix.ndim == 2, f"Matrix must be 2D, got {matrix.shape = }" # noqa: PLR2004
 	m, n = matrix.shape
 
 	# Preprocess the matrix into an RGB image
