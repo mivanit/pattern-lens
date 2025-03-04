@@ -229,8 +229,8 @@ def compute_activations(
 			torch.stack([cache_torch[k] for k in head_keys], dim=1)
 		)
 		# check shape
-		assert patterns_stacked.shape[:2] == (n_layers, model.cfg.n_heads), (
-			f"unexpected shape: {patterns_stacked.shape = }, expected {(n_layers, model.cfg.n_heads)}"
+		assert patterns_stacked.shape[:3] == (n_layers, model.cfg.n_heads), (
+			f"unexpected shape: {patterns_stacked.shape[:3] = }, expected {(1, n_layers, model.cfg.n_heads)}"
 		)
 
 		patterns_stacked_np: Float[np.ndarray, "n_layers n_heads n_ctx n_ctx"] = (

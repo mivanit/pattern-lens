@@ -31,7 +31,10 @@ class MockHookedTransformer:
 			# [1, n_heads, n_ctx, n_ctx] tensor, where n_ctx is len(prompt_str)
 			n_ctx: int = len(prompt_str)
 			attn_pattern: torch.Tensor = torch.rand(
-				1, self.cfg.n_heads, n_ctx, n_ctx,
+				1,
+				self.cfg.n_heads,
+				n_ctx,
+				n_ctx,
 			).float()
 			cache[f"blocks.{i}.attn.hook_pattern"] = attn_pattern
 
