@@ -54,7 +54,8 @@ class HTConfigMock:
 
 	def serialize(self) -> dict:
 		"""serialize the config to json. values which aren't serializable will be converted via `muutils.json_serialize.json_serialize`"""
-		return json_serialize(self.__dict__)
+		# its fine, we know its a dict
+		return json_serialize(self.__dict__)  # type: ignore[return-value]
 
 	@classmethod
 	def load(cls, data: dict) -> "HTConfigMock":

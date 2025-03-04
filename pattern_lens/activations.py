@@ -229,7 +229,7 @@ def compute_activations(  # noqa: PLR0915
 			torch.stack([cache_torch[k] for k in head_keys], dim=1)
 		)
 		# check shape
-		pattern_shape_no_ctx: tuple[int, int, int] = tuple(patterns_stacked.shape[:3])
+		pattern_shape_no_ctx: tuple[int, ...] = tuple(patterns_stacked.shape[:3])
 		assert pattern_shape_no_ctx == (1, n_layers, model.cfg.n_heads), (
 			f"unexpected shape: {patterns_stacked.shape[:3] = } ({pattern_shape_no_ctx = }), expected {(1, n_layers, model.cfg.n_heads) = }"
 		)
