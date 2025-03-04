@@ -57,6 +57,7 @@ def matplotlib_figure_saver(
 ) -> AttentionMatrixFigureFunc: ...
 @overload  # with keyword arguments, returns decorator
 def matplotlib_figure_saver(
+	func: None = None,
 	fmt: str = MATPLOTLIB_FIGURE_FMT,
 ) -> Callable[
 	[Callable[[AttentionMatrix, plt.Axes], None], str],
@@ -64,7 +65,6 @@ def matplotlib_figure_saver(
 ]: ...
 def matplotlib_figure_saver(
 	func: Callable[[AttentionMatrix, plt.Axes], None] | None = None,
-	*args,
 	fmt: str = MATPLOTLIB_FIGURE_FMT,
 ) -> (
 	AttentionMatrixFigureFunc
@@ -97,7 +97,6 @@ def matplotlib_figure_saver(
 	```
 
 	"""
-	assert len(args) == 0, "This decorator only supports keyword arguments"
 
 	def decorator(
 		func: Callable[[AttentionMatrix, plt.Axes], None],
