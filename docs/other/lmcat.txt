@@ -1,8 +1,8 @@
 # Stats
 - 20 files
 - 5050 (5.0K) lines
-- 189009 (189K) chars
-- 87686 (88K) `gpt2` tokens
+- 189010 (189K) chars
+- 87690 (88K) `gpt2` tokens
 
 # File Tree
 
@@ -34,8 +34,8 @@ pattern-lens
 │    └── test_figure_util.py  [  292L  8,530C  3,491T]
 ├── README.md                 [  106L  3,862C  1,295T]
 ├── demo.ipynb                [  165L  4,787C  2,343T]
-├── makefile                  [1,662L 50,657C 19,543T]
-├── pyproject.toml            [  218L  6,949C  3,592T]
+├── makefile                  [1,669L 50,890C 19,621T]
+├── pyproject.toml            [  218L  6,950C  3,595T]
 ```
 
 # File Contents
@@ -4920,7 +4920,7 @@ summary:
                 "D403", # first-word-uncapitalized
                 "D206", # docstring-tab-indentation
                 "ERA001", # commented-out-code
-                "T201", # print is fine lmao
+                "T201", # print is fine
                 "C408", # calling dict() is fine
                 "UP015", # we like specifying the mode even if it's the default
                 "D300", # we like docstrings
@@ -4938,9 +4938,9 @@ summary:
                 "D203", # docstring right after the class
                 "D213", # docstring on first line
                 "NPY002", # legacy numpy generator is fine
-                "D401", # dont care about imperative mood
+                "D401", # don't care about imperative mood
                 # todos:
-                "TD002", # dont care about author
+                "TD002", # don't care about author
                 "TD003", # `make todo` will give us a table where we can create issues
                 "PLR0913", # sometimes you have to have a lot of args
             ]
@@ -4949,11 +4949,11 @@ summary:
 
             [tool.ruff.lint.per-file-ignores]
                 "tests/*" = [
-                    # dont need docstrings in test functions or modules
+                    # don't need docstrings in test functions or modules
                     "D103", 
                     "D100",
-                    "INP001", # dont need __init__ either
-                    # dont need type annotations in test functions
+                    "INP001", # don't need __init__ either
+                    # don't need type annotations in test functions
                     "ANN001",
                     "ANN201", 
                     "ANN202",
@@ -4961,7 +4961,7 @@ summary:
                 ]
                 "docs/*" = ["ALL"] # not our problem
                 "**/*.ipynb" = [
-                    "D103", # dont need docstrings
+                    "D103", # don't need docstrings
                     "PLR2004", # magic variables are fine
                     "N806", # uppercase vars are fine
                 ]
