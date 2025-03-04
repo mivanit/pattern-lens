@@ -1,0 +1,1 @@
+{"name": "raw", "func_name": "raw", "doc": "raw attention matrix", "figure_save_fmt": "png", "source": "F:/projects/pattern-lens/pattern_lens/figure_util.py", "code": "@register_attn_figure_func\n@save_matrix_wrapper(fmt=\"png\")\ndef raw(attn_matrix: AttentionMatrix) -> Matrix2D:\n\t\"raw attention matrix\"\n\treturn attn_matrix\n"}
