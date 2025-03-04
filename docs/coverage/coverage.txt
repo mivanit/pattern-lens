@@ -1,20 +1,23 @@
-Name                                  Stmts   Miss  Cover   Missing
--------------------------------------------------------------------
-pattern_lens\__init__.py                  1      0   100%
-pattern_lens\activations.py             172     47    73%   197, 249, 252-254, 273, 276-278, 350-356, 425-429, 473-474, 487, 519-652, 656
-pattern_lens\attn_figure_funcs.py        22      6    73%   29, 81-91
-pattern_lens\consts.py                   23      0   100%
-pattern_lens\figure_util.py             147     30    80%   158-187, 227-230, 237-238, 243-245, 254-257, 268-272, 319-320, 506
-pattern_lens\figures.py                 104     28    73%   57, 100-101, 145, 163-166, 181-182, 292-352, 356
-pattern_lens\indexes.py                  65      3    95%   84-85, 97
-pattern_lens\load_activations.py         56      6    89%   103, 136-137, 141, 161-162
-pattern_lens\prompts.py                  24      1    96%   80
-pattern_lens\server.py                   25      8    68%   33-58
-tests\integration\test_pipeline.py       15      0   100%
-tests\unit\test_activations.py           65      0   100%
-tests\unit\test_figure_util.py          176      0   100%
-tests\unit\test_figures.py               55      1    98%   108
-tests\unit\test_load_activations.py      54      0   100%
-tests\unit\test_server.py                11      0   100%
--------------------------------------------------------------------
-TOTAL                                  1015    130    87%
+Name                                    Stmts   Miss  Cover   Missing
+---------------------------------------------------------------------
+pattern_lens\__init__.py                    1      0   100%
+pattern_lens\activations.py               172     14    92%   197, 276-278, 362, 425-429, 473-474, 487, 627, 656
+pattern_lens\attn_figure_funcs.py          22      6    73%   29, 81-91
+pattern_lens\consts.py                     23      0   100%
+pattern_lens\figure_util.py               154     50    68%   100, 113, 125, 154-157, 162, 168-169, 176, 179, 184-191, 227-232, 240-243, 246-249, 255-257, 265-268, 273-275, 278-283, 296, 298-299, 318-321, 362-363, 378-386, 465, 474, 501, 506, 515
+pattern_lens\figures.py                   104      9    91%   58, 101-102, 146, 164-167, 182-183, 357
+pattern_lens\indexes.py                    65      3    95%   84-85, 97
+pattern_lens\load_activations.py           56      6    89%   103, 136-137, 141, 161-162
+pattern_lens\prompts.py                    24      1    96%   80
+pattern_lens\server.py                     26      8    69%   34-59
+tests\integration\test_clis.py             51      0   100%
+tests\integration\test_pipeline.py         15      0   100%
+tests\unit\test_activations.py             65     13    80%   18-23, 26, 31-43
+tests\unit\test_activations_return.py      65      8    88%   108, 112, 130, 144-147, 151, 156, 168
+tests\unit\test_figure_util.py            175      0   100%
+tests\unit\test_figures.py                 55      1    98%   109
+tests\unit\test_load_activations.py        54      0   100%
+tests\unit\test_multifig.py                64      1    98%   101
+tests\unit\test_server.py                  11      0   100%
+---------------------------------------------------------------------
+TOTAL                                    1202    120    90%

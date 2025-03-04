@@ -7,7 +7,7 @@
 [![docs](https://img.shields.io/badge/docs-latest-blue)](https://miv.name/pattern-lens)
 [![Checks](https://github.com/mivanit/pattern-lens/actions/workflows/checks.yml/badge.svg)](https://github.com/mivanit/pattern-lens/actions/workflows/checks.yml)
 
-[![Coverage](data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz4NCjxzdmcgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB3aWR0aD0iOTkiIGhlaWdodD0iMjAiPg0KICAgIDxsaW5lYXJHcmFkaWVudCBpZD0iYiIgeDI9IjAiIHkyPSIxMDAlIj4NCiAgICAgICAgPHN0b3Agb2Zmc2V0PSIwIiBzdG9wLWNvbG9yPSIjYmJiIiBzdG9wLW9wYWNpdHk9Ii4xIi8+DQogICAgICAgIDxzdG9wIG9mZnNldD0iMSIgc3RvcC1vcGFjaXR5PSIuMSIvPg0KICAgIDwvbGluZWFyR3JhZGllbnQ+DQogICAgPG1hc2sgaWQ9ImEiPg0KICAgICAgICA8cmVjdCB3aWR0aD0iOTkiIGhlaWdodD0iMjAiIHJ4PSIzIiBmaWxsPSIjZmZmIi8+DQogICAgPC9tYXNrPg0KICAgIDxnIG1hc2s9InVybCgjYSkiPg0KICAgICAgICA8cGF0aCBmaWxsPSIjNTU1IiBkPSJNMCAwaDYzdjIwSDB6Ii8+DQogICAgICAgIDxwYXRoIGZpbGw9IiNhNGE2MWQiIGQ9Ik02MyAwaDM2djIwSDYzeiIvPg0KICAgICAgICA8cGF0aCBmaWxsPSJ1cmwoI2IpIiBkPSJNMCAwaDk5djIwSDB6Ii8+DQogICAgPC9nPg0KICAgIDxnIGZpbGw9IiNmZmYiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtZmFtaWx5PSJEZWphVnUgU2FucyxWZXJkYW5hLEdlbmV2YSxzYW5zLXNlcmlmIiBmb250LXNpemU9IjExIj4NCiAgICAgICAgPHRleHQgeD0iMzEuNSIgeT0iMTUiIGZpbGw9IiMwMTAxMDEiIGZpbGwtb3BhY2l0eT0iLjMiPmNvdmVyYWdlPC90ZXh0Pg0KICAgICAgICA8dGV4dCB4PSIzMS41IiB5PSIxNCI+Y292ZXJhZ2U8L3RleHQ+DQogICAgICAgIDx0ZXh0IHg9IjgwIiB5PSIxNSIgZmlsbD0iIzAxMDEwMSIgZmlsbC1vcGFjaXR5PSIuMyI+NzglPC90ZXh0Pg0KICAgICAgICA8dGV4dCB4PSI4MCIgeT0iMTQiPjc4JTwvdGV4dD4NCiAgICA8L2c+DQo8L3N2Zz4NCg==)](docs/coverage/html/)
+[![Coverage](data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz4NCjxzdmcgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB3aWR0aD0iOTkiIGhlaWdodD0iMjAiPg0KICAgIDxsaW5lYXJHcmFkaWVudCBpZD0iYiIgeDI9IjAiIHkyPSIxMDAlIj4NCiAgICAgICAgPHN0b3Agb2Zmc2V0PSIwIiBzdG9wLWNvbG9yPSIjYmJiIiBzdG9wLW9wYWNpdHk9Ii4xIi8+DQogICAgICAgIDxzdG9wIG9mZnNldD0iMSIgc3RvcC1vcGFjaXR5PSIuMSIvPg0KICAgIDwvbGluZWFyR3JhZGllbnQ+DQogICAgPG1hc2sgaWQ9ImEiPg0KICAgICAgICA8cmVjdCB3aWR0aD0iOTkiIGhlaWdodD0iMjAiIHJ4PSIzIiBmaWxsPSIjZmZmIi8+DQogICAgPC9tYXNrPg0KICAgIDxnIG1hc2s9InVybCgjYSkiPg0KICAgICAgICA8cGF0aCBmaWxsPSIjNTU1IiBkPSJNMCAwaDYzdjIwSDB6Ii8+DQogICAgICAgIDxwYXRoIGZpbGw9IiM5N0NBMDAiIGQ9Ik02MyAwaDM2djIwSDYzeiIvPg0KICAgICAgICA8cGF0aCBmaWxsPSJ1cmwoI2IpIiBkPSJNMCAwaDk5djIwSDB6Ii8+DQogICAgPC9nPg0KICAgIDxnIGZpbGw9IiNmZmYiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtZmFtaWx5PSJEZWphVnUgU2FucyxWZXJkYW5hLEdlbmV2YSxzYW5zLXNlcmlmIiBmb250LXNpemU9IjExIj4NCiAgICAgICAgPHRleHQgeD0iMzEuNSIgeT0iMTUiIGZpbGw9IiMwMTAxMDEiIGZpbGwtb3BhY2l0eT0iLjMiPmNvdmVyYWdlPC90ZXh0Pg0KICAgICAgICA8dGV4dCB4PSIzMS41IiB5PSIxNCI+Y292ZXJhZ2U8L3RleHQ+DQogICAgICAgIDx0ZXh0IHg9IjgwIiB5PSIxNSIgZmlsbD0iIzAxMDEwMSIgZmlsbC1vcGFjaXR5PSIuMyI+OTAlPC90ZXh0Pg0KICAgICAgICA8dGV4dCB4PSI4MCIgeT0iMTQiPjkwJTwvdGV4dD4NCiAgICA8L2c+DQo8L3N2Zz4NCg==)](docs/coverage/html/)
 ![GitHub commits](https://img.shields.io/github/commit-activity/t/mivanit/pattern-lens)
 ![GitHub commit activity](https://img.shields.io/github/commit-activity/m/mivanit/pattern-lens)
 ![GitHub closed pull requests](https://img.shields.io/github/issues-pr-closed/mivanit/pattern-lens)
@@ -134,7 +134,7 @@ see `demo.ipynb` for a full example
 [![docs](https://img.shields.io/badge/docs-latest-blue)](https://miv.name/pattern-lens)
 [![Checks](https://github.com/mivanit/pattern-lens/actions/workflows/checks.yml/badge.svg)](https://github.com/mivanit/pattern-lens/actions/workflows/checks.yml)
 
-[![Coverage](data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz4NCjxzdmcgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB3aWR0aD0iOTkiIGhlaWdodD0iMjAiPg0KICAgIDxsaW5lYXJHcmFkaWVudCBpZD0iYiIgeDI9IjAiIHkyPSIxMDAlIj4NCiAgICAgICAgPHN0b3Agb2Zmc2V0PSIwIiBzdG9wLWNvbG9yPSIjYmJiIiBzdG9wLW9wYWNpdHk9Ii4xIi8+DQogICAgICAgIDxzdG9wIG9mZnNldD0iMSIgc3RvcC1vcGFjaXR5PSIuMSIvPg0KICAgIDwvbGluZWFyR3JhZGllbnQ+DQogICAgPG1hc2sgaWQ9ImEiPg0KICAgICAgICA8cmVjdCB3aWR0aD0iOTkiIGhlaWdodD0iMjAiIHJ4PSIzIiBmaWxsPSIjZmZmIi8+DQogICAgPC9tYXNrPg0KICAgIDxnIG1hc2s9InVybCgjYSkiPg0KICAgICAgICA8cGF0aCBmaWxsPSIjNTU1IiBkPSJNMCAwaDYzdjIwSDB6Ii8+DQogICAgICAgIDxwYXRoIGZpbGw9IiNhNGE2MWQiIGQ9Ik02MyAwaDM2djIwSDYzeiIvPg0KICAgICAgICA8cGF0aCBmaWxsPSJ1cmwoI2IpIiBkPSJNMCAwaDk5djIwSDB6Ii8+DQogICAgPC9nPg0KICAgIDxnIGZpbGw9IiNmZmYiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtZmFtaWx5PSJEZWphVnUgU2FucyxWZXJkYW5hLEdlbmV2YSxzYW5zLXNlcmlmIiBmb250LXNpemU9IjExIj4NCiAgICAgICAgPHRleHQgeD0iMzEuNSIgeT0iMTUiIGZpbGw9IiMwMTAxMDEiIGZpbGwtb3BhY2l0eT0iLjMiPmNvdmVyYWdlPC90ZXh0Pg0KICAgICAgICA8dGV4dCB4PSIzMS41IiB5PSIxNCI+Y292ZXJhZ2U8L3RleHQ+DQogICAgICAgIDx0ZXh0IHg9IjgwIiB5PSIxNSIgZmlsbD0iIzAxMDEwMSIgZmlsbC1vcGFjaXR5PSIuMyI+NzglPC90ZXh0Pg0KICAgICAgICA8dGV4dCB4PSI4MCIgeT0iMTQiPjc4JTwvdGV4dD4NCiAgICA8L2c+DQo8L3N2Zz4NCg==)](docs/coverage/html/)
+[![Coverage](data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz4NCjxzdmcgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB3aWR0aD0iOTkiIGhlaWdodD0iMjAiPg0KICAgIDxsaW5lYXJHcmFkaWVudCBpZD0iYiIgeDI9IjAiIHkyPSIxMDAlIj4NCiAgICAgICAgPHN0b3Agb2Zmc2V0PSIwIiBzdG9wLWNvbG9yPSIjYmJiIiBzdG9wLW9wYWNpdHk9Ii4xIi8+DQogICAgICAgIDxzdG9wIG9mZnNldD0iMSIgc3RvcC1vcGFjaXR5PSIuMSIvPg0KICAgIDwvbGluZWFyR3JhZGllbnQ+DQogICAgPG1hc2sgaWQ9ImEiPg0KICAgICAgICA8cmVjdCB3aWR0aD0iOTkiIGhlaWdodD0iMjAiIHJ4PSIzIiBmaWxsPSIjZmZmIi8+DQogICAgPC9tYXNrPg0KICAgIDxnIG1hc2s9InVybCgjYSkiPg0KICAgICAgICA8cGF0aCBmaWxsPSIjNTU1IiBkPSJNMCAwaDYzdjIwSDB6Ii8+DQogICAgICAgIDxwYXRoIGZpbGw9IiM5N0NBMDAiIGQ9Ik02MyAwaDM2djIwSDYzeiIvPg0KICAgICAgICA8cGF0aCBmaWxsPSJ1cmwoI2IpIiBkPSJNMCAwaDk5djIwSDB6Ii8+DQogICAgPC9nPg0KICAgIDxnIGZpbGw9IiNmZmYiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtZmFtaWx5PSJEZWphVnUgU2FucyxWZXJkYW5hLEdlbmV2YSxzYW5zLXNlcmlmIiBmb250LXNpemU9IjExIj4NCiAgICAgICAgPHRleHQgeD0iMzEuNSIgeT0iMTUiIGZpbGw9IiMwMTAxMDEiIGZpbGwtb3BhY2l0eT0iLjMiPmNvdmVyYWdlPC90ZXh0Pg0KICAgICAgICA8dGV4dCB4PSIzMS41IiB5PSIxNCI+Y292ZXJhZ2U8L3RleHQ+DQogICAgICAgIDx0ZXh0IHg9IjgwIiB5PSIxNSIgZmlsbD0iIzAxMDEwMSIgZmlsbC1vcGFjaXR5PSIuMyI+OTAlPC90ZXh0Pg0KICAgICAgICA8dGV4dCB4PSI4MCIgeT0iMTQiPjkwJTwvdGV4dD4NCiAgICA8L2c+DQo8L3N2Zz4NCg==)](docs/coverage/html/)
 ![GitHub commits](https://img.shields.io/github/commit-activity/t/mivanit/pattern-lens)
 ![GitHub commit activity](https://img.shields.io/github/commit-activity/m/mivanit/pattern-lens)
 ![GitHub closed pull requests](https://img.shields.io/github/issues-pr-closed/mivanit/pattern-lens)
@@ -305,7 +305,7 @@ activations_main(
 )
 ```
 
-[View Source on GitHub](https://github.com/mivanit/pattern-lens/blob/0.3.0activations.py#L0-L654)
+[View Source on GitHub](https://github.com/mivanit/pattern-lens/blob/0.3.0activations.py#L0-L655)
 
 
 
@@ -322,7 +322,7 @@ activations_main(
 ```
 
 
-[View Source on GitHub](https://github.com/mivanit/pattern-lens/blob/0.3.0activations.py#L120-L277)
+[View Source on GitHub](https://github.com/mivanit/pattern-lens/blob/0.3.0activations.py#L120-L278)
 
 
 get activations for a given model and prompt, possibly from a cache
@@ -372,7 +372,7 @@ tuple[
 ```
 
 
-[View Source on GitHub](https://github.com/mivanit/pattern-lens/blob/0.3.0activations.py#L304-L368)
+[View Source on GitHub](https://github.com/mivanit/pattern-lens/blob/0.3.0activations.py#L305-L369)
 
 
 given a prompt and a model, save or load activations
@@ -421,7 +421,7 @@ given a prompt and a model, save or load activations
 ```
 
 
-[View Source on GitHub](https://github.com/mivanit/pattern-lens/blob/0.3.0activations.py#L376-L513)
+[View Source on GitHub](https://github.com/mivanit/pattern-lens/blob/0.3.0activations.py#L377-L514)
 
 
 main function for computing activations
@@ -461,7 +461,7 @@ main function for computing activations
 ```
 
 
-[View Source on GitHub](https://github.com/mivanit/pattern-lens/blob/0.3.0activations.py#L516-L651)
+[View Source on GitHub](https://github.com/mivanit/pattern-lens/blob/0.3.0activations.py#L517-L652)
 
 
 generate attention pattern activations for a model and prompts
@@ -721,7 +721,7 @@ implements a bunch of types, default values, and templates which are useful for 
 
 notably, you can use the decorators `matplotlib_figure_saver`, `save_matrix_wrapper` to make your functions save figures
 
-[View Source on GitHub](https://github.com/mivanit/pattern-lens/blob/0.3.0figure_util.py#L0-L507)
+[View Source on GitHub](https://github.com/mivanit/pattern-lens/blob/0.3.0figure_util.py#L0-L514)
 
 
 
@@ -795,7 +795,7 @@ template for saving an `n` by `m` matrix as an svg/svgz
 ```
 
 
-[View Source on GitHub](https://github.com/mivanit/pattern-lens/blob/0.3.0figure_util.py#L69-L129)
+[View Source on GitHub](https://github.com/mivanit/pattern-lens/blob/0.3.0figure_util.py#L65-L125)
 
 
 decorator for functions which take an attention matrix and predefined `ax` object, making it save a figure
@@ -831,7 +831,7 @@ def raw(attn_matrix: AttentionMatrix, ax: plt.Axes) -> None:
 ```
 
 
-[View Source on GitHub](https://github.com/mivanit/pattern-lens/blob/0.3.0figure_util.py#L132-L187)
+[View Source on GitHub](https://github.com/mivanit/pattern-lens/blob/0.3.0figure_util.py#L128-L193)
 
 
 decorate a function such that it saves multiple figures, one for each name in `names`
@@ -861,7 +861,7 @@ decorate a function such that it saves multiple figures, one for each name in `n
 ```
 
 
-[View Source on GitHub](https://github.com/mivanit/pattern-lens/blob/0.3.0figure_util.py#L190-L287)
+[View Source on GitHub](https://github.com/mivanit/pattern-lens/blob/0.3.0figure_util.py#L196-L293)
 
 
 preprocess a 2D matrix into a plottable heatmap image
@@ -897,7 +897,7 @@ preprocess a 2D matrix into a plottable heatmap image
 ```
 
 
-[View Source on GitHub](https://github.com/mivanit/pattern-lens/blob/0.3.0figure_util.py#L294-L320)
+[View Source on GitHub](https://github.com/mivanit/pattern-lens/blob/0.3.0figure_util.py#L300-L326)
 
 
 Convert a `Matrix2Drgb` to valid PNG bytes via PIL
@@ -927,7 +927,7 @@ Convert a `Matrix2Drgb` to valid PNG bytes via PIL
 ```
 
 
-[View Source on GitHub](https://github.com/mivanit/pattern-lens/blob/0.3.0figure_util.py#L323-L376)
+[View Source on GitHub](https://github.com/mivanit/pattern-lens/blob/0.3.0figure_util.py#L329-L383)
 
 
 quickly convert a 2D matrix to an SVG image, without matplotlib
@@ -970,7 +970,7 @@ quickly convert a 2D matrix to an SVG image, without matplotlib
 ```
 
 
-[View Source on GitHub](https://github.com/mivanit/pattern-lens/blob/0.3.0figure_util.py#L399-L508)
+[View Source on GitHub](https://github.com/mivanit/pattern-lens/blob/0.3.0figure_util.py#L406-L515)
 
 
 Decorator for functions that process an attention matrix and save it as an SVGZ image.
@@ -1047,13 +1047,13 @@ code for generating figures from attention patterns, using the functions decorat
 
 code for generating figures from attention patterns, using the functions decorated with `register_attn_figure_func`
 
-[View Source on GitHub](https://github.com/mivanit/pattern-lens/blob/0.3.0figures.py#L0-L355)
+[View Source on GitHub](https://github.com/mivanit/pattern-lens/blob/0.3.0figures.py#L0-L356)
 
 
 
 ### `class HTConfigMock:` { #HTConfigMock }
 
-[View Source on GitHub](https://github.com/mivanit/pattern-lens/blob/0.3.0figures.py#L37-L62)
+[View Source on GitHub](https://github.com/mivanit/pattern-lens/blob/0.3.0figures.py#L37-L63)
 
 
 Mock of `transformer_lens.HookedTransformerConfig` for type hinting and loading config json
@@ -1098,7 +1098,7 @@ will pass all kwargs to `__dict__`
 ```
 
 
-[View Source on GitHub](https://github.com/mivanit/pattern-lens/blob/0.3.0figures.py#L55-L57)
+[View Source on GitHub](https://github.com/mivanit/pattern-lens/blob/0.3.0figures.py#L55-L58)
 
 
 serialize the config to json. values which aren't serializable will be converted via `muutils.json_serialize.json_serialize`
@@ -1110,7 +1110,7 @@ serialize the config to json. values which aren't serializable will be converted
 ```
 
 
-[View Source on GitHub](https://github.com/mivanit/pattern-lens/blob/0.3.0figures.py#L59-L62)
+[View Source on GitHub](https://github.com/mivanit/pattern-lens/blob/0.3.0figures.py#L60-L63)
 
 
 try to load a config from a dict, using the `__init__` method
@@ -1128,7 +1128,7 @@ try to load a config from a dict, using the `__init__` method
 ```
 
 
-[View Source on GitHub](https://github.com/mivanit/pattern-lens/blob/0.3.0figures.py#L65-L117)
+[View Source on GitHub](https://github.com/mivanit/pattern-lens/blob/0.3.0figures.py#L66-L118)
 
 
 process a single head's attention pattern, running all the functions in `ATTENTION_MATRIX_FIGURE_FUNCS` on the attention pattern
@@ -1166,7 +1166,7 @@ process a single head's attention pattern, running all the functions in `ATTENTI
 ```
 
 
-[View Source on GitHub](https://github.com/mivanit/pattern-lens/blob/0.3.0figures.py#L120-L186)
+[View Source on GitHub](https://github.com/mivanit/pattern-lens/blob/0.3.0figures.py#L121-L187)
 
 
 compute and save figures for all heads in the model, using the functions in `ATTENTION_MATRIX_FIGURE_FUNCS`
@@ -1195,7 +1195,7 @@ compute and save figures for all heads in the model, using the functions in `ATT
 ```
 
 
-[View Source on GitHub](https://github.com/mivanit/pattern-lens/blob/0.3.0figures.py#L189-L220)
+[View Source on GitHub](https://github.com/mivanit/pattern-lens/blob/0.3.0figures.py#L190-L221)
 
 
 process a single prompt, loading the activations and computing and saving the figures
@@ -1221,7 +1221,7 @@ basically just calls `load_activations` and then `compute_and_save_figures`
 ```
 
 
-[View Source on GitHub](https://github.com/mivanit/pattern-lens/blob/0.3.0figures.py#L223-L287)
+[View Source on GitHub](https://github.com/mivanit/pattern-lens/blob/0.3.0figures.py#L224-L288)
 
 
 main function for generating figures from attention patterns, using the functions in `ATTENTION_MATRIX_FIGURE_FUNCS`
@@ -1246,7 +1246,7 @@ main function for generating figures from attention patterns, using the function
 ```
 
 
-[View Source on GitHub](https://github.com/mivanit/pattern-lens/blob/0.3.0figures.py#L290-L352)
+[View Source on GitHub](https://github.com/mivanit/pattern-lens/blob/0.3.0figures.py#L291-L353)
 
 
 generates figures from the activations using the functions decorated with `register_attn_figure_func`
@@ -1636,17 +1636,17 @@ cli for starting the server to show the web ui.
 can also run with --rewrite-index to update the index.html file.
 this is useful for working on the ui.
 
-[View Source on GitHub](https://github.com/mivanit/pattern-lens/blob/0.3.0server.py#L0-L57)
+[View Source on GitHub](https://github.com/mivanit/pattern-lens/blob/0.3.0server.py#L0-L58)
 
 
 
 ### `def main` { #main }
 ```python
-(path: str, port: int = 8000) -> None
+(path: str | None = None, port: int = 8000) -> None
 ```
 
 
-[View Source on GitHub](https://github.com/mivanit/pattern-lens/blob/0.3.0server.py#L17-L29)
+[View Source on GitHub](https://github.com/mivanit/pattern-lens/blob/0.3.0server.py#L17-L30)
 
 
 move to the given path and start the server

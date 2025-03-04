@@ -1406,7 +1406,7 @@ View Source on GitHub
 
 def main
 
-    (path: str, port: int = 8000) -> None
+    (path: str | None = None, port: int = 8000) -> None
 
 View Source on GitHub
 

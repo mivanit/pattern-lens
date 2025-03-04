@@ -52,9 +52,9 @@
 ## [`pattern_lens/figures.py`](/pattern_lens/figures.py)
 
 - do something with results  
-  local link: [`/pattern_lens/figures.py:184`](/pattern_lens/figures.py#L184) 
-  | view on GitHub: [pattern_lens/figures.py#L184](https://github.com/mivanit/pattern-lens/blob/main/pattern_lens/figures.py#L184)
-  | [Make Issue](https://github.com/mivanit/pattern-lens/issues/new?title=do%20something%20with%20results&body=%23%20source%0A%0A%5B%60pattern_lens%2Ffigures.py%23L184%60%5D%28https%3A%2F%2Fgithub.com%2Fmivanit%2Fpattern-lens%2Fblob%2Fmain%2Fpattern_lens%2Ffigures.py%23L184%29%0A%0A%23%20context%0A%60%60%60python%0A%09%09%09%09results%5Bfunc_name%5D%5B%28layer_idx%2C%20head_idx%29%5D%20%3D%20status%0A%0A%09%23%20TODO%3A%20do%20something%20with%20results%0A%0A%09generate_prompts_jsonl%28save_path%20%2F%20model_cfg.model_name%29%0A%60%60%60&labels=enhancement)
+  local link: [`/pattern_lens/figures.py:185`](/pattern_lens/figures.py#L185) 
+  | view on GitHub: [pattern_lens/figures.py#L185](https://github.com/mivanit/pattern-lens/blob/main/pattern_lens/figures.py#L185)
+  | [Make Issue](https://github.com/mivanit/pattern-lens/issues/new?title=do%20something%20with%20results&body=%23%20source%0A%0A%5B%60pattern_lens%2Ffigures.py%23L185%60%5D%28https%3A%2F%2Fgithub.com%2Fmivanit%2Fpattern-lens%2Fblob%2Fmain%2Fpattern_lens%2Ffigures.py%23L185%29%0A%0A%23%20context%0A%60%60%60python%0A%09%09%09%09results%5Bfunc_name%5D%5B%28layer_idx%2C%20head_idx%29%5D%20%3D%20status%0A%0A%09%23%20TODO%3A%20do%20something%20with%20results%0A%0A%09generate_prompts_jsonl%28save_path%20%2F%20model_cfg.model_name%29%0A%60%60%60&labels=enhancement)
 
   ```python
   			results[func_name][(layer_idx, head_idx)] = status
@@ -67,49 +67,67 @@
 
 
 
+## [`tests/integration/test_clis.py`](/tests/integration/test_clis.py)
+
+- make these mock checks work -- I have no idea how to use mock properly  
+  local link: [`/tests/integration/test_clis.py:147`](/tests/integration/test_clis.py#L147) 
+  | view on GitHub: [tests/integration/test_clis.py#L147](https://github.com/mivanit/pattern-lens/blob/main/tests/integration/test_clis.py#L147)
+  | [Make Issue](https://github.com/mivanit/pattern-lens/issues/new?title=make%20these%20mock%20checks%20work%20--%20I%20have%20no%20idea%20how%20to%20use%20mock%20properly&body=%23%20source%0A%0A%5B%60tests%2Fintegration%2Ftest_clis.py%23L147%60%5D%28https%3A%2F%2Fgithub.com%2Fmivanit%2Fpattern-lens%2Fblob%2Fmain%2Ftests%2Fintegration%2Ftest_clis.py%23L147%29%0A%0A%23%20context%0A%60%60%60python%0A%09%09%09server_main%28%29%0A%0A%09%09%23%20TODO%3A%20make%20these%20mock%20checks%20work%20--%20I%20have%20no%20idea%20how%20to%20use%20mock%20properly%0A%09%09%23%20%23%20Check%20that%20write_html_index%20was%20called%0A%09%09%23%20mock_write_html.assert_called_once%28%29%0A%60%60%60&labels=enhancement)
+
+  ```python
+  	server_main()
+
+  # TODO: make these mock checks work -- I have no idea how to use mock properly
+  # # Check that write_html_index was called
+  # mock_write_html.assert_called_once()
+  ```
+
+
+
+
 
 # TYPING
 
 ## [`pattern_lens/figure_util.py`](/pattern_lens/figure_util.py)
 
 - error: Item "SubFigure" of "Figure | SubFigure" has no attribute "tight_layout"  [union-attr]  
-  local link: [`/pattern_lens/figure_util.py:175`](/pattern_lens/figure_util.py#L175) 
-  | view on GitHub: [pattern_lens/figure_util.py#L175](https://github.com/mivanit/pattern-lens/blob/main/pattern_lens/figure_util.py#L175)
-  | [Make Issue](https://github.com/mivanit/pattern-lens/issues/new?title=error%3A%20Item%20%22SubFigure%22%20of%20%22Figure%20%7C%20SubFigure%22%20has%20no%20attribute%20%22tight_layout%22%20%20%5Bunion-attr%5D&body=%23%20source%0A%0A%5B%60pattern_lens%2Ffigure_util.py%23L175%60%5D%28https%3A%2F%2Fgithub.com%2Fmivanit%2Fpattern-lens%2Fblob%2Fmain%2Fpattern_lens%2Ffigure_util.py%23L175%29%0A%0A%23%20context%0A%60%60%60python%0A%09%09%09for%20name%2C%20ax%20in%20axes_dict.items%28%29%3A%0A%09%09%09%09fig_path%3A%20Path%20%3D%20save_dir%20%2F%20f%22%7Bfunc_name%7D.%7Bname%7D.%7Bfmt%7D%22%0A%09%09%09%09%23%20TYPING%3A%20error%3A%20Item%20%22SubFigure%22%20of%20%22Figure%20%7C%20SubFigure%22%20has%20no%20attribute%20%22tight_layout%22%20%20%5Bunion-attr%5D%0A%09%09%09%09ax.figure.tight_layout%28%29%20%20%23%20type%3A%20ignore%5Bunion-attr%5D%0A%09%09%09%09%23%20TYPING%3A%20error%3A%20Item%20%22SubFigure%22%20of%20%22Figure%20%7C%20SubFigure%22%20has%20no%20attribute%20%22savefig%22%20%20%5Bunion-attr%5D%0A%60%60%60&labels=TYPING)
+  local link: [`/pattern_lens/figure_util.py:178`](/pattern_lens/figure_util.py#L178) 
+  | view on GitHub: [pattern_lens/figure_util.py#L178](https://github.com/mivanit/pattern-lens/blob/main/pattern_lens/figure_util.py#L178)
+  | [Make Issue](https://github.com/mivanit/pattern-lens/issues/new?title=error%3A%20Item%20%22SubFigure%22%20of%20%22Figure%20%7C%20SubFigure%22%20has%20no%20attribute%20%22tight_layout%22%20%20%5Bunion-attr%5D&body=%23%20source%0A%0A%5B%60pattern_lens%2Ffigure_util.py%23L178%60%5D%28https%3A%2F%2Fgithub.com%2Fmivanit%2Fpattern-lens%2Fblob%2Fmain%2Fpattern_lens%2Ffigure_util.py%23L178%29%0A%0A%23%20context%0A%60%60%60python%0A%09%09%09%09for%20name%2C%20fig_%20in%20figs_dict.items%28%29%3A%0A%09%09%09%09%09fig_path%3A%20Path%20%3D%20save_dir%20%2F%20f%22%7Bfunc_name%7D.%7Bname%7D.%7Bfmt%7D%22%0A%09%09%09%09%09%23%20TYPING%3A%20error%3A%20Item%20%22SubFigure%22%20of%20%22Figure%20%7C%20SubFigure%22%20has%20no%20attribute%20%22tight_layout%22%20%20%5Bunion-attr%5D%0A%09%09%09%09%09fig_.tight_layout%28%29%20%20%23%20type%3A%20ignore%5Bunion-attr%5D%0A%09%09%09%09%09%23%20TYPING%3A%20error%3A%20Item%20%22SubFigure%22%20of%20%22Figure%20%7C%20SubFigure%22%20has%20no%20attribute%20%22savefig%22%20%20%5Bunion-attr%5D%0A%60%60%60&labels=TYPING)
 
   ```python
-  for name, ax in axes_dict.items():
+  for name, fig_ in figs_dict.items():
   	fig_path: Path = save_dir / f"{func_name}.{name}.{fmt}"
   	# TYPING: error: Item "SubFigure" of "Figure | SubFigure" has no attribute "tight_layout"  [union-attr]
-  	ax.figure.tight_layout()  # type: ignore[union-attr]
+  	fig_.tight_layout()  # type: ignore[union-attr]
   	# TYPING: error: Item "SubFigure" of "Figure | SubFigure" has no attribute "savefig"  [union-attr]
   ```
 
 
 - error: Item "SubFigure" of "Figure | SubFigure" has no attribute "savefig"  [union-attr]  
-  local link: [`/pattern_lens/figure_util.py:177`](/pattern_lens/figure_util.py#L177) 
-  | view on GitHub: [pattern_lens/figure_util.py#L177](https://github.com/mivanit/pattern-lens/blob/main/pattern_lens/figure_util.py#L177)
-  | [Make Issue](https://github.com/mivanit/pattern-lens/issues/new?title=error%3A%20Item%20%22SubFigure%22%20of%20%22Figure%20%7C%20SubFigure%22%20has%20no%20attribute%20%22savefig%22%20%20%5Bunion-attr%5D&body=%23%20source%0A%0A%5B%60pattern_lens%2Ffigure_util.py%23L177%60%5D%28https%3A%2F%2Fgithub.com%2Fmivanit%2Fpattern-lens%2Fblob%2Fmain%2Fpattern_lens%2Ffigure_util.py%23L177%29%0A%0A%23%20context%0A%60%60%60python%0A%09%09%09%09%23%20TYPING%3A%20error%3A%20Item%20%22SubFigure%22%20of%20%22Figure%20%7C%20SubFigure%22%20has%20no%20attribute%20%22tight_layout%22%20%20%5Bunion-attr%5D%0A%09%09%09%09ax.figure.tight_layout%28%29%20%20%23%20type%3A%20ignore%5Bunion-attr%5D%0A%09%09%09%09%23%20TYPING%3A%20error%3A%20Item%20%22SubFigure%22%20of%20%22Figure%20%7C%20SubFigure%22%20has%20no%20attribute%20%22savefig%22%20%20%5Bunion-attr%5D%0A%09%09%09%09ax.figure.savefig%28fig_path%29%20%20%23%20type%3A%20ignore%5Bunion-attr%5D%0A%09%09%09%09%23%20TYPING%3A%20error%3A%20Argument%201%20to%20%22close%22%20has%20incompatible%20type%20%22Figure%20%7C%20SubFigure%22%3B%20expected%20%22int%20%7C%20str%20%7C%20Figure%20%7C%20Literal%5B%27all%27%5D%20%7C%20None%22%20%20%5Barg-type%5D%0A%60%60%60&labels=TYPING)
+  local link: [`/pattern_lens/figure_util.py:180`](/pattern_lens/figure_util.py#L180) 
+  | view on GitHub: [pattern_lens/figure_util.py#L180](https://github.com/mivanit/pattern-lens/blob/main/pattern_lens/figure_util.py#L180)
+  | [Make Issue](https://github.com/mivanit/pattern-lens/issues/new?title=error%3A%20Item%20%22SubFigure%22%20of%20%22Figure%20%7C%20SubFigure%22%20has%20no%20attribute%20%22savefig%22%20%20%5Bunion-attr%5D&body=%23%20source%0A%0A%5B%60pattern_lens%2Ffigure_util.py%23L180%60%5D%28https%3A%2F%2Fgithub.com%2Fmivanit%2Fpattern-lens%2Fblob%2Fmain%2Fpattern_lens%2Ffigure_util.py%23L180%29%0A%0A%23%20context%0A%60%60%60python%0A%09%09%09%09%09%23%20TYPING%3A%20error%3A%20Item%20%22SubFigure%22%20of%20%22Figure%20%7C%20SubFigure%22%20has%20no%20attribute%20%22tight_layout%22%20%20%5Bunion-attr%5D%0A%09%09%09%09%09fig_.tight_layout%28%29%20%20%23%20type%3A%20ignore%5Bunion-attr%5D%0A%09%09%09%09%09%23%20TYPING%3A%20error%3A%20Item%20%22SubFigure%22%20of%20%22Figure%20%7C%20SubFigure%22%20has%20no%20attribute%20%22savefig%22%20%20%5Bunion-attr%5D%0A%09%09%09%09%09fig_.savefig%28fig_path%29%20%20%23%20type%3A%20ignore%5Bunion-attr%5D%0A%09%09%09finally%3A%0A%60%60%60&labels=TYPING)
 
   ```python
-  # TYPING: error: Item "SubFigure" of "Figure | SubFigure" has no attribute "tight_layout"  [union-attr]
-  ax.figure.tight_layout()  # type: ignore[union-attr]
-  # TYPING: error: Item "SubFigure" of "Figure | SubFigure" has no attribute "savefig"  [union-attr]
-  ax.figure.savefig(fig_path)  # type: ignore[union-attr]
-  # TYPING: error: Argument 1 to "close" has incompatible type "Figure | SubFigure"; expected "int | str | Figure | Literal['all'] | None"  [arg-type]
+  		# TYPING: error: Item "SubFigure" of "Figure | SubFigure" has no attribute "tight_layout"  [union-attr]
+  		fig_.tight_layout()  # type: ignore[union-attr]
+  		# TYPING: error: Item "SubFigure" of "Figure | SubFigure" has no attribute "savefig"  [union-attr]
+  		fig_.savefig(fig_path)  # type: ignore[union-attr]
+  finally:
   ```
 
 
 - error: Argument 1 to "close" has incompatible type "Figure | SubFigure"; expected "int | str | Figure | Literal['all'] | None"  [arg-type]  
-  local link: [`/pattern_lens/figure_util.py:179`](/pattern_lens/figure_util.py#L179) 
-  | view on GitHub: [pattern_lens/figure_util.py#L179](https://github.com/mivanit/pattern-lens/blob/main/pattern_lens/figure_util.py#L179)
-  | [Make Issue](https://github.com/mivanit/pattern-lens/issues/new?title=error%3A%20Argument%201%20to%20%22close%22%20has%20incompatible%20type%20%22Figure%20%7C%20SubFigure%22%3B%20expected%20%22int%20%7C%20str%20%7C%20Figure%20%7C%20Literal%5B%27all%27%5D%20%7C%20None%22%20%20%5Barg-type%5D&body=%23%20source%0A%0A%5B%60pattern_lens%2Ffigure_util.py%23L179%60%5D%28https%3A%2F%2Fgithub.com%2Fmivanit%2Fpattern-lens%2Fblob%2Fmain%2Fpattern_lens%2Ffigure_util.py%23L179%29%0A%0A%23%20context%0A%60%60%60python%0A%09%09%09%09%23%20TYPING%3A%20error%3A%20Item%20%22SubFigure%22%20of%20%22Figure%20%7C%20SubFigure%22%20has%20no%20attribute%20%22savefig%22%20%20%5Bunion-attr%5D%0A%09%09%09%09ax.figure.savefig%28fig_path%29%20%20%23%20type%3A%20ignore%5Bunion-attr%5D%0A%09%09%09%09%23%20TYPING%3A%20error%3A%20Argument%201%20to%20%22close%22%20has%20incompatible%20type%20%22Figure%20%7C%20SubFigure%22%3B%20expected%20%22int%20%7C%20str%20%7C%20Figure%20%7C%20Literal%5B%27all%27%5D%20%7C%20None%22%20%20%5Barg-type%5D%0A%09%09%09%09plt.close%28ax.figure%29%20%20%23%20type%3A%20ignore%5Barg-type%5D%0A%60%60%60&labels=TYPING)
+  local link: [`/pattern_lens/figure_util.py:185`](/pattern_lens/figure_util.py#L185) 
+  | view on GitHub: [pattern_lens/figure_util.py#L185](https://github.com/mivanit/pattern-lens/blob/main/pattern_lens/figure_util.py#L185)
+  | [Make Issue](https://github.com/mivanit/pattern-lens/issues/new?title=error%3A%20Argument%201%20to%20%22close%22%20has%20incompatible%20type%20%22Figure%20%7C%20SubFigure%22%3B%20expected%20%22int%20%7C%20str%20%7C%20Figure%20%7C%20Literal%5B%27all%27%5D%20%7C%20None%22%20%20%5Barg-type%5D&body=%23%20source%0A%0A%5B%60pattern_lens%2Ffigure_util.py%23L185%60%5D%28https%3A%2F%2Fgithub.com%2Fmivanit%2Fpattern-lens%2Fblob%2Fmain%2Fpattern_lens%2Ffigure_util.py%23L185%29%0A%0A%23%20context%0A%60%60%60python%0A%09%09%09%09%23%20Always%20clean%20up%20figures%2C%20even%20if%20an%20error%20occurred%0A%09%09%09%09for%20fig%20in%20figs_dict.values%28%29%3A%0A%09%09%09%09%09%23%20TYPING%3A%20error%3A%20Argument%201%20to%20%22close%22%20has%20incompatible%20type%20%22Figure%20%7C%20SubFigure%22%3B%20expected%20%22int%20%7C%20str%20%7C%20Figure%20%7C%20Literal%5B%27all%27%5D%20%7C%20None%22%20%20%5Barg-type%5D%0A%09%09%09%09%09plt.close%28fig%29%20%20%23%20type%3A%20ignore%5Barg-type%5D%0A%60%60%60&labels=TYPING)
 
   ```python
-  # TYPING: error: Item "SubFigure" of "Figure | SubFigure" has no attribute "savefig"  [union-attr]
-  ax.figure.savefig(fig_path)  # type: ignore[union-attr]
-  # TYPING: error: Argument 1 to "close" has incompatible type "Figure | SubFigure"; expected "int | str | Figure | Literal['all'] | None"  [arg-type]
-  plt.close(ax.figure)  # type: ignore[arg-type]
+  # Always clean up figures, even if an error occurred
+  for fig in figs_dict.values():
+  	# TYPING: error: Argument 1 to "close" has incompatible type "Figure | SubFigure"; expected "int | str | Figure | Literal['all'] | None"  [arg-type]
+  	plt.close(fig)  # type: ignore[arg-type]
   ```
 
 
