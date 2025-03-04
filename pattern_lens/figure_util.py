@@ -51,6 +51,7 @@ MATRIX_SAVE_SVG_TEMPLATE: str = """<svg xmlns="http://www.w3.org/2000/svg" width
 "template for saving an `n` by `m` matrix as an svg/svgz"
 
 
+# TYPING: mypy hates it when we dont pass func=None or None as the first arg
 @overload  # without keyword arguments, returns decorated function
 def matplotlib_figure_saver(
 	func: Callable[[AttentionMatrix, plt.Axes], None],
