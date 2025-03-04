@@ -1630,8 +1630,8 @@ help: help-targets info
 
 
 DEMO_MODEL ?= pythia-14m,tiny-stories-1M
-DEMO_PROMPTS ?= data/pile_100.jsonl
-DEMO_N_SAMPLES ?= 10
+DEMO_PROMPTS ?= data/pile_demo.jsonl
+DEMO_N_SAMPLES ?= 32
 DEMO_ARGS ?= --min-chars 128 --max-chars 256
 DEMO_DATA ?= docs/demo
 
