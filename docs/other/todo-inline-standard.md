@@ -20,9 +20,9 @@
 
 
 - this basically does nothing, since we load the activations and then immediately get rid of them.  
-  local link: [`/pattern_lens/activations.py:352`](/pattern_lens/activations.py#L352) 
-  | view on GitHub: [pattern_lens/activations.py#L352](https://github.com/mivanit/pattern-lens/blob/main/pattern_lens/activations.py#L352)
-  | [Make Issue](https://github.com/mivanit/pattern-lens/issues/new?title=this%20basically%20does%20nothing%2C%20since%20we%20load%20the%20activations%20and%20then%20immediately%20get%20rid%20of%20them.&body=%23%20source%0A%0A%5B%60pattern_lens%2Factivations.py%23L352%60%5D%28https%3A%2F%2Fgithub.com%2Fmivanit%2Fpattern-lens%2Fblob%2Fmain%2Fpattern_lens%2Factivations.py%23L352%29%0A%0A%23%20context%0A%60%60%60python%0A%09%09%09%09return%20path%2C%20cache%0A%09%09%09else%3A%0A%09%09%09%09%23%20TODO%3A%20this%20basically%20does%20nothing%2C%20since%20we%20load%20the%20activations%20and%20then%20immediately%20get%20rid%20of%20them.%0A%09%09%09%09%23%20maybe%20refactor%20this%20so%20that%20load_activations%20can%20take%20a%20parameter%20to%20simply%20assert%20that%20the%20cache%20exists%3F%0A%09%09%09%09%23%20this%20will%20let%20us%20avoid%20loading%20it%2C%20which%20slows%20things%20down%0A%60%60%60&labels=enhancement)
+  local link: [`/pattern_lens/activations.py:353`](/pattern_lens/activations.py#L353) 
+  | view on GitHub: [pattern_lens/activations.py#L353](https://github.com/mivanit/pattern-lens/blob/main/pattern_lens/activations.py#L353)
+  | [Make Issue](https://github.com/mivanit/pattern-lens/issues/new?title=this%20basically%20does%20nothing%2C%20since%20we%20load%20the%20activations%20and%20then%20immediately%20get%20rid%20of%20them.&body=%23%20source%0A%0A%5B%60pattern_lens%2Factivations.py%23L353%60%5D%28https%3A%2F%2Fgithub.com%2Fmivanit%2Fpattern-lens%2Fblob%2Fmain%2Fpattern_lens%2Factivations.py%23L353%29%0A%0A%23%20context%0A%60%60%60python%0A%09%09%09%09return%20path%2C%20cache%0A%09%09%09else%3A%0A%09%09%09%09%23%20TODO%3A%20this%20basically%20does%20nothing%2C%20since%20we%20load%20the%20activations%20and%20then%20immediately%20get%20rid%20of%20them.%0A%09%09%09%09%23%20maybe%20refactor%20this%20so%20that%20load_activations%20can%20take%20a%20parameter%20to%20simply%20assert%20that%20the%20cache%20exists%3F%0A%09%09%09%09%23%20this%20will%20let%20us%20avoid%20loading%20it%2C%20which%20slows%20things%20down%0A%60%60%60&labels=enhancement)
 
   ```python
   	return path, cache
@@ -34,9 +34,9 @@
 
 
 - not implemented yet  
-  local link: [`/pattern_lens/activations.py:484`](/pattern_lens/activations.py#L484) 
-  | view on GitHub: [pattern_lens/activations.py#L484](https://github.com/mivanit/pattern-lens/blob/main/pattern_lens/activations.py#L484)
-  | [Make Issue](https://github.com/mivanit/pattern-lens/issues/new?title=not%20implemented%20yet&body=%23%20source%0A%0A%5B%60pattern_lens%2Factivations.py%23L484%60%5D%28https%3A%2F%2Fgithub.com%2Fmivanit%2Fpattern-lens%2Fblob%2Fmain%2Fpattern_lens%2Factivations.py%23L484%29%0A%0A%23%20context%0A%60%60%60python%0A%09%09%09write_html_index%28save_path_p%29%0A%0A%09%23%20TODO%3A%20not%20implemented%20yet%0A%09if%20stacked_heads%3A%0A%09%09raise%20NotImplementedError%28%22stacked_heads%20not%20implemented%20yet%22%29%0A%60%60%60&labels=enhancement)
+  local link: [`/pattern_lens/activations.py:485`](/pattern_lens/activations.py#L485) 
+  | view on GitHub: [pattern_lens/activations.py#L485](https://github.com/mivanit/pattern-lens/blob/main/pattern_lens/activations.py#L485)
+  | [Make Issue](https://github.com/mivanit/pattern-lens/issues/new?title=not%20implemented%20yet&body=%23%20source%0A%0A%5B%60pattern_lens%2Factivations.py%23L485%60%5D%28https%3A%2F%2Fgithub.com%2Fmivanit%2Fpattern-lens%2Fblob%2Fmain%2Fpattern_lens%2Factivations.py%23L485%29%0A%0A%23%20context%0A%60%60%60python%0A%09%09%09write_html_index%28save_path_p%29%0A%0A%09%23%20TODO%3A%20not%20implemented%20yet%0A%09if%20stacked_heads%3A%0A%09%09raise%20NotImplementedError%28%22stacked_heads%20not%20implemented%20yet%22%29%0A%60%60%60&labels=enhancement)
 
   ```python
   		write_html_index(save_path_p)

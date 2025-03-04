@@ -1,41 +1,45 @@
 # Stats
-- 20 files
-- 5050 (5.0K) lines
-- 189010 (189K) chars
-- 87690 (88K) `gpt2` tokens
+- 24 files
+- 5581 (5.6K) lines
+- 204771 (205K) chars
+- 93760 (94K) `gpt2` tokens
 
 # File Tree
 
 ```
-pattern-lens                  
-├── .github                   
-│   └── workflows             
-│    └── checks.yml           [   85L  1,688C    844T]
-├── data                      
-│   └── pile_5.jsonl          [    5L 22,124C  6,858T]
-├── pattern_lens              
-│   ├── frontend              
-│   │   └── index.html        [1,733L 71,573C 43,359T]
-│   ├── __init__.py           [   13L    180C     83T]
-│   ├── activations.py        [  655L 18,249C  7,010T]
-│   ├── attn_figure_funcs.py  [  118L  3,127C  1,159T]
-│   ├── consts.py             [   37L  1,093C    354T]
-│   ├── figure_util.py        [  508L 16,513C  6,104T]
-│   ├── figures.py            [  356L 10,398C  3,894T]
-│   ├── indexes.py            [  147L  4,398C  1,683T]
-│   ├── load_activations.py   [  167L  4,270C  1,579T]
-│   ├── prompts.py            [   82L  1,721C    743T]
-│   ├── py.typed              [    0L      0C      0T]
-│   └── server.py             [   58L  1,334C    479T]
-├── tests                     
-│   ├── integration           
-│   │   └── test_pipeline.py  [   38L    835C    385T]
-│   └── unit                  
-│    └── test_figure_util.py  [  292L  8,530C  3,491T]
-├── README.md                 [  106L  3,862C  1,295T]
-├── demo.ipynb                [  165L  4,787C  2,343T]
-├── makefile                  [1,669L 50,890C 19,621T]
-├── pyproject.toml            [  218L  6,950C  3,595T]
+pattern-lens                       
+├── .github                        
+│   └── workflows                  
+│    └── checks.yml                [   85L  1,688C    844T]
+├── data                           
+│   └── pile_5.jsonl               [    5L 22,124C  6,858T]
+├── pattern_lens                   
+│   ├── frontend                   
+│   │   └── index.html             [1,733L 71,573C 43,359T]
+│   ├── __init__.py                [   13L    180C     83T]
+│   ├── activations.py             [  656L 18,382C  7,070T]
+│   ├── attn_figure_funcs.py       [  118L  3,127C  1,159T]
+│   ├── consts.py                  [   37L  1,093C    354T]
+│   ├── figure_util.py             [  509L 16,600C  6,139T]
+│   ├── figures.py                 [  356L 10,398C  3,894T]
+│   ├── indexes.py                 [  147L  4,398C  1,683T]
+│   ├── load_activations.py        [  167L  4,270C  1,579T]
+│   ├── prompts.py                 [   82L  1,721C    743T]
+│   ├── py.typed                   [    0L      0C      0T]
+│   └── server.py                  [   58L  1,334C    479T]
+├── tests                          
+│   ├── integration                
+│   │   └── test_pipeline.py       [   38L    835C    385T]
+│   └── unit                       
+│    ├── test_activations.py       [  176L  4,876C  1,835T]
+│    ├── test_figure_util.py       [  292L  8,530C  3,491T]
+│    ├── test_figures.py           [  156L  4,655C  1,772T]
+│    ├── test_load_activations.py  [  137L  3,809C  1,366T]
+│    └── test_server.py            [   35L  1,234C    415T]
+├── README.md                      [  106L  3,862C  1,295T]
+├── demo.ipynb                     [  165L  4,787C  2,343T]
+├── makefile                       [1,669L 50,890C 19,621T]
+├── pyproject.toml                 [  223L  7,116C  3,718T]
 ```
 
 # File Contents
@@ -2009,7 +2013,7 @@ def compute_activations(
 	stack_heads: Literal[False] = False,
 ) -> tuple[Path, ActivationCache]: ...
 # actual function body
-def compute_activations(
+def compute_activations(  # noqa: PLR0915
 	prompt: dict,
 	model: HookedTransformer | None = None,
 	save_path: Path = Path(DATA_DIR),
@@ -2121,8 +2125,9 @@ def compute_activations(
 			torch.stack([cache_torch[k] for k in head_keys], dim=1)
 		)
 		# check shape
-		assert patterns_stacked.shape[:2] == (n_layers, model.cfg.n_heads), (
-			f"unexpected shape: {patterns_stacked.shape = }, expected {(n_layers, model.cfg.n_heads)}"
+		pattern_shape_no_ctx: tuple[int, int, int] = tuple(patterns_stacked.shape[:3])
+		assert pattern_shape_no_ctx == (1, n_layers, model.cfg.n_heads), (
+			f"unexpected shape: {patterns_stacked.shape[:3] = } ({pattern_shape_no_ctx = }), expected {(1, n_layers, model.cfg.n_heads) = }"
 		)
 
 		patterns_stacked_np: Float[np.ndarray, "n_layers n_heads n_ctx n_ctx"] = (
@@ -3067,6 +3072,7 @@ def matrix_as_svg(
 		the SVG content for the matrix
 	"""
 	# Get the dimensions of the matrix
+	assert matrix.ndim == 2, f"Matrix must be 2D, got {matrix.shape = }"  # noqa: PLR2004
 	m, n = matrix.shape
 
 	# Preprocess the matrix into an RGB image
@@ -4099,6 +4105,186 @@ def test_pipeline(model_name: str):
 
 ``````{ end_of_file="tests/integration/test_pipeline.py" }
 
+``````{ path="tests/unit/test_activations.py"  }
+import tempfile
+from pathlib import Path
+from unittest import mock
+
+import numpy as np
+import torch
+
+from pattern_lens.activations import compute_activations, get_activations
+from pattern_lens.load_activations import ActivationsMissingError
+
+
+class MockHookedTransformer:
+	"""Mock of HookedTransformer for testing compute_activations and get_activations."""
+
+	def __init__(self, model_name="test-model", n_layers=2, n_heads=2):
+		self.model_name = model_name
+		self.cfg = mock.MagicMock()
+		self.cfg.n_layers = n_layers
+		self.cfg.n_heads = n_heads
+		self.tokenizer = mock.MagicMock()
+		self.tokenizer.tokenize.return_value = ["test", "tokens"]
+
+	def eval(self):
+		return self
+
+	def run_with_cache(self, prompt_str, names_filter=None, return_type=None):  # noqa: ARG002
+		"""Mock run_with_cache to return fake attention patterns."""
+		# Create a mock activation cache with appropriately shaped attention patterns
+		cache: dict[str, torch.Tensor] = {}
+		for i in range(self.cfg.n_layers):
+			# [1, n_heads, n_ctx, n_ctx] tensor, where n_ctx is len(prompt_str)
+			n_ctx: int = len(prompt_str)
+			attn_pattern: torch.Tensor = torch.rand(
+				1,
+				self.cfg.n_heads,
+				n_ctx,
+				n_ctx,
+			).float()
+			cache[f"blocks.{i}.attn.hook_pattern"] = attn_pattern
+
+		return None, cache
+
+
+def test_compute_activations_stack_heads():
+	"""Test compute_activations with stack_heads=True."""
+	# Setup
+	temp_dir: Path = Path(tempfile.mkdtemp())
+	model: MockHookedTransformer = MockHookedTransformer(n_layers=3, n_heads=4)
+	prompt: dict[str, str] = {"text": "test prompt", "hash": "testhash123"}
+
+	# Test with return_cache=None
+	path, result = compute_activations(
+		prompt=prompt,
+		model=model,
+		save_path=temp_dir,
+		return_cache=None,
+		stack_heads=True,
+	)
+
+	# Check return values
+	assert (
+		path
+		== temp_dir
+		/ model.model_name
+		/ "prompts"
+		/ prompt["hash"]
+		/ "activations-blocks.-.attn.hook_pattern.npy"
+	)
+	assert result is None
+
+	# Check the file was created and has correct shape
+	assert path.exists()
+	loaded = np.load(path)
+	assert loaded.shape == (
+		1,
+		model.cfg.n_layers,
+		model.cfg.n_heads,
+		len(prompt["text"]),
+		len(prompt["text"]),
+	)
+
+	# Test with return_cache="numpy"
+	path, result = compute_activations(
+		prompt=prompt,
+		model=model,
+		save_path=temp_dir,
+		return_cache="numpy",
+		stack_heads=True,
+	)
+
+	# Check return values
+	assert isinstance(result, np.ndarray)
+	assert result.shape == (
+		1,
+		model.cfg.n_layers,
+		model.cfg.n_heads,
+		len(prompt["text"]),
+		len(prompt["text"]),
+	)
+
+
+def test_compute_activations_no_stack():
+	"""Test compute_activations with stack_heads=False."""
+	# Setup
+	temp_dir = Path(tempfile.mkdtemp())
+	model = MockHookedTransformer(n_layers=2, n_heads=2)
+	prompt = {"text": "test prompt", "hash": "testhash123"}
+
+	# Test with return_cache="numpy"
+	path, result = compute_activations(
+		prompt=prompt,
+		model=model,
+		save_path=temp_dir,
+		return_cache="numpy",
+		stack_heads=False,
+	)
+
+	# Check return values
+	assert (
+		path
+		== temp_dir / model.model_name / "prompts" / prompt["hash"] / "activations.npz"
+	)
+	assert isinstance(result, dict)
+
+	# Check that the keys have the expected form and values have the right shape
+	for i in range(model.cfg.n_layers):
+		key = f"blocks.{i}.attn.hook_pattern"
+		assert key in result
+		assert result[key].shape == (
+			1,
+			model.cfg.n_heads,
+			len(prompt["text"]),
+			len(prompt["text"]),
+		)
+
+
+def test_get_activations_missing():
+	"""Test get_activations when activations don't exist."""
+	temp_dir = Path(tempfile.mkdtemp())
+	model = "test-model"  # String model name, should trigger model loading if activations are missing
+	prompt = {"text": "test prompt", "hash": "testhash123"}
+
+	# Patch the load_activations and compute_activations functions
+	with (
+		mock.patch("pattern_lens.activations.load_activations") as mock_load,
+		mock.patch("pattern_lens.activations.compute_activations") as mock_compute,
+		mock.patch(
+			"pattern_lens.activations.HookedTransformer.from_pretrained",
+		) as mock_from_pretrained,
+	):
+		# Set up load_activations to fail
+		mock_load.side_effect = ActivationsMissingError("Not found")
+
+		# Set up mock model and compute_activations
+		mock_model = MockHookedTransformer(model_name=model)
+		mock_from_pretrained.return_value = mock_model
+		mock_compute.return_value = (Path("mock/path"), {"mock": "cache"})
+
+		# Call get_activations
+		path, cache = get_activations(
+			prompt=prompt,
+			model=model,
+			save_path=temp_dir,
+			return_cache="numpy",
+		)
+
+		# Check that model was loaded
+		mock_from_pretrained.assert_called_once_with(model)
+
+		# Check that compute_activations was called with the right arguments
+		mock_compute.assert_called_once()
+		args, kwargs = mock_compute.call_args
+		assert kwargs["model"] == mock_model
+		assert kwargs["prompt"] == prompt
+		assert kwargs["save_path"] == temp_dir
+		assert kwargs["return_cache"] == "numpy"
+
+``````{ end_of_file="tests/unit/test_activations.py" }
+
 ``````{ path="tests/unit/test_figure_util.py"  }
 import base64
 import gzip
@@ -4394,6 +4580,346 @@ def test_matrix_as_svg_format():
 	Image.open(io.BytesIO(png_data))
 
 ``````{ end_of_file="tests/unit/test_figure_util.py" }
+
+``````{ path="tests/unit/test_figures.py"  }
+# tests/unit/test_figures.py
+import tempfile
+from pathlib import Path
+from unittest import mock
+
+import numpy as np
+
+from pattern_lens.figure_util import save_matrix_wrapper
+from pattern_lens.figures import compute_and_save_figures, process_single_head
+
+
+def test_process_single_head():
+	"""Test processing a single head's attention pattern."""
+	# Setup
+	temp_dir = Path(tempfile.mkdtemp())
+	head_dir = temp_dir / "L0" / "H0"
+	head_dir.mkdir(parents=True)
+
+	# Create a simple test attention matrix
+	attn_pattern = np.random.rand(10, 10).astype(np.float32)
+
+	# Create a simple test figure function
+	@save_matrix_wrapper(fmt="svg")
+	def test_fig_func(matrix):
+		return matrix
+
+	# Patch ATTENTION_MATRIX_FIGURE_FUNCS to use our test function
+	with mock.patch(
+		"pattern_lens.figures.ATTENTION_MATRIX_FIGURE_FUNCS",
+		[test_fig_func],
+	):
+		# Call process_single_head
+		result = process_single_head(
+			layer_idx=0,
+			head_idx=0,
+			attn_pattern=attn_pattern,
+			save_dir=head_dir,
+			force_overwrite=True,
+		)
+
+		# Check that our function was called and succeeded
+		assert "test_fig_func" in result
+		assert result["test_fig_func"] is True
+
+		# Check that the figure file was created
+		assert (head_dir / "test_fig_func.svg").exists()
+
+
+def test_process_single_head_error_handling():
+	"""Test that process_single_head properly handles errors in figure functions."""
+	# Setup
+	temp_dir = Path(tempfile.mkdtemp())
+	head_dir = temp_dir / "L0" / "H0"
+	head_dir.mkdir(parents=True)
+
+	# Create a simple test attention matrix
+	attn_pattern = np.random.rand(10, 10).astype(np.float32)
+
+	# Create a test figure function that raises an exception
+	def error_fig_func(matrix, save_dir):  # noqa: ARG001
+		raise ValueError("Test error")
+
+	# Patch ATTENTION_MATRIX_FIGURE_FUNCS to use our test function
+	with mock.patch(
+		"pattern_lens.figures.ATTENTION_MATRIX_FIGURE_FUNCS",
+		[error_fig_func],
+	):
+		# Call process_single_head
+		result = process_single_head(
+			layer_idx=0,
+			head_idx=0,
+			attn_pattern=attn_pattern,
+			save_dir=head_dir,
+			force_overwrite=True,
+		)
+
+		# Check that our function was called and failed
+		assert "error_fig_func" in result
+		assert isinstance(result["error_fig_func"], ValueError)
+
+		# Check that an error file was created
+		assert (head_dir / "error_fig_func.error.txt").exists()
+
+
+def test_compute_and_save_figures():
+	"""Test compute_and_save_figures with a mock model config and cache."""
+	# Setup
+	temp_dir = Path(tempfile.mkdtemp())
+	prompt_dir = temp_dir / "test-model" / "prompts" / "test-hash"
+	prompt_dir.mkdir(parents=True)
+
+	# Create a mock model config
+	class MockConfig:
+		def __init__(self):
+			self.n_layers = 2
+			self.n_heads = 2
+			self.model_name = "test-model"
+
+	# Create a simple test attention matrices dict
+	cache_dict = {
+		"blocks.0.attn.hook_pattern": np.random.rand(1, 2, 5, 5).astype(np.float32),
+		"blocks.1.attn.hook_pattern": np.random.rand(1, 2, 5, 5).astype(np.float32),
+	}
+
+	# Create a simple test figure function
+	@save_matrix_wrapper(fmt="png")
+	def test_fig_func(matrix):
+		return matrix
+
+	# Patch ATTENTION_MATRIX_FIGURE_FUNCS and process_single_head
+	with (
+		mock.patch(
+			"pattern_lens.figures.ATTENTION_MATRIX_FIGURE_FUNCS",
+			[test_fig_func],
+		),
+		mock.patch("pattern_lens.figures.process_single_head") as mock_process_head,
+		mock.patch("pattern_lens.figures.generate_prompts_jsonl") as mock_gen_prompts,
+	):
+		mock_process_head.return_value = {"test_fig_func": True}
+
+		# Call compute_and_save_figures with dict cache
+		compute_and_save_figures(
+			model_cfg=MockConfig(),
+			activations_path=prompt_dir / "activations.npz",
+			cache=cache_dict,
+			save_path=temp_dir,
+			force_overwrite=True,
+		)
+
+		# Check that process_single_head was called for each layer and head
+		assert mock_process_head.call_count == 4  # 2 layers * 2 heads
+
+		# Check that generate_prompts_jsonl was called
+		mock_gen_prompts.assert_called_once_with(temp_dir / "test-model")
+
+		# Reset mocks and test with stacked array
+		mock_process_head.reset_mock()
+		mock_gen_prompts.reset_mock()
+
+		# Create a stacked array of shape [n_layers, n_heads, n_ctx, n_ctx]
+		cache_array = np.random.rand(2, 2, 5, 5).astype(np.float32)
+
+		# Call compute_and_save_figures with array cache
+		compute_and_save_figures(
+			model_cfg=MockConfig(),
+			activations_path=prompt_dir / "activations.npy",
+			cache=cache_array,
+			save_path=temp_dir,
+			force_overwrite=True,
+		)
+
+		# Check that process_single_head was called for each layer and head
+		assert mock_process_head.call_count == 4  # 2 layers * 2 heads
+
+		# Check that generate_prompts_jsonl was called
+		mock_gen_prompts.assert_called_once_with(temp_dir / "test-model")
+
+``````{ end_of_file="tests/unit/test_figures.py" }
+
+``````{ path="tests/unit/test_load_activations.py"  }
+# tests/unit/test_load_activations.py
+import json
+import tempfile
+from pathlib import Path
+from unittest import mock
+
+import numpy as np
+import pytest
+
+from pattern_lens.load_activations import (
+	ActivationsMismatchError,
+	ActivationsMissingError,
+	InvalidPromptError,
+	augment_prompt_with_hash,
+	load_activations,
+)
+
+
+def test_augment_prompt_with_hash():
+	"""Test adding hash to prompt."""
+	# Test with a prompt that doesn't have a hash
+	prompt_no_hash = {"text": "test prompt"}
+	result = augment_prompt_with_hash(prompt_no_hash)
+
+	# Check that the hash was added and is deterministic
+	assert "hash" in result
+	assert isinstance(result["hash"], str)
+
+	# Save the hash for comparison
+	first_hash = result["hash"]
+
+	# Test that calling it again doesn't change the hash
+	result = augment_prompt_with_hash(prompt_no_hash)
+	assert result["hash"] == first_hash
+
+	# Test with a prompt that already has a hash
+	prompt_with_hash = {"text": "test prompt", "hash": "existing-hash"}
+	result = augment_prompt_with_hash(prompt_with_hash)
+
+	# Check that the hash wasn't changed
+	assert result["hash"] == "existing-hash"
+
+	# Test with an invalid prompt (no text or hash)
+	with pytest.raises(InvalidPromptError):
+		augment_prompt_with_hash({"other_field": "value"})
+
+
+def test_load_activations_success():
+	"""Test successful loading of activations."""
+	# Setup
+	temp_dir = Path(tempfile.mkdtemp())
+	model_name = "test-model"
+	prompt = {"text": "test prompt", "hash": "testhash123"}
+
+	# Create the necessary directory structure
+	prompt_dir = temp_dir / model_name / "prompts" / prompt["hash"]
+	prompt_dir.mkdir(parents=True)
+
+	# Create a dummy prompt.json file
+	with open(prompt_dir / "prompt.json", "w") as f:
+		json.dump(prompt, f)
+
+	# Create a dummy activations.npz file
+	fake_activations = {
+		"blocks.0.attn.hook_pattern": np.random.rand(1, 2, 10, 10).astype(np.float32),
+	}
+	np.savez(prompt_dir / "activations.npz", **fake_activations)
+
+	# Test loading with numpy format
+	with mock.patch(
+		"pattern_lens.load_activations.compare_prompt_to_loaded",
+	) as mock_compare:
+		path, cache = load_activations(
+			model_name=model_name,
+			prompt=prompt,
+			save_path=temp_dir,
+			return_fmt="numpy",
+		)
+
+		# Check that the path is correct
+		assert path == prompt_dir / "activations.npz"
+
+		# Check that the cache has the right structure
+		assert isinstance(cache, dict)
+		assert "blocks.0.attn.hook_pattern" in cache
+		assert cache["blocks.0.attn.hook_pattern"].shape == (1, 2, 10, 10)
+
+		# Check that the prompt was compared
+		mock_compare.assert_called_once_with(prompt, prompt)
+
+
+def test_load_activations_errors():
+	"""Test error handling in load_activations."""
+	# Setup
+	temp_dir = Path(tempfile.mkdtemp())
+	model_name = "test-model"
+	prompt = {"text": "test prompt", "hash": "testhash123"}
+
+	# Test with missing prompt file
+	with pytest.raises(ActivationsMissingError):
+		load_activations(
+			model_name=model_name,
+			prompt=prompt,
+			save_path=temp_dir,
+			return_fmt="numpy",
+		)
+
+	# Create the necessary directory structure
+	prompt_dir = temp_dir / model_name / "prompts" / prompt["hash"]
+	prompt_dir.mkdir(parents=True)
+
+	# Create a prompt.json file with different content
+	different_prompt = {"text": "different prompt", "hash": prompt["hash"]}
+	with open(prompt_dir / "prompt.json", "w") as f:
+		json.dump(different_prompt, f)
+
+	# Test with mismatched prompt
+	with pytest.raises(ActivationsMismatchError):
+		load_activations(
+			model_name=model_name,
+			prompt=prompt,
+			save_path=temp_dir,
+			return_fmt="numpy",
+		)
+
+	# Fix the prompt file
+	with open(prompt_dir / "prompt.json", "w") as f:
+		json.dump(prompt, f)
+
+	# Test with missing activations file
+	with pytest.raises(FileNotFoundError):
+		load_activations(
+			model_name=model_name,
+			prompt=prompt,
+			save_path=temp_dir,
+			return_fmt="numpy",
+		)
+
+``````{ end_of_file="tests/unit/test_load_activations.py" }
+
+``````{ path="tests/unit/test_server.py"  }
+# tests/unit/test_server.py
+from unittest import mock
+
+from pattern_lens.server import main as server_main
+
+
+def test_server_main():
+	"""Test the server main function."""
+	# Mock the TCPServer and other components
+	with (
+		mock.patch("pattern_lens.server.socketserver.TCPServer") as mock_server,
+		mock.patch(
+			"pattern_lens.server.http.server.SimpleHTTPRequestHandler",
+		) as mock_handler,
+		mock.patch("pattern_lens.server.os.chdir") as mock_chdir,
+		mock.patch("pattern_lens.server.sys.exit") as mock_exit,
+	):
+		# Setup the server to raise KeyboardInterrupt after being called
+		mock_server_instance = mock_server.return_value.__enter__.return_value
+		mock_server_instance.serve_forever.side_effect = KeyboardInterrupt()
+
+		# Call the server main function
+		server_main("test_path", 8080)
+
+		# Check that the function changed to the right directory
+		mock_chdir.assert_called_once_with("test_path")
+
+		# Check that the server was initialized with the right parameters
+		mock_server.assert_called_once_with(("", 8080), mock_handler)
+
+		# Check that serve_forever was called
+		mock_server_instance.serve_forever.assert_called_once()
+
+		# Check that sys.exit was called with 0 (clean exit)
+		mock_exit.assert_called_once_with(0)
+
+``````{ end_of_file="tests/unit/test_server.py" }
 
 ``````{ path="README.md"  }
 [![PyPI](https://img.shields.io/pypi/v/pattern-lens)](https://pypi.org/project/pattern-lens/)
@@ -4950,14 +5476,19 @@ summary:
             [tool.ruff.lint.per-file-ignores]
                 "tests/*" = [
                     # don't need docstrings in test functions or modules
-                    "D103", 
                     "D100",
-                    "INP001", # don't need __init__ either
+                    "D102",
+                    "D103", 
+                    "D107",
+                    # don't need __init__ either
+                    "INP001",
+                    "ANN204",
                     # don't need type annotations in test functions
                     "ANN001",
                     "ANN201", 
                     "ANN202",
                     "TRY003", # long exception messages in tests are fine
+                    "PLR2004", # magic values fine in tests
                 ]
                 "docs/*" = ["ALL"] # not our problem
                 "**/*.ipynb" = [
