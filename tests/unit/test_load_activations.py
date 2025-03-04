@@ -71,7 +71,10 @@ def test_load_activations_success():
 		"pattern_lens.load_activations.compare_prompt_to_loaded",
 	) as mock_compare:
 		path, cache = load_activations(
-			model_name=model_name, prompt=prompt, save_path=temp_dir, return_fmt="numpy",
+			model_name=model_name,
+			prompt=prompt,
+			save_path=temp_dir,
+			return_fmt="numpy",
 		)
 
 		# Check that the path is correct
@@ -96,7 +99,10 @@ def test_load_activations_errors():
 	# Test with missing prompt file
 	with pytest.raises(ActivationsMissingError):
 		load_activations(
-			model_name=model_name, prompt=prompt, save_path=temp_dir, return_fmt="numpy",
+			model_name=model_name,
+			prompt=prompt,
+			save_path=temp_dir,
+			return_fmt="numpy",
 		)
 
 	# Create the necessary directory structure
@@ -111,7 +117,10 @@ def test_load_activations_errors():
 	# Test with mismatched prompt
 	with pytest.raises(ActivationsMismatchError):
 		load_activations(
-			model_name=model_name, prompt=prompt, save_path=temp_dir, return_fmt="numpy",
+			model_name=model_name,
+			prompt=prompt,
+			save_path=temp_dir,
+			return_fmt="numpy",
 		)
 
 	# Fix the prompt file
@@ -121,5 +130,8 @@ def test_load_activations_errors():
 	# Test with missing activations file
 	with pytest.raises(FileNotFoundError):
 		load_activations(
-			model_name=model_name, prompt=prompt, save_path=temp_dir, return_fmt="numpy",
+			model_name=model_name,
+			prompt=prompt,
+			save_path=temp_dir,
+			return_fmt="numpy",
 		)

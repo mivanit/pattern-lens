@@ -26,7 +26,8 @@ def test_process_single_head():
 
 	# Patch ATTENTION_MATRIX_FIGURE_FUNCS to use our test function
 	with mock.patch(
-		"pattern_lens.figures.ATTENTION_MATRIX_FIGURE_FUNCS", [test_fig_func],
+		"pattern_lens.figures.ATTENTION_MATRIX_FIGURE_FUNCS",
+		[test_fig_func],
 	):
 		# Call process_single_head
 		result = process_single_head(
@@ -56,12 +57,13 @@ def test_process_single_head_error_handling():
 	attn_pattern = np.random.rand(10, 10).astype(np.float32)
 
 	# Create a test figure function that raises an exception
-	def error_fig_func(matrix, save_dir):
+	def error_fig_func(matrix, save_dir):  # noqa: ARG001
 		raise ValueError("Test error")
 
 	# Patch ATTENTION_MATRIX_FIGURE_FUNCS to use our test function
 	with mock.patch(
-		"pattern_lens.figures.ATTENTION_MATRIX_FIGURE_FUNCS", [error_fig_func],
+		"pattern_lens.figures.ATTENTION_MATRIX_FIGURE_FUNCS",
+		[error_fig_func],
 	):
 		# Call process_single_head
 		result = process_single_head(
@@ -108,7 +110,8 @@ def test_compute_and_save_figures():
 	# Patch ATTENTION_MATRIX_FIGURE_FUNCS and process_single_head
 	with (
 		mock.patch(
-			"pattern_lens.figures.ATTENTION_MATRIX_FIGURE_FUNCS", [test_fig_func],
+			"pattern_lens.figures.ATTENTION_MATRIX_FIGURE_FUNCS",
+			[test_fig_func],
 		),
 		mock.patch("pattern_lens.figures.process_single_head") as mock_process_head,
 		mock.patch("pattern_lens.figures.generate_prompts_jsonl") as mock_gen_prompts,

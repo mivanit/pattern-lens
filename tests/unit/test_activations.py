@@ -22,7 +22,7 @@ class MockHookedTransformer:
 	def eval(self):
 		return self
 
-	def run_with_cache(self, prompt_str, names_filter=None, return_type=None):
+	def run_with_cache(self, prompt_str, names_filter=None, return_type=None):  # noqa: ARG002
 		"""Mock run_with_cache to return fake attention patterns."""
 		# Create a mock activation cache with appropriately shaped attention patterns
 		cache = {}
@@ -152,7 +152,10 @@ def test_get_activations_missing():
 
 		# Call get_activations
 		path, cache = get_activations(
-			prompt=prompt, model=model, save_path=temp_dir, return_cache="numpy",
+			prompt=prompt,
+			model=model,
+			save_path=temp_dir,
+			return_cache="numpy",
 		)
 
 		# Check that model was loaded

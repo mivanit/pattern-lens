@@ -113,14 +113,19 @@
             [tool.ruff.lint.per-file-ignores]
                 "tests/*" = [
                     # don't need docstrings in test functions or modules
-                    "D103", 
                     "D100",
-                    "INP001", # don't need __init__ either
+                    "D102",
+                    "D103", 
+                    "D107",
+                    # don't need __init__ either
+                    "INP001",
+                    "ANN204",
                     # don't need type annotations in test functions
                     "ANN001",
                     "ANN201", 
                     "ANN202",
                     "TRY003", # long exception messages in tests are fine
+                    "PLR2004", # magic values fine in tests
                 ]
                 "docs/*" = ["ALL"] # not our problem
                 "**/*.ipynb" = [
