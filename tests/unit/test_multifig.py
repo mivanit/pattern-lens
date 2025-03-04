@@ -1,4 +1,3 @@
-import tempfile
 from pathlib import Path
 
 import matplotlib.pyplot as plt
@@ -6,11 +5,13 @@ import numpy as np
 
 from pattern_lens.figure_util import matplotlib_multifigure_saver
 
+TEMP_DIR: Path = Path("tests/_temp")
+
 
 def test_matplotlib_multifigure_saver():
 	"""Test the matplotlib_multifigure_saver decorator."""
 	# Create a temporary directory for saving figures
-	temp_dir = Path(tempfile.mkdtemp())
+	temp_dir = TEMP_DIR / "test_matplotlib_multifigure_saver"
 
 	# Define a test function with the decorator
 	@matplotlib_multifigure_saver(names=["hist", "heatmap"])
@@ -44,7 +45,7 @@ def test_matplotlib_multifigure_saver():
 def test_matplotlib_multifigure_saver_custom_format():
 	"""Test the matplotlib_multifigure_saver decorator with a custom format."""
 	# Create a temporary directory for saving figures
-	temp_dir = Path(tempfile.mkdtemp())
+	temp_dir = TEMP_DIR / "test_matplotlib_multifigure_saver_custom_format"
 
 	# Define a test function with the decorator and custom format
 	@matplotlib_multifigure_saver(names=["plot1", "plot2"], fmt="png")
@@ -77,7 +78,7 @@ def test_matplotlib_multifigure_saver_custom_format():
 def test_matplotlib_multifigure_saver_error_handling():
 	"""Test error handling in the matplotlib_multifigure_saver decorator."""
 	# Create a temporary directory for saving figures
-	temp_dir = Path(tempfile.mkdtemp())
+	temp_dir = TEMP_DIR / "test_matplotlib_multifigure_saver_error_handling"
 
 	# Define a test function that raises an error for one of the plots
 	@matplotlib_multifigure_saver(names=["good_plot", "error_plot"])
@@ -104,7 +105,7 @@ def test_matplotlib_multifigure_saver_error_handling():
 def test_matplotlib_multifigure_saver_cleanup():
 	"""Test that matplotlib_multifigure_saver properly closes figures."""
 	# Create a temporary directory for saving figures
-	temp_dir = Path(tempfile.mkdtemp())
+	temp_dir = TEMP_DIR / "test_matplotlib_multifigure_saver_cleanup"
 
 	# Count the number of open figures before the test
 	initial_figures = len(plt.get_fignums())

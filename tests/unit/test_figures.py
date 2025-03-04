@@ -1,5 +1,4 @@
 # tests/unit/test_figures.py
-import tempfile
 from pathlib import Path
 from unittest import mock
 
@@ -8,11 +7,13 @@ import numpy as np
 from pattern_lens.figure_util import save_matrix_wrapper
 from pattern_lens.figures import compute_and_save_figures, process_single_head
 
+TEMP_DIR: Path = Path("tests/_temp")
+
 
 def test_process_single_head():
 	"""Test processing a single head's attention pattern."""
 	# Setup
-	temp_dir = Path(tempfile.mkdtemp())
+	temp_dir = TEMP_DIR / "test_process_single_head"
 	head_dir = temp_dir / "L0" / "H0"
 	head_dir.mkdir(parents=True)
 
@@ -49,7 +50,7 @@ def test_process_single_head():
 def test_process_single_head_error_handling():
 	"""Test that process_single_head properly handles errors in figure functions."""
 	# Setup
-	temp_dir = Path(tempfile.mkdtemp())
+	temp_dir = TEMP_DIR / "test_process_single_head_error_handling"
 	head_dir = temp_dir / "L0" / "H0"
 	head_dir.mkdir(parents=True)
 
@@ -85,7 +86,7 @@ def test_process_single_head_error_handling():
 def test_compute_and_save_figures():
 	"""Test compute_and_save_figures with a mock model config and cache."""
 	# Setup
-	temp_dir = Path(tempfile.mkdtemp())
+	temp_dir = TEMP_DIR / "test_compute_and_save_figures"
 	prompt_dir = temp_dir / "test-model" / "prompts" / "test-hash"
 	prompt_dir.mkdir(parents=True)
 

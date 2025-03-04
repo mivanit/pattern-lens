@@ -1,5 +1,4 @@
 # tests/unit/test_activations_return.py
-import tempfile
 from pathlib import Path
 from unittest import mock
 
@@ -7,6 +6,8 @@ import pytest
 import torch
 
 from pattern_lens.activations import compute_activations, get_activations
+
+TEMP_DIR: Path = Path("tests/_temp")
 
 
 class MockHookedTransformer:
@@ -44,7 +45,7 @@ class MockHookedTransformer:
 def test_compute_activations_torch_return():
 	"""Test compute_activations with return_cache="torch"."""
 	# Setup
-	temp_dir = Path(tempfile.mkdtemp())
+	temp_dir = TEMP_DIR / "test_compute_activations_torch_return"
 	model = MockHookedTransformer(n_layers=3, n_heads=4)
 	prompt = {"text": "test prompt", "hash": "testhash123"}
 
@@ -87,7 +88,7 @@ def test_compute_activations_torch_return():
 def test_compute_activations_invalid_return():
 	"""Test compute_activations with an invalid return_cache value."""
 	# Setup
-	temp_dir = Path(tempfile.mkdtemp())
+	temp_dir = TEMP_DIR / "test_compute_activations_invalid_return"
 	model = MockHookedTransformer()
 	prompt = {"text": "test prompt", "hash": "testhash123"}
 
@@ -104,7 +105,7 @@ def test_compute_activations_invalid_return():
 
 def test_get_activations_torch_return():
 	"""Test get_activations with return_cache="torch" and mocked load_activations."""
-	temp_dir = Path(tempfile.mkdtemp())
+	temp_dir = TEMP_DIR / "test_get_activations_torch_return"
 	prompt = {"text": "test prompt", "hash": "testhash123"}
 	model = MockHookedTransformer(model_name="test-model")
 
@@ -143,7 +144,7 @@ def test_get_activations_torch_return():
 
 def test_get_activations_none_return():
 	"""Test get_activations with return_cache=None."""
-	temp_dir = Path(tempfile.mkdtemp())
+	temp_dir = TEMP_DIR / "test_get_activations_none_return"
 	prompt = {"text": "test prompt", "hash": "testhash123"}
 	model = MockHookedTransformer(model_name="test-model")
 
@@ -167,7 +168,7 @@ def test_get_activations_none_return():
 
 def test_get_activations_compute_device():
 	"""Test that get_activations correctly handles device for computing activations."""
-	temp_dir = Path(tempfile.mkdtemp())
+	temp_dir = TEMP_DIR / "test_get_activations_compute_device"
 	prompt = {"text": "test prompt", "hash": "testhash123"}
 
 	# Use a mock HookedTransformer.from_pretrained

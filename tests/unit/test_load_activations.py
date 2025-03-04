@@ -1,6 +1,5 @@
 # tests/unit/test_load_activations.py
 import json
-import tempfile
 from pathlib import Path
 from unittest import mock
 
@@ -14,6 +13,8 @@ from pattern_lens.load_activations import (
 	augment_prompt_with_hash,
 	load_activations,
 )
+
+TEMP_DIR: Path = Path("tests/_temp")
 
 
 def test_augment_prompt_with_hash():
@@ -48,7 +49,7 @@ def test_augment_prompt_with_hash():
 def test_load_activations_success():
 	"""Test successful loading of activations."""
 	# Setup
-	temp_dir = Path(tempfile.mkdtemp())
+	temp_dir = TEMP_DIR / "test_load_activations_success"
 	model_name = "test-model"
 	prompt = {"text": "test prompt", "hash": "testhash123"}
 
@@ -92,7 +93,7 @@ def test_load_activations_success():
 def test_load_activations_errors():
 	"""Test error handling in load_activations."""
 	# Setup
-	temp_dir = Path(tempfile.mkdtemp())
+	temp_dir = TEMP_DIR / "test_load_activations_errors"
 	model_name = "test-model"
 	prompt = {"text": "test prompt", "hash": "testhash123"}
 

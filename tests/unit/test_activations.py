@@ -1,4 +1,3 @@
-import tempfile
 from pathlib import Path
 from unittest import mock
 
@@ -7,6 +6,8 @@ import torch
 
 from pattern_lens.activations import compute_activations, get_activations
 from pattern_lens.load_activations import ActivationsMissingError
+
+TEMP_DIR: Path = Path("tests/_temp")
 
 
 class MockHookedTransformer:
@@ -44,7 +45,7 @@ class MockHookedTransformer:
 def test_compute_activations_stack_heads():
 	"""Test compute_activations with stack_heads=True."""
 	# Setup
-	temp_dir: Path = Path(tempfile.mkdtemp())
+	temp_dir: Path = TEMP_DIR / "test_compute_activations_stack_heads"
 	model: MockHookedTransformer = MockHookedTransformer(n_layers=3, n_heads=4)
 	prompt: dict[str, str] = {"text": "test prompt", "hash": "testhash123"}
 
@@ -102,7 +103,7 @@ def test_compute_activations_stack_heads():
 def test_compute_activations_no_stack():
 	"""Test compute_activations with stack_heads=False."""
 	# Setup
-	temp_dir = Path(tempfile.mkdtemp())
+	temp_dir = TEMP_DIR / "test_compute_activations_no_stack"
 	model = MockHookedTransformer(n_layers=2, n_heads=2)
 	prompt = {"text": "test prompt", "hash": "testhash123"}
 
@@ -136,7 +137,7 @@ def test_compute_activations_no_stack():
 
 def test_get_activations_missing():
 	"""Test get_activations when activations don't exist."""
-	temp_dir = Path(tempfile.mkdtemp())
+	temp_dir = TEMP_DIR / "test_get_activations_missing"
 	model = "test-model"  # String model name, should trigger model loading if activations are missing
 	prompt = {"text": "test prompt", "hash": "testhash123"}
 
