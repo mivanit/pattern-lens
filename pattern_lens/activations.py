@@ -648,6 +648,7 @@ def main() -> None:
 			stacked_heads=args.stacked_heads,
 			device=args.device,
 		)
+		del model
 
 	print(DIVIDER_S1)
 
