@@ -1,0 +1,585 @@
+/* CSS Variables */
+:root {
+	/* Colors */
+	--primary: #007bff;
+	--primary-hover: #0056b3;
+	--secondary: #6c757d;
+	--secondary-hover: #545b62;
+	--success: #28a745;
+	--border: #ccc;
+	--text-muted: #666;
+	--bg-light: #f0f0f0;
+	--bg-white: #fff;
+	--shadow: rgba(0, 0, 0, 0.1);
+	--text-color: #000;
+
+	/* Dark mode colors */
+	--dark-bg: #1a1a1a;
+	--dark-text: #ffffff;
+	--dark-border: #444;
+	--dark-bg-light: #2d2d2d;
+	--dark-shadow: rgba(0, 0, 0, 0.3);
+
+	/* Spacing */
+	--space-xs: 3px;
+	--space-sm: 5px;
+	--space-md: 10px;
+	--space-lg: 20px;
+
+	/* Layout */
+	--border-radius: 4px;
+	--container-max-width: 1200px;
+	--checkbox-size: 12px;
+}
+
+/* Base Styles */
+body {
+	font-family: Arial, sans-serif;
+	line-height: 1.4;
+	margin: 0;
+	padding: var(--space-md);
+}
+
+.container {
+	max-width: var(--container-max-width);
+	margin: 0 auto;
+}
+
+/* Header Styles */
+.header-container {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	margin-bottom: 1rem;
+}
+
+.header-title {
+	margin: 0;
+}
+
+.header-controls {
+	display: flex;
+	gap: 1rem;
+	align-items: center;
+}
+
+/* Layout Components */
+.main-selection-content {
+	display: flex;
+	flex-direction: column;
+	border: 2px solid var(--border);
+	height: 800px;
+	min-height: 400px;
+	resize: vertical;
+	overflow: hidden;
+}
+
+.top-filters {
+	display: flex;
+	gap: var(--space-md);
+	height: 350px;
+	border-bottom: 1px solid var(--border);
+	min-height: 100px;
+	max-height: 80vh;
+	padding: var(--space-md);
+	resize: vertical;
+	position: relative;
+	overflow: auto;
+}
+
+/* Functions Filter */
+.functions-filter {
+	width: 200px;
+	min-width: 100px;
+	max-width: 500px;
+	display: flex;
+	flex-direction: column;
+	border: 1px solid var(--border);
+	padding: var(--space-md);
+	border-radius: var(--border-radius);
+	flex-shrink: 0;
+}
+
+/* Filter Components */
+.filter-item {
+	margin-bottom: var(--space-sm);
+	border: 1px solid var(--border);
+	padding: var(--space-sm);
+	border-radius: var(--border-radius);
+}
+
+.filter-label {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	margin-bottom: var(--space-xs);
+}
+
+/* Checkbox Lists */
+.checkbox-list {
+	border: 1px solid var(--border);
+	padding: var(--space-xs);
+	flex: 1;
+	overflow-y: auto;
+	overflow-x: visible;
+}
+
+.checkbox-item {
+	position: relative;
+	display: flex;
+	align-items: center;
+	margin-bottom: 1px;
+	line-height: 1;
+	width: 100%;
+}
+
+.checkbox-item label {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	width: 100%;
+	margin-left: 4px;
+}
+
+.function-name {
+	flex-grow: 1;
+	margin-right: 8px;
+}
+
+input[type="checkbox"] {
+	margin: 0 0.2em 0 0;
+	width: var(--checkbox-size);
+	height: var(--checkbox-size);
+	vertical-align: middle;
+}
+
+/* Head Grid */
+.head-grid {
+	display: flex;
+	gap: 1px;
+	margin: 0 8px;
+	height: 100%;
+	align-items: center;
+}
+
+.headsGrid-col {
+	display: flex;
+	flex-direction: column;
+	gap: 1px;
+	height: 100%;
+	justify-content: center;
+}
+
+.headsGrid-cell {
+	width: 5px;
+	height: 5px;
+	margin: 0.5px;
+	transition: background-color 0.2s ease;
+}
+
+.headsGrid-cell-selected {
+	background-color: #2a1fee;
+}
+
+.headsGrid-cell-empty {
+	background-color: #ac9a9a;
+}
+
+/* Model Grid */
+#modelGrid {
+	flex: 1;
+	min-width: 200px;
+	overflow: auto;
+}
+
+/* Prompt Table */
+.prompt-table {
+	flex: 1;
+	min-height: 200px;
+	display: flex;
+	flex-direction: column;
+	overflow: hidden;
+	position: relative;
+}
+
+.prompts-info {
+	border: 1px solid var(--border);
+	padding: var(--space-sm);
+	border-radius: var(--border-radius);
+}
+
+.prompt-counter {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+}
+
+.prompt-text-cell {
+	cursor: pointer;
+}
+
+/* ag-Grid Customization */
+.ag-theme-alpine {
+	height: calc(100% - 3em) !important;
+	width: 100% !important;
+}
+
+.ag-cell-edit-input {
+	height: 100% !important;
+	line-height: normal !important;
+	padding: 0 8px !important;
+}
+
+.ag-cell:not(.invalid-selection) {
+	background-color: transparent !important;
+}
+
+.ag-cell.invalid-selection {
+	background-color: #ffeaea !important;
+}
+
+/* Dataset List */
+.dataset-list-container {
+	position: absolute;
+	right: var(--space-md);
+	top: 0.5em;
+}
+
+.dataset-list {
+	position: relative;
+	cursor: pointer;
+	border: 1px solid var(--border);
+	padding: 1px;
+	border-radius: var(--border-radius);
+	background-color: #f9f9f9;
+}
+
+.dataset-list-content {
+	display: none;
+	position: absolute;
+	right: 0;
+	top: 100%;
+	background-color: var(--bg-white);
+	border: 1px solid var(--border);
+	padding: var(--space-xs) var(--space-lg) var(--space-xs) var(--space-xs);
+	font-family: monospace;
+	box-shadow: 0 4px 8px var(--shadow);
+	z-index: 1000;
+}
+
+.dataset-list:hover .dataset-list-content {
+	display: block;
+}
+
+/* Image Controls and Display */
+.image-controls-container {
+	margin: var(--space-lg) 0;
+}
+
+.image-controls {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	padding: var(--space-md);
+	background-color: var(--bg-light);
+	border-radius: 8px;
+	box-shadow: 0 2px 4px var(--shadow);
+}
+
+.image-controls-display,
+.image-controls-size {
+	display: flex;
+	align-items: center;
+	width: 50%;
+}
+
+.image-controls-size {
+	justify-content: flex-end;
+}
+
+.resize-slider {
+	width: 250px;
+	margin: 0 var(--space-md);
+}
+
+.resize-input {
+	width: 75px;
+	padding: 2px var(--space-sm);
+}
+
+/* Image Grid */
+.images {
+	display: grid;
+	gap: var(--space-sm);
+	margin-top: var(--space-md);
+}
+
+.image-container {
+	text-align: center;
+}
+
+.image-info {
+	font-size: 0.8em;
+	margin: 2em 0 -1em;
+}
+
+.img-container svg,
+.img-container img {
+	width: 100%;
+	height: 100%;
+	object-fit: contain;
+	image-rendering: pixelated;
+	-ms-interpolation-mode: nearest-neighbor;
+}
+
+/* Buttons */
+.btn {
+	margin: 5px;
+	padding: 8px 16px;
+	font-size: 14px;
+	font-weight: bold;
+	border: none;
+	border-radius: var(--border-radius);
+	cursor: pointer;
+	transition: background-color 0.3s ease;
+}
+
+.btn-primary {
+	background-color: var(--primary);
+	color: white;
+}
+
+.btn-primary:hover {
+	background-color: var(--primary-hover);
+}
+
+.btn-secondary,
+.btn-header,
+.btn-dark-mode {
+	background-color: var(--secondary);
+	color: white;
+}
+
+.btn-secondary:hover,
+.btn-header:hover,
+.btn-dark-mode:hover {
+	background-color: var(--secondary-hover);
+}
+
+/* Progress Bar */
+.progress-bar {
+	height: 12px;
+	width: 200px;
+	background: #ddd;
+	border-radius: 6px;
+	overflow: hidden;
+}
+
+.progress-bar-fill {
+	height: 100%;
+	transition: width 0.3s ease;
+}
+
+.progress-bar-fill.loading {
+	background-color: var(--primary);
+}
+
+.progress-bar-fill.complete {
+	background-color: var(--success);
+}
+
+.progress-wrapper {
+	padding-left: 1rem;
+}
+
+/* Function Info Tooltip */
+.function-info {
+	position: relative;
+	cursor: help;
+	display: flex;
+	align-items: center;
+	margin-left: auto;
+}
+
+.function-tooltip {
+	display: none;
+	position: fixed;
+	background-color: #eee;
+	border: 1px solid #ccc;
+	padding: 8px;
+	width: 250px;
+	z-index: 9999999;
+	border-radius: 4px;
+	box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.function-info:hover .function-tooltip {
+	display: block;
+}
+
+/* Dark Mode Styles */
+.dark-mode {
+	background-color: var(--dark-bg);
+	color: var(--dark-text);
+}
+
+.dark-mode .container {
+	background-color: var(--dark-bg);
+}
+
+.dark-mode .functions-filter,
+.dark-mode .filter-item,
+.dark-mode .checkbox-list {
+	background-color: var(--dark-bg-light);
+	border-color: var(--dark-border);
+}
+
+.dark-mode .ag-theme-alpine {
+	--ag-background-color: var(--dark-bg-light);
+	--ag-header-background-color: var(--dark-bg);
+	--ag-odd-row-background-color: var(--dark-bg);
+	--ag-header-foreground-color: var(--dark-text);
+	--ag-foreground-color: var(--dark-text);
+	--ag-border-color: var(--dark-border);
+}
+
+.dark-mode .top-controls {
+	background-color: var(--dark-bg-light);
+}
+
+.dark-mode .dataset-list,
+.dark-mode .dataset-list-content {
+	background-color: var(--dark-bg-light);
+	border-color: var(--dark-border);
+	color: var(--dark-text);
+}
+
+.dark-mode .dataset-list-content ul {
+	margin: 0;
+	padding: 0.5em 1em;
+	list-style-type: none;
+}
+
+.dark-mode .dataset-list-content li {
+	color: var(--dark-text);
+	padding: 0.2em 0;
+}
+
+.dark-mode .image-controls-container {
+	background-color: transparent;
+}
+
+.dark-mode .image-controls {
+	background-color: var(--dark-bg-light);
+	border-color: var(--dark-border);
+	box-shadow: 0 2px 4px var(--dark-shadow);
+}
+
+.dark-mode .resize-slider,
+.dark-mode .resize-input {
+	background-color: var(--dark-bg);
+	border-color: var(--dark-border);
+}
+
+.dark-mode .resize-input {
+	color: var(--dark-text);
+}
+
+.dark-mode .image-controls label {
+	color: var(--dark-text);
+}
+
+.dark-mode .progress-bar {
+	background-color: var(--dark-bg);
+	border: 1px solid var(--dark-border);
+}
+
+.dark-mode .progress-status {
+	color: var(--dark-text);
+}
+
+.dark-mode .function-tooltip {
+	background-color: var(--dark-bg-light);
+	border-color: var(--dark-border);
+	color: var(--dark-text);
+}
+
+/* Utility Classes */
+.loading,
+.error {
+	text-align: center;
+	padding: var(--space-md);
+}
+
+.counter {
+	font-size: 0.8em;
+	color: var(--text-muted);
+	margin-left: auto;
+}
+
+/* Dark Mode Toggle */
+.dark-mode-toggle {
+	position: relative;
+	width: 60px;
+	height: 30px;
+	border-radius: 15px;
+	background-color: #e2e8f0;
+	cursor: pointer;
+	transition: background-color 0.3s ease;
+	border: none;
+	padding: 0;
+	overflow: hidden;
+}
+
+.dark-mode-toggle::before {
+	content: "";
+	position: absolute;
+	top: 3px;
+	left: 3px;
+	width: 24px;
+	height: 24px;
+	border-radius: 50%;
+	background-color: white;
+	transition: transform 0.3s ease;
+	z-index: 1;
+}
+
+.dark-mode .dark-mode-toggle {
+	background-color: #4a5568;
+}
+
+.dark-mode .dark-mode-toggle::before {
+	transform: translateX(30px);
+}
+
+.dark-mode-icon {
+	position: absolute;
+	top: 50%;
+	transform: translateY(-50%);
+	font-size: 14px;
+	pointer-events: none;
+	line-height: 1;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 24px;
+	height: 24px;
+}
+
+.sun-icon {
+	left: 8px;
+	opacity: 1;
+}
+
+.moon-icon {
+	right: 8px;
+	opacity: 1;
+}
+
+.dark-mode-button {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	cursor: pointer;
+	color: inherit;
+}

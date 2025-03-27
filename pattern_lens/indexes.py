@@ -5,8 +5,10 @@ import importlib.resources
 import inspect
 import itertools
 import json
+import re
 from collections.abc import Callable
 from pathlib import Path
+from typing import Literal
 
 import pattern_lens
 from pattern_lens.attn_figure_funcs import (
@@ -134,14 +136,64 @@ def generate_functions_jsonl(path: Path) -> None:
 			f.write("\n")
 
 
+def inline_assets(
+	html: str,
+	assets: list[tuple[Literal["script", "style"], str]],
+	base_path: Path,
+) -> str:
+	"""Inline specified local CSS/JS files into an HTML document.
+
+	Each entry in `assets` should be a tuple like `("script", "app.js")` or `("style", "style.css")`.
+
+	# Parameters:
+	- `html : str`
+		input HTML content.
+	- `assets : list[tuple[Literal["script", "style"], str]]`
+		List of (tag_type, filename) tuples to inline.
+
+	# Returns:
+	`str` : Modified HTML content with inlined assets.
+	"""
+	for tag_type, filename in assets:
+		if tag_type not in ("style", "script"):
+			err_msg: str = f"Unsupported tag type: {tag_type}"
+			raise ValueError(err_msg)
+
+		# Dynamically create the regex pattern for the given tag and filename
+		pattern: str = (
+			rf'<{tag_type}\s+src=["\']{re.escape(filename)}["\']\s*></{tag_type}>'
+		)
+		# read the content and create the replacement
+		content: str = (base_path / filename).read_text()
+		replacement: str = f"<{tag_type}>\n{content}\n</{tag_type}>"
+		# perform the replacement
+		html = re.sub(pattern, replacement, html)
+
+	return html
+
+
 def write_html_index(path: Path) -> None:
 	"""writes an index.html file to the path"""
-	html_index: str = (
-		importlib.resources.files(pattern_lens)
-		.joinpath("frontend/index.html")
-		.read_text(encoding="utf-8")
+	frontend_resources_path: Path = Path(
+		importlib.resources.files(pattern_lens).joinpath("frontend"),
 	)
+	html_index: str = (frontend_resources_path / "index.template.html").read_text(
+		encoding="utf-8",
+	)
+	# inline assets
+	html_index = inline_assets(
+		html_index,
+		[
+			("style", "style.css"),
+			("script", "fileOps.js"),
+			("script", "app.js"),
+		],
+		base_path=frontend_resources_path,
+	)
+
+	# add version
 	pattern_lens_version: str = importlib.metadata.version("pattern-lens")
 	html_index = html_index.replace("$$PATTERN_LENS_VERSION$$", pattern_lens_version)
+	# write the index.html file
 	with open(path / "index.html", "w", encoding="utf-8") as f:
 		f.write(html_index)
