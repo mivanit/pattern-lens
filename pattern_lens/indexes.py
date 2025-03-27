@@ -5,7 +5,6 @@ import importlib.resources
 import inspect
 import itertools
 import json
-import re
 from collections.abc import Callable
 from pathlib import Path
 from typing import Literal
@@ -159,15 +158,17 @@ def inline_assets(
 			err_msg: str = f"Unsupported tag type: {tag_type}"
 			raise ValueError(err_msg)
 
-		# Dynamically create the regex pattern for the given tag and filename
-		pattern: str = (
-			rf'<{tag_type}\s+src=["\']{re.escape(filename)}["\']\s*></{tag_type}>'
+		# Dynamically create the pattern for the given tag and filename
+		pattern: str = rf'<{tag_type} src="{filename}"></{tag_type}>'
+		# assert it's in the text exactly once
+		assert html.count(pattern) == 1, (
+			f"Pattern {pattern} should be in the html exactly once, found {html.count(pattern) = }"
 		)
 		# read the content and create the replacement
 		content: str = (base_path / filename).read_text()
 		replacement: str = f"<{tag_type}>\n{content}\n</{tag_type}>"
 		# perform the replacement
-		html = re.sub(pattern, replacement, html)
+		html = html.replace(pattern, replacement)
 
 	return html
 

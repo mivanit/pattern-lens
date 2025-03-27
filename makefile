@@ -1634,6 +1634,7 @@ DEMO_PROMPTS ?= data/pile_demo.jsonl
 DEMO_N_SAMPLES ?= 32
 DEMO_ARGS ?= --min-chars 128 --max-chars 256
 DEMO_DATA ?= docs/demo
+DEMO_PORT ?= 8001
 
 
 .PHONY: demo-clean
@@ -1650,7 +1651,7 @@ demo-figures:
 
 .PHONY: demo-server
 demo-server:
-	$(PYTHON) -m pattern_lens.server --rewrite-index --path $(DEMO_DATA)
+	$(PYTHON) -m pattern_lens.server --rewrite-index --path $(DEMO_DATA) --port $(DEMO_PORT)
 
 .PHONY: demo
 demo: demo-clean demo-activations demo-figures demo-server
