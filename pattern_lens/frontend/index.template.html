@@ -103,6 +103,38 @@
 
         <!-- image display button and size controls -->
         <div class="image-controls-container">
+            <div class="visualization-controls">
+                <div class="color-controls">
+                    <label for="colorBy">Color borders by:</label>
+                    <select id="colorBy" v-model="visualization.colorBy">
+                        <option value="">None</option>
+                        <option value="model">Model</option>
+                        <option value="function">Function</option>
+                        <option value="layer">Layer</option>
+                        <option value="head">Head</option>
+                        <option value="promptHash">Prompt</option>
+                    </select>
+                    <button class="btn btn-secondary" @click="regenerateColors" :disabled="!visualization.colorBy"
+                        title="Generate new random colors">
+                        🔄 Regenerate Colors
+                    </button>
+                </div>
+                <div class="sort-controls">
+                    <label for="sortBy">Sort by:</label>
+                    <select id="sortBy" v-model="visualization.sortBy">
+                        <option value="">Default Order</option>
+                        <option value="model">Model</option>
+                        <option value="function">Function</option>
+                        <option value="layer">Layer</option>
+                        <option value="head">Head</option>
+                        <option value="promptHash">Prompt</option>
+                    </select>
+                    <select v-model="visualization.sortOrder">
+                        <option value="asc">Ascending</option>
+                        <option value="desc">Descending</option>
+                    </select>
+                </div>
+            </div>
             <div class="image-controls">
                 <div class="image-controls-display">
                     <button class="btn" :class="{ 'btn-primary': !images.upToDate, 'btn-secondary': images.upToDate }"
@@ -132,9 +164,13 @@
         <div v-if="loading" class="loading">Loading...</div>
 
         <!-- actual images display -->
-        <div v-else-if="images.visible.length > 0" class="images"
-            :style="{ 'grid-template-columns': `repeat(${images.perRow}, 1fr)` }">
-            <div v-for="image in images.visible" class="image-container">
+        <!-- actual images display -->
+        <div v-else-if="images.visible.length > 0" class="images" :style="{ 'grid-template-columns': `repeat(${images.perRow}, 1fr)` }">
+            <div
+                v-for="image in sortedImages"
+                class="image-container"
+                :style="{ borderColor: getBorderColor(image) }"
+            >
                 <p v-if="images.perRow <= 4" class="image-info">
                     <a :href="getSinglePropertyFilterUrl('models', image.model)">{{ image.model }}</a> -
                     <a :href="getSinglePropertyFilterUrl('functions', image.function)">{{ image.function }}</a> -
@@ -143,17 +179,18 @@
                     <a :href="getSinglePropertyFilterUrl('prompts', image.promptHash)">{{ image.promptHash }}</a>
                 </p>
                 <a :href="getImageUrl(image)" class="img-container" v-html="image.content"
-                    :title="images.perRow > 4 ? image.name : ''">
+                :title="images.perRow > 4 ? image.name : ''">
                 </a>
             </div>
         </div>
+
 
         <!-- no images found -->
         <div v-else-if="images.requested" class="error">No images found for the selected criteria.</div>
 
     </div>
 
-    <script src="fileOps.js"></script>
+    <script src="util.js"></script>
     <script src="app.js"></script>
     <script>
         const DATA_DIR = '.';

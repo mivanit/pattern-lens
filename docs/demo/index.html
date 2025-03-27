@@ -605,6 +605,66 @@ input[type="checkbox"] {
 	cursor: pointer;
 	color: inherit;
 }
+
+/* Visualization Controls Styles */
+.visualization-controls {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    margin-top: 10px;
+    padding: 5px 0;
+    border-top: 1px solid var(--border);
+}
+
+.color-controls, .sort-controls {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.image-container {
+    position: relative;
+    border: 3px solid transparent;
+    border-radius: 6px;
+    padding: 4px;
+    transition: border-color 0.2s ease;
+}
+
+.dark-mode .visualization-controls {
+    border-color: var(--dark-border);
+}
+
+.color-legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 10px;
+    padding: 10px;
+    background-color: var(--bg-light);
+    border-radius: 6px;
+}
+
+.legend-item {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 0.85em;
+}
+
+.legend-color {
+    width: 16px;
+    height: 16px;
+    border-radius: 3px;
+    border: 3px solid #000;
+}
+
+.dark-mode .color-legend {
+    background-color: var(--dark-bg-light);
+}
+
+.dark-mode .legend-color {
+    border-color: #fff;
+}
 </style>
 </head>
 
@@ -689,6 +749,38 @@ input[type="checkbox"] {
 
         <!-- image display button and size controls -->
         <div class="image-controls-container">
+            <div class="visualization-controls">
+                <div class="color-controls">
+                    <label for="colorBy">Color borders by:</label>
+                    <select id="colorBy" v-model="visualization.colorBy">
+                        <option value="">None</option>
+                        <option value="model">Model</option>
+                        <option value="function">Function</option>
+                        <option value="layer">Layer</option>
+                        <option value="head">Head</option>
+                        <option value="promptHash">Prompt</option>
+                    </select>
+                    <button class="btn btn-secondary" @click="regenerateColors" :disabled="!visualization.colorBy"
+                        title="Generate new random colors">
+                        🔄 Regenerate Colors
+                    </button>
+                </div>
+                <div class="sort-controls">
+                    <label for="sortBy">Sort by:</label>
+                    <select id="sortBy" v-model="visualization.sortBy">
+                        <option value="">Default Order</option>
+                        <option value="model">Model</option>
+                        <option value="function">Function</option>
+                        <option value="layer">Layer</option>
+                        <option value="head">Head</option>
+                        <option value="promptHash">Prompt</option>
+                    </select>
+                    <select v-model="visualization.sortOrder">
+                        <option value="asc">Ascending</option>
+                        <option value="desc">Descending</option>
+                    </select>
+                </div>
+            </div>
             <div class="image-controls">
                 <div class="image-controls-display">
                     <button class="btn" :class="{ 'btn-primary': !images.upToDate, 'btn-secondary': images.upToDate }"
@@ -718,9 +810,13 @@ input[type="checkbox"] {
         <div v-if="loading" class="loading">Loading...</div>
 
         <!-- actual images display -->
-        <div v-else-if="images.visible.length > 0" class="images"
-            :style="{ 'grid-template-columns': `repeat(${images.perRow}, 1fr)` }">
-            <div v-for="image in images.visible" class="image-container">
+        <!-- actual images display -->
+        <div v-else-if="images.visible.length > 0" class="images" :style="{ 'grid-template-columns': `repeat(${images.perRow}, 1fr)` }">
+            <div
+                v-for="image in sortedImages"
+                class="image-container"
+                :style="{ borderColor: getBorderColor(image) }"
+            >
                 <p v-if="images.perRow <= 4" class="image-info">
                     <a :href="getSinglePropertyFilterUrl('models', image.model)">{{ image.model }}</a> -
                     <a :href="getSinglePropertyFilterUrl('functions', image.function)">{{ image.function }}</a> -
@@ -729,10 +825,11 @@ input[type="checkbox"] {
                     <a :href="getSinglePropertyFilterUrl('prompts', image.promptHash)">{{ image.promptHash }}</a>
                 </p>
                 <a :href="getImageUrl(image)" class="img-container" v-html="image.content"
-                    :title="images.perRow > 4 ? image.name : ''">
+                :title="images.perRow > 4 ? image.name : ''">
                 </a>
             </div>
         </div>
+
 
         <!-- no images found -->
         <div v-else-if="images.requested" class="error">No images found for the selected criteria.</div>
@@ -789,6 +886,16 @@ const fileOps = {
 	}
 };
 
+
+const colorUtils = {
+	getRandomColor() {
+		// Generate vibrant colors with good contrast
+		const hue = Math.floor(Math.random() * 360);
+		return `hsl(${hue}, 70%, 60%)`;
+	},
+};
+
+
 </script>
     <script>
 const app = Vue.createApp({
@@ -841,6 +948,12 @@ const app = Vue.createApp({
 				},
 			},
 			head_selections_str: {}, // model -> selection string mapping
+			visualization: {
+				colorBy: '',
+				sortBy: '',
+				sortOrder: 'asc',
+				colorMap: {},
+			},
 		};
 	},
 
@@ -1568,7 +1681,28 @@ const app = Vue.createApp({
 			newWindow.document.close();
 			newWindow.document.title = `Metadata for ${func.name}`;
 		},
+
+		regenerateColors() {
+			if (!this.visualization.colorBy) return;
+			
+			// Get unique values for the selected property
+			const uniqueValues = [...new Set(this.images.visible.map(img => img[this.visualization.colorBy]))];
+			
+			// Generate new random colors
+			this.visualization.colorMap = {};
+			uniqueValues.forEach(value => {
+				this.visualization.colorMap[value] = colorUtils.getRandomColor();
+			});
+		},
+		
+		
+		getBorderColor(image) {
+			if (!this.visualization.colorBy || !image) return 'transparent';
+			const value = image[this.visualization.colorBy];
+			return this.visualization.colorMap[value] || 'transparent';
+		},
 	},
+
 
 
 	//  ######   #######  ##     ## ########  ##     ## ######## ######## ########
@@ -1615,7 +1749,28 @@ const app = Vue.createApp({
 			}
 
 			return parsed;
-		}
+		},
+		sortedImages() {
+			if (!this.visualization.sortBy) return this.images.visible;
+			
+			return [...this.images.visible].sort((a, b) => {
+				const valueA = a[this.visualization.sortBy];
+				const valueB = b[this.visualization.sortBy];
+				
+				// Handle numeric values for layer and head
+				if (['layer', 'head'].includes(this.visualization.sortBy)) {
+					const numA = Number(valueA);
+					const numB = Number(valueB);
+					return this.visualization.sortOrder === 'asc' 
+						? numA - numB 
+						: numB - numA;
+				}
+				
+				// Handle string values
+				const comparison = String(valueA).localeCompare(String(valueB));
+				return this.visualization.sortOrder === 'asc' ? comparison : -comparison;
+			});
+		},
 	},
 
 
@@ -1667,6 +1822,13 @@ const app = Vue.createApp({
 				this.updateURL();
 			}
 		},
+		'visualization.colorBy': {
+			handler(newValue) {
+				if (newValue) {
+					this.regenerateColors();
+				}
+			}
+    	},
 	},
 
 	// Lifecycle hook when component is mounted

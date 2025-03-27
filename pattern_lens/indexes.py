@@ -186,7 +186,7 @@ def write_html_index(path: Path) -> None:
 		html_index,
 		[
 			("style", "style.css"),
-			("script", "fileOps.js"),
+			("script", "util.js"),
 			("script", "app.js"),
 		],
 		base_path=frontend_resources_path,

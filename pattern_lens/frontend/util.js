@@ -46,3 +46,13 @@ const fileOps = {
 		return null;
 	}
 };
+
+
+const colorUtils = {
+	getRandomColor() {
+		// Generate vibrant colors with good contrast
+		const hue = Math.floor(Math.random() * 360);
+		return `hsl(${hue}, 70%, 60%)`;
+	},
+};
+

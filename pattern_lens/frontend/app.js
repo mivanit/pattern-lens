@@ -48,6 +48,12 @@ const app = Vue.createApp({
 				},
 			},
 			head_selections_str: {}, // model -> selection string mapping
+			visualization: {
+				colorBy: '',
+				sortBy: '',
+				sortOrder: 'asc',
+				colorMap: {},
+			},
 		};
 	},
 
@@ -775,7 +781,28 @@ const app = Vue.createApp({
 			newWindow.document.close();
 			newWindow.document.title = `Metadata for ${func.name}`;
 		},
+
+		regenerateColors() {
+			if (!this.visualization.colorBy) return;
+			
+			// Get unique values for the selected property
+			const uniqueValues = [...new Set(this.images.visible.map(img => img[this.visualization.colorBy]))];
+			
+			// Generate new random colors
+			this.visualization.colorMap = {};
+			uniqueValues.forEach(value => {
+				this.visualization.colorMap[value] = colorUtils.getRandomColor();
+			});
+		},
+		
+		
+		getBorderColor(image) {
+			if (!this.visualization.colorBy || !image) return 'transparent';
+			const value = image[this.visualization.colorBy];
+			return this.visualization.colorMap[value] || 'transparent';
+		},
 	},
+
 
 
 	//  ######   #######  ##     ## ########  ##     ## ######## ######## ########
@@ -822,7 +849,28 @@ const app = Vue.createApp({
 			}
 
 			return parsed;
-		}
+		},
+		sortedImages() {
+			if (!this.visualization.sortBy) return this.images.visible;
+			
+			return [...this.images.visible].sort((a, b) => {
+				const valueA = a[this.visualization.sortBy];
+				const valueB = b[this.visualization.sortBy];
+				
+				// Handle numeric values for layer and head
+				if (['layer', 'head'].includes(this.visualization.sortBy)) {
+					const numA = Number(valueA);
+					const numB = Number(valueB);
+					return this.visualization.sortOrder === 'asc' 
+						? numA - numB 
+						: numB - numA;
+				}
+				
+				// Handle string values
+				const comparison = String(valueA).localeCompare(String(valueB));
+				return this.visualization.sortOrder === 'asc' ? comparison : -comparison;
+			});
+		},
 	},
 
 
@@ -874,6 +922,13 @@ const app = Vue.createApp({
 				this.updateURL();
 			}
 		},
+		'visualization.colorBy': {
+			handler(newValue) {
+				if (newValue) {
+					this.regenerateColors();
+				}
+			}
+    	},
 	},
 
 	// Lifecycle hook when component is mounted
