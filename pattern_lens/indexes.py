@@ -175,8 +175,9 @@ def inline_assets(
 
 def write_html_index(path: Path) -> None:
 	"""writes an index.html file to the path"""
+	# TYPING: error: Argument 1 to "Path" has incompatible type "Traversable"; expected "str | PathLike[str]"  [arg-type]
 	frontend_resources_path: Path = Path(
-		importlib.resources.files(pattern_lens).joinpath("frontend"),
+		importlib.resources.files(pattern_lens).joinpath("frontend"),  # type: ignore[arg-type]
 	)
 	html_index: str = (frontend_resources_path / "index.template.html").read_text(
 		encoding="utf-8",
