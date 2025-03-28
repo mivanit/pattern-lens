@@ -2,7 +2,7 @@
 #| python project makefile template                                 |
 #| originally by Michael Ivanitskiy (mivanits@umich.edu)            |
 #| https://github.com/mivanit/python-project-makefile-template      |
-#| version: v0.3.1                                                  |
+#| version: v0.3.4                                                  |
 #| license: https://creativecommons.org/licenses/by-sa/4.0/         |
 #| modifications from the original should be denoted with `~~~~~`   |
 #| as this makes it easier to find edits when updating makefile     |
@@ -105,8 +105,16 @@ PYTHON_VERSION := NULL
 # RUN_GLOBAL=1 to use global `PYTHON_BASE` instead of `uv run $(PYTHON_BASE)`
 RUN_GLOBAL ?= 0
 
+# for running tests or other commands without updating the env, set this to 1
+# and it will pass `--no-sync` to `uv run`
+UV_NOSYNC ?= 0
+
 ifeq ($(RUN_GLOBAL),0)
-	PYTHON = uv run $(PYTHON_BASE)
+	ifeq ($(UV_NOSYNC),1)
+		PYTHON = uv run --no-sync $(PYTHON_BASE)
+	else
+		PYTHON = uv run $(PYTHON_BASE)
+	endif
 else
 	PYTHON = $(PYTHON_BASE)
 endif
@@ -160,7 +168,7 @@ default: help
 
 # create commands for exporting requirements as specified in `pyproject.toml:tool.uv-exports.exports`
 define SCRIPT_EXPORT_REQUIREMENTS
-# source: https://github.com/mivanit/python-project-makefile-template/tree/main/scripts/export_requirements.py
+# source: https://github.com/mivanit/python-project-makefile-template/tree/main/scripts/make/export_requirements.py
 
 "export to requirements.txt files based on pyproject.toml configuration"
 
@@ -295,7 +303,7 @@ export SCRIPT_EXPORT_REQUIREMENTS
 
 # get the version from `pyproject.toml:project.version`
 define SCRIPT_GET_VERSION
-# source: https://github.com/mivanit/python-project-makefile-template/tree/main/scripts/get_version.py
+# source: https://github.com/mivanit/python-project-makefile-template/tree/main/scripts/make/get_version.py
 
 "write the current version of the project to a file"
 
@@ -326,7 +334,7 @@ export SCRIPT_GET_VERSION
 
 # get the commit log since the last version from `$(LAST_VERSION_FILE)`
 define SCRIPT_GET_COMMIT_LOG
-# source: https://github.com/mivanit/python-project-makefile-template/tree/main/scripts/get_commit_log.py
+# source: https://github.com/mivanit/python-project-makefile-template/tree/main/scripts/make/get_commit_log.py
 
 "pretty print a commit log amd wrote it to a file"
 
@@ -377,7 +385,7 @@ export SCRIPT_GET_COMMIT_LOG
 
 # get cuda information and whether torch sees it
 define SCRIPT_CHECK_TORCH
-# source: https://github.com/mivanit/python-project-makefile-template/tree/main/scripts/check_torch.py
+# source: https://github.com/mivanit/python-project-makefile-template/tree/main/scripts/make/check_torch.py
 
 "print info about current python, torch, cuda, and devices"
 
@@ -468,7 +476,12 @@ def get_torch_info() -> Tuple[List[Exception], Dict[str, Any]]:
 
 	try:
 		import torch
+	except ImportError as e:
+		info["torch.__version__"] = "not available"
+		exceptions.append(e)
+		return exceptions, info
 
+	try:
 		info["torch.__version__"] = torch.__version__
 		info["torch.cuda.is_available()"] = torch.cuda.is_available()
 
@@ -557,7 +570,7 @@ export SCRIPT_CHECK_TORCH
 
 # get todo's from the code
 define SCRIPT_GET_TODOS
-# source: https://github.com/mivanit/python-project-makefile-template/tree/main/scripts/get_todos.py
+# source: https://github.com/mivanit/python-project-makefile-template/tree/main/scripts/make/get_todos.py
 
 "read all TODO type comments and write them to markdown, jsonl, html. configurable in pyproject.toml"
 
@@ -989,7 +1002,7 @@ export SCRIPT_GET_TODOS
 
 # markdown to html using pdoc
 define SCRIPT_PDOC_MARKDOWN2_CLI
-# source: https://github.com/mivanit/python-project-makefile-template/tree/main/scripts/pdoc_markdown2_cli.py
+# source: https://github.com/mivanit/python-project-makefile-template/tree/main/scripts/make/pdoc_markdown2_cli.py
 
 "cli to convert markdown files to HTML using pdoc's markdown2"
 
@@ -1060,7 +1073,7 @@ export SCRIPT_PDOC_MARKDOWN2_CLI
 
 # clean up the docs (configurable in pyproject.toml)
 define SCRIPT_DOCS_CLEAN
-# source: https://github.com/mivanit/python-project-makefile-template/tree/main/scripts/docs_clean.py
+# source: https://github.com/mivanit/python-project-makefile-template/tree/main/scripts/make/docs_clean.py
 
 "clean up docs directory based on pyproject.toml configuration"
 
@@ -1154,7 +1167,7 @@ export SCRIPT_DOCS_CLEAN
 
 # generate a report of the mypy output
 define SCRIPT_MYPY_REPORT
-# source: https://github.com/mivanit/python-project-makefile-template/tree/main/scripts/mypy_report.py
+# source: https://github.com/mivanit/python-project-makefile-template/tree/main/scripts/make/mypy_report.py
 
 "usage: mypy ... | mypy_report.py [--mode jsonl|exclude]"
 
@@ -1340,18 +1353,20 @@ dep-clean:
 # checks (formatting/linting, typing, tests)
 # ==================================================
 
-# runs ruff to format the code
+# runs ruff and pycln to format the code
 .PHONY: format
 format:
 	@echo "format the source code"
 	$(PYTHON) -m ruff format --config $(PYPROJECT) .
 	$(PYTHON) -m ruff check --fix --config $(PYPROJECT) .
+	$(PYTHON) -m pycln --config $(PYPROJECT) --all .
 
 # runs ruff and pycln to check if the code is formatted correctly
 .PHONY: format-check
 format-check:
 	@echo "check if the source code is formatted correctly"
 	$(PYTHON) -m ruff check --config $(PYPROJECT) .
+	$(PYTHON) -m pycln --check --config $(PYPROJECT) .
 
 # runs type checks with mypy
 .PHONY: typing
@@ -1548,7 +1563,7 @@ clean:
 	rm -rf build
 	rm -rf $(PACKAGE_NAME).egg-info
 	rm -rf $(TESTS_TEMP_DIR)
-	$(PYTHON_BASE) -Bc "import pathlib; [p.unlink() for path in ['$(PACKAGE_NAME)', '$(TESTS_DIR)', '$(DOCS_DIR)'] for pattern in ['*.py[co]', '__pycache__/*'] for p in pathlib.Path(path).rglob(pattern)]"
+	$(PYTHON) -Bc "import pathlib; [p.unlink() for path in ['$(PACKAGE_NAME)', '$(TESTS_DIR)', '$(DOCS_DIR)'] for pattern in ['*.py[co]', '__pycache__/*'] for p in pathlib.Path(path).rglob(pattern)]"
 
 .PHONY: clean-all
 clean-all: clean docs-clean dep-clean
@@ -1575,7 +1590,7 @@ clean-all: clean docs-clean dep-clean
 help-targets:
 	@echo -n "# make targets"
 	@echo ":"
-	@cat Makefile | sed -n '/^\.PHONY: / h; /\(^\t@*echo\|^\t:\)/ {H; x; /PHONY/ s/.PHONY: \(.*\)\n.*"\(.*\)"/    make \1\t\2/p; d; x}'| sort -k2,2 |expand -t 30
+	@cat makefile | sed -n '/^\.PHONY: / h; /\(^\t@*echo\|^\t:\)/ {H; x; /PHONY/ s/.PHONY: \(.*\)\n.*"\(.*\)"/    make \1\t\2/p; d; x}'| sort -k2,2 |expand -t 30
 
 
 .PHONY: info
