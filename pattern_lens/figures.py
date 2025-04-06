@@ -368,12 +368,10 @@ def figures_main(
 		generate_functions_jsonl(save_path_p)
 
 
-
-
 def _parse_args() -> tuple[
 	argparse.Namespace,
-	list[str], # models
-	set[str] | str | None, # figure_funcs_select
+	list[str],  # models
+	set[str] | str | None,  # figure_funcs_select
 ]:
 	arg_parser: argparse.ArgumentParser = argparse.ArgumentParser()
 	# input and output
@@ -439,9 +437,9 @@ def _parse_args() -> tuple[
 
 	return args, models, figure_funcs_select
 
+
 def main() -> None:
 	"generates figures from the activations using the functions decorated with `register_attn_figure_func`"
-
 	# parse args
 	print(DIVIDER_S1)
 	args: argparse.Namespace
