@@ -4,6 +4,7 @@ from unittest import mock
 
 import numpy as np
 
+from pattern_lens.attn_figure_funcs import ATTENTION_MATRIX_FIGURE_FUNCS
 from pattern_lens.figure_util import save_matrix_wrapper
 from pattern_lens.figures import compute_and_save_figures, process_single_head
 
@@ -25,26 +26,22 @@ def test_process_single_head():
 	def test_fig_func(matrix):
 		return matrix
 
-	# Patch ATTENTION_MATRIX_FIGURE_FUNCS to use our test function
-	with mock.patch(
-		"pattern_lens.figures.ATTENTION_MATRIX_FIGURE_FUNCS",
-		[test_fig_func],
-	):
-		# Call process_single_head
-		result = process_single_head(
-			layer_idx=0,
-			head_idx=0,
-			attn_pattern=attn_pattern,
-			save_dir=head_dir,
-			force_overwrite=True,
-		)
+	# Patch to use our test function
+	result = process_single_head(
+		layer_idx=0,
+		head_idx=0,
+		attn_pattern=attn_pattern,
+		save_dir=head_dir,
+		figure_funcs=[*ATTENTION_MATRIX_FIGURE_FUNCS, test_fig_func],
+		force_overwrite=True,
+	)
 
-		# Check that our function was called and succeeded
-		assert "test_fig_func" in result
-		assert result["test_fig_func"] is True
+	# Check that our function was called and succeeded
+	assert "test_fig_func" in result
+	assert result["test_fig_func"] is True
 
-		# Check that the figure file was created
-		assert (head_dir / "test_fig_func.svg").exists()
+	# Check that the figure file was created
+	assert (head_dir / "test_fig_func.svg").exists()
 
 
 def test_process_single_head_error_handling():
@@ -61,26 +58,22 @@ def test_process_single_head_error_handling():
 	def error_fig_func(matrix, save_dir):  # noqa: ARG001
 		raise ValueError("Test error")
 
-	# Patch ATTENTION_MATRIX_FIGURE_FUNCS to use our test function
-	with mock.patch(
-		"pattern_lens.figures.ATTENTION_MATRIX_FIGURE_FUNCS",
-		[error_fig_func],
-	):
-		# Call process_single_head
-		result = process_single_head(
-			layer_idx=0,
-			head_idx=0,
-			attn_pattern=attn_pattern,
-			save_dir=head_dir,
-			force_overwrite=True,
-		)
+	# Patch to use our test function
+	result = process_single_head(
+		layer_idx=0,
+		head_idx=0,
+		attn_pattern=attn_pattern,
+		save_dir=head_dir,
+		figure_funcs=[error_fig_func],
+		force_overwrite=True,
+	)
 
-		# Check that our function was called and failed
-		assert "error_fig_func" in result
-		assert isinstance(result["error_fig_func"], ValueError)
+	# Check that our function was called and failed
+	assert "error_fig_func" in result
+	assert isinstance(result["error_fig_func"], ValueError)
 
-		# Check that an error file was created
-		assert (head_dir / "error_fig_func.error.txt").exists()
+	# Check that an error file was created
+	assert (head_dir / "error_fig_func.error.txt").exists()
 
 
 def test_compute_and_save_figures():
@@ -124,6 +117,7 @@ def test_compute_and_save_figures():
 			model_cfg=MockConfig(),
 			activations_path=prompt_dir / "activations.npz",
 			cache=cache_dict,
+			figure_funcs=ATTENTION_MATRIX_FIGURE_FUNCS,
 			save_path=temp_dir,
 			force_overwrite=True,
 		)
@@ -146,6 +140,7 @@ def test_compute_and_save_figures():
 			model_cfg=MockConfig(),
 			activations_path=prompt_dir / "activations.npy",
 			cache=cache_array,
+			figure_funcs=ATTENTION_MATRIX_FIGURE_FUNCS,
 			save_path=temp_dir,
 			force_overwrite=True,
 		)
