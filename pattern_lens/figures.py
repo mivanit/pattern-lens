@@ -368,57 +368,58 @@ def figures_main(
 		generate_functions_jsonl(save_path_p)
 
 
-def main() -> None:
-	"generates figures from the activations using the functions decorated with `register_attn_figure_func`"
-	print(DIVIDER_S1)
-	with SpinnerContext(message="parsing args", **SPINNER_KWARGS):
-		arg_parser: argparse.ArgumentParser = argparse.ArgumentParser()
-		# input and output
-		arg_parser.add_argument(
-			"--model",
-			"-m",
-			type=str,
-			required=True,
-			help="The model name(s) to use. comma separated with no whitespace if multiple",
-		)
-		arg_parser.add_argument(
-			"--save-path",
-			"-s",
-			type=str,
-			required=False,
-			help="The path to save the attention patterns",
-			default=DATA_DIR,
-		)
-		# number of samples
-		arg_parser.add_argument(
-			"--n-samples",
-			"-n",
-			type=int,
-			required=False,
-			help="The max number of samples to process, do all in the file if None",
-			default=None,
-		)
-		# force overwrite of existing figures
-		arg_parser.add_argument(
-			"--force",
-			"-f",
-			type=bool,
-			required=False,
-			help="Force overwrite of existing figures",
-			default=False,
-		)
-		# figure functions
-		arg_parser.add_argument(
-			"--figure-funcs",
-			type=str,
-			required=False,
-			help="The figure functions to use. if 'None' (default), will use all functions. if a string, will use the function names which match the string. if a comma-separated list of strings, will use the function names in the set",
-			default=None,
-		)
 
-		args: argparse.Namespace = arg_parser.parse_args()
 
-	print(f"args parsed: {args}")
+def _parse_args() -> tuple[
+	argparse.Namespace,
+	list[str], # models
+	set[str] | str | None, # figure_funcs_select
+]:
+	arg_parser: argparse.ArgumentParser = argparse.ArgumentParser()
+	# input and output
+	arg_parser.add_argument(
+		"--model",
+		"-m",
+		type=str,
+		required=True,
+		help="The model name(s) to use. comma separated with no whitespace if multiple",
+	)
+	arg_parser.add_argument(
+		"--save-path",
+		"-s",
+		type=str,
+		required=False,
+		help="The path to save the attention patterns",
+		default=DATA_DIR,
+	)
+	# number of samples
+	arg_parser.add_argument(
+		"--n-samples",
+		"-n",
+		type=int,
+		required=False,
+		help="The max number of samples to process, do all in the file if None",
+		default=None,
+	)
+	# force overwrite of existing figures
+	arg_parser.add_argument(
+		"--force",
+		"-f",
+		type=bool,
+		required=False,
+		help="Force overwrite of existing figures",
+		default=False,
+	)
+	# figure functions
+	arg_parser.add_argument(
+		"--figure-funcs",
+		type=str,
+		required=False,
+		help="The figure functions to use. if 'None' (default), will use all functions. if a string, will use the function names which match the string. if a comma-separated list of strings, will use the function names in the set",
+		default=None,
+	)
+
+	args: argparse.Namespace = arg_parser.parse_args()
 
 	# figure out models
 	models: list[str]
@@ -435,6 +436,22 @@ def main() -> None:
 		figure_funcs_select = {x.strip() for x in args.figure_funcs.split(",")}
 	else:
 		figure_funcs_select = args.figure_funcs.strip()
+
+	return args, models, figure_funcs_select
+
+def main() -> None:
+	"generates figures from the activations using the functions decorated with `register_attn_figure_func`"
+
+	# parse args
+	print(DIVIDER_S1)
+	args: argparse.Namespace
+	models: list[str]
+	figure_funcs_select: set[str] | str | None
+	with SpinnerContext(message="parsing args", **SPINNER_KWARGS):
+		args, models, figure_funcs_select = _parse_args()
+	print(f"\targs parsed: '{args}'")
+	print(f"\tmodels: '{models}'")
+	print(f"\tfigure_funcs_select: '{figure_funcs_select}'")
 
 	# compute for each model
 	n_models: int = len(models)
