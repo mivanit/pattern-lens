@@ -1,8 +1,8 @@
 # Stats
 - 31 files
-- 6347 (6.3K) lines
-- 546698 (547K) chars
-- 179873 (180K) `gpt2` tokens
+- 6458 (6.5K) lines
+- 550682 (551K) chars
+- 181240 (181K) `gpt2` tokens
 
 # File Tree
 
@@ -25,8 +25,8 @@ pattern-lens
 │   ├── attn_figure_funcs.py         [  118L   3,127C  1,159T]
 │   ├── consts.py                    [   37L   1,093C    354T]
 │   ├── figure_util.py               [  515L  16,788C  6,213T]
-│   ├── figures.py                   [  357L  10,461C  3,916T]
-│   ├── indexes.py                   [  200L   5,958C  2,233T]
+│   ├── figures.py                   [  472L  14,402C  5,289T]
+│   ├── indexes.py                   [  201L   6,103C  2,281T]
 │   ├── load_activations.py          [  167L   4,270C  1,579T]
 │   ├── prompts.py                   [   82L   1,721C    743T]
 │   ├── py.typed                     [    0L       0C      0T]
@@ -39,13 +39,13 @@ pattern-lens
 │    ├── test_activations.py         [  170L   4,691C  1,774T]
 │    ├── test_activations_return.py  [  168L   4,804C  1,820T]
 │    ├── test_figure_util.py         [  291L   8,605C  3,519T]
-│    ├── test_figures.py             [  157L   4,736C  1,807T]
+│    ├── test_figures.py             [  152L   4,663C  1,762T]
 │    ├── test_load_activations.py    [  138L   3,866C  1,389T]
 │    ├── test_multifig.py            [  130L   4,851C  1,720T]
 │    └── test_server.py              [   35L   1,234C    415T]
 ├── README.md                        [  106L   3,862C  1,295T]
 ├── demo.ipynb                       [  165L   4,787C  2,343T]
-├── makefile                         [1,668L  50,817C 19,585T]
+├── makefile                         [1,681L  51,167C 19,727T]
 ├── pyproject.toml                   [  223L   7,121C  3,718T]
 ```
 
@@ -2043,7 +2043,7 @@ input[type="checkbox"] {
     width: 16px;
     height: 16px;
     border-radius: 3px;
-    border: 1px solid #000;
+    border: 3px solid #000;
 }
 
 .dark-mode .color-legend {
@@ -3481,9 +3481,12 @@ def save_matrix_wrapper(
 """code for generating figures from attention patterns, using the functions decorated with `register_attn_figure_func`"""
 
 import argparse
+import fnmatch
 import functools
 import itertools
 import json
+import multiprocessing
+import re
 import warnings
 from collections import defaultdict
 from pathlib import Path
@@ -3506,6 +3509,7 @@ from pattern_lens.consts import (
 	ActivationCacheNp,
 	AttentionMatrix,
 )
+from pattern_lens.figure_util import AttentionMatrixFigureFunc
 from pattern_lens.indexes import (
 	generate_functions_jsonl,
 	generate_models_jsonl,
@@ -3548,9 +3552,10 @@ def process_single_head(
 	head_idx: int,
 	attn_pattern: AttentionMatrix,
 	save_dir: Path,
+	figure_funcs: list[AttentionMatrixFigureFunc],
 	force_overwrite: bool = False,
 ) -> dict[str, bool | Exception]:
-	"""process a single head's attention pattern, running all the functions in `ATTENTION_MATRIX_FIGURE_FUNCS` on the attention pattern
+	"""process a single head's attention pattern, running all the functions in `figure_funcs` on the attention pattern
 
 	> [gotcha:] if `force_overwrite` is `False`, and we used a multi-figure function,
 	> it will skip all figures for that function if any are already saved
@@ -3573,7 +3578,7 @@ def process_single_head(
 	"""
 	funcs_status: dict[str, bool | Exception] = dict()
 
-	for func in ATTENTION_MATRIX_FIGURE_FUNCS:
+	for func in figure_funcs:
 		func_name: str = func.__name__
 		fig_path: list[Path] = list(save_dir.glob(f"{func_name}.*"))
 
@@ -3602,6 +3607,7 @@ def compute_and_save_figures(
 	model_cfg: "HookedTransformerConfig|HTConfigMock",  # type: ignore[name-defined] # noqa: F821
 	activations_path: Path,
 	cache: ActivationCacheNp | Float[np.ndarray, "n_layers n_heads n_ctx n_ctx"],
+	figure_funcs: list[AttentionMatrixFigureFunc],
 	save_path: Path = Path(DATA_DIR),
 	force_overwrite: bool = False,
 	track_results: bool = False,
@@ -3610,8 +3616,13 @@ def compute_and_save_figures(
 
 	# Parameters:
 	- `model_cfg : HookedTransformerConfig|HTConfigMock`
-	- `cache : ActivationCacheNp | Float[np.ndarray, "n_layers n_heads n_ctx n_ctx"]`
+		configuration of the model, used for loading the activations
+	- `cache : ActivationCacheNp | Float[np.ndarray, &quot;n_layers n_heads n_ctx n_ctx&quot;]`
+		activation cache containing actual patterns for the prompt we are processing
+	- `figure_funcs : list[AttentionMatrixFigureFunc]`
+		list of functions to run
 	- `save_path : Path`
+		directory to save the figures to
 		(defaults to `Path(DATA_DIR)`)
 	- `force_overwrite : bool`
 		force overwrite of existing figures. if `False`, will skip any functions which have already saved a figure
@@ -3656,6 +3667,7 @@ def compute_and_save_figures(
 			attn_pattern=attn_pattern,
 			save_dir=save_dir,
 			force_overwrite=force_overwrite,
+			figure_funcs=figure_funcs,
 		)
 
 		if track_results:
@@ -3671,6 +3683,7 @@ def process_prompt(
 	prompt: dict,
 	model_cfg: "HookedTransformerConfig|HTConfigMock",  # type: ignore[name-defined] # noqa: F821
 	save_path: Path,
+	figure_funcs: list[AttentionMatrixFigureFunc],
 	force_overwrite: bool = False,
 ) -> None:
 	"""process a single prompt, loading the activations and computing and saving the figures
@@ -3679,10 +3692,19 @@ def process_prompt(
 
 	# Parameters:
 	- `prompt : dict`
+		prompt to process, should be a dict with the following keys:
+		- `"text"`: the prompt string
+		- `"hash"`: the hash of the prompt
 	- `model_cfg : HookedTransformerConfig|HTConfigMock`
+		configuration of the model, used for figuring out where to save
+	- `save_path : Path`
+		directory to save the figures to
+	- `figure_funcs : list[AttentionMatrixFigureFunc]`
+		list of functions to run
 	- `force_overwrite : bool`
 		(defaults to `False`)
 	"""
+	# load the activations
 	activations_path: Path
 	cache: ActivationCacheNp | Float[np.ndarray, "n_layers n_heads n_ctx n_ctx"]
 	activations_path, cache = load_activations(
@@ -3692,13 +3714,54 @@ def process_prompt(
 		return_fmt="numpy",
 	)
 
+	# compute and save the figures
 	compute_and_save_figures(
 		model_cfg=model_cfg,
 		activations_path=activations_path,
 		cache=cache,
+		figure_funcs=figure_funcs,
 		save_path=save_path,
 		force_overwrite=force_overwrite,
 	)
+
+
+def select_attn_figure_funcs(
+	figure_funcs_select: set[str] | str | None = None,
+) -> list[AttentionMatrixFigureFunc]:
+	"""given a selector, figure out which functions from `ATTENTION_MATRIX_FIGURE_FUNCS` to use
+
+	- if arg is `None`, will use all functions
+	- if a string, will use the function names which match the string (glob/fnmatch syntax)
+	- if a set, will use functions whose names are in the set
+
+	"""
+	# figure out which functions to use
+	figure_funcs: list[AttentionMatrixFigureFunc]
+	if figure_funcs_select is None:
+		# all if nothing specified
+		figure_funcs = ATTENTION_MATRIX_FIGURE_FUNCS
+	elif isinstance(figure_funcs_select, str):
+		# if a string, assume a glob pattern
+		pattern: re.Pattern = re.compile(fnmatch.translate(figure_funcs_select))
+		figure_funcs = [
+			func
+			for func in ATTENTION_MATRIX_FIGURE_FUNCS
+			if pattern.match(func.__name__)
+		]
+	elif isinstance(figure_funcs_select, set):
+		# if a set, assume a set of function names
+		figure_funcs = [
+			func
+			for func in ATTENTION_MATRIX_FIGURE_FUNCS
+			if func.__name__ in figure_funcs_select
+		]
+	else:
+		err_msg: str = (
+			f"figure_funcs_select must be None, str, or set, not {type(figure_funcs_select) = }"
+			f"\n{figure_funcs_select = }"
+		)
+		raise TypeError(err_msg)
+	return figure_funcs
 
 
 def figures_main(
@@ -3706,6 +3769,7 @@ def figures_main(
 	save_path: str,
 	n_samples: int,
 	force: bool,
+	figure_funcs_select: set[str] | str | None = None,
 	parallel: bool | int = True,
 ) -> None:
 	"""main function for generating figures from attention patterns, using the functions in `ATTENTION_MATRIX_FIGURE_FUNCS`
@@ -3719,6 +3783,9 @@ def figures_main(
 		max number of samples to process
 	- `force : bool`
 		force overwrite of existing figures. if `False`, will skip any functions which have already saved a figure
+	- `figure_funcs_select : set[str]|str|None`
+		figure functions to use. if `None`, will use all functions. if a string, will use the function names which match the string. if a set, will use the function names in the set
+		(defaults to `None`)
 	- `parallel : bool | int`
 		whether to run in parallel. if `True`, will use all available cores. if `False`, will run in serial. if an int, will try to use that many cores
 		(defaults to `True`)
@@ -3739,8 +3806,19 @@ def figures_main(
 
 	print(f"{len(prompts)} prompts loaded")
 
-	print(f"{len(ATTENTION_MATRIX_FIGURE_FUNCS)} figure functions loaded")
-	print("\t" + ", ".join([func.__name__ for func in ATTENTION_MATRIX_FIGURE_FUNCS]))
+	figure_funcs: list[AttentionMatrixFigureFunc] = select_attn_figure_funcs(
+		figure_funcs_select=figure_funcs_select,
+	)
+	print(f"{len(figure_funcs)} figure functions loaded")
+	print("\t" + ", ".join([func.__name__ for func in figure_funcs]))
+
+	chunksize: int = int(
+		max(
+			1,
+			len(prompts) // (5 * multiprocessing.cpu_count()),
+		),
+	)
+	print(f"chunksize: {chunksize}")
 
 	list(
 		run_maybe_parallel(
@@ -3748,10 +3826,12 @@ def figures_main(
 				process_prompt,
 				model_cfg=model_cfg,
 				save_path=save_path_p,
+				figure_funcs=figure_funcs,
 				force_overwrite=force,
 			),
 			iterable=prompts,
 			parallel=parallel,
+			chunksize=chunksize,
 			pbar="tqdm",
 			pbar_kwargs=dict(
 				desc="Making figures",
@@ -3768,56 +3848,90 @@ def figures_main(
 		generate_functions_jsonl(save_path_p)
 
 
-def main() -> None:
-	"generates figures from the activations using the functions decorated with `register_attn_figure_func`"
-	print(DIVIDER_S1)
-	with SpinnerContext(message="parsing args", **SPINNER_KWARGS):
-		arg_parser: argparse.ArgumentParser = argparse.ArgumentParser()
-		# input and output
-		arg_parser.add_argument(
-			"--model",
-			"-m",
-			type=str,
-			required=True,
-			help="The model name(s) to use. comma separated with no whitespace if multiple",
-		)
-		arg_parser.add_argument(
-			"--save-path",
-			"-s",
-			type=str,
-			required=False,
-			help="The path to save the attention patterns",
-			default=DATA_DIR,
-		)
-		# number of samples
-		arg_parser.add_argument(
-			"--n-samples",
-			"-n",
-			type=int,
-			required=False,
-			help="The max number of samples to process, do all in the file if None",
-			default=None,
-		)
-		# force overwrite of existing figures
-		arg_parser.add_argument(
-			"--force",
-			"-f",
-			type=bool,
-			required=False,
-			help="Force overwrite of existing figures",
-			default=False,
-		)
+def _parse_args() -> tuple[
+	argparse.Namespace,
+	list[str],  # models
+	set[str] | str | None,  # figure_funcs_select
+]:
+	arg_parser: argparse.ArgumentParser = argparse.ArgumentParser()
+	# input and output
+	arg_parser.add_argument(
+		"--model",
+		"-m",
+		type=str,
+		required=True,
+		help="The model name(s) to use. comma separated with no whitespace if multiple",
+	)
+	arg_parser.add_argument(
+		"--save-path",
+		"-s",
+		type=str,
+		required=False,
+		help="The path to save the attention patterns",
+		default=DATA_DIR,
+	)
+	# number of samples
+	arg_parser.add_argument(
+		"--n-samples",
+		"-n",
+		type=int,
+		required=False,
+		help="The max number of samples to process, do all in the file if None",
+		default=None,
+	)
+	# force overwrite of existing figures
+	arg_parser.add_argument(
+		"--force",
+		"-f",
+		type=bool,
+		required=False,
+		help="Force overwrite of existing figures",
+		default=False,
+	)
+	# figure functions
+	arg_parser.add_argument(
+		"--figure-funcs",
+		type=str,
+		required=False,
+		help="The figure functions to use. if 'None' (default), will use all functions. if a string, will use the function names which match the string. if a comma-separated list of strings, will use the function names in the set",
+		default=None,
+	)
 
-		args: argparse.Namespace = arg_parser.parse_args()
+	args: argparse.Namespace = arg_parser.parse_args()
 
-	print(f"args parsed: {args}")
-
+	# figure out models
 	models: list[str]
 	if "," in args.model:
 		models = args.model.split(",")
 	else:
 		models = [args.model]
 
+	# figure out figures
+	figure_funcs_select: set[str] | str | None
+	if (args.figure_funcs is None) or (args.figure_funcs.lower().strip() == "none"):
+		figure_funcs_select = None
+	elif "," in args.figure_funcs:
+		figure_funcs_select = {x.strip() for x in args.figure_funcs.split(",")}
+	else:
+		figure_funcs_select = args.figure_funcs.strip()
+
+	return args, models, figure_funcs_select
+
+
+def main() -> None:
+	"generates figures from the activations using the functions decorated with `register_attn_figure_func`"
+	# parse args
+	print(DIVIDER_S1)
+	args: argparse.Namespace
+	models: list[str]
+	figure_funcs_select: set[str] | str | None
+	with SpinnerContext(message="parsing args", **SPINNER_KWARGS):
+		args, models, figure_funcs_select = _parse_args()
+	print(f"\targs parsed: '{args}'")
+	print(f"\tmodels: '{models}'")
+	print(f"\tfigure_funcs_select: '{figure_funcs_select}'")
+
+	# compute for each model
 	n_models: int = len(models)
 	for idx, model in enumerate(models):
 		print(DIVIDER_S2)
@@ -3828,6 +3942,7 @@ def main() -> None:
 			save_path=args.save_path,
 			n_samples=args.n_samples,
 			force=args.force,
+			figure_funcs_select=figure_funcs_select,
 		)
 
 	print(DIVIDER_S1)
@@ -4016,8 +4131,9 @@ def inline_assets(
 
 def write_html_index(path: Path) -> None:
 	"""writes an index.html file to the path"""
+	# TYPING: error: Argument 1 to "Path" has incompatible type "Traversable"; expected "str | PathLike[str]"  [arg-type]
 	frontend_resources_path: Path = Path(
-		importlib.resources.files(pattern_lens).joinpath("frontend"),
+		importlib.resources.files(pattern_lens).joinpath("frontend"),  # type: ignore[arg-type]
 	)
 	html_index: str = (frontend_resources_path / "index.template.html").read_text(
 		encoding="utf-8",
@@ -5218,6 +5334,7 @@ from unittest import mock
 
 import numpy as np
 
+from pattern_lens.attn_figure_funcs import ATTENTION_MATRIX_FIGURE_FUNCS
 from pattern_lens.figure_util import save_matrix_wrapper
 from pattern_lens.figures import compute_and_save_figures, process_single_head
 
@@ -5239,26 +5356,22 @@ def test_process_single_head():
 	def test_fig_func(matrix):
 		return matrix
 
-	# Patch ATTENTION_MATRIX_FIGURE_FUNCS to use our test function
-	with mock.patch(
-		"pattern_lens.figures.ATTENTION_MATRIX_FIGURE_FUNCS",
-		[test_fig_func],
-	):
-		# Call process_single_head
-		result = process_single_head(
-			layer_idx=0,
-			head_idx=0,
-			attn_pattern=attn_pattern,
-			save_dir=head_dir,
-			force_overwrite=True,
-		)
+	# Patch to use our test function
+	result = process_single_head(
+		layer_idx=0,
+		head_idx=0,
+		attn_pattern=attn_pattern,
+		save_dir=head_dir,
+		figure_funcs=[*ATTENTION_MATRIX_FIGURE_FUNCS, test_fig_func],
+		force_overwrite=True,
+	)
 
-		# Check that our function was called and succeeded
-		assert "test_fig_func" in result
-		assert result["test_fig_func"] is True
+	# Check that our function was called and succeeded
+	assert "test_fig_func" in result
+	assert result["test_fig_func"] is True
 
-		# Check that the figure file was created
-		assert (head_dir / "test_fig_func.svg").exists()
+	# Check that the figure file was created
+	assert (head_dir / "test_fig_func.svg").exists()
 
 
 def test_process_single_head_error_handling():
@@ -5275,26 +5388,22 @@ def test_process_single_head_error_handling():
 	def error_fig_func(matrix, save_dir):  # noqa: ARG001
 		raise ValueError("Test error")
 
-	# Patch ATTENTION_MATRIX_FIGURE_FUNCS to use our test function
-	with mock.patch(
-		"pattern_lens.figures.ATTENTION_MATRIX_FIGURE_FUNCS",
-		[error_fig_func],
-	):
-		# Call process_single_head
-		result = process_single_head(
-			layer_idx=0,
-			head_idx=0,
-			attn_pattern=attn_pattern,
-			save_dir=head_dir,
-			force_overwrite=True,
-		)
+	# Patch to use our test function
+	result = process_single_head(
+		layer_idx=0,
+		head_idx=0,
+		attn_pattern=attn_pattern,
+		save_dir=head_dir,
+		figure_funcs=[error_fig_func],
+		force_overwrite=True,
+	)
 
-		# Check that our function was called and failed
-		assert "error_fig_func" in result
-		assert isinstance(result["error_fig_func"], ValueError)
+	# Check that our function was called and failed
+	assert "error_fig_func" in result
+	assert isinstance(result["error_fig_func"], ValueError)
 
-		# Check that an error file was created
-		assert (head_dir / "error_fig_func.error.txt").exists()
+	# Check that an error file was created
+	assert (head_dir / "error_fig_func.error.txt").exists()
 
 
 def test_compute_and_save_figures():
@@ -5338,6 +5447,7 @@ def test_compute_and_save_figures():
 			model_cfg=MockConfig(),
 			activations_path=prompt_dir / "activations.npz",
 			cache=cache_dict,
+			figure_funcs=ATTENTION_MATRIX_FIGURE_FUNCS,
 			save_path=temp_dir,
 			force_overwrite=True,
 		)
@@ -5360,6 +5470,7 @@ def test_compute_and_save_figures():
 			model_cfg=MockConfig(),
 			activations_path=prompt_dir / "activations.npy",
 			cache=cache_array,
+			figure_funcs=ATTENTION_MATRIX_FIGURE_FUNCS,
 			save_path=temp_dir,
 			force_overwrite=True,
 		)
@@ -5946,13 +6057,13 @@ dep-clean:
 	@echo "clean up lock files, .venv, and requirements files"
 	...
 
-# runs ruff to format the code
+# runs ruff
 .PHONY: format
 format:
 	@echo "format the source code"
 	...
 
-# runs ruff and pycln to check if the code is formatted correctly
+# runs ruff to check if the code is formatted correctly
 .PHONY: format-check
 format-check:
 	@echo "check if the source code is formatted correctly"
@@ -6129,7 +6240,7 @@ summary:
 ``````{ path="pyproject.toml"  }
 [project]
     name = "pattern_lens"
-    version = "0.3.0"
+    version = "0.4.0"
     description = ""
     readme = "README.md"
     requires-python = ">=3.11"

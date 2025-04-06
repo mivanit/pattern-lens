@@ -46,7 +46,7 @@
 </script></head>
 <body>
 <div class="package-version">
-    docs for <a href="https://github.com/mivanit/pattern-lens">pattern_lens</a> v0.3.0<br>
+    docs for <a href="https://github.com/mivanit/pattern-lens">pattern_lens</a> v0.4.0<br>
 </div>
     <nav class="pdoc">
         <label id="navtoggle" for="togglestate" class="pdoc-button">
@@ -111,7 +111,7 @@
     </nav>
     <main class="pdoc">
             <section class="module-info">
-                        <a class="pdoc-button git-button" href="https://github.com/mivanit/pattern-lens/blob/0.3.0activations.py">View Source on GitHub</a>
+                        <a class="pdoc-button git-button" href="https://github.com/mivanit/pattern-lens/blob/0.4.0activations.py">View Source on GitHub</a>
                     <h1 class="modulename">
 <a href="./../pattern_lens.html">pattern_lens</a><wbr>.activations    </h1>
 
@@ -144,7 +144,7 @@
                         <div class="source-button-container">
             <label class="pdoc-button view-source-button" for="mod-activations-view-source"><span>View Source</span></label>
             <div class="github-button-wrapper">
-                <a class="pdoc-button github-link-button" href="https://github.com/mivanit/pattern-lens/blob/0.3.0activations.py#L0-L655" target="_blank">
+                <a class="pdoc-button github-link-button" href="https://github.com/mivanit/pattern-lens/blob/0.4.0activations.py#L0-L656" target="_blank">
                     <span>View on GitHub</span>
                 </a>
             </div>
@@ -801,12 +801,13 @@
 </span><span id="L-648"><a href="#L-648"><span class="linenos">648</span></a>			<span class="n">stacked_heads</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">stacked_heads</span><span class="p">,</span>
 </span><span id="L-649"><a href="#L-649"><span class="linenos">649</span></a>			<span class="n">device</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">device</span><span class="p">,</span>
 </span><span id="L-650"><a href="#L-650"><span class="linenos">650</span></a>		<span class="p">)</span>
-</span><span id="L-651"><a href="#L-651"><span class="linenos">651</span></a>
-</span><span id="L-652"><a href="#L-652"><span class="linenos">652</span></a>	<span class="nb">print</span><span class="p">(</span><span class="n">DIVIDER_S1</span><span class="p">)</span>
-</span><span id="L-653"><a href="#L-653"><span class="linenos">653</span></a>
+</span><span id="L-651"><a href="#L-651"><span class="linenos">651</span></a>		<span class="k">del</span> <span class="n">model</span>
+</span><span id="L-652"><a href="#L-652"><span class="linenos">652</span></a>
+</span><span id="L-653"><a href="#L-653"><span class="linenos">653</span></a>	<span class="nb">print</span><span class="p">(</span><span class="n">DIVIDER_S1</span><span class="p">)</span>
 </span><span id="L-654"><a href="#L-654"><span class="linenos">654</span></a>
-</span><span id="L-655"><a href="#L-655"><span class="linenos">655</span></a><span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
-</span><span id="L-656"><a href="#L-656"><span class="linenos">656</span></a>	<span class="n">main</span><span class="p">()</span>
+</span><span id="L-655"><a href="#L-655"><span class="linenos">655</span></a>
+</span><span id="L-656"><a href="#L-656"><span class="linenos">656</span></a><span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+</span><span id="L-657"><a href="#L-657"><span class="linenos">657</span></a>	<span class="n">main</span><span class="p">()</span>
 </span></pre></div>
 
 
@@ -817,12 +818,12 @@
 <div class="attr function">
             
         <span class="def">def</span>
-        <span class="name">compute_activations</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">prompt</span><span class="p">:</span> <span class="nb">dict</span>,</span><span class="param">	<span class="n">model</span><span class="p">:</span> <span class="n">transformer_lens</span><span class="o">.</span><span class="n">HookedTransformer</span><span class="o">.</span><span class="n">HookedTransformer</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">save_path</span><span class="p">:</span> <span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span> <span class="o">=</span> <span class="n">WindowsPath</span><span class="p">(</span><span class="s1">&#39;attn_data&#39;</span><span class="p">)</span>,</span><span class="param">	<span class="n">names_filter</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="nb">str</span><span class="p">],</span> <span class="nb">bool</span><span class="p">]</span> <span class="o">|</span> <span class="n">re</span><span class="o">.</span><span class="n">Pattern</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="s1">&#39;blocks</span><span class="se">\\</span><span class="s1">.(</span><span class="se">\\</span><span class="s1">d+)</span><span class="se">\\</span><span class="s1">.attn</span><span class="se">\\</span><span class="s1">.hook_pattern&#39;</span><span class="p">)</span>,</span><span class="param">	<span class="n">return_cache</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="s1">&#39;numpy&#39;</span><span class="p">,</span> <span class="s1">&#39;torch&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;torch&#39;</span>,</span><span class="param">	<span class="n">stack_heads</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span></span><span class="return-annotation">) -> <span class="nb">tuple</span><span class="p">[</span><span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">,</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">numpy</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]</span> <span class="o">|</span> <span class="n">transformer_lens</span><span class="o">.</span><span class="n">ActivationCache</span><span class="o">.</span><span class="n">ActivationCache</span> <span class="o">|</span> <span class="n">jaxtyping</span><span class="o">.</span><span class="n">Float</span><span class="p">[</span><span class="n">ndarray</span><span class="p">,</span> <span class="s1">&#39;n_layers n_heads n_ctx n_ctx&#39;</span><span class="p">]</span> <span class="o">|</span> <span class="n">jaxtyping</span><span class="o">.</span><span class="n">Float</span><span class="p">[</span><span class="n">Tensor</span><span class="p">,</span> <span class="s1">&#39;n_layers n_heads n_ctx n_ctx&#39;</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span><span class="p">]</span>:</span></span>
+        <span class="name">compute_activations</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">prompt</span><span class="p">:</span> <span class="nb">dict</span>,</span><span class="param">	<span class="n">model</span><span class="p">:</span> <span class="n">transformer_lens</span><span class="o">.</span><span class="n">HookedTransformer</span><span class="o">.</span><span class="n">HookedTransformer</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">save_path</span><span class="p">:</span> <span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span> <span class="o">=</span> <span class="n">PosixPath</span><span class="p">(</span><span class="s1">&#39;attn_data&#39;</span><span class="p">)</span>,</span><span class="param">	<span class="n">names_filter</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="nb">str</span><span class="p">],</span> <span class="nb">bool</span><span class="p">]</span> <span class="o">|</span> <span class="n">re</span><span class="o">.</span><span class="n">Pattern</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="s1">&#39;blocks</span><span class="se">\\</span><span class="s1">.(</span><span class="se">\\</span><span class="s1">d+)</span><span class="se">\\</span><span class="s1">.attn</span><span class="se">\\</span><span class="s1">.hook_pattern&#39;</span><span class="p">)</span>,</span><span class="param">	<span class="n">return_cache</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="s1">&#39;numpy&#39;</span><span class="p">,</span> <span class="s1">&#39;torch&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;torch&#39;</span>,</span><span class="param">	<span class="n">stack_heads</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span></span><span class="return-annotation">) -> <span class="nb">tuple</span><span class="p">[</span><span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">,</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">numpy</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]</span> <span class="o">|</span> <span class="n">transformer_lens</span><span class="o">.</span><span class="n">ActivationCache</span><span class="o">.</span><span class="n">ActivationCache</span> <span class="o">|</span> <span class="n">jaxtyping</span><span class="o">.</span><span class="n">Float</span><span class="p">[</span><span class="n">ndarray</span><span class="p">,</span> <span class="s1">&#39;n_layers n_heads n_ctx n_ctx&#39;</span><span class="p">]</span> <span class="o">|</span> <span class="n">jaxtyping</span><span class="o">.</span><span class="n">Float</span><span class="p">[</span><span class="n">Tensor</span><span class="p">,</span> <span class="s1">&#39;n_layers n_heads n_ctx n_ctx&#39;</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span><span class="p">]</span>:</span></span>
 
                 <div class="source-button-container">
             <label class="pdoc-button view-source-button" for="compute_activations-view-source"><span>View Source</span></label>
             <div class="github-button-wrapper">
-                <a class="pdoc-button github-link-button" href="https://github.com/mivanit/pattern-lens/blob/0.3.0activations.py#L120-L278" target="_blank">
+                <a class="pdoc-button github-link-button" href="https://github.com/mivanit/pattern-lens/blob/0.4.0activations.py#L120-L278" target="_blank">
                     <span>View on GitHub</span>
                 </a>
             </div>
@@ -1037,12 +1038,12 @@ will assert that everything in the activation cache is only attention patterns, 
 <div class="attr function">
             
         <span class="def">def</span>
-        <span class="name">get_activations</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">prompt</span><span class="p">:</span> <span class="nb">dict</span>,</span><span class="param">	<span class="n">model</span><span class="p">:</span> <span class="n">transformer_lens</span><span class="o">.</span><span class="n">HookedTransformer</span><span class="o">.</span><span class="n">HookedTransformer</span> <span class="o">|</span> <span class="nb">str</span>,</span><span class="param">	<span class="n">save_path</span><span class="p">:</span> <span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span> <span class="o">=</span> <span class="n">WindowsPath</span><span class="p">(</span><span class="s1">&#39;attn_data&#39;</span><span class="p">)</span>,</span><span class="param">	<span class="n">allow_disk_cache</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>,</span><span class="param">	<span class="n">return_cache</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="s1">&#39;numpy&#39;</span><span class="p">,</span> <span class="s1">&#39;torch&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;numpy&#39;</span></span><span class="return-annotation">) -> <span class="nb">tuple</span><span class="p">[</span><span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">,</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">numpy</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]</span> <span class="o">|</span> <span class="n">transformer_lens</span><span class="o">.</span><span class="n">ActivationCache</span><span class="o">.</span><span class="n">ActivationCache</span> <span class="o">|</span> <span class="kc">None</span><span class="p">]</span>:</span></span>
+        <span class="name">get_activations</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">prompt</span><span class="p">:</span> <span class="nb">dict</span>,</span><span class="param">	<span class="n">model</span><span class="p">:</span> <span class="n">transformer_lens</span><span class="o">.</span><span class="n">HookedTransformer</span><span class="o">.</span><span class="n">HookedTransformer</span> <span class="o">|</span> <span class="nb">str</span>,</span><span class="param">	<span class="n">save_path</span><span class="p">:</span> <span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span> <span class="o">=</span> <span class="n">PosixPath</span><span class="p">(</span><span class="s1">&#39;attn_data&#39;</span><span class="p">)</span>,</span><span class="param">	<span class="n">allow_disk_cache</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>,</span><span class="param">	<span class="n">return_cache</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="s1">&#39;numpy&#39;</span><span class="p">,</span> <span class="s1">&#39;torch&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;numpy&#39;</span></span><span class="return-annotation">) -> <span class="nb">tuple</span><span class="p">[</span><span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">,</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">numpy</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]</span> <span class="o">|</span> <span class="n">transformer_lens</span><span class="o">.</span><span class="n">ActivationCache</span><span class="o">.</span><span class="n">ActivationCache</span> <span class="o">|</span> <span class="kc">None</span><span class="p">]</span>:</span></span>
 
                 <div class="source-button-container">
             <label class="pdoc-button view-source-button" for="get_activations-view-source"><span>View Source</span></label>
             <div class="github-button-wrapper">
-                <a class="pdoc-button github-link-button" href="https://github.com/mivanit/pattern-lens/blob/0.3.0activations.py#L305-L369" target="_blank">
+                <a class="pdoc-button github-link-button" href="https://github.com/mivanit/pattern-lens/blob/0.4.0activations.py#L305-L369" target="_blank">
                     <span>View on GitHub</span>
                 </a>
             </div>
@@ -1151,7 +1152,7 @@ the path to the activations and the cache if <code>return_cache is not None</cod
                 <section id="DEFAULT_DEVICE">
                     <div class="attr variable">
             <span class="name">DEFAULT_DEVICE</span><span class="annotation">: torch.device</span>        =
-<span class="default_value">device(type=&#39;cpu&#39;)</span>
+<span class="default_value">device(type=&#39;cuda&#39;)</span>
 
         
     </div>
@@ -1165,12 +1166,12 @@ the path to the activations and the cache if <code>return_cache is not None</cod
 <div class="attr function">
             
         <span class="def">def</span>
-        <span class="name">activations_main</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">model_name</span><span class="p">:</span> <span class="nb">str</span>,</span><span class="param">	<span class="n">save_path</span><span class="p">:</span> <span class="nb">str</span>,</span><span class="param">	<span class="n">prompts_path</span><span class="p">:</span> <span class="nb">str</span>,</span><span class="param">	<span class="n">raw_prompts</span><span class="p">:</span> <span class="nb">bool</span>,</span><span class="param">	<span class="n">min_chars</span><span class="p">:</span> <span class="nb">int</span>,</span><span class="param">	<span class="n">max_chars</span><span class="p">:</span> <span class="nb">int</span>,</span><span class="param">	<span class="n">force</span><span class="p">:</span> <span class="nb">bool</span>,</span><span class="param">	<span class="n">n_samples</span><span class="p">:</span> <span class="nb">int</span>,</span><span class="param">	<span class="n">no_index_html</span><span class="p">:</span> <span class="nb">bool</span>,</span><span class="param">	<span class="n">shuffle</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>,</span><span class="param">	<span class="n">stacked_heads</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>,</span><span class="param">	<span class="n">device</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">torch</span><span class="o">.</span><span class="n">device</span> <span class="o">=</span> <span class="n">device</span><span class="p">(</span><span class="nb">type</span><span class="o">=</span><span class="s1">&#39;cpu&#39;</span><span class="p">)</span></span><span class="return-annotation">) -> <span class="kc">None</span>:</span></span>
+        <span class="name">activations_main</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">model_name</span><span class="p">:</span> <span class="nb">str</span>,</span><span class="param">	<span class="n">save_path</span><span class="p">:</span> <span class="nb">str</span>,</span><span class="param">	<span class="n">prompts_path</span><span class="p">:</span> <span class="nb">str</span>,</span><span class="param">	<span class="n">raw_prompts</span><span class="p">:</span> <span class="nb">bool</span>,</span><span class="param">	<span class="n">min_chars</span><span class="p">:</span> <span class="nb">int</span>,</span><span class="param">	<span class="n">max_chars</span><span class="p">:</span> <span class="nb">int</span>,</span><span class="param">	<span class="n">force</span><span class="p">:</span> <span class="nb">bool</span>,</span><span class="param">	<span class="n">n_samples</span><span class="p">:</span> <span class="nb">int</span>,</span><span class="param">	<span class="n">no_index_html</span><span class="p">:</span> <span class="nb">bool</span>,</span><span class="param">	<span class="n">shuffle</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>,</span><span class="param">	<span class="n">stacked_heads</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>,</span><span class="param">	<span class="n">device</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">torch</span><span class="o">.</span><span class="n">device</span> <span class="o">=</span> <span class="n">device</span><span class="p">(</span><span class="nb">type</span><span class="o">=</span><span class="s1">&#39;cuda&#39;</span><span class="p">)</span></span><span class="return-annotation">) -> <span class="kc">None</span>:</span></span>
 
                 <div class="source-button-container">
             <label class="pdoc-button view-source-button" for="activations_main-view-source"><span>View Source</span></label>
             <div class="github-button-wrapper">
-                <a class="pdoc-button github-link-button" href="https://github.com/mivanit/pattern-lens/blob/0.3.0activations.py#L377-L514" target="_blank">
+                <a class="pdoc-button github-link-button" href="https://github.com/mivanit/pattern-lens/blob/0.4.0activations.py#L377-L514" target="_blank">
                     <span>View on GitHub</span>
                 </a>
             </div>
@@ -1365,7 +1366,7 @@ the device to use. if a string, will be passed to <code>torch.device</code></li>
                 <div class="source-button-container">
             <label class="pdoc-button view-source-button" for="main-view-source"><span>View Source</span></label>
             <div class="github-button-wrapper">
-                <a class="pdoc-button github-link-button" href="https://github.com/mivanit/pattern-lens/blob/0.3.0activations.py#L517-L652" target="_blank">
+                <a class="pdoc-button github-link-button" href="https://github.com/mivanit/pattern-lens/blob/0.4.0activations.py#L517-L653" target="_blank">
                     <span>View on GitHub</span>
                 </a>
             </div>
@@ -1507,8 +1508,9 @@ the device to use. if a string, will be passed to <code>torch.device</code></li>
 </span><span id="main-649"><a href="#main-649"><span class="linenos">649</span></a>			<span class="n">stacked_heads</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">stacked_heads</span><span class="p">,</span>
 </span><span id="main-650"><a href="#main-650"><span class="linenos">650</span></a>			<span class="n">device</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">device</span><span class="p">,</span>
 </span><span id="main-651"><a href="#main-651"><span class="linenos">651</span></a>		<span class="p">)</span>
-</span><span id="main-652"><a href="#main-652"><span class="linenos">652</span></a>
-</span><span id="main-653"><a href="#main-653"><span class="linenos">653</span></a>	<span class="nb">print</span><span class="p">(</span><span class="n">DIVIDER_S1</span><span class="p">)</span>
+</span><span id="main-652"><a href="#main-652"><span class="linenos">652</span></a>		<span class="k">del</span> <span class="n">model</span>
+</span><span id="main-653"><a href="#main-653"><span class="linenos">653</span></a>
+</span><span id="main-654"><a href="#main-654"><span class="linenos">654</span></a>	<span class="nb">print</span><span class="p">(</span><span class="n">DIVIDER_S1</span><span class="p">)</span>
 </span></pre></div>
 
 
