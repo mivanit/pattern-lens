@@ -7,7 +7,6 @@ import itertools
 import json
 import multiprocessing
 import re
-from typing import Sequence
 import warnings
 from collections import defaultdict
 from pathlib import Path
@@ -199,6 +198,7 @@ def compute_and_save_figures(
 
 	generate_prompts_jsonl(save_path / model_cfg.model_name)
 
+
 def process_prompt(
 	prompt: dict,
 	model_cfg: "HookedTransformerConfig|HTConfigMock",  # type: ignore[name-defined] # noqa: F821
@@ -224,7 +224,6 @@ def process_prompt(
 	- `force_overwrite : bool`
 		(defaults to `False`)
 	"""
-
 	# load the activations
 	activations_path: Path
 	cache: ActivationCacheNp | Float[np.ndarray, "n_layers n_heads n_ctx n_ctx"]
@@ -245,9 +244,17 @@ def process_prompt(
 		force_overwrite=force_overwrite,
 	)
 
+
 def select_attn_figure_funcs(
-	figure_funcs_select: set[str]|str|None = None,
+	figure_funcs_select: set[str] | str | None = None,
 ) -> list[AttentionMatrixFigureFunc]:
+	"""given a selector, figure out which functions from `ATTENTION_MATRIX_FIGURE_FUNCS` to use
+
+	- if arg is `None`, will use all functions
+	- if a string, will use the function names which match the string (glob/fnmatch syntax)
+	- if a set, will use functions whose names are in the set
+
+	"""
 	# figure out which functions to use
 	figure_funcs: list[AttentionMatrixFigureFunc]
 	if figure_funcs_select is None:
@@ -269,18 +276,20 @@ def select_attn_figure_funcs(
 			if func.__name__ in figure_funcs_select
 		]
 	else:
-		raise TypeError(
+		err_msg: str = (
 			f"figure_funcs_select must be None, str, or set, not {type(figure_funcs_select) = }"
-			f"\n{figure_funcs_select = }",
+			f"\n{figure_funcs_select = }"
 		)
+		raise TypeError(err_msg)
 	return figure_funcs
+
 
 def figures_main(
 	model_name: str,
 	save_path: str,
 	n_samples: int,
 	force: bool,
-	figure_funcs_select: set[str]|str|None = None,
+	figure_funcs_select: set[str] | str | None = None,
 	parallel: bool | int = True,
 ) -> None:
 	"""main function for generating figures from attention patterns, using the functions in `ATTENTION_MATRIX_FIGURE_FUNCS`
@@ -323,10 +332,12 @@ def figures_main(
 	print(f"{len(figure_funcs)} figure functions loaded")
 	print("\t" + ", ".join([func.__name__ for func in figure_funcs]))
 
-	chunksize: int = int(max(
-		1,
-		len(prompts) // (5 * multiprocessing.cpu_count()),
-	))
+	chunksize: int = int(
+		max(
+			1,
+			len(prompts) // (5 * multiprocessing.cpu_count()),
+		),
+	)
 	print(f"chunksize: {chunksize}")
 
 	list(
@@ -421,7 +432,7 @@ def main() -> None:
 	if (args.figure_funcs is None) or (args.figure_funcs.lower().strip() == "none"):
 		figure_funcs_select = None
 	elif "," in args.figure_funcs:
-		figure_funcs_select = set(x.strip() for x in args.figure_funcs.split(","))
+		figure_funcs_select = {x.strip() for x in args.figure_funcs.split(",")}
 	else:
 		figure_funcs_select = args.figure_funcs.strip()
 
