@@ -1,9 +1,13 @@
 """code for generating figures from attention patterns, using the functions decorated with `register_attn_figure_func`"""
 
 import argparse
+import fnmatch
 import functools
 import itertools
 import json
+import multiprocessing
+import re
+from typing import Sequence
 import warnings
 from collections import defaultdict
 from pathlib import Path
@@ -26,6 +30,7 @@ from pattern_lens.consts import (
 	ActivationCacheNp,
 	AttentionMatrix,
 )
+from pattern_lens.figure_util import AttentionMatrixFigureFunc
 from pattern_lens.indexes import (
 	generate_functions_jsonl,
 	generate_models_jsonl,
@@ -68,9 +73,10 @@ def process_single_head(
 	head_idx: int,
 	attn_pattern: AttentionMatrix,
 	save_dir: Path,
+	figure_funcs: list[AttentionMatrixFigureFunc],
 	force_overwrite: bool = False,
 ) -> dict[str, bool | Exception]:
-	"""process a single head's attention pattern, running all the functions in `ATTENTION_MATRIX_FIGURE_FUNCS` on the attention pattern
+	"""process a single head's attention pattern, running all the functions in `figure_funcs` on the attention pattern
 
 	> [gotcha:] if `force_overwrite` is `False`, and we used a multi-figure function,
 	> it will skip all figures for that function if any are already saved
@@ -93,7 +99,7 @@ def process_single_head(
 	"""
 	funcs_status: dict[str, bool | Exception] = dict()
 
-	for func in ATTENTION_MATRIX_FIGURE_FUNCS:
+	for func in figure_funcs:
 		func_name: str = func.__name__
 		fig_path: list[Path] = list(save_dir.glob(f"{func_name}.*"))
 
@@ -122,6 +128,7 @@ def compute_and_save_figures(
 	model_cfg: "HookedTransformerConfig|HTConfigMock",  # type: ignore[name-defined] # noqa: F821
 	activations_path: Path,
 	cache: ActivationCacheNp | Float[np.ndarray, "n_layers n_heads n_ctx n_ctx"],
+	figure_funcs: list[AttentionMatrixFigureFunc],
 	save_path: Path = Path(DATA_DIR),
 	force_overwrite: bool = False,
 	track_results: bool = False,
@@ -130,8 +137,13 @@ def compute_and_save_figures(
 
 	# Parameters:
 	- `model_cfg : HookedTransformerConfig|HTConfigMock`
-	- `cache : ActivationCacheNp | Float[np.ndarray, "n_layers n_heads n_ctx n_ctx"]`
+		configuration of the model, used for loading the activations
+	- `cache : ActivationCacheNp | Float[np.ndarray, &quot;n_layers n_heads n_ctx n_ctx&quot;]`
+		activation cache containing actual patterns for the prompt we are processing
+	- `figure_funcs : list[AttentionMatrixFigureFunc]`
+		list of functions to run
 	- `save_path : Path`
+		directory to save the figures to
 		(defaults to `Path(DATA_DIR)`)
 	- `force_overwrite : bool`
 		force overwrite of existing figures. if `False`, will skip any functions which have already saved a figure
@@ -176,6 +188,7 @@ def compute_and_save_figures(
 			attn_pattern=attn_pattern,
 			save_dir=save_dir,
 			force_overwrite=force_overwrite,
+			figure_funcs=figure_funcs,
 		)
 
 		if track_results:
@@ -186,11 +199,11 @@ def compute_and_save_figures(
 
 	generate_prompts_jsonl(save_path / model_cfg.model_name)
 
-
 def process_prompt(
 	prompt: dict,
 	model_cfg: "HookedTransformerConfig|HTConfigMock",  # type: ignore[name-defined] # noqa: F821
 	save_path: Path,
+	figure_funcs: list[AttentionMatrixFigureFunc],
 	force_overwrite: bool = False,
 ) -> None:
 	"""process a single prompt, loading the activations and computing and saving the figures
@@ -199,10 +212,20 @@ def process_prompt(
 
 	# Parameters:
 	- `prompt : dict`
+		prompt to process, should be a dict with the following keys:
+		- `"text"`: the prompt string
+		- `"hash"`: the hash of the prompt
 	- `model_cfg : HookedTransformerConfig|HTConfigMock`
+		configuration of the model, used for figuring out where to save
+	- `save_path : Path`
+		directory to save the figures to
+	- `figure_funcs : list[AttentionMatrixFigureFunc]`
+		list of functions to run
 	- `force_overwrite : bool`
 		(defaults to `False`)
 	"""
+
+	# load the activations
 	activations_path: Path
 	cache: ActivationCacheNp | Float[np.ndarray, "n_layers n_heads n_ctx n_ctx"]
 	activations_path, cache = load_activations(
@@ -212,20 +235,52 @@ def process_prompt(
 		return_fmt="numpy",
 	)
 
+	# compute and save the figures
 	compute_and_save_figures(
 		model_cfg=model_cfg,
 		activations_path=activations_path,
 		cache=cache,
+		figure_funcs=figure_funcs,
 		save_path=save_path,
 		force_overwrite=force_overwrite,
 	)
 
+def select_attn_figure_funcs(
+	figure_funcs_select: set[str]|str|None = None,
+) -> list[AttentionMatrixFigureFunc]:
+	# figure out which functions to use
+	figure_funcs: list[AttentionMatrixFigureFunc]
+	if figure_funcs_select is None:
+		# all if nothing specified
+		figure_funcs = ATTENTION_MATRIX_FIGURE_FUNCS
+	elif isinstance(figure_funcs_select, str):
+		# if a string, assume a glob pattern
+		pattern: re.Pattern = re.compile(fnmatch.translate(figure_funcs_select))
+		figure_funcs = [
+			func
+			for func in ATTENTION_MATRIX_FIGURE_FUNCS
+			if pattern.match(func.__name__)
+		]
+	elif isinstance(figure_funcs_select, set):
+		# if a set, assume a set of function names
+		figure_funcs = [
+			func
+			for func in ATTENTION_MATRIX_FIGURE_FUNCS
+			if func.__name__ in figure_funcs_select
+		]
+	else:
+		raise TypeError(
+			f"figure_funcs_select must be None, str, or set, not {type(figure_funcs_select) = }"
+			f"\n{figure_funcs_select = }",
+		)
+	return figure_funcs
 
 def figures_main(
 	model_name: str,
 	save_path: str,
 	n_samples: int,
 	force: bool,
+	figure_funcs_select: set[str]|str|None = None,
 	parallel: bool | int = True,
 ) -> None:
 	"""main function for generating figures from attention patterns, using the functions in `ATTENTION_MATRIX_FIGURE_FUNCS`
@@ -239,6 +294,9 @@ def figures_main(
 		max number of samples to process
 	- `force : bool`
 		force overwrite of existing figures. if `False`, will skip any functions which have already saved a figure
+	- `figure_funcs_select : set[str]|str|None`
+		figure functions to use. if `None`, will use all functions. if a string, will use the function names which match the string. if a set, will use the function names in the set
+		(defaults to `None`)
 	- `parallel : bool | int`
 		whether to run in parallel. if `True`, will use all available cores. if `False`, will run in serial. if an int, will try to use that many cores
 		(defaults to `True`)
@@ -259,8 +317,17 @@ def figures_main(
 
 	print(f"{len(prompts)} prompts loaded")
 
-	print(f"{len(ATTENTION_MATRIX_FIGURE_FUNCS)} figure functions loaded")
-	print("\t" + ", ".join([func.__name__ for func in ATTENTION_MATRIX_FIGURE_FUNCS]))
+	figure_funcs: list[AttentionMatrixFigureFunc] = select_attn_figure_funcs(
+		figure_funcs_select=figure_funcs_select,
+	)
+	print(f"{len(figure_funcs)} figure functions loaded")
+	print("\t" + ", ".join([func.__name__ for func in figure_funcs]))
+
+	chunksize: int = int(max(
+		1,
+		len(prompts) // (5 * multiprocessing.cpu_count()),
+	))
+	print(f"chunksize: {chunksize}")
 
 	list(
 		run_maybe_parallel(
@@ -268,10 +335,12 @@ def figures_main(
 				process_prompt,
 				model_cfg=model_cfg,
 				save_path=save_path_p,
+				figure_funcs=figure_funcs,
 				force_overwrite=force,
 			),
 			iterable=prompts,
 			parallel=parallel,
+			chunksize=chunksize,
 			pbar="tqdm",
 			pbar_kwargs=dict(
 				desc="Making figures",
@@ -327,17 +396,36 @@ def main() -> None:
 			help="Force overwrite of existing figures",
 			default=False,
 		)
+		# figure functions
+		arg_parser.add_argument(
+			"--figure-funcs",
+			type=str,
+			required=False,
+			help="The figure functions to use. if 'None' (default), will use all functions. if a string, will use the function names which match the string. if a comma-separated list of strings, will use the function names in the set",
+			default=None,
+		)
 
 		args: argparse.Namespace = arg_parser.parse_args()
 
 	print(f"args parsed: {args}")
 
+	# figure out models
 	models: list[str]
 	if "," in args.model:
 		models = args.model.split(",")
 	else:
 		models = [args.model]
 
+	# figure out figures
+	figure_funcs_select: set[str] | str | None
+	if (args.figure_funcs is None) or (args.figure_funcs.lower().strip() == "none"):
+		figure_funcs_select = None
+	elif "," in args.figure_funcs:
+		figure_funcs_select = set(x.strip() for x in args.figure_funcs.split(","))
+	else:
+		figure_funcs_select = args.figure_funcs.strip()
+
+	# compute for each model
 	n_models: int = len(models)
 	for idx, model in enumerate(models):
 		print(DIVIDER_S2)
@@ -348,6 +436,7 @@ def main() -> None:
 			save_path=args.save_path,
 			n_samples=args.n_samples,
 			force=args.force,
+			figure_funcs_select=figure_funcs_select,
 		)
 
 	print(DIVIDER_S1)
