@@ -156,6 +156,8 @@
             ".venv/**",
             ".git/**",
             ".meta/**",
+            "data/pile_demo.jsonl",
+            "tests/**",
             "uv.lock",
             "LICENSE",
         ]
