@@ -48,6 +48,8 @@
         "tomli>=2.1.0; python_version < '3.11'",
         # lint
         "ruff>=0.4.8",
+        # twine
+        "twine",
     ]
 
 [tool.uv]
