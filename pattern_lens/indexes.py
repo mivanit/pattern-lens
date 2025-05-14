@@ -135,6 +135,7 @@ def generate_functions_jsonl(path: Path) -> None:
 			f.write("\n")
 
 
+# TODO: move this to muutils
 def inline_assets(
 	html: str,
 	assets: list[tuple[Literal["script", "style"], str]],
