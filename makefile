@@ -1679,3 +1679,20 @@ demo-docs: demo-clean demo-activations demo-figures
 summary:
 	@echo "write docs/summary.md using lmcat"
 	py -m lmcat -o docs/summary.md
+
+# Frontend build targets
+.PHONY: build-patternlens
+build-patternlens:
+	@echo "Building patternlens frontend"
+	$(PYTHON) -m muutils.web.bundle_html pattern_lens/frontend/patternlens/index.html \
+		--output pattern_lens/frontend/patternlens.html
+
+.PHONY: build-single
+build-single:
+	@echo "Building single pattern viewer frontend"
+	$(PYTHON) -m muutils.web.bundle_html pattern_lens/frontend/single/index.html \
+		--output pattern_lens/frontend/single.html
+
+.PHONY: build-frontend
+build-frontend: build-patternlens build-single
+	@echo "Built all frontend components"
