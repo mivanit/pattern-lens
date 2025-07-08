@@ -14,10 +14,10 @@ class AttentionDataLoader {
     }
 
     async loadPromptMetadata(model, promptHash) {
-        const jsonPath = `${this.basePath}${model}/prompts/${promptHash}/prompt.json`;
+        const jsonPath = `${this.basePath}/${model}/prompts/${promptHash}/prompt.json`;
         const response = await fetch(jsonPath);
         if (!response.ok) {
-            throw new Error(`Failed to load prompt metadata: ${response.statusText}`);
+            throw new Error(`Failed to load prompt metadata:\n${response.statusText}\nPath: ${jsonPath}`);
         }
         return await response.json();
     }
