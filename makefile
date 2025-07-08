@@ -1506,10 +1506,13 @@ verify-git:
 	fi; \
 
 
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# frontend build required for package build
 .PHONY: build
-build: 
+build: build-frontend 
 	@echo "build the package"
 	uv build
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 # gets the commit log, checks everything, builds, and then publishes with twine
 # will ask the user to confirm the new version number (and this allows for editing the tag info)
@@ -1682,14 +1685,18 @@ summary:
 
 # Frontend build targets
 .PHONY: build-patternlens
-build-patternlens:
+build-patternlens: gen-version-info
 	@echo "Building patternlens frontend"
 	$(PYTHON) -m muutils.web.bundle_html pattern_lens/frontend/patternlens/index.html --output pattern_lens/frontend/patternlens.html
+	@echo "Replacing version placeholder in patternlens.html"
+	sed -i 's/\$$\$$PATTERN_LENS_VERSION\$$\$$/$(PROJ_VERSION)/g' pattern_lens/frontend/patternlens.html
 
 .PHONY: build-single
-build-single:
+build-single: gen-version-info
 	@echo "Building single pattern viewer frontend"
 	$(PYTHON) -m muutils.web.bundle_html pattern_lens/frontend/single/index.html --output pattern_lens/frontend/single.html
+	@echo "Replacing version placeholder in single.html"
+	sed -i 's/\$$\$$PATTERN_LENS_VERSION\$$\$$/$(PROJ_VERSION)/g' pattern_lens/frontend/single.html
 
 .PHONY: build-frontend
 build-frontend: build-patternlens build-single

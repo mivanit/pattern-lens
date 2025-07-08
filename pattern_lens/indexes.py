@@ -1,14 +1,11 @@
 """writes indexes to the model directory for the frontend to use or for record keeping"""
 
-import importlib.metadata
 import importlib.resources
 import inspect
 import itertools
 import json
 from collections.abc import Callable
 from pathlib import Path
-
-from muutils.web.bundle_html import inline_html_file
 
 import pattern_lens
 from pattern_lens.attn_figure_funcs import (
@@ -137,7 +134,7 @@ def generate_functions_jsonl(path: Path) -> None:
 
 
 def write_html_index(path: Path) -> None:
-	"""writes index.html and single.html files to the path"""
+	"""writes index.html and single.html files to the path (version replacement handled by makefile)"""
 	# TYPING: error: Argument 1 to "Path" has incompatible type "Traversable"; expected "str | PathLike[str]"  [arg-type]
 	frontend_resources_path: Path = Path(
 		importlib.resources.files(pattern_lens).joinpath("frontend"),  # type: ignore[arg-type]
@@ -146,14 +143,7 @@ def write_html_index(path: Path) -> None:
 	pl_index_html: str = (frontend_resources_path / "patternlens.html").read_text()
 	sg_html: str = (frontend_resources_path / "single.html").read_text()
 
-	# Get version
-	pattern_lens_version: str = importlib.metadata.version("pattern-lens")
-
-	# Replace version placeholder in both files
-	pl_index_html = pl_index_html.replace("$$PATTERN_LENS_VERSION$$", pattern_lens_version)
-	sg_html = sg_html.replace("$$PATTERN_LENS_VERSION$$", pattern_lens_version)
-
-	# Write both files
+	# Write both files (version replacement now handled by makefile)
 	with open(path / "index.html", "w", encoding="utf-8") as f:
 		f.write(pl_index_html)
 
