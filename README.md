@@ -122,4 +122,4 @@ figures_main(
 )
 ```
 
-see `demo.ipynb` for a full example
+See `demo.ipynb` for a full example.
