@@ -41,6 +41,7 @@
         # type checking
         "mypy>=1.0.1",
         "types-tqdm",
+        "ty",
         # docs
         'pdoc>=14.6.0',
         "nbconvert>=7.16.4",
