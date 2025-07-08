@@ -1,6 +1,6 @@
 [project]
     name = "pattern_lens"
-    version = "0.4.0"
+    version = "0.5.0"
     description = ""
     readme = "README.md"
     requires-python = ">=3.11"
@@ -21,7 +21,7 @@
         # typing
         "beartype>=0.14.1",
         # custom utils
-        "muutils>=0.6.19",
+        "muutils>=0.8.10",
         "zanj>=0.3.1",
         # TL
         "transformer-lens>=2.10.0",

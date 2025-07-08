@@ -227,7 +227,7 @@ multidict==6.1.0
     #   yarl
 multiprocess==0.70.16
     # via datasets
-muutils==0.8.3
+muutils==0.8.10
     # via
     #   lmcat
     #   pattern-lens
