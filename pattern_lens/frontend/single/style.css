@@ -107,9 +107,14 @@ canvas {
 }
 
 .x-label {
-	writing-mode: vertical-rl;
-	width: 20px;
-	height: 50px;
+	transform: rotate(270deg);
+	transform-origin: bottom left;
+	text-align: left;
+	white-space: nowrap;
+	overflow: visible;
+	position: relative;
+	left: 15px;
+	top: 45px;
 }
 
 .y-label {
@@ -174,12 +179,11 @@ canvas {
 .source-link {
 	font-size: 12px;
 	color: #666;
-	text-decoration: none;
+	text-decoration: underline;
 }
 
 .source-link:hover {
 	color: #333;
-	text-decoration: underline;
 }
 
 .info-center {
@@ -189,14 +193,24 @@ canvas {
 	font-size: 14px;
 }
 
+.info-center a {
+	color: #007bff;
+	text-decoration: underline;
+	transition: color 0.2s;
+}
+
+.info-center a:hover {
+	color: #0056b3;
+}
+
 .help-menu {
 	position: relative;
 }
 
 .help-button {
-	background: #f0f0f0;
-	border: 1px solid #ccc;
-	color: #666;
+	background: #007bff;
+	border: 1px solid #0056b3;
+	color: #fff;
 	font-size: 12px;
 	font-weight: bold;
 	cursor: pointer;
@@ -206,8 +220,8 @@ canvas {
 }
 
 .help-button:hover {
-	background: #e0e0e0;
-	color: #333;
+	background: #0056b3;
+	color: #fff;
 }
 
 .help-content {

@@ -74,9 +74,45 @@
 
             // Update info (will be updated with token count after pattern loads)
             const updateInfo = (tokenCount = null) => {
-                const tokenInfo = tokenCount ? ` | Tokens: ${tokenCount}` : '';
-                document.getElementById('info').innerHTML =
-                    `<p>Model: ${model} | Layer: ${layerIdx} | Head: ${headIdx} | Prompt hash: ${promptHash}${tokenInfo}</p>`;
+                const tokenInfo = tokenCount ? ` | Prompt tokens: ${tokenCount}` : '';
+                
+                // Get link templates from config
+                const headLinkTemplate = getConfigValue('data.links.head', '');
+                const promptLinkTemplate = getConfigValue('data.links.prompt', '');
+                
+                // Helper function to replace all placeholders in a template
+                const replacePlaceholders = (template) => {
+                    return template
+                        .replace(/{model}/g, model)
+                        .replace(/{layer}/g, layerIdx)
+                        .replace(/{head}/g, headIdx)
+                        .replace(/{prompt_hash}/g, promptHash);
+                };
+                
+                // Generate links
+                const headLink = headLinkTemplate ? replacePlaceholders(headLinkTemplate) : '';
+                const promptLink = promptLinkTemplate ? replacePlaceholders(promptLinkTemplate) : '';
+                
+                // Build the info HTML with links
+                let infoHTML = '<p>';
+                
+                if (headLink) {
+                    infoHTML += `Head: <a href="${headLink}" target="_blank">${model}:L${layerIdx}:H${headIdx}</a>`;
+                } else {
+                    infoHTML += `Head: ${model}:L${layerIdx}:H${headIdx}`;
+                }
+                
+                infoHTML += ' | ';
+                
+                if (promptLink) {
+                    infoHTML += `Prompt hash: <a href="${promptLink}" target="_blank">${promptHash}</a>`;
+                } else {
+                    infoHTML += `Prompt hash: ${promptHash}`;
+                }
+                
+                infoHTML += tokenInfo + '</p>';
+                
+                document.getElementById('info').innerHTML = infoHTML;
             };
             updateInfo();
 

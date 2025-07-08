@@ -46,7 +46,7 @@ function getDefaultConfig() {
 		// Layout configuration
 		layout: {
 			yLabelWidth: 80,
-			xLabelHeight: 60,
+			xLabelHeight: 60,  // Height of x-axis labels (becomes width when rotated)
 			canvasSize: 500,
 			maxTokensForLabels: 30  // Hide labels if more than this many tokens
 		},
@@ -63,6 +63,13 @@ function getDefaultConfig() {
 			defaults: {
 				promptHash: "LQc1qlQHZHOVpI7zEWAeEA",
 				head: "gpt2-small.L0.H0"
+			},
+			// Link templates for head and prompt
+			links: {
+				// Use {model}, {layer}, {head} placeholders for head link
+				head: "https://miv.name/pattern-lens/demo/index.html?models={model}&heads-{model}=L{layer}H{head}",
+				// Use {prompt_hash} placeholder for prompt link
+				prompt: "https://miv.name/pattern-lens/demo/index.html?prompts={prompt_hash}"
 			}
 		},
 

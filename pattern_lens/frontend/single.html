@@ -116,9 +116,14 @@
     }
     
     .x-label {
-    	writing-mode: vertical-rl;
-    	width: 20px;
-    	height: 50px;
+    	transform: rotate(270deg);
+    	transform-origin: bottom left;
+    	text-align: left;
+    	white-space: nowrap;
+    	overflow: visible;
+    	position: relative;
+    	left: 15px;
+    	top: 45px;
     }
     
     .y-label {
@@ -183,12 +188,11 @@
     .source-link {
     	font-size: 12px;
     	color: #666;
-    	text-decoration: none;
+    	text-decoration: underline;
     }
     
     .source-link:hover {
     	color: #333;
-    	text-decoration: underline;
     }
     
     .info-center {
@@ -198,14 +202,24 @@
     	font-size: 14px;
     }
     
+    .info-center a {
+    	color: #007bff;
+    	text-decoration: underline;
+    	transition: color 0.2s;
+    }
+    
+    .info-center a:hover {
+    	color: #0056b3;
+    }
+    
     .help-menu {
     	position: relative;
     }
     
     .help-button {
-    	background: #f0f0f0;
-    	border: 1px solid #ccc;
-    	color: #666;
+    	background: #007bff;
+    	border: 1px solid #0056b3;
+    	color: #fff;
     	font-size: 12px;
     	font-weight: bold;
     	cursor: pointer;
@@ -215,8 +229,8 @@
     }
     
     .help-button:hover {
-    	background: #e0e0e0;
-    	color: #333;
+    	background: #0056b3;
+    	color: #fff;
     }
     
     .help-content {
@@ -367,7 +381,7 @@
     		// Layout configuration
     		layout: {
     			yLabelWidth: 80,
-    			xLabelHeight: 60,
+    			xLabelHeight: 60,  // Height of x-axis labels (becomes width when rotated)
     			canvasSize: 500,
     			maxTokensForLabels: 30  // Hide labels if more than this many tokens
     		},
@@ -384,6 +398,13 @@
     			defaults: {
     				promptHash: "LQc1qlQHZHOVpI7zEWAeEA",
     				head: "gpt2-small.L0.H0"
+    			},
+    			// Link templates for head and prompt
+    			links: {
+    				// Use {model}, {layer}, {head} placeholders for head link
+    				head: "https://miv.name/pattern-lens/demo/index.html?models={model}&heads-{model}=L{layer}H{head}",
+    				// Use {prompt_hash} placeholder for prompt link
+    				prompt: "https://miv.name/pattern-lens/demo/index.html?prompts={prompt_hash}"
     			}
     		},
     
@@ -1528,9 +1549,45 @@
 
             // Update info (will be updated with token count after pattern loads)
             const updateInfo = (tokenCount = null) => {
-                const tokenInfo = tokenCount ? ` | Tokens: ${tokenCount}` : '';
-                document.getElementById('info').innerHTML =
-                    `<p>Model: ${model} | Layer: ${layerIdx} | Head: ${headIdx} | Prompt hash: ${promptHash}${tokenInfo}</p>`;
+                const tokenInfo = tokenCount ? ` | Prompt tokens: ${tokenCount}` : '';
+                
+                // Get link templates from config
+                const headLinkTemplate = getConfigValue('data.links.head', '');
+                const promptLinkTemplate = getConfigValue('data.links.prompt', '');
+                
+                // Helper function to replace all placeholders in a template
+                const replacePlaceholders = (template) => {
+                    return template
+                        .replace(/{model}/g, model)
+                        .replace(/{layer}/g, layerIdx)
+                        .replace(/{head}/g, headIdx)
+                        .replace(/{prompt_hash}/g, promptHash);
+                };
+                
+                // Generate links
+                const headLink = headLinkTemplate ? replacePlaceholders(headLinkTemplate) : '';
+                const promptLink = promptLinkTemplate ? replacePlaceholders(promptLinkTemplate) : '';
+                
+                // Build the info HTML with links
+                let infoHTML = '<p>';
+                
+                if (headLink) {
+                    infoHTML += `Head: <a href="${headLink}" target="_blank">${model}:L${layerIdx}:H${headIdx}</a>`;
+                } else {
+                    infoHTML += `Head: ${model}:L${layerIdx}:H${headIdx}`;
+                }
+                
+                infoHTML += ' | ';
+                
+                if (promptLink) {
+                    infoHTML += `Prompt hash: <a href="${promptLink}" target="_blank">${promptHash}</a>`;
+                } else {
+                    infoHTML += `Prompt hash: ${promptHash}`;
+                }
+                
+                infoHTML += tokenInfo + '</p>';
+                
+                document.getElementById('info').innerHTML = infoHTML;
             };
             updateInfo();
 

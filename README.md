@@ -11,7 +11,7 @@
 
 | | |
 |:---:|:---|
-| [![](docs/assets/pl-demo.png)](https://miv.name/pattern-lens/demo/index.html?functions=raw&prompts=sCw9tqGtgecntuFkGO7kVw%7Em0iqfjse9QrsuNKyiOjMfA%7EdbzSd3_jXPQuPN0N7Sz0TA%7ENc7zLpp4s9BmAiGWsaQRUw&models=tiny-stories-1M%7Epythia-14m&heads-pythia-14m=L2H3%7EL0Hx&heads-tiny-stories-1M=LxH0%7EL5H5%7EL2H12) | [![](docs/assets/sg-demo.png)](https://miv.name/pattern-lens/demo/single.html?prompt=m0iqfjse9QrsuNKyiOjMfA&head=tiny-stories-1M.L5.H7&layout.canvasSize=200) |
+| [![](docs/assets/pl-demo.png)](https://miv.name/pattern-lens/demo/index.html?functions=raw&prompts=sCw9tqGtgecntuFkGO7kVw%7Em0iqfjse9QrsuNKyiOjMfA%7EdbzSd3_jXPQuPN0N7Sz0TA%7ENc7zLpp4s9BmAiGWsaQRUw&models=tiny-stories-1M%7Epythia-14m&heads-pythia-14m=L2H3%7EL0Hx&heads-tiny-stories-1M=LxH0%7EL5H5%7EL2H12) | [![](docs/assets/sg-demo.png)](https://miv.name/pattern-lens/demo/single.html?prompt=m0iqfjse9QrsuNKyiOjMfA&head=tiny-stories-1M.L5.H7) |
 
 
 # pattern-lens
