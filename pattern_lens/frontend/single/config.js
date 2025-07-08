@@ -46,7 +46,7 @@ function getDefaultConfig() {
 		// Layout configuration
 		layout: {
 			yLabelWidth: 80,
-			xLabelHeight: 60,  // Height of x-axis labels (becomes width when rotated)
+			xLabelHeight: 60,
 			canvasSize: 500,
 			maxTokensForLabels: 30  // Hide labels if more than this many tokens
 		},
