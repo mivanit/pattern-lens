@@ -45,8 +45,8 @@ function getDefaultConfig() {
 	let default_cfg = {
 		// Layout configuration
 		layout: {
-			yLabelWidth: 80,
-			xLabelHeight: 60,
+			yLabelWidth: 100,
+			xLabelHeight: 100,
 			canvasSize: 500,
 			maxTokensForLabels: 30  // Hide labels if more than this many tokens
 		},

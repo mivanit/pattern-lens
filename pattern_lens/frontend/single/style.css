@@ -107,9 +107,8 @@ canvas {
 }
 
 .x-label {
-	writing-mode: vertical-rl;
-	width: 20px;
-	height: 50px;
+	writing-mode: vertical-lr;
+	transform: rotate(180deg);
 }
 
 .y-label {
