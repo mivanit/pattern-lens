@@ -177,6 +177,7 @@
     no_clean = [
         ".nojekyll",
         "demo",
+        "assets",
     ]
     markdown_headings_increment = 2
     warnings_ignore = [

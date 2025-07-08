@@ -9,6 +9,11 @@
 ![GitHub closed pull requests](https://img.shields.io/github/issues-pr-closed/mivanit/pattern-lens)
 ![code size, bytes](https://img.shields.io/github/languages/code-size/mivanit/pattern-lens)
 
+| | |
+|:---:|:---|
+| [![](docs/assets/pl-demo.png)](https://miv.name/pattern-lens/demo/index.html?functions=raw&prompts=sCw9tqGtgecntuFkGO7kVw%7Em0iqfjse9QrsuNKyiOjMfA%7EdbzSd3_jXPQuPN0N7Sz0TA%7ENc7zLpp4s9BmAiGWsaQRUw&models=tiny-stories-1M%7Epythia-14m&heads-pythia-14m=L2H3%7EL0Hx&heads-tiny-stories-1M=LxH0%7EL5H5%7EL2H12) | [![](docs/assets/sg-demo.png)](https://miv.name/pattern-lens/demo/single.html?prompt=m0iqfjse9QrsuNKyiOjMfA&head=tiny-stories-1M.L5.H7&layout.canvasSize=200) |
+
+
 # pattern-lens
 
 visualization of LLM attention patterns and things computed about them
@@ -54,7 +59,20 @@ python -m pattern_lens.server --path attn_data
 
 ## Web UI
 
+pattern-lens provides two complementary web interfaces for exploring attention patterns:
+
+- The main interface for comparing attention patterns across models, layers, and heads
+    - Filter and select patterns by model, layer, head, prompt, etc.
+    - View multiple patterns simultaneously in a grid layout
+    - Click patterns to open detailed single-pattern view
+
+- A focused interface for detailed examination of individual attention patterns
+    - Interactive heatmap with hover highlights and keyboard navigation
+    - Token-by-token analysis with Q/K axis highlighting
+
 View a demo of the web UI at [miv.name/pattern-lens/demo](https://miv.name/pattern-lens/demo/).
+
+Much of this web UI is inspired by [`CircuitsVis`](https://github.com/TransformerLensOrg/CircuitsVis), but with a focus on just attention patterns and figures computed from them. I have also tried to make the interface a bit simpler, more flexible, and faster.
 
 ## Custom Figures
 
