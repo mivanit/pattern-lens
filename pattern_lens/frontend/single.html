@@ -251,7 +251,12 @@
     		
     		// Data configuration
     		data: {
-    			basePath: "."
+    			basePath: ".",
+    			attentionFilename: "attn.png",  // Filename for attention pattern PNG files
+    			tokenBoundary: {
+    				start: ["<BOS>"],  // Tokens to add at start
+    				end: []            // Tokens to add at end
+    			}
     		},
     		
     		// Visualization configuration
@@ -695,8 +700,6 @@
     function _pixel_avg(data, idx) {
     	// Convert pixel at `idx` to perceived luminance (gray value).
     	// Assumes data is Uint8ClampedArray with RGBA channels.
-    	// console.log(`_pixel_avg: idx=${idx}`);
-    	// console.log(data[idx], data[idx + 1], data[idx + 2]);
     	return (
     		(data[idx] + data[idx + 1] + data[idx + 2]) / 3
     	) / 255; // scale to [0,1]
@@ -704,10 +707,18 @@
     
     async function pngToMatrix(url, n = null) {
     	// ---------- load & sanity‑check ------------------------------------------------
+    	console.log(`pngToMatrix: Loading image from ${url}`);
     	const img = new Image();
     	img.crossOrigin = 'anonymous';   // allow CORS / data URIs
     	img.src = url;
-    	await img.decode();
+    	
+    	try {
+    		await img.decode();
+    		console.log(`pngToMatrix: Successfully decoded image`);
+    	} catch (error) {
+    		console.error(`pngToMatrix: Failed to decode image from ${url}:`, error);
+    		throw error;
+    	}
     
     	const size = img.width;
     	if (img.height !== size) throw new Error('PNG must be square');
@@ -722,10 +733,6 @@
     	const ctx = canvas.getContext('2d');
     	ctx.drawImage(img, 0, 0);
     	const { data } = ctx.getImageData(0, 0, size, size); // Uint8ClampedArray
-    	console.log(`PNG loaded: ${url} (${size}x${size})`);
-    	console.log(`Matrix size: ${n}x${n}`);
-    	console.log(`Pixel data length: ${data.length} bytes`);
-    	console.log(data)
     
     	// ---------- calibration --------------------------------------------------------
     	const gMax = _pixel_avg(data, 0);          // pixel (0,0)  -> scalar 1
@@ -740,23 +747,36 @@
     	const matrix = new Array(n);
     	let rowStart = 0;               // byte offset of first pixel in current row
     
-    	for (let y = 0; y < n; ++y) {
-    		const row = new Float32Array(n);            // zero‑filled
-    		for (let x = 0; x <= y; ++x) {              // lower triangle incl. diag
-    			let v = pix_to_scalar(data, rowStart + x * 4);
-    			console.log(`Pixel (${x},${y}) -> value: ${v}`);
-    			if (v < 0 || v > 1) {
-    				throw new Error(`Invalid pixel value at (${x},${y}): ${v}`);
+    	try {
+    		for (let y = 0; y < n; ++y) {
+    			const row = new Float32Array(n); // zero‑filled
+    			for (let x = 0; x <= y; ++x) { // lower triangle incl. diag
+    				let v = pix_to_scalar(data, rowStart + x * 4);
+    				if (v < 0 || v > 1) {
+    					console.error(`Invalid pixel value at (${x},${y}): ${v} (will clam to [0,1])`);
+    					if (v < 0) {
+    						v = 0; // clamp to 0
+    					}
+    					else if (v > 1) {
+    						v = 1; // clamp to 1
+    					}
+    				}
+    				row[x] = v;
     			}
-    			row[x] = v;
+    			// normalize row to sum to 1
+    			const rowSum = row.reduce((sum, val) => sum + val, 0);
+    			for (let x = 0; x <= y; ++x) {
+    				row[x] /= rowSum; // normalize to sum to 1
+    			}
+    			matrix[y] = Array.from(row);
+    			rowStart += n * 4;
     		}
-    		// normalize row to sum to 1
-    		const rowSum = row.reduce((sum, val) => sum + val, 0);
-    		for (let x = 0; x <= y; ++x) {
-    			row[x] /= rowSum; // normalize to sum to 1
-    		}
-    		matrix[y] = Array.from(row);
-    		rowStart += n * 4;
+    	} catch (error) {
+    		console.error(`pngToMatrix: Error processing image data:`, error);
+    		console.log(`gMax: ${gMax}, gMin: ${gMin}, denom: ${denom}`);
+    		console.log(data)
+    		console.log(matrix);
+    		return matrix;
     	}
     
     	return matrix;
@@ -772,17 +792,18 @@
      */
     
     class AttentionDataLoader {
-        constructor(basePath = null) {
-            this.basePath = basePath || CONFIG.data.basePath;
-        }
+        constructor() {}
     
         async loadAttentionPattern(model, promptHash, layerIdx, headIdx) {
-            const pngPath = `${this.basePath}${model}/prompts/${promptHash}/L${layerIdx}/H${headIdx}/attn.png`;
-            return await pngToMatrix(pngPath);
+            const pngPath = `${CONFIG.data.basePath}/${model}/prompts/${promptHash}/L${layerIdx}/H${headIdx}/${CONFIG.data.attentionFilename}`;
+            console.log(`Loading attention pattern from: ${pngPath}`);
+            const matrix = await pngToMatrix(pngPath);
+            return { matrix, pngPath };
         }
     
         async loadPromptMetadata(model, promptHash) {
-            const jsonPath = `${this.basePath}/${model}/prompts/${promptHash}/prompt.json`;
+            const jsonPath = `${CONFIG.data.basePath}/${model}/prompts/${promptHash}/prompt.json`;
+            console.log(`Loading prompt metadata from: ${jsonPath}`);
             const response = await fetch(jsonPath);
             if (!response.ok) {
                 throw new Error(`Failed to load prompt metadata:\n${response.statusText}\nPath: ${jsonPath}`);
@@ -1285,23 +1306,28 @@
         async displayPattern(dataLoader, model, promptHash, layerIdx, headIdx) {
             // Load prompt metadata
             const metadata = await dataLoader.loadPromptMetadata(model, promptHash);
-            // Add BOS token at the beginning
-            const tokensWithBOS = ['<BOS>'].concat(metadata.tokens);
-            this.tokens = this.normalizeTokens(tokensWithBOS);
+            // Add boundary tokens as specified in config
+            const startTokens = CONFIG.data.tokenBoundary.start || [];
+            const endTokens = CONFIG.data.tokenBoundary.end || [];
+            const tokensWithBounds = startTokens.concat(metadata.tokens).concat(endTokens);
+            this.tokens = this.normalizeTokens(tokensWithBounds);
             this.n = this.tokens.length;
             this.pixelSize = this.SIZE / this.n;
     
-            // Load attention matrix data
-            this.attentionMatrix = await dataLoader.loadAttentionPattern(model, promptHash, layerIdx, headIdx);
+            // Load attention matrix data and PNG path
+            const { matrix, pngPath } = await dataLoader.loadAttentionPattern(model, promptHash, layerIdx, headIdx);
+            this.attentionMatrix = matrix;
     
-            // Load PNG directly for display
-            const pngPath = `${dataLoader.basePath}${model}/prompts/${promptHash}/L${layerIdx}/H${headIdx}/attn.png`;
     
             return new Promise((resolve, reject) => {
                 this.pngImage = new Image();
                 this.pngImage.crossOrigin = 'anonymous';
+                
+                console.log(`Attempting to load PNG image from: ${pngPath}`);
     
                 this.pngImage.onload = () => {
+                    console.log(`Successfully loaded PNG image: ${pngPath}`);
+                    console.log(`Image dimensions: ${this.pngImage.width}x${this.pngImage.height}`);
                     // Precalculate boundaries
                     this.precalculateBoundaries();
     
@@ -1338,7 +1364,9 @@
                     resolve();
                 };
     
-                this.pngImage.onerror = () => {
+                this.pngImage.onerror = (event) => {
+                    console.error(`Failed to load PNG image: ${pngPath}`);
+                    console.error('Error event:', event);
                     reject(new Error(`Failed to load image: ${pngPath}`));
                 };
     

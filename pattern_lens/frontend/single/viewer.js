@@ -489,23 +489,28 @@ class AttentionPatternViewer {
     async displayPattern(dataLoader, model, promptHash, layerIdx, headIdx) {
         // Load prompt metadata
         const metadata = await dataLoader.loadPromptMetadata(model, promptHash);
-        // Add BOS token at the beginning
-        const tokensWithBOS = ['<BOS>'].concat(metadata.tokens);
-        this.tokens = this.normalizeTokens(tokensWithBOS);
+        // Add boundary tokens as specified in config
+        const startTokens = CONFIG.data.tokenBoundary.start || [];
+        const endTokens = CONFIG.data.tokenBoundary.end || [];
+        const tokensWithBounds = startTokens.concat(metadata.tokens).concat(endTokens);
+        this.tokens = this.normalizeTokens(tokensWithBounds);
         this.n = this.tokens.length;
         this.pixelSize = this.SIZE / this.n;
 
-        // Load attention matrix data
-        this.attentionMatrix = await dataLoader.loadAttentionPattern(model, promptHash, layerIdx, headIdx);
+        // Load attention matrix data and PNG path
+        const { matrix, pngPath } = await dataLoader.loadAttentionPattern(model, promptHash, layerIdx, headIdx);
+        this.attentionMatrix = matrix;
 
-        // Load PNG directly for display
-        const pngPath = `${dataLoader.basePath}${model}/prompts/${promptHash}/L${layerIdx}/H${headIdx}/attn.png`;
 
         return new Promise((resolve, reject) => {
             this.pngImage = new Image();
             this.pngImage.crossOrigin = 'anonymous';
+            
+            console.log(`Attempting to load PNG image from: ${pngPath}`);
 
             this.pngImage.onload = () => {
+                console.log(`Successfully loaded PNG image: ${pngPath}`);
+                console.log(`Image dimensions: ${this.pngImage.width}x${this.pngImage.height}`);
                 // Precalculate boundaries
                 this.precalculateBoundaries();
 
@@ -542,7 +547,9 @@ class AttentionPatternViewer {
                 resolve();
             };
 
-            this.pngImage.onerror = () => {
+            this.pngImage.onerror = (event) => {
+                console.error(`Failed to load PNG image: ${pngPath}`);
+                console.error('Error event:', event);
                 reject(new Error(`Failed to load image: ${pngPath}`));
             };
 

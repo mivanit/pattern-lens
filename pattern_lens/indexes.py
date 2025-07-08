@@ -7,14 +7,14 @@ import itertools
 import json
 from collections.abc import Callable
 from pathlib import Path
-from typing import Literal
+
+from muutils.web.bundle_html import inline_html_file
 
 import pattern_lens
 from pattern_lens.attn_figure_funcs import (
 	_FIGURE_NAMES_KEY,
 	ATTENTION_MATRIX_FIGURE_FUNCS,
 )
-from muutils.web.bundle_html import inline_html_file
 
 
 def generate_prompts_jsonl(model_dir: Path) -> None:
@@ -136,15 +136,13 @@ def generate_functions_jsonl(path: Path) -> None:
 			f.write("\n")
 
 
-
-
 def write_html_index(path: Path) -> None:
 	"""writes an index.html file to the path"""
 	# TYPING: error: Argument 1 to "Path" has incompatible type "Traversable"; expected "str | PathLike[str]"  [arg-type]
 	frontend_resources_path: Path = Path(
 		importlib.resources.files(pattern_lens).joinpath("frontend"),  # type: ignore[arg-type]
 	)
-	
+
 	# Check if pre-built patternlens.html exists
 	prebuilt_path: Path = frontend_resources_path / "patternlens.html"
 	if prebuilt_path.exists():
@@ -153,15 +151,16 @@ def write_html_index(path: Path) -> None:
 	else:
 		# Build from source using muutils
 		from tempfile import NamedTemporaryFile
-		with NamedTemporaryFile(mode='w', suffix='.html', delete=False) as tmp:
+
+		with NamedTemporaryFile(mode="w", suffix=".html", delete=False) as tmp:
 			tmp_path = Path(tmp.name)
-		
+
 		# Bundle the HTML file
 		inline_html_file(
 			html_path=frontend_resources_path / "patternlens" / "index.html",
 			output_path=tmp_path,
 		)
-		
+
 		# Read the bundled content
 		html_index = tmp_path.read_text(encoding="utf-8")
 		tmp_path.unlink()  # Clean up temp file

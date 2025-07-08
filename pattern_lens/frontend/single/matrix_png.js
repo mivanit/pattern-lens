@@ -25,8 +25,6 @@
 function _pixel_avg(data, idx) {
 	// Convert pixel at `idx` to perceived luminance (gray value).
 	// Assumes data is Uint8ClampedArray with RGBA channels.
-	// console.log(`_pixel_avg: idx=${idx}`);
-	// console.log(data[idx], data[idx + 1], data[idx + 2]);
 	return (
 		(data[idx] + data[idx + 1] + data[idx + 2]) / 3
 	) / 255; // scale to [0,1]
@@ -34,10 +32,18 @@ function _pixel_avg(data, idx) {
 
 async function pngToMatrix(url, n = null) {
 	// ---------- load & sanity‑check ------------------------------------------------
+	console.log(`pngToMatrix: Loading image from ${url}`);
 	const img = new Image();
 	img.crossOrigin = 'anonymous';   // allow CORS / data URIs
 	img.src = url;
-	await img.decode();
+	
+	try {
+		await img.decode();
+		console.log(`pngToMatrix: Successfully decoded image`);
+	} catch (error) {
+		console.error(`pngToMatrix: Failed to decode image from ${url}:`, error);
+		throw error;
+	}
 
 	const size = img.width;
 	if (img.height !== size) throw new Error('PNG must be square');
@@ -52,10 +58,6 @@ async function pngToMatrix(url, n = null) {
 	const ctx = canvas.getContext('2d');
 	ctx.drawImage(img, 0, 0);
 	const { data } = ctx.getImageData(0, 0, size, size); // Uint8ClampedArray
-	console.log(`PNG loaded: ${url} (${size}x${size})`);
-	console.log(`Matrix size: ${n}x${n}`);
-	console.log(`Pixel data length: ${data.length} bytes`);
-	console.log(data)
 
 	// ---------- calibration --------------------------------------------------------
 	const gMax = _pixel_avg(data, 0);          // pixel (0,0)  -> scalar 1
@@ -70,23 +72,36 @@ async function pngToMatrix(url, n = null) {
 	const matrix = new Array(n);
 	let rowStart = 0;               // byte offset of first pixel in current row
 
-	for (let y = 0; y < n; ++y) {
-		const row = new Float32Array(n);            // zero‑filled
-		for (let x = 0; x <= y; ++x) {              // lower triangle incl. diag
-			let v = pix_to_scalar(data, rowStart + x * 4);
-			console.log(`Pixel (${x},${y}) -> value: ${v}`);
-			if (v < 0 || v > 1) {
-				throw new Error(`Invalid pixel value at (${x},${y}): ${v}`);
+	try {
+		for (let y = 0; y < n; ++y) {
+			const row = new Float32Array(n); // zero‑filled
+			for (let x = 0; x <= y; ++x) { // lower triangle incl. diag
+				let v = pix_to_scalar(data, rowStart + x * 4);
+				if (v < 0 || v > 1) {
+					console.error(`Invalid pixel value at (${x},${y}): ${v} (will clam to [0,1])`);
+					if (v < 0) {
+						v = 0; // clamp to 0
+					}
+					else if (v > 1) {
+						v = 1; // clamp to 1
+					}
+				}
+				row[x] = v;
 			}
-			row[x] = v;
+			// normalize row to sum to 1
+			const rowSum = row.reduce((sum, val) => sum + val, 0);
+			for (let x = 0; x <= y; ++x) {
+				row[x] /= rowSum; // normalize to sum to 1
+			}
+			matrix[y] = Array.from(row);
+			rowStart += n * 4;
 		}
-		// normalize row to sum to 1
-		const rowSum = row.reduce((sum, val) => sum + val, 0);
-		for (let x = 0; x <= y; ++x) {
-			row[x] /= rowSum; // normalize to sum to 1
-		}
-		matrix[y] = Array.from(row);
-		rowStart += n * 4;
+	} catch (error) {
+		console.error(`pngToMatrix: Error processing image data:`, error);
+		console.log(`gMax: ${gMax}, gMin: ${gMin}, denom: ${denom}`);
+		console.log(data)
+		console.log(matrix);
+		return matrix;
 	}
 
 	return matrix;

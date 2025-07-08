@@ -53,7 +53,12 @@ function getDefaultConfig() {
 		
 		// Data configuration
 		data: {
-			basePath: "."
+			basePath: ".",
+			attentionFilename: "attn.png",  // Filename for attention pattern PNG files
+			tokenBoundary: {
+				start: ["<BOS>"],  // Tokens to add at start
+				end: []            // Tokens to add at end
+			}
 		},
 		
 		// Visualization configuration
