@@ -1,0 +1,167 @@
+body {
+	font-family: Arial, sans-serif;
+	margin: 20px;
+}
+
+#controls {
+	margin-bottom: 20px;
+	text-align: center;
+}
+
+#info {
+	font-family: monospace;
+	font-size: 14px;
+	margin-bottom: 10px;
+}
+
+.main-content {
+	display: flex;
+	gap: 20px;
+	align-items: flex-start;
+}
+
+.tokens-display {
+	flex: 1;
+	padding: 10px;
+	border: 1px solid #ccc;
+	background: #ffffff;
+	font-family: monospace;
+	font-size: 14px;
+	white-space: pre-wrap;
+	word-break: break-all;
+	max-height: 600px;
+	overflow-y: auto;
+}
+
+.tokens-display .token {
+	cursor: pointer;
+	padding: 1px 2px;
+	transition: background-color 0.1s;
+	border-bottom: 1px solid transparent;
+	box-sizing: border-box;
+}
+
+.tokens-display .token:hover {
+	background-color: #e0e0e0;
+}
+
+.tokens-display .token.whitespace {
+	color: #999;
+}
+
+.tokens-display .token.highlight-k {
+	border-bottom: 1px solid var(--k-axis, #ff0000);
+}
+
+.tokens-display .token.highlight-q {
+	border-bottom: 1px solid var(--q-axis, #00aa00);
+}
+
+.heatmap-container {
+	display: grid;
+	grid-template-areas:
+		"y-labels canvas"
+		"empty x-labels";
+	margin: 0 20px;
+	gap: 0;
+}
+
+canvas {
+	grid-area: canvas;
+	border: 1px solid #000;
+	cursor: crosshair;
+	position: relative;
+
+	/* make scaling nearest‑neighbor on every browser */
+	image-rendering: pixelated;
+	/* spec / Chromium */
+	image-rendering: -moz-crisp-edges;
+	/* Firefox */
+	image-rendering: crisp-edges;
+	/* Safari */
+}
+
+.x-labels {
+	grid-area: x-labels;
+	display: flex;
+	align-items: flex-start;
+}
+
+.y-labels {
+	grid-area: y-labels;
+	display: flex;
+	flex-direction: column;
+	align-items: flex-end;
+	justify-content: flex-start;
+}
+
+.label {
+	font-family: monospace;
+	font-size: 10px;
+	text-align: left;
+	overflow: hidden;
+	transition: background-color 0.1s;
+}
+
+.label.highlight-k {
+	background-color: var(--k-axis-light, #ffcccc);
+}
+
+.label.highlight-q {
+	background-color: var(--q-axis-light, #ccffcc);
+}
+
+.x-label {
+	writing-mode: vertical-rl;
+	width: 20px;
+	height: 50px;
+}
+
+.y-label {
+	width: 60px;
+	height: 20px;
+	line-height: 20px;
+}
+
+.tooltip {
+	display: none !important;
+	/* Removed in favor of static cell info */
+}
+
+.canvas-section {
+	display: flex;
+	flex-direction: column;
+	gap: 10px;
+}
+
+.cell-info {
+	padding: 5px 10px;
+	border: 1px solid #ccc;
+	background: #ffffff;
+	font-family: monospace;
+	font-size: 14px;
+	width: 80vw;
+	margin: 0 auto;
+	min-height: 24px;
+}
+
+.cell-info-table {
+	width: 100%;
+	border-collapse: collapse;
+	table-layout: fixed;
+}
+
+.cell-info-table td {
+	padding: 3px 15px;
+	border-right: 1px solid #ddd;
+	width: 33.33%;
+	text-align: left;
+}
+
+.cell-info-table td .right {
+	float: right;
+}
+
+.cell-info-table td:last-child {
+	border-right: none;
+}
