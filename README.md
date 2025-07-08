@@ -9,9 +9,10 @@
 ![GitHub closed pull requests](https://img.shields.io/github/issues-pr-closed/mivanit/pattern-lens)
 ![code size, bytes](https://img.shields.io/github/languages/code-size/mivanit/pattern-lens)
 
-| | |
-|:---:|:---|
-| [![](docs/assets/pl-demo.png)](https://miv.name/pattern-lens/demo/index.html?functions=raw&prompts=sCw9tqGtgecntuFkGO7kVw%7Em0iqfjse9QrsuNKyiOjMfA%7EdbzSd3_jXPQuPN0N7Sz0TA%7ENc7zLpp4s9BmAiGWsaQRUw&models=tiny-stories-1M%7Epythia-14m&heads-pythia-14m=L2H3%7EL0Hx&heads-tiny-stories-1M=LxH0%7EL5H5%7EL2H12) | [![](docs/assets/sg-demo.png)](https://miv.name/pattern-lens/demo/single.html?prompt=m0iqfjse9QrsuNKyiOjMfA&head=tiny-stories-1M.L5.H7) |
+|                                                                                                            |                                                                                                            |
+| :--------------------------------------------------------------------------------------------------------: | :--------------------------------------------------------------------------------------------------------: |
+| [Inspect patterns across models, heads, prompts, etc.](https://miv.name/pattern-lens/assets/pl-demo.html)  |               [Inspect a single pattern](https://miv.name/pattern-lens/assets/sg-demo.html)                |
+| [![](https://miv.name/pattern-lens/assets/pl-demo.png)](https://miv.name/pattern-lens/assets/pl-demo.html) | [![](https://miv.name/pattern-lens/assets/sg-demo.png)](https://miv.name/pattern-lens/assets/sg-demo.html) |
 
 
 # pattern-lens
