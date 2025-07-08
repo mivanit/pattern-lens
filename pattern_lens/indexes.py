@@ -14,6 +14,7 @@ from pattern_lens.attn_figure_funcs import (
 	_FIGURE_NAMES_KEY,
 	ATTENTION_MATRIX_FIGURE_FUNCS,
 )
+from muutils.web.bundle_html import inline_html_file
 
 
 def generate_prompts_jsonl(model_dir: Path) -> None:
@@ -135,43 +136,6 @@ def generate_functions_jsonl(path: Path) -> None:
 			f.write("\n")
 
 
-# TODO: move this to muutils
-def inline_assets(
-	html: str,
-	assets: list[tuple[Literal["script", "style"], str]],
-	base_path: Path,
-) -> str:
-	"""Inline specified local CSS/JS files into an HTML document.
-
-	Each entry in `assets` should be a tuple like `("script", "app.js")` or `("style", "style.css")`.
-
-	# Parameters:
-	- `html : str`
-		input HTML content.
-	- `assets : list[tuple[Literal["script", "style"], str]]`
-		List of (tag_type, filename) tuples to inline.
-
-	# Returns:
-	`str` : Modified HTML content with inlined assets.
-	"""
-	for tag_type, filename in assets:
-		if tag_type not in ("style", "script"):
-			err_msg: str = f"Unsupported tag type: {tag_type}"
-			raise ValueError(err_msg)
-
-		# Dynamically create the pattern for the given tag and filename
-		pattern: str = rf'<{tag_type} src="{filename}"></{tag_type}>'
-		# assert it's in the text exactly once
-		assert html.count(pattern) == 1, (
-			f"Pattern {pattern} should be in the html exactly once, found {html.count(pattern) = }"
-		)
-		# read the content and create the replacement
-		content: str = (base_path / filename).read_text()
-		replacement: str = f"<{tag_type}>\n{content}\n</{tag_type}>"
-		# perform the replacement
-		html = html.replace(pattern, replacement)
-
-	return html
 
 
 def write_html_index(path: Path) -> None:
@@ -180,19 +144,27 @@ def write_html_index(path: Path) -> None:
 	frontend_resources_path: Path = Path(
 		importlib.resources.files(pattern_lens).joinpath("frontend"),  # type: ignore[arg-type]
 	)
-	html_index: str = (frontend_resources_path / "index.template.html").read_text(
-		encoding="utf-8",
-	)
-	# inline assets
-	html_index = inline_assets(
-		html_index,
-		[
-			("style", "style.css"),
-			("script", "util.js"),
-			("script", "app.js"),
-		],
-		base_path=frontend_resources_path,
-	)
+	
+	# Check if pre-built patternlens.html exists
+	prebuilt_path: Path = frontend_resources_path / "patternlens.html"
+	if prebuilt_path.exists():
+		# Use pre-built version
+		html_index: str = prebuilt_path.read_text(encoding="utf-8")
+	else:
+		# Build from source using muutils
+		from tempfile import NamedTemporaryFile
+		with NamedTemporaryFile(mode='w', suffix='.html', delete=False) as tmp:
+			tmp_path = Path(tmp.name)
+		
+		# Bundle the HTML file
+		inline_html_file(
+			html_path=frontend_resources_path / "patternlens" / "index.html",
+			output_path=tmp_path,
+		)
+		
+		# Read the bundled content
+		html_index = tmp_path.read_text(encoding="utf-8")
+		tmp_path.unlink()  # Clean up temp file
 
 	# add version
 	pattern_lens_version: str = importlib.metadata.version("pattern-lens")

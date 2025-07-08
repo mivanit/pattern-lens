@@ -179,7 +179,7 @@ const app = Vue.createApp({
 			if (this.filters.selected.models.length > 0) {
 				for (const model of Object.keys(this.head_selections_str)) {
 					params.set(
-						`${URL_HEAD_PREFIX}${model}`,
+						`${CONFIG.data.urlHeadPrefix}${model}`,
 						this.head_selections_str[model].replaceAll("*", "x").replaceAll(" ", "").split(',').join('~')
 					);
 				}
@@ -201,8 +201,8 @@ const app = Vue.createApp({
 			try {
 				this.head_selections_str = {};
 				for (const [key, value] of params) {
-					if (key.startsWith(URL_HEAD_PREFIX)) {
-						const model = key.substring(URL_HEAD_PREFIX.length);
+					if (key.startsWith(CONFIG.data.urlHeadPrefix)) {
+						const model = key.substring(CONFIG.data.urlHeadPrefix.length);
 						this.head_selections_str[model] = value.split('~').join(', ');
 					}
 				}
@@ -222,6 +222,15 @@ const app = Vue.createApp({
 		},
 		getImageUrl(image) {
 			return this.getFilterUrl('all', [image.model], [image.promptHash], [image.layer], [image.head], [image.function]);
+		},
+
+		openSingleView(promptHash, model, layer, head) {
+			const singlePath = CONFIG.data.singleViewerPath;
+			const params = new URLSearchParams({
+				prompt: promptHash,
+				head: `${model}.L${layer}.H${head}`
+			});
+			window.open(`${singlePath}?${params.toString()}`, '_blank');
 		},
 
 		getSinglePropertyFilterUrl(type, value) {
@@ -313,7 +322,7 @@ const app = Vue.createApp({
 		async loadModels() {
 			this.loading = true;
 			console.log('Loading models...');
-			const models = await fileOps.fetchJsonL(`${DATA_DIR}/models.jsonl`);
+			const models = await fileOps.fetchJsonL(`${CONFIG.data.basePath}/${CONFIG.data.modelsFile}`);
 			this.models.configs = {};
 			for (const model of models) {
 				this.models.configs[model["model_name"]] = model;
@@ -330,7 +339,7 @@ const app = Vue.createApp({
 			});
 		},
 		async loadFunctions() {
-			const functions = await fileOps.fetchJsonL(`${DATA_DIR}/figures.jsonl`);
+			const functions = await fileOps.fetchJsonL(`${CONFIG.data.basePath}/${CONFIG.data.figuresFile}`);
 			console.log('Functions:', functions);
 			this.filters.available.functions = functions.reduce(
 				(acc, item) => {
@@ -582,7 +591,7 @@ const app = Vue.createApp({
 
 			for (const model of this.filters.available.models) {
 				try {
-					const modelPrompts = await fileOps.fetchJsonL(`${DATA_DIR}/${model}/prompts.jsonl`);
+					const modelPrompts = await fileOps.fetchJsonL(`${CONFIG.data.basePath}/${model}/${CONFIG.data.promptsFile}`);
 					for (const prompt of modelPrompts) {
 						if (prompt.hash in this.prompts.all) {
 							this.prompts.all[prompt.hash].models.push(model);
@@ -717,7 +726,7 @@ const app = Vue.createApp({
 								if (!func) {
 									console.warn(`Function not found ${func_name}`, typeof func_name, JSON.stringify(func_name), func_name, this.filters.available.functions);
 								}
-								const basePath = `${DATA_DIR}/${model}/prompts/${promptHash}/L${layer}/H${head}`;
+								const basePath = `${CONFIG.data.basePath}/${model}/prompts/${promptHash}/L${layer}/H${head}`;
 
 								// get the figure format from metadata
 								let figure_format = func.figure_save_fmt;
@@ -934,6 +943,11 @@ const app = Vue.createApp({
 	// Lifecycle hook when component is mounted
 	async mounted() {
 		console.log('Mounting app:', this);
+		
+		// Apply config values to data (config is already initialized by main script)
+		this.images.perRow = CONFIG.ui.imagesPerRow;
+		this.isDarkMode = CONFIG.ui.darkModeDefault;
+		
 		const savedDarkMode = localStorage.getItem('darkMode');
 		if (savedDarkMode !== null) {
 			this.isDarkMode = savedDarkMode === 'true';

@@ -16,7 +16,7 @@
  */
 
 // Configuration constants
-const CONFIG_FILE_PATH = "config.json";
+const CONFIG_FILE_PATH = "sg_cfg.json";
 const URL_UPDATE_DEBOUNCE_DELAY = 500; // ms
 const FLOAT_COMPARISON_EPSILON = 0.001;
 
@@ -53,7 +53,7 @@ function getDefaultConfig() {
 		
 		// Data configuration
 		data: {
-			basePath: "../../../../../data/patterns/"
+			basePath: "."
 		},
 		
 		// Visualization configuration

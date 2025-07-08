@@ -19,7 +19,25 @@
     <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/ag-grid/32.1.0/ag-grid-community.min.js"></script> -->
     <script src="https://cdn.jsdelivr.net/npm/ag-grid-community@32.2.0/dist/ag-grid-community.min.js"></script>
 
-    <style src="style.css"></style>
+    <!-- stylesheet -->
+    <link rel="stylesheet" href="style.css">
+
+    <!-- js imports -->
+    <script src="config.js"></script>
+    <script src="util.js"></script>
+    <script src="app.js"></script>
+
+    <!-- main script -->
+    <script>
+        // Mount the Vue app to the DOM element with id="app"
+        window.addEventListener('DOMContentLoaded', async () => {
+            // Initialize config first
+            await initConfig();
+            
+            // Mount the app
+            app.mount('#app');
+        });
+    </script>
 </head>
 
 <body>
@@ -178,8 +196,10 @@
                     <a :href="getSinglePropertyFilterUrl('heads', image.head)">H{{ image.head }}</a> -
                     <a :href="getSinglePropertyFilterUrl('prompts', image.promptHash)">{{ image.promptHash }}</a>
                 </p>
-                <a :href="getImageUrl(image)" class="img-container" v-html="image.content"
-                :title="images.perRow > 4 ? image.name : ''">
+                <a href="#" @click.prevent="openSingleView(image.promptHash, image.model, image.layer, image.head)" 
+                class="img-container" v-html="image.content"
+                :title="images.perRow > 4 ? image.name : ''"
+                style="cursor: pointer;">
                 </a>
             </div>
         </div>
@@ -189,16 +209,6 @@
         <div v-else-if="images.requested" class="error">No images found for the selected criteria.</div>
 
     </div>
-
-    <script src="util.js"></script>
-    <script src="app.js"></script>
-    <script>
-        const DATA_DIR = '.';
-        const FIGURE_FORMATS = ['svg', 'svgz', 'png'];
-        const URL_HEAD_PREFIX = 'heads-';
-        // Mount the Vue app to the DOM element with id="app"
-        app.mount('#app');
-    </script>
 </body>
 
 </html>

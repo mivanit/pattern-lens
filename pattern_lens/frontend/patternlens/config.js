@@ -16,7 +16,7 @@
  */
 
 // Configuration constants
-const CONFIG_FILE_PATH = "config.json";
+const CONFIG_FILE_PATH = "pl_cfg.json";
 const URL_UPDATE_DEBOUNCE_DELAY = 500; // ms
 const FLOAT_COMPARISON_EPSILON = 0.001;
 
@@ -43,52 +43,26 @@ let URL_UPDATE_TIMEOUT = null;
  */
 function getDefaultConfig() {
 	let default_cfg = {
-		// Layout configuration
-		layout: {
-			yLabelWidth: 80,
-			xLabelHeight: 60,
-			canvasSize: 500,
-			maxTokensForLabels: 30  // Hide labels if more than this many tokens
-		},
-		
 		// Data configuration
 		data: {
-			basePath: "../../../../../data/patterns/"
+			basePath: "./",  // Base path for data directory
+			singleViewerPath: "single.html",  // Path to single pattern viewer
+			modelsFile: "models.jsonl",
+			figuresFile: "figures.jsonl",
+			promptsFile: "prompts.jsonl",
+			figureFormats: ['svg', 'svgz', 'png'],  // Supported figure formats
+			urlHeadPrefix: 'heads-'  // Prefix for URL head parameters
+		},
+		
+		// UI configuration
+		ui: {
+			imagesPerRow: 4,  // Number of images to display per row
+			darkModeDefault: false
 		},
 		
 		// Visualization configuration
 		visualization: {
-			// Canvas styling
-			highlightStrokeStyle: "#ff0000",
-			highlightLineWidth: 0.5,
-			gridStrokeStyle: "#ddd",
-			gridLineWidth: 0.2,
-			
-			// Colors for different axes
-			colors: {
-				kAxis: "#ff0000",      // Red for K (key) axis
-				qAxis: "#00aa00",      // Green for Q (query) axis
-				kAxisLight: "#ffcccc", // Light red for K axis labels
-				qAxisLight: "#ccffcc"  // Light green for Q axis labels
-			},
-			
-			// Performance settings
-			throttleDelay: 16,  // ~60fps for mouse updates
-			
-			// Keyboard navigation
-			keyboard: {
-				moveStep: 1,
-				ctrlMoveStep: 10,
-				repeatDelay: 300,    // Initial delay before key repeat
-				repeatInterval: 100  // Interval between repeats
-			},
-			
-			// Token highlighting
-			tokenHighlight: {
-				maxOpacity: 0.9,
-				intensityScale: 5.0,
-				backgroundColor: "rgba(173, 216, 230, {alpha})"
-			}
+			// Add any visualization-specific settings here
 		}
 	};
 

@@ -37,7 +37,7 @@ const fileOps = {
 		}
 	},
 	async figureExists(path) {
-		for (const format of FIGURE_FORMATS) {
+		for (const format of CONFIG.data.figureFormats) {
 			fig_path = `${path}.${format}`;
 			if (await this.fileExists(fig_path)) {
 				return format;

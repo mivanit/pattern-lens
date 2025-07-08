@@ -1,0 +1,1399 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Attention Pattern Viewer</title>
+        <!-- begin 'style.css' -->
+    <style>
+    body {
+    	font-family: Arial, sans-serif;
+    	margin: 20px;
+    }
+    
+    #controls {
+    	margin-bottom: 20px;
+    	text-align: center;
+    }
+    
+    #info {
+    	font-family: monospace;
+    	font-size: 14px;
+    	margin-bottom: 10px;
+    }
+    
+    .main-content {
+    	display: flex;
+    	gap: 20px;
+    	align-items: flex-start;
+    }
+    
+    .tokens-display {
+    	flex: 1;
+    	padding: 10px;
+    	border: 1px solid #ccc;
+    	background: #ffffff;
+    	font-family: monospace;
+    	font-size: 14px;
+    	white-space: pre-wrap;
+    	word-break: break-all;
+    	max-height: 600px;
+    	overflow-y: auto;
+    }
+    
+    .tokens-display .token {
+    	cursor: pointer;
+    	padding: 1px 2px;
+    	transition: background-color 0.1s;
+    	border-bottom: 1px solid transparent;
+    	box-sizing: border-box;
+    }
+    
+    .tokens-display .token:hover {
+    	background-color: #e0e0e0;
+    }
+    
+    .tokens-display .token.whitespace {
+    	color: #999;
+    }
+    
+    .tokens-display .token.highlight-k {
+    	border-bottom: 1px solid var(--k-axis, #ff0000);
+    }
+    
+    .tokens-display .token.highlight-q {
+    	border-bottom: 1px solid var(--q-axis, #00aa00);
+    }
+    
+    .heatmap-container {
+    	display: grid;
+    	grid-template-areas:
+    		"y-labels canvas"
+    		"empty x-labels";
+    	margin: 0 20px;
+    	gap: 0;
+    }
+    
+    canvas {
+    	grid-area: canvas;
+    	border: 1px solid #000;
+    	cursor: crosshair;
+    	position: relative;
+    
+    	/* make scaling nearest‑neighbor on every browser */
+    	image-rendering: pixelated;
+    	/* spec / Chromium */
+    	image-rendering: -moz-crisp-edges;
+    	/* Firefox */
+    	image-rendering: crisp-edges;
+    	/* Safari */
+    }
+    
+    .x-labels {
+    	grid-area: x-labels;
+    	display: flex;
+    	align-items: flex-start;
+    }
+    
+    .y-labels {
+    	grid-area: y-labels;
+    	display: flex;
+    	flex-direction: column;
+    	align-items: flex-end;
+    	justify-content: flex-start;
+    }
+    
+    .label {
+    	font-family: monospace;
+    	font-size: 10px;
+    	text-align: left;
+    	overflow: hidden;
+    	transition: background-color 0.1s;
+    }
+    
+    .label.highlight-k {
+    	background-color: var(--k-axis-light, #ffcccc);
+    }
+    
+    .label.highlight-q {
+    	background-color: var(--q-axis-light, #ccffcc);
+    }
+    
+    .x-label {
+    	writing-mode: vertical-rl;
+    	width: 20px;
+    	height: 50px;
+    }
+    
+    .y-label {
+    	width: 60px;
+    	height: 20px;
+    	line-height: 20px;
+    }
+    
+    .tooltip {
+    	display: none !important;
+    	/* Removed in favor of static cell info */
+    }
+    
+    .canvas-section {
+    	display: flex;
+    	flex-direction: column;
+    	gap: 10px;
+    }
+    
+    .cell-info {
+    	padding: 5px 10px;
+    	border: 1px solid #ccc;
+    	background: #ffffff;
+    	font-family: monospace;
+    	font-size: 14px;
+    	width: 80vw;
+    	margin: 0 auto;
+    	min-height: 24px;
+    }
+    
+    .cell-info-table {
+    	width: 100%;
+    	border-collapse: collapse;
+    	table-layout: fixed;
+    }
+    
+    .cell-info-table td {
+    	padding: 3px 15px;
+    	border-right: 1px solid #ddd;
+    	width: 33.33%;
+    	text-align: left;
+    }
+    
+    .cell-info-table td .right {
+    	float: right;
+    }
+    
+    .cell-info-table td:last-child {
+    	border-right: none;
+    }
+    </style>
+    <!-- end 'style.css' -->
+</head>
+
+<body>
+    <div id="controls">
+        <div id="info"></div>
+        <div class="cell-info" id="cellInfo"></div>
+    </div>
+    <div class="main-content">
+        <div class="canvas-section">
+            <div class="heatmap-container" id="heatmapContainer">
+                <canvas id="heatmapCanvas"></canvas>
+                <div class="x-labels" id="xLabels"></div>
+                <div class="y-labels" id="yLabels"></div>
+                <div class="tooltip" id="tooltip"></div>
+            </div>
+        </div>
+        <div class="tokens-display" id="tokensDisplay"></div>
+    </div>
+        <!-- begin 'config.js' -->
+    <script>
+    /**
+     * Configuration Handler
+     * 
+     * Provides a flexible configuration system with multiple override levels:
+     * 1. Default configuration (lowest priority)
+     * 2. Inline configuration override (INLINE_CONFIG)
+     * 3. External config.json file
+     * 4. URL parameters (highest priority)
+     * 
+     * Features:
+     * - Deep merging of configuration objects
+     * - URL parameter parsing with dot notation support
+     * - Automatic URL synchronization with debouncing
+     * - Configuration export functionality
+     * - Reset to loaded state capability
+     */
+    
+    // Configuration constants
+    const CONFIG_FILE_PATH = "sg_cfg.json";
+    const URL_UPDATE_DEBOUNCE_DELAY = 500; // ms
+    const FLOAT_COMPARISON_EPSILON = 0.001;
+    
+    // Keys to skip during URL serialization
+    const URL_SKIP_PATHS = [];
+    
+    // Keys to skip during config comparison
+    const COMPARISON_SKIP_KEYS = [];
+    
+    // For inline config overrides - replace this with external script if needed
+    var INLINE_CONFIG = null;
+    
+    // the line below might be replaced by an external build script to inject a config
+    /*$$$INLINE_CONFIG$$$*/
+    
+    // Global variables for configuration management
+    let CONFIG = null;
+    let LOADED_CONFIG = null; // Store the config as loaded from file for comparison
+    let URL_UPDATE_TIMEOUT = null;
+    
+    /**
+     * Get default configuration object
+     * @returns {object} Default configuration
+     */
+    function getDefaultConfig() {
+    	let default_cfg = {
+    		// Layout configuration
+    		layout: {
+    			yLabelWidth: 80,
+    			xLabelHeight: 60,
+    			canvasSize: 500,
+    			maxTokensForLabels: 30  // Hide labels if more than this many tokens
+    		},
+    		
+    		// Data configuration
+    		data: {
+    			basePath: "."
+    		},
+    		
+    		// Visualization configuration
+    		visualization: {
+    			// Canvas styling
+    			highlightStrokeStyle: "#ff0000",
+    			highlightLineWidth: 0.5,
+    			gridStrokeStyle: "#ddd",
+    			gridLineWidth: 0.2,
+    			
+    			// Colors for different axes
+    			colors: {
+    				kAxis: "#ff0000",      // Red for K (key) axis
+    				qAxis: "#00aa00",      // Green for Q (query) axis
+    				kAxisLight: "#ffcccc", // Light red for K axis labels
+    				qAxisLight: "#ccffcc"  // Light green for Q axis labels
+    			},
+    			
+    			// Performance settings
+    			throttleDelay: 16,  // ~60fps for mouse updates
+    			
+    			// Keyboard navigation
+    			keyboard: {
+    				moveStep: 1,
+    				ctrlMoveStep: 10,
+    				repeatDelay: 300,    // Initial delay before key repeat
+    				repeatInterval: 100  // Interval between repeats
+    			},
+    			
+    			// Token highlighting
+    			tokenHighlight: {
+    				maxOpacity: 0.9,
+    				intensityScale: 5.0,
+    				backgroundColor: "rgba(173, 216, 230, {alpha})"
+    			}
+    		}
+    	};
+    
+    	if (INLINE_CONFIG) {
+    		// If INLINE_CONFIG is set, merge it into the default config
+    		deepMerge(default_cfg, INLINE_CONFIG);
+    		console.log("Merged inline config overrides");
+    	}
+    
+    	return default_cfg;
+    }
+    
+    /**
+     * Load config.json (if present) and merge into CONFIG.
+     * Also parse URL parameters and apply them to CONFIG.
+     * Priority: URL params > config.json > inline config > defaults
+     * @returns {Promise<object>} resolved CONFIG object
+     */
+    async function getConfig() {
+    	// Initialize with defaults
+    	CONFIG = getDefaultConfig();
+    
+    	try {
+    		// First, try to load config.json
+    		const r = await fetch(CONFIG_FILE_PATH);
+    		if (r.ok) {
+    			const loaded = await r.json();
+    			// Deep merge loaded config into CONFIG
+    			deepMerge(CONFIG, loaded);
+    			// Store a deep copy of the loaded config for URL comparison
+    			LOADED_CONFIG = JSON.parse(JSON.stringify(CONFIG));
+    			console.log("Loaded config.json");
+    		} else {
+    			console.warn("config.json not found, using defaults");
+    			// If no config.json, use defaults for comparison
+    			LOADED_CONFIG = JSON.parse(JSON.stringify(CONFIG));
+    		}
+    	} catch (e) {
+    		// if the inline config is null, then failing to find config.json is fine
+    		if (!INLINE_CONFIG) {
+    			console.error("Config load error:", e);
+    		} else {
+    			console.warn("Failed to load config.json, but it's fine because an inline config was provided");
+    		}
+    		// On error, use defaults for comparison
+    		LOADED_CONFIG = JSON.parse(JSON.stringify(CONFIG));
+    	}
+    
+    	// Parse URL parameters and override CONFIG values (highest priority)
+    	parseURLParams();
+    
+    	return CONFIG;
+    }
+    
+    /**
+     * Deep merge source object into target object
+     * @param {object} target - Target object to merge into
+     * @param {object} source - Source object to merge from
+     */
+    function deepMerge(target, source) {
+    	for (const key in source) {
+    		if (source[key] && typeof source[key] === 'object' && !Array.isArray(source[key])) {
+    			if (!target[key]) target[key] = {};
+    			deepMerge(target[key], source[key]);
+    		} else {
+    			target[key] = source[key];
+    		}
+    	}
+    }
+    
+    /**
+     * Parse URL parameters and update CONFIG
+     * Supports nested paths like: ?theme=light&ui.showToolbar=false&performance.maxItems=2000
+     * Also supports arrays like: ?data.sources=file1.json,file2.json,file3.json
+     * @param {URLSearchParams} [params] - Optional URLSearchParams object, defaults to current URL
+     */
+    function parseURLParams(params = null) {
+    	if (!params) {
+    		params = new URLSearchParams(window.location.search);
+    	}
+    
+    	for (const [key, value] of params) {
+    		setNestedConfigValue(CONFIG, key, parseConfigValue(value));
+    	}
+    }
+    
+    /**
+     * Set a nested configuration value using dot notation
+     * Example: setNestedConfigValue(CONFIG, "ui.showToolbar", false)
+     * @param {object} obj - Object to modify
+     * @param {string} path - Dot-separated path
+     * @param {any} value - Value to set
+     */
+    function setNestedConfigValue(obj, path, value) {
+    	const keys = path.split('.');
+    	let current = obj;
+    
+    	for (let i = 0; i < keys.length - 1; i++) {
+    		const key = keys[i];
+    		if (!(key in current) || typeof current[key] !== 'object') {
+    			current[key] = {};
+    		}
+    		current = current[key];
+    	}
+    
+    	const finalKey = keys[keys.length - 1];
+    	current[finalKey] = value;
+    	console.log(`URL param override: ${path} = ${value}`);
+    }
+    
+    /**
+     * Parse a string value from URL params into appropriate type
+     * Handles arrays (comma-separated values), booleans, numbers, and strings
+     * @param {string} value - String value from URL parameter
+     * @returns {any} Parsed value
+     */
+    function parseConfigValue(value) {
+    	// Boolean
+    	if (value === 'true') return true;
+    	if (value === 'false') return false;
+    
+    	// Array (comma-separated) - but handle single values too
+    	if (value.includes(',')) {
+    		return value.split(',').map(v => v.trim()).filter(v => v.length > 0);
+    	}
+    
+    	// Number
+    	if (!isNaN(value) && !isNaN(parseFloat(value))) {
+    		return parseFloat(value);
+    	}
+    
+    	// String (including hex colors, URLs, etc.)
+    	return value;
+    }
+    
+    /**
+     * Update the URL with current CONFIG state
+     * Debounced to avoid excessive URL updates
+     * @param {number} [delay] - Debounce delay in milliseconds (uses global constant if not provided)
+     */
+    function updateURL(delay = URL_UPDATE_DEBOUNCE_DELAY) {
+    	if (URL_UPDATE_TIMEOUT) {
+    		clearTimeout(URL_UPDATE_TIMEOUT);
+    	}
+    
+    	URL_UPDATE_TIMEOUT = setTimeout(() => {
+    		const params = generateURLParams();
+    		const newURL = window.location.pathname + (params.toString() ? '?' + params.toString() : '');
+    		window.history.replaceState({}, '', newURL);
+    		URL_UPDATE_TIMEOUT = null;
+    	}, delay);
+    }
+    
+    /**
+     * Generate URL search params from current CONFIG state
+     * Only includes values that differ from the loaded config (not defaults)
+     * @returns {URLSearchParams} URL parameters representing config differences
+     */
+    function generateURLParams() {
+    	if (!LOADED_CONFIG) {
+    		// Fallback to default config if loaded config not available
+    		return new URLSearchParams();
+    	}
+    
+    	const params = new URLSearchParams();
+    	const differences = findConfigDifferences(CONFIG, LOADED_CONFIG);
+    
+    	for (const [path, value] of differences) {
+    		// Skip certain fields that shouldn't be in URLs
+    		if (shouldSkipInURL(path)) {
+    			continue;
+    		}
+    
+    		// Special handling for arrays
+    		if (Array.isArray(value)) {
+    			if (value.length > 0) {
+    				params.set(path, value.join(','));
+    			}
+    		} else {
+    			params.set(path, value.toString());
+    		}
+    	}
+    
+    	return params;
+    }
+    
+    /**
+     * Check if a config path should be skipped when generating URL parameters
+     * @param {string} path - Config path (dot notation)
+     * @returns {boolean} True if should be skipped
+     */
+    function shouldSkipInURL(path) {
+    	return URL_SKIP_PATHS.some(skipPath => path.startsWith(skipPath));
+    }
+    
+    /**
+     * Find differences between current config and loaded config
+     * Returns array of [path, value] tuples
+     * Uses epsilon comparison for floats
+     * @param {object} current - Current configuration
+     * @param {object} base - Base configuration to compare against
+     * @param {string} [prefix=''] - Current path prefix
+     * @returns {Array<[string, any]>} Array of [path, value] differences
+     */
+    function findConfigDifferences(current, base, prefix = '') {
+    	const differences = [];
+    
+    	for (const key in current) {
+    		// Skip certain keys that shouldn't be compared
+    		if (shouldSkipInComparison(key)) {
+    			continue;
+    		}
+    
+    		const currentPath = prefix ? `${prefix}.${key}` : key;
+    		const currentValue = current[key];
+    		const baseValue = base[key];
+    
+    		if (Array.isArray(currentValue)) {
+    			// Special handling for arrays
+    			if (!Array.isArray(baseValue) || !arraysEqual(currentValue, baseValue)) {
+    				differences.push([currentPath, currentValue]);
+    			}
+    		} else if (typeof currentValue === 'object' && currentValue !== null) {
+    			if (typeof baseValue === 'object' && !Array.isArray(baseValue) && baseValue !== null) {
+    				differences.push(...findConfigDifferences(currentValue, baseValue, currentPath));
+    			} else {
+    				// Base doesn't have this object, include all of current
+    				differences.push([currentPath, JSON.stringify(currentValue)]);
+    			}
+    		} else {
+    			// Compare primitive values with epsilon for floats
+    			let valuesEqual = false;
+    
+    			if (typeof currentValue === 'number' && typeof baseValue === 'number') {
+    				// Use epsilon comparison for floats
+    				valuesEqual = Math.abs(currentValue - baseValue) < FLOAT_COMPARISON_EPSILON;
+    			} else {
+    				// Direct comparison for other types
+    				valuesEqual = currentValue === baseValue;
+    			}
+    
+    			if (!valuesEqual) {
+    				differences.push([currentPath, currentValue]);
+    			}
+    		}
+    	}
+    
+    	return differences;
+    }
+    
+    /**
+     * Check if a config key should be skipped during comparison
+     * @param {string} key - Configuration key
+     * @returns {boolean} True if should be skipped
+     */
+    function shouldSkipInComparison(key) {
+    	return COMPARISON_SKIP_KEYS.includes(key);
+    }
+    
+    /**
+     * Helper function to compare arrays for equality
+     * @param {Array} arr1 - First array
+     * @param {Array} arr2 - Second array
+     * @returns {boolean} True if arrays are equal
+     */
+    function arraysEqual(arr1, arr2) {
+    	if (arr1.length !== arr2.length) return false;
+    	for (let i = 0; i < arr1.length; i++) {
+    		if (arr1[i] !== arr2[i]) return false;
+    	}
+    	return true;
+    }
+    
+    /**
+     * Get the current configuration as a formatted JSON string
+     * @param {number} [indent=2] - JSON indentation spaces
+     * @returns {string} Formatted JSON configuration
+     */
+    function getConfigAsJSON(indent = 2) {
+    	return JSON.stringify(CONFIG, null, indent);
+    }
+    
+    /**
+     * Export current configuration to a new browser tab
+     * Creates a downloadable JSON file with current config
+     */
+    function exportConfigToNewTab() {
+    	const configText = getConfigAsJSON();
+    	const blob = new Blob([configText], { type: 'application/json' });
+    	const url = URL.createObjectURL(blob);
+    	window.open(url, '_blank');
+    
+    	// Clean up the object URL after a delay
+    	setTimeout(() => {
+    		URL.revokeObjectURL(url);
+    	}, 1000);
+    }
+    
+    /**
+     * Reset CONFIG to the loaded config.json state and clear URL parameters
+     * Useful for reverting all changes back to the original loaded state
+     */
+    function resetConfigToLoaded() {
+    	if (!LOADED_CONFIG) {
+    		console.warn("No loaded config available, resetting to defaults");
+    		CONFIG = getDefaultConfig();
+    	} else {
+    		// Deep copy the loaded config back to CONFIG
+    		CONFIG = JSON.parse(JSON.stringify(LOADED_CONFIG));
+    	}
+    
+    	// Clear URL parameters by navigating to clean URL
+    	const cleanURL = window.location.pathname;
+    	window.history.replaceState({}, '', cleanURL);
+    
+    	// Clear the URL update timeout if it exists
+    	if (URL_UPDATE_TIMEOUT) {
+    		clearTimeout(URL_UPDATE_TIMEOUT);
+    		URL_UPDATE_TIMEOUT = null;
+    	}
+    
+    	console.log("Config reset to loaded state and URL cleared");
+    }
+    
+    /**
+     * Get a nested configuration value using dot notation
+     * Example: getConfigValue("ui.showToolbar")
+     * @param {string} path - Dot-separated path to config value
+     * @param {any} [defaultValue] - Default value if path doesn't exist
+     * @returns {any} Configuration value or default
+     */
+    function getConfigValue(path, defaultValue = undefined) {
+    	const keys = path.split('.');
+    	let current = CONFIG;
+    
+    	for (const key of keys) {
+    		if (current && typeof current === 'object' && key in current) {
+    			current = current[key];
+    		} else {
+    			return defaultValue;
+    		}
+    	}
+    
+    	return current;
+    }
+    
+    /**
+     * Set a nested configuration value and optionally update URL
+     * Example: setConfigValue("theme", "light", true)
+     * @param {string} path - Dot-separated path to config value
+     * @param {any} value - Value to set
+     * @param {boolean} [updateUrl=true] - Whether to update URL parameters
+     */
+    function setConfigValue(path, value, updateUrl = true) {
+    	setNestedConfigValue(CONFIG, path, value);
+    
+    	if (updateUrl) {
+    		updateURL();
+    	}
+    }
+    
+    /**
+     * Initialize the configuration system
+     * Call this once when your application starts
+     * @returns {Promise<object>} Resolved configuration object
+     */
+    async function initConfig() {
+    	try {
+    		return await getConfig();
+    	} catch (error) {
+    		console.error("Failed to initialize configuration:", error);
+    		// Fallback to defaults
+    		CONFIG = getDefaultConfig();
+    		LOADED_CONFIG = JSON.parse(JSON.stringify(CONFIG));
+    		return CONFIG;
+    	}
+    }
+    </script>
+    <!-- end 'config.js' -->
+        <!-- begin 'matrix_png.js' -->
+    <script>
+    /* matrix_png.js
+     *
+     * Decode a square PNG created from a lower‑triangular, row‑stochastic matrix
+     * (values scaled linearly to Matplotlib’s Blues colormap) and recover the
+     * numeric matrix.
+     *
+     * Exported async function:
+     *
+     *     pngToMatrix(url: string, n?: number) -> Promise<number[][]>
+     *
+     *   • `url`  – URL (or data‑URI) of the PNG.
+     *   • `n`    – optional matrix size; validated against the image if supplied.
+     *
+     * Assumptions
+     *   • The PNG is n×n.
+     *   • Pixel (0,0) encodes 1; pixel (1,0) encodes 0.
+     *   • Mapping between these is linear in perceived luminance.
+     *   • The matrix is strictly lower‑triangular; entries above the diagonal are 0.
+     *
+     * The function runs entirely in the browser, using OffscreenCanvas when
+     * available.  It returns the matrix as an Array<Array<number>> with rows in
+     * natural order (row 0 at index 0).
+     */
+    
+    function _pixel_avg(data, idx) {
+    	// Convert pixel at `idx` to perceived luminance (gray value).
+    	// Assumes data is Uint8ClampedArray with RGBA channels.
+    	// console.log(`_pixel_avg: idx=${idx}`);
+    	// console.log(data[idx], data[idx + 1], data[idx + 2]);
+    	return (
+    		(data[idx] + data[idx + 1] + data[idx + 2]) / 3
+    	) / 255; // scale to [0,1]
+    }
+    
+    async function pngToMatrix(url, n = null) {
+    	// ---------- load & sanity‑check ------------------------------------------------
+    	const img = new Image();
+    	img.crossOrigin = 'anonymous';   // allow CORS / data URIs
+    	img.src = url;
+    	await img.decode();
+    
+    	const size = img.width;
+    	if (img.height !== size) throw new Error('PNG must be square');
+    	if (n !== null && n !== size) throw new Error('given n does not match PNG size');
+    	n = size;
+    
+    	// ---------- raster to RGBA -----------------------------------------------------
+    	const canvas = typeof OffscreenCanvas !== 'undefined'
+    		? new OffscreenCanvas(size, size)
+    		: Object.assign(document.createElement('canvas'), { width: size, height: size });
+    
+    	const ctx = canvas.getContext('2d');
+    	ctx.drawImage(img, 0, 0);
+    	const { data } = ctx.getImageData(0, 0, size, size); // Uint8ClampedArray
+    	console.log(`PNG loaded: ${url} (${size}x${size})`);
+    	console.log(`Matrix size: ${n}x${n}`);
+    	console.log(`Pixel data length: ${data.length} bytes`);
+    	console.log(data)
+    
+    	// ---------- calibration --------------------------------------------------------
+    	const gMax = _pixel_avg(data, 0);          // pixel (0,0)  -> scalar 1
+    	const gMin = _pixel_avg(data, 4);          // pixel (1,0)  -> scalar 0
+    	const denom = gMax - gMin || 1;
+    
+    	const pix_to_scalar = (data, idx) => (
+    		_pixel_avg(data, idx) - gMin
+    	) / denom; // scale to [0,1]
+    
+    	// ---------- extract matrix -----------------------------------------------------
+    	const matrix = new Array(n);
+    	let rowStart = 0;               // byte offset of first pixel in current row
+    
+    	for (let y = 0; y < n; ++y) {
+    		const row = new Float32Array(n);            // zero‑filled
+    		for (let x = 0; x <= y; ++x) {              // lower triangle incl. diag
+    			let v = pix_to_scalar(data, rowStart + x * 4);
+    			console.log(`Pixel (${x},${y}) -> value: ${v}`);
+    			if (v < 0 || v > 1) {
+    				throw new Error(`Invalid pixel value at (${x},${y}): ${v}`);
+    			}
+    			row[x] = v;
+    		}
+    		// normalize row to sum to 1
+    		const rowSum = row.reduce((sum, val) => sum + val, 0);
+    		for (let x = 0; x <= y; ++x) {
+    			row[x] /= rowSum; // normalize to sum to 1
+    		}
+    		matrix[y] = Array.from(row);
+    		rowStart += n * 4;
+    	}
+    
+    	return matrix;
+    }
+    
+    </script>
+    <!-- end 'matrix_png.js' -->
+        <!-- begin 'dataLoader.js' -->
+    <script>
+    /**
+     * Data Loader Module
+     * Handles fetching attention patterns and prompt metadata
+     */
+    
+    class AttentionDataLoader {
+        constructor(basePath = null) {
+            this.basePath = basePath || CONFIG.data.basePath;
+        }
+    
+        async loadAttentionPattern(model, promptHash, layerIdx, headIdx) {
+            const pngPath = `${this.basePath}${model}/prompts/${promptHash}/L${layerIdx}/H${headIdx}/attn.png`;
+            return await pngToMatrix(pngPath);
+        }
+    
+        async loadPromptMetadata(model, promptHash) {
+            const jsonPath = `${this.basePath}${model}/prompts/${promptHash}/prompt.json`;
+            const response = await fetch(jsonPath);
+            if (!response.ok) {
+                throw new Error(`Failed to load prompt metadata: ${response.statusText}`);
+            }
+            return await response.json();
+        }
+    }
+    </script>
+    <!-- end 'dataLoader.js' -->
+        <!-- begin 'viewer.js' -->
+    <script>
+    /**
+     * Attention Pattern Viewer Module - Simplified version
+     * Displays PNG directly with overlay for highlights
+     */
+    
+    class AttentionPatternViewer {
+        constructor(containerId) {
+            // Constants from config
+            this.SIZE = CONFIG.layout.canvasSize;
+            this.HM_highlight_strokeStyle = CONFIG.visualization.highlightStrokeStyle;
+            this.HM_highlight_lineWidth = CONFIG.visualization.highlightLineWidth;
+            this.HM_grid_strokeStyle = CONFIG.visualization.gridStrokeStyle;
+            this.HM_grid_lineWidth = CONFIG.visualization.gridLineWidth;
+            this.THROTTLE_DELAY = CONFIG.visualization.throttleDelay;
+    
+            // State
+            this.n = 0;
+            this.tokens = [];
+            this.pixelSize = 0;
+            this.cellBoundaries = [];
+            this.lastMouseTime = 0;
+            this.animationFrame = null;
+            this.labelElements = { x: [], y: [] };
+            this.pngImage = null;
+            this.attentionMatrix = null; // Store the actual matrix data
+            this.selectedCell = null; // { x, y } or null
+            this.keyboardMode = false;
+            this.keysPressed = new Set(); // Track multiple key presses
+            this.keyRepeatInterval = null;
+    
+            // DOM elements
+            this.container = document.getElementById(containerId);
+    
+            // Set up grid layout with constants
+            this.container.style.gridTemplateColumns = `${CONFIG.layout.yLabelWidth}px ${CONFIG.layout.canvasSize}px`;
+            this.container.style.gridTemplateRows = `${CONFIG.layout.canvasSize}px ${CONFIG.layout.xLabelHeight}px`;
+    
+            // Create main canvas for PNG display
+            this.canvas = document.getElementById('heatmapCanvas');
+            this.ctx = this.canvas.getContext('2d');
+    
+            // no image smoothing for pixelated
+            this.ctx.imageSmoothingEnabled = false;
+            this.ctx.webkitImageSmoothingEnabled = false; // Safari
+            this.ctx.mozImageSmoothingEnabled = false;   // Firefox
+            this.ctx.msImageSmoothingEnabled = false;   // old Edge/IE
+    
+            // Create overlay canvas for highlights
+            this.overlayCanvas = document.createElement('canvas');
+            this.overlayCanvas.style.position = 'absolute';
+            this.overlayCanvas.style.left = '0';
+            this.overlayCanvas.style.top = '0';
+            this.overlayCanvas.style.pointerEvents = 'none';
+            this.overlayCanvas.style.zIndex = '10';
+            this.overlayCtx = this.overlayCanvas.getContext('2d');
+    
+            // Add overlay to container
+            this.canvas.parentElement.style.position = 'relative';
+            this.canvas.parentElement.appendChild(this.overlayCanvas);
+    
+            this.tooltip = document.getElementById('tooltip');
+            this.cellInfo = document.getElementById('cellInfo');
+            this.tokensDisplay = document.getElementById('tokensDisplay');
+            this.xLabelsContainer = document.getElementById('xLabels');
+            this.yLabelsContainer = document.getElementById('yLabels');
+    
+            // Set up event listeners
+            this.canvas.addEventListener('mousemove', (e) => this.handleMouseMove(e));
+            this.canvas.addEventListener('mouseleave', () => this.handleMouseLeave());
+            this.canvas.addEventListener('click', (e) => this.handleClick(e));
+            document.addEventListener('keydown', (e) => this.handleKeyDown(e));
+            document.addEventListener('keyup', (e) => this.handleKeyUp(e));
+    
+            // Set up token click handlers once
+            this.tokensDisplay.addEventListener('click', (e) => this.handleTokenClick(e, 'k'));
+            this.tokensDisplay.addEventListener('contextmenu', (e) => this.handleTokenClick(e, 'q'));
+        }
+    
+        precalculateBoundaries() {
+            this.cellBoundaries = [];
+            for (let i = 0; i <= this.n; i++) {
+                this.cellBoundaries.push(i * this.pixelSize);
+            }
+        }
+    
+    
+        renderHighlights(hoverX, hoverY) {
+            // Clear overlay
+            this.overlayCtx.clearRect(0, 0, this.SIZE, this.SIZE);
+    
+            // Draw grid lines
+            this.overlayCtx.strokeStyle = this.HM_grid_strokeStyle;
+            this.overlayCtx.lineWidth = this.HM_grid_lineWidth;
+            this.overlayCtx.beginPath();
+    
+            for (let i = 0; i <= this.n; i++) {
+                const pos = this.cellBoundaries[i] + 0.5;
+                // Horizontal line
+                this.overlayCtx.moveTo(0, pos);
+                this.overlayCtx.lineTo(this.SIZE, pos);
+                // Vertical line
+                this.overlayCtx.moveTo(pos, 0);
+                this.overlayCtx.lineTo(pos, this.SIZE);
+            }
+    
+            this.overlayCtx.stroke();
+    
+            // Draw highlights if hovering
+            if (hoverX >= 0 && hoverY >= 0 && hoverX < this.n && hoverY < this.n) {
+                const x1 = hoverX * this.pixelSize;
+                const y1 = hoverY * this.pixelSize;
+    
+                // Highlight the cell's own borders (red)
+                this.overlayCtx.strokeStyle = CONFIG.visualization.colors.kAxis;
+                this.overlayCtx.lineWidth = this.HM_highlight_lineWidth;
+                this.overlayCtx.strokeRect(x1, y1, this.pixelSize, this.pixelSize);
+    
+                // Highlight row (only to the left of hovered cell) - green for Q
+                if (hoverX > 0) {
+                    this.overlayCtx.strokeStyle = CONFIG.visualization.colors.qAxis;
+                    this.overlayCtx.beginPath();
+                    this.overlayCtx.moveTo(0, y1);
+                    this.overlayCtx.lineTo(x1, y1);
+                    this.overlayCtx.moveTo(0, y1 + this.pixelSize);
+                    this.overlayCtx.lineTo(x1, y1 + this.pixelSize);
+                    this.overlayCtx.stroke();
+                }
+    
+                // Highlight column (only below hovered cell) - red for K
+                if (hoverY < this.n - 1) {
+                    this.overlayCtx.strokeStyle = CONFIG.visualization.colors.kAxis;
+                    this.overlayCtx.beginPath();
+                    this.overlayCtx.moveTo(x1, y1 + this.pixelSize);
+                    this.overlayCtx.lineTo(x1, this.SIZE);
+                    this.overlayCtx.moveTo(x1 + this.pixelSize, y1 + this.pixelSize);
+                    this.overlayCtx.lineTo(x1 + this.pixelSize, this.SIZE);
+                    this.overlayCtx.stroke();
+                }
+            }
+        }
+    
+        createAxisLabels() {
+            // Clear existing labels
+            this.xLabelsContainer.innerHTML = '';
+            this.yLabelsContainer.innerHTML = '';
+            this.labelElements.x = [];
+            this.labelElements.y = [];
+    
+            // Hide labels if too many tokens
+            if (this.n > CONFIG.layout.maxTokensForLabels) {
+                // Adjust grid layout to account for missing labels
+                this.container.style.gridTemplateColumns = `0px ${CONFIG.layout.canvasSize}px`;
+                this.container.style.gridTemplateRows = `${CONFIG.layout.canvasSize}px 0px`;
+                return;
+            }
+    
+            // Reset grid layout for labels
+            this.container.style.gridTemplateColumns = `${CONFIG.layout.yLabelWidth}px ${CONFIG.layout.canvasSize}px`;
+            this.container.style.gridTemplateRows = `${CONFIG.layout.canvasSize}px ${CONFIG.layout.xLabelHeight}px`;
+    
+            this.tokens.forEach((token) => {
+                const displayToken = this.renderWhitespace(token);
+    
+                const xLabel = document.createElement('div');
+                xLabel.className = 'label x-label';
+                xLabel.textContent = displayToken;
+                xLabel.style.width = this.pixelSize + 'px';
+                xLabel.style.height = CONFIG.layout.xLabelHeight + 'px';
+                this.xLabelsContainer.appendChild(xLabel);
+                this.labelElements.x.push(xLabel);
+    
+                const yLabel = document.createElement('div');
+                yLabel.className = 'label y-label';
+                yLabel.textContent = displayToken;
+                yLabel.style.width = CONFIG.layout.yLabelWidth + 'px';
+                yLabel.style.height = this.pixelSize + 'px';
+                yLabel.style.lineHeight = this.pixelSize + 'px';
+                this.yLabelsContainer.appendChild(yLabel);
+                this.labelElements.y.push(yLabel);
+            });
+        }
+    
+        updateHighlights(x, y) {
+            // Update label highlights
+            this.labelElements.x.forEach(label => label.classList.remove('highlight-k'));
+            this.labelElements.y.forEach(label => label.classList.remove('highlight-q'));
+    
+            if (x >= 0 && x < this.n && y >= 0 && y < this.n) {
+                if (this.labelElements.x.length > 0) {
+                    this.labelElements.x[x].classList.add('highlight-k');
+                    this.labelElements.y[y].classList.add('highlight-q');
+                }
+            }
+    
+            // Update token highlights
+            this.updateTokenHighlights(x, y);
+    
+            // Render highlights
+            this.renderHighlights(x, y);
+        }
+    
+        updateTokenHighlights(x, y) {
+            const tokens = this.tokensDisplay.querySelectorAll('.token');
+            tokens.forEach((token, idx) => {
+                token.classList.remove('highlight-k', 'highlight-q');
+                token.style.backgroundColor = '';
+    
+                if (idx === x) {
+                    token.classList.add('highlight-k');
+                }
+                if (idx === y) {
+                    token.classList.add('highlight-q');
+                }
+    
+                // Add value-based highlighting based on attention values
+                if (x >= 0 && y >= 0 && x < this.n && y < this.n) {
+                    // Get the attention value for this token from the selected row
+                    const attentionValue = this.getPixelValue(idx, y);
+                    if (attentionValue > 0) {
+                        // Apply intensity-based background color
+                        const intensity = Math.min(1, attentionValue * CONFIG.visualization.tokenHighlight.intensityScale);
+                        const alpha = intensity * CONFIG.visualization.tokenHighlight.maxOpacity;
+                        token.style.backgroundColor = CONFIG.visualization.tokenHighlight.backgroundColor.replace('{alpha}', alpha);
+                    }
+                }
+            });
+        }
+    
+        getPixelValue(x, y) {
+            // Get value from the attention matrix
+            if (!this.attentionMatrix || y >= this.attentionMatrix.length || x >= this.attentionMatrix[y].length) {
+                return 0;
+            }
+            return this.attentionMatrix[y][x];
+        }
+    
+        handleMouseMove(e) {
+            const rect = this.canvas.getBoundingClientRect();
+            const x = Math.floor((e.clientX - rect.left) / rect.width * this.n);
+            const y = Math.floor((e.clientY - rect.top) / rect.height * this.n);
+    
+            if (x >= 0 && x < this.n && y >= 0 && y < this.n) {
+                // Update cell info with hover position
+                this.updateCellInfo(x, y, false);
+    
+                // Don't update highlights in keyboard mode
+                if (!this.keyboardMode) {
+                    this.updateHighlightsFromMouse(e);
+                }
+            }
+        }
+    
+        updateHighlightsFromMouse(e) {
+    
+            const now = Date.now();
+            if (now - this.lastMouseTime < this.THROTTLE_DELAY) {
+                return;
+            }
+            this.lastMouseTime = now;
+    
+            const rect = this.canvas.getBoundingClientRect();
+            const x = Math.floor((e.clientX - rect.left) / rect.width * this.n);
+            const y = Math.floor((e.clientY - rect.top) / rect.height * this.n);
+    
+            if (x >= 0 && x < this.n && y >= 0 && y < this.n) {
+                // Cancel any pending animation frame
+                if (this.animationFrame) {
+                    cancelAnimationFrame(this.animationFrame);
+                }
+    
+                // Schedule highlight update
+                this.animationFrame = requestAnimationFrame(() => {
+                    this.updateHighlights(x, y);
+                    this.animationFrame = null;
+                });
+            }
+        }
+    
+    
+        handleMouseLeave() {
+            // Clear cell info if not in keyboard mode
+            if (!this.keyboardMode) {
+                this.cellInfo.innerHTML = '';
+            }
+    
+            // In keyboard mode, don't clear highlights
+            if (this.keyboardMode) {
+                return;
+            }
+    
+            // Cancel any pending animation frame
+            if (this.animationFrame) {
+                cancelAnimationFrame(this.animationFrame);
+                this.animationFrame = null;
+            }
+    
+            // Remove highlights
+            this.labelElements.x.forEach(label => label.classList.remove('highlight-k'));
+            this.labelElements.y.forEach(label => label.classList.remove('highlight-q'));
+    
+            // Clear token highlights
+            this.updateTokenHighlights(-1, -1);
+    
+            // Render without highlights
+            this.renderHighlights(-1, -1);
+        }
+    
+        handleClick(e) {
+            const rect = this.canvas.getBoundingClientRect();
+            const x = Math.floor((e.clientX - rect.left) / rect.width * this.n);
+            const y = Math.floor((e.clientY - rect.top) / rect.height * this.n);
+    
+            if (x >= 0 && x < this.n && y >= 0 && y < this.n) {
+                if (this.keyboardMode) {
+                    // Exit keyboard mode on second click
+                    this.keyboardMode = false;
+                    this.selectedCell = null;
+                    this.cellInfo.innerHTML = '';
+                    // Let mouse position take over
+                    this.handleMouseMove(e);
+                } else {
+                    // Enter keyboard mode and select cell
+                    this.keyboardMode = true;
+                    this.selectedCell = { x, y };
+                    this.updateHighlights(x, y);
+                    this.updateCellInfo(x, y);
+                }
+            }
+        }
+    
+        handleKeyDown(e) {
+            // Only handle in keyboard mode
+            if (!this.keyboardMode || !this.selectedCell) {
+                return;
+            }
+    
+            // Track key press
+            this.keysPressed.add(e.key);
+    
+            if (e.key === 'Escape') {
+                // Exit keyboard mode
+                this.keyboardMode = false;
+                this.selectedCell = null;
+                this.updateHighlights(-1, -1);
+                this.cellInfo.innerHTML = '';
+                this.keysPressed.clear();
+                if (this.keyRepeatInterval) {
+                    clearInterval(this.keyRepeatInterval);
+                    this.keyRepeatInterval = null;
+                }
+                return;
+            }
+    
+            // Start continuous movement if not already running
+            if (!this.keyRepeatInterval && this.isArrowKey(e.key)) {
+                e.preventDefault();
+                // Add initial delay before continuous movement
+                this.moveSelection(); // Initial move
+                setTimeout(() => {
+                    if (this.hasArrowKeyPressed() && !this.keyRepeatInterval) {
+                        this.keyRepeatInterval = setInterval(() => this.moveSelection(), 100);
+                    }
+                }, 300); // 300ms delay before repeat
+            }
+        }
+    
+        handleKeyUp(e) {
+            this.keysPressed.delete(e.key);
+    
+            // Stop continuous movement if no arrow keys pressed
+            if (this.keyRepeatInterval && !this.hasArrowKeyPressed()) {
+                clearInterval(this.keyRepeatInterval);
+                this.keyRepeatInterval = null;
+            }
+        }
+    
+        isArrowKey(key) {
+            return ['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(key);
+        }
+    
+        hasArrowKeyPressed() {
+            return Array.from(this.keysPressed).some(key => this.isArrowKey(key));
+        }
+    
+        moveSelection() {
+            if (!this.selectedCell) return;
+    
+            let dx = 0, dy = 0;
+            const step = this.keysPressed.has('Control') ? CONFIG.visualization.keyboard.ctrlMoveStep : CONFIG.visualization.keyboard.moveStep;
+    
+            if (this.keysPressed.has('ArrowLeft')) dx -= step;
+            if (this.keysPressed.has('ArrowRight')) dx += step;
+            if (this.keysPressed.has('ArrowUp')) dy -= step;
+            if (this.keysPressed.has('ArrowDown')) dy += step;
+    
+            const newX = Math.max(0, Math.min(this.n - 1, this.selectedCell.x + dx));
+            const newY = Math.max(0, Math.min(this.n - 1, this.selectedCell.y + dy));
+    
+            if (newX !== this.selectedCell.x || newY !== this.selectedCell.y) {
+                this.selectedCell = { x: newX, y: newY };
+                this.updateHighlights(newX, newY);
+                this.updateCellInfo(newX, newY);
+            }
+        }
+    
+        updateCellInfo(x, y) {
+            if (x >= 0 && x < this.n && y >= 0 && y < this.n) {
+                const xToken = this.renderWhitespace(this.tokens[x]);
+                const yToken = this.renderWhitespace(this.tokens[y]);
+                const value = this.getPixelValue(x, y).toFixed(2);
+    
+                this.cellInfo.innerHTML = `
+                    <table class="cell-info-table">
+                        <tr>
+                            <td>K[${x}]: <span class="right">${xToken}</span></td>
+                            <td>Q[${y}]: <span class="right">${yToken}</span></td>
+                            <td>Value: <span class="right">${value}</span></td>
+                        </tr>
+                    </table>
+                `;
+            }
+        }
+    
+        renderWhitespace(token) {
+            // Convert whitespace characters to visible symbols
+            return token.replace(/ /g, '␣')
+                       .replace(/\t/g, '␉')
+                       .replace(/\n/g, '␤')
+                       .replace(/\r/g, '␍');
+        }
+    
+        renderTokensDisplay() {
+            // Create individual token spans for click handling
+            const tokenSpans = this.tokens.map((token, idx) => {
+                // Check if token is purely whitespace
+                const isWhitespace = /^[\s\n\r\t]+$/.test(token);
+                const displayToken = this.renderWhitespace(token);
+                const className = isWhitespace ? 'token whitespace' : 'token';
+                const span = `<span class="${className}" data-index="${idx}">${displayToken}</span>`;
+    
+                // Add line break after tokens that are purely newlines
+                if (token === '\n') {
+                    return span + '<br>';
+                }
+                return span;
+            }).join('');
+    
+            this.tokensDisplay.innerHTML = tokenSpans;
+        }
+    
+        handleTokenClick(e, axis) {
+            e.preventDefault();
+            const tokenEl = e.target.closest('.token');
+            if (!tokenEl) return;
+    
+            const index = parseInt(tokenEl.dataset.index);
+            if (isNaN(index) || index < 0 || index >= this.n) return;
+    
+            // Enter keyboard mode if not already
+            if (!this.keyboardMode) {
+                this.keyboardMode = true;
+            }
+    
+            // Update selection
+            if (!this.selectedCell) {
+                this.selectedCell = { x: 0, y: 0 };
+            }
+    
+            if (axis === 'k') {
+                this.selectedCell.x = index;
+            } else {
+                this.selectedCell.y = index;
+            }
+    
+            this.updateHighlights(this.selectedCell.x, this.selectedCell.y);
+            this.updateCellInfo(this.selectedCell.x, this.selectedCell.y);
+        }
+    
+        normalizeTokens(tokens) {
+            return tokens.map(token => {
+                // Replace unicode sequences within tokens
+                let normalized = token;
+                normalized = normalized.replace(/\u0120/g, ' ');    // GPT-2 space token
+                normalized = normalized.replace(/\u010a/g, '\n');   // GPT-2 newline token
+                return normalized;
+            });
+        }
+    
+        async displayPattern(dataLoader, model, promptHash, layerIdx, headIdx) {
+            // Load prompt metadata
+            const metadata = await dataLoader.loadPromptMetadata(model, promptHash);
+            // Add BOS token at the beginning
+            const tokensWithBOS = ['<BOS>'].concat(metadata.tokens);
+            this.tokens = this.normalizeTokens(tokensWithBOS);
+            this.n = this.tokens.length;
+            this.pixelSize = this.SIZE / this.n;
+    
+            // Load attention matrix data
+            this.attentionMatrix = await dataLoader.loadAttentionPattern(model, promptHash, layerIdx, headIdx);
+    
+            // Load PNG directly for display
+            const pngPath = `${dataLoader.basePath}${model}/prompts/${promptHash}/L${layerIdx}/H${headIdx}/attn.png`;
+    
+            return new Promise((resolve, reject) => {
+                this.pngImage = new Image();
+                this.pngImage.crossOrigin = 'anonymous';
+    
+                this.pngImage.onload = () => {
+                    // Precalculate boundaries
+                    this.precalculateBoundaries();
+    
+                    // Set canvas dimensions to fixed size
+                    this.canvas.width = this.SIZE;
+                    this.canvas.height = this.SIZE;
+                    this.overlayCanvas.width = this.SIZE;
+                    this.overlayCanvas.height = this.SIZE;
+    
+                    // every canvas reside restores defaults, so we remove the smoothing again
+                    this.ctx.imageSmoothingEnabled = false;
+                    this.ctx.webkitImageSmoothingEnabled = false; // Safari
+                    this.ctx.mozImageSmoothingEnabled = false; // Firefox
+                    this.ctx.msImageSmoothingEnabled = false; // old Edge/IE
+    
+                    // Calculate pixel size based on fixed canvas size
+                    this.pixelSize = this.SIZE / this.n;
+    
+                    // Render PNG scaled to canvas size
+                    this.ctx.drawImage(this.pngImage, 0, 0, this.SIZE, this.SIZE);
+    
+                    // Initial render of grid
+                    this.renderHighlights(-1, -1);
+    
+                    // Create labels
+                    this.createAxisLabels();
+    
+                    // Render tokens display
+                    this.renderTokensDisplay();
+    
+                    // Update page title
+                    document.title = `${model} L${layerIdx}H${headIdx} - ${promptHash.substring(0, 8)}`;
+    
+                    resolve();
+                };
+    
+                this.pngImage.onerror = () => {
+                    reject(new Error(`Failed to load image: ${pngPath}`));
+                };
+    
+                this.pngImage.src = pngPath;
+            });
+        }
+    }
+    </script>
+    <!-- end 'viewer.js' -->
+    <script>
+        // Initialize configuration system first
+        initConfig().then(() => {
+            // Set CSS variables from config
+            const root = document.documentElement;
+            root.style.setProperty('--k-axis', CONFIG.visualization.colors.kAxis);
+            root.style.setProperty('--q-axis', CONFIG.visualization.colors.qAxis);
+            root.style.setProperty('--k-axis-light', CONFIG.visualization.colors.kAxisLight);
+            root.style.setProperty('--q-axis-light', CONFIG.visualization.colors.qAxisLight);
+
+            // Parse URL parameters with defaults for debugging
+            const urlParams = new URLSearchParams(window.location.search);
+            const promptHash = urlParams.get('prompt') || 'LQc1qlQHZHOVpI7zEWAeEA';
+            const headParam = urlParams.get('head') || 'gpt2-small.L0.H0';
+
+            // Parse head parameter: {model}.L{layer}.H{head}
+            const parts = headParam.split('.');
+            const model = parts[0];
+
+            const layerIdx = parseInt(parts[1].substring(1));
+            const headIdx = parseInt(parts[2].substring(1));
+
+            // Update info (will be updated with token count after pattern loads)
+            const updateInfo = (tokenCount = null) => {
+                const tokenInfo = tokenCount ? ` | Tokens: ${tokenCount}` : '';
+                document.getElementById('info').innerHTML =
+                    `<p>Model: ${model} | Layer: ${layerIdx} | Head: ${headIdx} | Prompt hash: ${promptHash}${tokenInfo}</p>`;
+            };
+            updateInfo();
+
+            // Initialize viewer and load data
+            const viewer = new AttentionPatternViewer('heatmapContainer');
+            const dataLoader = new AttentionDataLoader();
+
+            viewer.displayPattern(dataLoader, model, promptHash, layerIdx, headIdx).then(() => {
+                // Update info with token count after pattern loads
+                updateInfo(viewer.n);
+            });
+        }).catch(error => {
+            console.error('Failed to initialize config:', error);
+            // Continue with defaults if config fails
+            const viewer = new AttentionPatternViewer('heatmapContainer');
+            const dataLoader = new AttentionDataLoader();
+            // ... rest of fallback initialization
+        });
+    </script>
+</body>
+
+</html>

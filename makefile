@@ -1684,14 +1684,12 @@ summary:
 .PHONY: build-patternlens
 build-patternlens:
 	@echo "Building patternlens frontend"
-	$(PYTHON) -m muutils.web.bundle_html pattern_lens/frontend/patternlens/index.html \
-		--output pattern_lens/frontend/patternlens.html
+	$(PYTHON) -m muutils.web.bundle_html pattern_lens/frontend/patternlens/index.html --output pattern_lens/frontend/patternlens.html
 
 .PHONY: build-single
 build-single:
 	@echo "Building single pattern viewer frontend"
-	$(PYTHON) -m muutils.web.bundle_html pattern_lens/frontend/single/index.html \
-		--output pattern_lens/frontend/single.html
+	$(PYTHON) -m muutils.web.bundle_html pattern_lens/frontend/single/index.html --output pattern_lens/frontend/single.html
 
 .PHONY: build-frontend
 build-frontend: build-patternlens build-single
