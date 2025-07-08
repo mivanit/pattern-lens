@@ -6,7 +6,7 @@ pattern_lens/attn_figure_funcs.py          22      6    73%   29, 81-91
 pattern_lens/consts.py                     23      0   100%
 pattern_lens/figure_util.py               153     16    90%   233-236, 243-244, 249-251, 260-263, 274-278, 325-326, 512
 pattern_lens/figures.py                   133     19    86%   62, 106-107, 157, 175-178, 194-195, 263-283, 433-436, 472
-pattern_lens/indexes.py                    79      5    94%   85-86, 98, 158-159
+pattern_lens/indexes.py                    66      3    95%   83-84, 96
 pattern_lens/load_activations.py           56      6    89%   103, 136-137, 141, 161-162
 pattern_lens/prompts.py                    24      1    96%   80
 pattern_lens/server.py                     26      8    69%   34-59
@@ -20,4 +20,4 @@ tests/unit/test_load_activations.py        54      0   100%
 tests/unit/test_multifig.py                64      1    98%   101
 tests/unit/test_server.py                  11      0   100%
 ---------------------------------------------------------------------
-TOTAL                                    1244     90    93%
+TOTAL                                    1231     88    93%

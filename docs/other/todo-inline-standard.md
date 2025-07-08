@@ -148,13 +148,13 @@
 ## [`pattern_lens/indexes.py`](/pattern_lens/indexes.py)
 
 - error: Argument 1 to "Path" has incompatible type "Traversable"; expected "str | PathLike[str]"  [arg-type]  
-  local link: [`/pattern_lens/indexes.py:178`](/pattern_lens/indexes.py#L178) 
-  | view on GitHub: [pattern_lens/indexes.py#L178](https://github.com/mivanit/pattern-lens/blob/main/pattern_lens/indexes.py#L178)
-  | [Make Issue](https://github.com/mivanit/pattern-lens/issues/new?title=error%3A%20Argument%201%20to%20%22Path%22%20has%20incompatible%20type%20%22Traversable%22%3B%20expected%20%22str%20%7C%20PathLike%5Bstr%5D%22%20%20%5Barg-type%5D&body=%23%20source%0A%0A%5B%60pattern_lens%2Findexes.py%23L178%60%5D%28https%3A%2F%2Fgithub.com%2Fmivanit%2Fpattern-lens%2Fblob%2Fmain%2Fpattern_lens%2Findexes.py%23L178%29%0A%0A%23%20context%0A%60%60%60python%0Adef%20write_html_index%28path%3A%20Path%29%20-%3E%20None%3A%0A%09%22%22%22writes%20an%20index.html%20file%20to%20the%20path%22%22%22%0A%09%23%20TYPING%3A%20error%3A%20Argument%201%20to%20%22Path%22%20has%20incompatible%20type%20%22Traversable%22%3B%20expected%20%22str%20%7C%20PathLike%5Bstr%5D%22%20%20%5Barg-type%5D%0A%09frontend_resources_path%3A%20Path%20%3D%20Path%28%0A%09%09importlib.resources.files%28pattern_lens%29.joinpath%28%22frontend%22%29%2C%20%20%23%20type%3A%20ignore%5Barg-type%5D%0A%60%60%60&labels=TYPING)
+  local link: [`/pattern_lens/indexes.py:138`](/pattern_lens/indexes.py#L138) 
+  | view on GitHub: [pattern_lens/indexes.py#L138](https://github.com/mivanit/pattern-lens/blob/main/pattern_lens/indexes.py#L138)
+  | [Make Issue](https://github.com/mivanit/pattern-lens/issues/new?title=error%3A%20Argument%201%20to%20%22Path%22%20has%20incompatible%20type%20%22Traversable%22%3B%20expected%20%22str%20%7C%20PathLike%5Bstr%5D%22%20%20%5Barg-type%5D&body=%23%20source%0A%0A%5B%60pattern_lens%2Findexes.py%23L138%60%5D%28https%3A%2F%2Fgithub.com%2Fmivanit%2Fpattern-lens%2Fblob%2Fmain%2Fpattern_lens%2Findexes.py%23L138%29%0A%0A%23%20context%0A%60%60%60python%0Adef%20write_html_index%28path%3A%20Path%29%20-%3E%20None%3A%0A%09%22%22%22writes%20index.html%20and%20single.html%20files%20to%20the%20path%20%28version%20replacement%20handled%20by%20makefile%29%22%22%22%0A%09%23%20TYPING%3A%20error%3A%20Argument%201%20to%20%22Path%22%20has%20incompatible%20type%20%22Traversable%22%3B%20expected%20%22str%20%7C%20PathLike%5Bstr%5D%22%20%20%5Barg-type%5D%0A%09frontend_resources_path%3A%20Path%20%3D%20Path%28%0A%09%09importlib.resources.files%28pattern_lens%29.joinpath%28%22frontend%22%29%2C%20%20%23%20type%3A%20ignore%5Barg-type%5D%0A%60%60%60&labels=TYPING)
 
   ```python
   def write_html_index(path: Path) -> None:
-  	"""writes an index.html file to the path"""
+  	"""writes index.html and single.html files to the path (version replacement handled by makefile)"""
   	# TYPING: error: Argument 1 to "Path" has incompatible type "Traversable"; expected "str | PathLike[str]"  [arg-type]
   	frontend_resources_path: Path = Path(
   		importlib.resources.files(pattern_lens).joinpath("frontend"),  # type: ignore[arg-type]

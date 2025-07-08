@@ -46,7 +46,7 @@
 </script></head>
 <body>
 <div class="package-version">
-    docs for <a href="https://github.com/mivanit/pattern-lens">pattern_lens</a> v0.4.0<br>
+    docs for <a href="https://github.com/mivanit/pattern-lens">pattern_lens</a> v0.5.0<br>
 </div>
     <nav class="pdoc">
         <label id="navtoggle" for="togglestate" class="pdoc-button">
@@ -108,7 +108,7 @@
     </nav>
     <main class="pdoc">
             <section class="module-info">
-                        <a class="pdoc-button git-button" href="https://github.com/mivanit/pattern-lens/blob/0.4.0__init__.py">View Source on GitHub</a>
+                        <a class="pdoc-button git-button" href="https://github.com/mivanit/pattern-lens/blob/0.5.0__init__.py">View Source on GitHub</a>
                     <h1 class="modulename">
 pattern_lens    </h1>
 
@@ -122,6 +122,25 @@ pattern_lens    </h1>
 <img src="https://img.shields.io/github/commit-activity/m/mivanit/pattern-lens" alt="GitHub commit activity" />
 <img src="https://img.shields.io/github/issues-pr-closed/mivanit/pattern-lens" alt="GitHub closed pull requests" />
 <img src="https://img.shields.io/github/languages/code-size/mivanit/pattern-lens" alt="code size, bytes" /></p>
+
+<table>
+<thead>
+<tr>
+  <th style="text-align:center;"></th>
+  <th style="text-align:center;"></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td style="text-align:center;"><a href="https://miv.name/pattern-lens/assets/pl-demo.html">Inspect patterns across models, heads, prompts, etc.</a></td>
+  <td style="text-align:center;"><a href="https://miv.name/pattern-lens/assets/sg-demo.html">Inspect a single pattern</a></td>
+</tr>
+<tr>
+  <td style="text-align:center;"><a href="https://miv.name/pattern-lens/assets/pl-demo.html"><img src="https://miv.name/pattern-lens/assets/pl-demo.png" alt="" /></a></td>
+  <td style="text-align:center;"><a href="https://miv.name/pattern-lens/assets/sg-demo.html"><img src="https://miv.name/pattern-lens/assets/sg-demo.png" alt="" /></a></td>
+</tr>
+</tbody>
+</table>
 
 <h1 id="pattern-lens">pattern-lens</h1>
 
@@ -172,7 +191,27 @@ python<span class="w"> </span>-m<span class="w"> </span><a href="pattern_lens/fi
 
 <h2 id="web-ui">Web UI</h2>
 
+<p>pattern-lens provides two complementary web interfaces for exploring attention patterns:</p>
+
+<ul>
+<li><p>The main interface for comparing attention patterns across models, layers, and heads</p>
+
+<ul>
+<li>Filter and select patterns by model, layer, head, prompt, etc.</li>
+<li>View multiple patterns simultaneously in a grid layout</li>
+<li>Click patterns to open detailed single-pattern view</li>
+</ul></li>
+<li><p>A focused interface for detailed examination of individual attention patterns</p>
+
+<ul>
+<li>Interactive heatmap with hover highlights and keyboard navigation</li>
+<li>Token-by-token analysis with Q/K axis highlighting</li>
+</ul></li>
+</ul>
+
 <p>View a demo of the web UI at <a href="https://miv.name/pattern-lens/demo/">miv.name/pattern-lens/demo</a>.</p>
+
+<p>Much of this web UI is inspired by <a href="https://github.com/TransformerLensOrg/CircuitsVis"><code>CircuitsVis</code></a>, but with a focus on just attention patterns and figures computed from them. I have also tried to make the interface a bit simpler, more flexible, and faster.</p>
 
 <h2 id="custom-figures">Custom Figures</h2>
 
@@ -222,7 +261,7 @@ python<span class="w"> </span>-m<span class="w"> </span><a href="pattern_lens/fi
 </code></pre>
 </div>
 
-<p>see <code>demo.ipynb</code> for a full example</p>
+<p>See <code>demo.ipynb</code> for a full example.</p>
 </div>
 
                         <input id="mod-pattern_lens-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
@@ -230,7 +269,7 @@ python<span class="w"> </span>-m<span class="w"> </span><a href="pattern_lens/fi
                         <div class="source-button-container">
             <label class="pdoc-button view-source-button" for="mod-pattern_lens-view-source"><span>View Source</span></label>
             <div class="github-button-wrapper">
-                <a class="pdoc-button github-link-button" href="https://github.com/mivanit/pattern-lens/blob/0.4.0__init__.py#L0-L12" target="_blank">
+                <a class="pdoc-button github-link-button" href="https://github.com/mivanit/pattern-lens/blob/0.5.0__init__.py#L0-L12" target="_blank">
                     <span>View on GitHub</span>
                 </a>
             </div>

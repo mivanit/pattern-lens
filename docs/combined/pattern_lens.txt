@@ -1,4 +1,4 @@
-  docs for pattern_lens v0.4.0
+  docs for pattern_lens v0.5.0
 
 Contents
 
@@ -6,6 +6,13 @@ Contents
 
 [Coverage] [GitHub commits] [GitHub commit activity] [GitHub closed pull
 requests] [code size, bytes]
+
+  ----------------------------------- -----------------------------------
+    Inspect patterns across models,        Inspect a single pattern
+         heads, prompts, etc.         
+
+                  []                                  []
+  ----------------------------------- -----------------------------------
 
 pattern-lens
 
@@ -51,7 +58,25 @@ serve the web UI:
 
 Web UI
 
+pattern-lens provides two complementary web interfaces for exploring
+attention patterns:
+
+-   The main interface for comparing attention patterns across models,
+    layers, and heads
+    -   Filter and select patterns by model, layer, head, prompt, etc.
+    -   View multiple patterns simultaneously in a grid layout
+    -   Click patterns to open detailed single-pattern view
+-   A focused interface for detailed examination of individual attention
+    patterns
+    -   Interactive heatmap with hover highlights and keyboard
+        navigation
+    -   Token-by-token analysis with Q/K axis highlighting
+
 View a demo of the web UI at miv.name/pattern-lens/demo.
+
+Much of this web UI is inspired by CircuitsVis, but with a focus on just
+attention patterns and figures computed from them. I have also tried to
+make the interface a bit simpler, more flexible, and faster.
 
 Custom Figures
 
@@ -99,7 +124,7 @@ and then write+run a script/notebook that looks something like this:
         force=False,
     )
 
-see demo.ipynb for a full example
+See demo.ipynb for a full example.
 
 Submodules
 
@@ -121,6 +146,13 @@ pattern_lens
 
 [Coverage] [GitHub commits] [GitHub commit activity] [GitHub closed pull
 requests] [code size, bytes]
+
+  ----------------------------------- -----------------------------------
+    Inspect patterns across models,        Inspect a single pattern
+         heads, prompts, etc.         
+
+                  []                                  []
+  ----------------------------------- -----------------------------------
 
 pattern-lens
 
@@ -168,7 +200,25 @@ serve the web UI:
 
 Web UI
 
+pattern-lens provides two complementary web interfaces for exploring
+attention patterns:
+
+-   The main interface for comparing attention patterns across models,
+    layers, and heads
+    -   Filter and select patterns by model, layer, head, prompt, etc.
+    -   View multiple patterns simultaneously in a grid layout
+    -   Click patterns to open detailed single-pattern view
+-   A focused interface for detailed examination of individual attention
+    patterns
+    -   Interactive heatmap with hover highlights and keyboard
+        navigation
+    -   Token-by-token analysis with Q/K axis highlighting
+
 View a demo of the web UI at miv.name/pattern-lens/demo.
+
+Much of this web UI is inspired by CircuitsVis, but with a focus on just
+attention patterns and figures computed from them. I have also tried to
+make the interface a bit simpler, more flexible, and faster.
 
 Custom Figures
 
@@ -216,11 +266,11 @@ and then write+run a script/notebook that looks something like this:
         force=False,
     )
 
-see demo.ipynb for a full example
+See demo.ipynb for a full example.
 
 View Source on GitHub
 
-  docs for pattern_lens v0.4.0
+  docs for pattern_lens v0.5.0
 
 Contents
 
@@ -406,7 +456,7 @@ View Source on GitHub
 
 generate attention pattern activations for a model and prompts
 
-  docs for pattern_lens v0.4.0
+  docs for pattern_lens v0.5.0
 
 Contents
 
@@ -505,7 +555,7 @@ View Source on GitHub
 
 raw attention matrix
 
-  docs for pattern_lens v0.4.0
+  docs for pattern_lens v0.5.0
 
 Contents
 
@@ -570,7 +620,7 @@ divider string for separating subsections
 
 return type for a cache of activations
 
-  docs for pattern_lens v0.4.0
+  docs for pattern_lens v0.5.0
 
 Contents
 
@@ -870,7 +920,7 @@ Usage:
     def scale_matrix(matrix):
             return matrix * 2
 
-  docs for pattern_lens v0.4.0
+  docs for pattern_lens v0.5.0
 
 Contents
 
@@ -1099,7 +1149,7 @@ View Source on GitHub
 generates figures from the activations using the functions decorated
 with register_attn_figure_func
 
-  docs for pattern_lens v0.4.0
+  docs for pattern_lens v0.5.0
 
 Contents
 
@@ -1112,7 +1162,6 @@ API Documentation
 -   generate_models_jsonl
 -   get_func_metadata
 -   generate_functions_jsonl
--   inline_assets
 -   write_html_index
 
 View Source on GitHub
@@ -1181,40 +1230,16 @@ View Source on GitHub
 unions all functions from figures.jsonl and
 ATTENTION_MATRIX_FIGURE_FUNCS into the file
 
-def inline_assets
-
-    (
-        html: str,
-        assets: list[tuple[typing.Literal['script', 'style'], str]],
-        base_path: pathlib.Path
-    ) -> str
-
-View Source on GitHub
-
-Inline specified local CSS/JS files into an HTML document.
-
-Each entry in assets should be a tuple like ("script", "app.js") or
-("style", "style.css").
-
-Parameters:
-
--   html : str input HTML content.
--   assets : list[tuple[Literal["script", "style"], str]] List of
-    (tag_type, filename) tuples to inline.
-
-Returns:
-
-str : Modified HTML content with inlined assets.
-
 def write_html_index
 
     (path: pathlib.Path) -> None
 
 View Source on GitHub
 
-writes an index.html file to the path
+writes index.html and single.html files to the path (version replacement
+handled by makefile)
 
-  docs for pattern_lens v0.4.0
+  docs for pattern_lens v0.5.0
 
 Contents
 
@@ -1393,7 +1418,7 @@ Raises:
 -   ActivationsMissingError : if the activations file is missing
 -   ValueError : if return_fmt is not "torch" or "numpy"
 
-  docs for pattern_lens v0.4.0
+  docs for pattern_lens v0.5.0
 
 Contents
 
@@ -1439,7 +1464,7 @@ Returns:
     w/ a string value and some metadata. this is not guaranteed to be
     the same length as the input list!
 
-  docs for pattern_lens v0.4.0
+  docs for pattern_lens v0.5.0
 
 Contents
 
