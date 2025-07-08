@@ -424,9 +424,9 @@ class AttentionPatternViewer {
     renderWhitespace(token) {
         // Convert whitespace characters to visible symbols
         return token.replace(/ /g, '␣')
-                   .replace(/\t/g, '␉')
-                   .replace(/\n/g, '␤')
-                   .replace(/\r/g, '␍');
+            .replace(/\t/g, '␉')
+            .replace(/\n/g, '␤')
+            .replace(/\r/g, '␍');
     }
 
     renderTokensDisplay() {
@@ -505,7 +505,7 @@ class AttentionPatternViewer {
         return new Promise((resolve, reject) => {
             this.pngImage = new Image();
             this.pngImage.crossOrigin = 'anonymous';
-            
+
             console.log(`Attempting to load PNG image from: ${pngPath}`);
 
             this.pngImage.onload = () => {

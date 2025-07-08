@@ -36,7 +36,7 @@ async function pngToMatrix(url, n = null) {
 	const img = new Image();
 	img.crossOrigin = 'anonymous';   // allow CORS / data URIs
 	img.src = url;
-	
+
 	try {
 		await img.decode();
 		console.log(`pngToMatrix: Successfully decoded image`);

@@ -50,7 +50,7 @@ function getDefaultConfig() {
 			canvasSize: 500,
 			maxTokensForLabels: 30  // Hide labels if more than this many tokens
 		},
-		
+
 		// Data configuration
 		data: {
 			basePath: ".",
@@ -60,7 +60,7 @@ function getDefaultConfig() {
 				end: []            // Tokens to add at end
 			}
 		},
-		
+
 		// Visualization configuration
 		visualization: {
 			// Canvas styling
@@ -68,7 +68,7 @@ function getDefaultConfig() {
 			highlightLineWidth: 0.5,
 			gridStrokeStyle: "#ddd",
 			gridLineWidth: 0.2,
-			
+
 			// Colors for different axes
 			colors: {
 				kAxis: "#ff0000",      // Red for K (key) axis
@@ -76,10 +76,10 @@ function getDefaultConfig() {
 				kAxisLight: "#ffcccc", // Light red for K axis labels
 				qAxisLight: "#ccffcc"  // Light green for Q axis labels
 			},
-			
+
 			// Performance settings
 			throttleDelay: 16,  // ~60fps for mouse updates
-			
+
 			// Keyboard navigation
 			keyboard: {
 				moveStep: 1,
@@ -87,7 +87,7 @@ function getDefaultConfig() {
 				repeatDelay: 300,    // Initial delay before key repeat
 				repeatInterval: 100  // Interval between repeats
 			},
-			
+
 			// Token highlighting
 			tokenHighlight: {
 				maxOpacity: 0.9,

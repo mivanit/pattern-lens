@@ -793,18 +793,18 @@ const app = Vue.createApp({
 
 		regenerateColors() {
 			if (!this.visualization.colorBy) return;
-			
+
 			// Get unique values for the selected property
 			const uniqueValues = [...new Set(this.images.visible.map(img => img[this.visualization.colorBy]))];
-			
+
 			// Generate new random colors
 			this.visualization.colorMap = {};
 			uniqueValues.forEach(value => {
 				this.visualization.colorMap[value] = colorUtils.getRandomColor();
 			});
 		},
-		
-		
+
+
 		getBorderColor(image) {
 			if (!this.visualization.colorBy || !image) return 'transparent';
 			const value = image[this.visualization.colorBy];
@@ -861,20 +861,20 @@ const app = Vue.createApp({
 		},
 		sortedImages() {
 			if (!this.visualization.sortBy) return this.images.visible;
-			
+
 			return [...this.images.visible].sort((a, b) => {
 				const valueA = a[this.visualization.sortBy];
 				const valueB = b[this.visualization.sortBy];
-				
+
 				// Handle numeric values for layer and head
 				if (['layer', 'head'].includes(this.visualization.sortBy)) {
 					const numA = Number(valueA);
 					const numB = Number(valueB);
-					return this.visualization.sortOrder === 'asc' 
-						? numA - numB 
+					return this.visualization.sortOrder === 'asc'
+						? numA - numB
 						: numB - numA;
 				}
-				
+
 				// Handle string values
 				const comparison = String(valueA).localeCompare(String(valueB));
 				return this.visualization.sortOrder === 'asc' ? comparison : -comparison;
@@ -937,17 +937,17 @@ const app = Vue.createApp({
 					this.regenerateColors();
 				}
 			}
-    	},
+		},
 	},
 
 	// Lifecycle hook when component is mounted
 	async mounted() {
 		console.log('Mounting app:', this);
-		
+
 		// Apply config values to data (config is already initialized by main script)
 		this.images.perRow = CONFIG.ui.imagesPerRow;
 		this.isDarkMode = CONFIG.ui.darkModeDefault;
-		
+
 		const savedDarkMode = localStorage.getItem('darkMode');
 		if (savedDarkMode !== null) {
 			this.isDarkMode = savedDarkMode === 'true';

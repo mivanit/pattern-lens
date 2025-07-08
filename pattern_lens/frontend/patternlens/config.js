@@ -53,13 +53,13 @@ function getDefaultConfig() {
 			figureFormats: ['svg', 'svgz', 'png'],  // Supported figure formats
 			urlHeadPrefix: 'heads-'  // Prefix for URL head parameters
 		},
-		
+
 		// UI configuration
 		ui: {
 			imagesPerRow: 4,  // Number of images to display per row
 			darkModeDefault: false
 		},
-		
+
 		// Visualization configuration
 		visualization: {
 			// Add any visualization-specific settings here

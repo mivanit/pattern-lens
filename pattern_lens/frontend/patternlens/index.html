@@ -5,10 +5,7 @@
     <meta charset="UTF-8">
     <!-- <meta name="viewport" content="width=device-width, initial-scale=1.0"> -->
     <title>Attention Pattern Analysis</title>
-
-    <link rel="icon" type="image/svg+xml"
-        href='data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect width="100" height="100" fill="%23000" stroke="%23333" stroke-width="1"/><path d="M0,0 L100,100 L0,100 Z" fill="rgba(0,255,255,0.2)"/><path d="M0,0 L15,15 L0,15 Z" fill="rgba(255,255,255,0.3)"/><path d="M15,15 L35,35 L15,35 Z" fill="rgba(255,255,255,0.3)"/><path d="M35,35 L60,60 L35,60 Z" fill="rgba(255,255,255,0.3)"/><path d="M60,60 L100,100 L60,100 Z" fill="rgba(255,255,255,0.3)"/></svg>'>
-
+    <link rel="icon" type="image/svg+xml" href='data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect width="100" height="100" fill="%23000" stroke="%23333" stroke-width="1"/><path d="M0,0 L100,100 L0,100 Z" fill="rgba(0,255,255,0.2)"/><path d="M0,0 L15,15 L0,15 Z" fill="rgba(255,255,255,0.3)"/><path d="M15,15 L35,35 L15,35 Z" fill="rgba(255,255,255,0.3)"/><path d="M35,35 L60,60 L35,60 Z" fill="rgba(255,255,255,0.3)"/><path d="M60,60 L100,100 L60,100 Z" fill="rgba(255,255,255,0.3)"/></svg>'>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/3.2.31/vue.global.min.js"></script>
     <!-- Include lodash library for utility functions -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.21/lodash.min.js"></script>
@@ -18,22 +15,19 @@
     <!-- Include ag-Grid library for prompts table -->
     <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/ag-grid/32.1.0/ag-grid-community.min.js"></script> -->
     <script src="https://cdn.jsdelivr.net/npm/ag-grid-community@32.2.0/dist/ag-grid-community.min.js"></script>
-
     <!-- stylesheet -->
     <link rel="stylesheet" href="style.css">
-
     <!-- js imports -->
     <script src="config.js"></script>
     <script src="util.js"></script>
     <script src="app.js"></script>
-
     <!-- main script -->
     <script>
         // Mount the Vue app to the DOM element with id="app"
         window.addEventListener('DOMContentLoaded', async () => {
             // Initialize config first
             await initConfig();
-            
+
             // Mount the app
             app.mount('#app');
         });
@@ -54,37 +48,26 @@
                         <div class="dark-mode-icon" style="right: 4px">🌙</div>
                     </div>
                 </button>
-                <button class="btn btn-header" @click="clearAllSelections">
-                    🗑️ Clear All Selections
-                </button>
+                <button class="btn btn-header" @click="clearAllSelections"> 🗑️ Clear All Selections </button>
             </div>
         </div>
-
         <div class="main-selection-content">
             <!-- Top section with functions and models side by side -->
             <div class="top-filters">
                 <!-- Functions Filter -->
                 <div class="functions-filter">
                     <div class="filter-label">
-                        <input type="checkbox" id="select-all-functions"
-                            :indeterminate.prop="isIndeterminate('functions')" :checked="isChecked('functions')"
-                            @change="toggleSelectAll('functions', $event)">
+                        <input type="checkbox" id="select-all-functions" :indeterminate.prop="isIndeterminate('functions')" :checked="isChecked('functions')" @change="toggleSelectAll('functions', $event)">
                         <label for="select-all-functions">Functions:</label>
-                        <span class="counter">
-                            {{ filters.selected.functions.length }} / {{ Object.keys(filters.available.functions).length
-                            }}
-                        </span>
+                        <span class="counter"> {{ filters.selected.functions.length }} / {{ Object.keys(filters.available.functions).length }} </span>
                     </div>
                     <div class="checkbox-list">
                         <div v-for="(func, name) in filters.available.functions" :key="name" class="checkbox-item">
-                            <input type="checkbox" :id="'func-' + name" :value="name"
-                                v-model="filters.selected.functions">
+                            <input type="checkbox" :id="'func-' + name" :value="name" v-model="filters.selected.functions">
                             <label :for="'func-' + name">
                                 <span class="function-name">{{ name }}</span>
-                                <span class="function-info">ℹ️
-                                    <div class="function-tooltip">
-                                        <div v-if="func.figure_save_fmt"><strong>Format:</strong> {{
-                                            func.figure_save_fmt }}</div>
+                                <span class="function-info">ℹ️ <div class="function-tooltip">
+                                        <div v-if="func.figure_save_fmt"><strong>Format:</strong> {{ func.figure_save_fmt }}</div>
                                         <div v-if="func.source"><strong>Source:</strong> {{ func.source }}</div>
                                         <div v-if="func.doc"> {{ func.doc }} </div>
                                     </div>
@@ -93,21 +76,15 @@
                         </div>
                     </div>
                 </div>
-
                 <!-- Model Selection -->
                 <div id="modelGrid" class="ag-theme-alpine" style="height: 300px; width: 100%;"></div>
             </div>
-
             <!-- Prompts Table (full width) -->
             <div class="prompt-table">
                 <div class="prompts-info">
-                    <div class="prompt-counter">
-                        Selected Prompts: {{ prompts.selected.length }} / {{ Object.keys(prompts.all).length }}
-                    </div>
+                    <div class="prompt-counter"> Selected Prompts: {{ prompts.selected.length }} / {{ Object.keys(prompts.all).length }} </div>
                     <div class="dataset-list-container">
-                        <div class="dataset-list">
-                            Hover here to see unique datasets
-                            <div class="dataset-list-content">
+                        <div class="dataset-list"> Hover here to see unique datasets <div class="dataset-list-content">
                                 <ul>
                                     <li v-for="dataset in uniqueDatasets" :key="dataset">{{ dataset }}</li>
                                 </ul>
@@ -118,7 +95,6 @@
                 <div id="promptGrid" class="ag-theme-alpine"></div>
             </div>
         </div>
-
         <!-- image display button and size controls -->
         <div class="image-controls-container">
             <div class="visualization-controls">
@@ -132,10 +108,7 @@
                         <option value="head">Head</option>
                         <option value="promptHash">Prompt</option>
                     </select>
-                    <button class="btn btn-secondary" @click="regenerateColors" :disabled="!visualization.colorBy"
-                        title="Generate new random colors">
-                        🔄 Regenerate Colors
-                    </button>
+                    <button class="btn btn-secondary" @click="regenerateColors" :disabled="!visualization.colorBy" title="Generate new random colors"> 🔄 Regenerate Colors </button>
                 </div>
                 <div class="sort-controls">
                     <label for="sortBy">Sort by:</label>
@@ -155,59 +128,37 @@
             </div>
             <div class="image-controls">
                 <div class="image-controls-display">
-                    <button class="btn" :class="{ 'btn-primary': !images.upToDate, 'btn-secondary': images.upToDate }"
-                        @click="displayImages">
-                        {{ images.upToDate ? 'Images Up to Date' : 'Display Images' }}
-                    </button>
+                    <button class="btn" :class="{ 'btn-primary': !images.upToDate, 'btn-secondary': images.upToDate }" @click="displayImages"> {{ images.upToDate ? 'Images Up to Date' : 'Display Images' }} </button>
                     <div class="progress-wrapper">
-                        <span class="progress-status" v-if="images.expected > 0"> {{ images.visible.length || 'N/A' }} /
-                            {{ images.expected }} images</span>
+                        <span class="progress-status" v-if="images.expected > 0"> {{ images.visible.length || 'N/A' }} / {{ images.expected }} images</span>
                         <div class="progress-bar" v-if="loading || images.visible.length > 0">
-                            <div class="progress-bar-fill" :class="{ 'loading': loading, 'complete': !loading }"
-                                :style="{ width: `${(images.visible.length / images.expected) * 100}%` }">
+                            <div class="progress-bar-fill" :class="{ 'loading': loading, 'complete': !loading }" :style="{ width: `${(images.visible.length / images.expected) * 100}%` }">
                             </div>
                         </div>
                     </div>
                 </div>
                 <div class="image-controls-size" v-if="images.visible.length > 0">
                     <label for="resizeSlider">Images per row:</label>
-                    <input type="range" id="resizeSlider" class="resize-slider" v-model.number="images.perRow" min="1"
-                        max="16" step="1">
+                    <input type="range" id="resizeSlider" class="resize-slider" v-model.number="images.perRow" min="1" max="16" step="1">
                     <input type="number" class="resize-input" v-model.number="images.perRow" min="1" max="64">
                 </div>
             </div>
         </div>
-
         <!-- images are loading -->
         <div v-if="loading" class="loading">Loading...</div>
-
         <!-- actual images display -->
         <!-- actual images display -->
         <div v-else-if="images.visible.length > 0" class="images" :style="{ 'grid-template-columns': `repeat(${images.perRow}, 1fr)` }">
-            <div
-                v-for="image in sortedImages"
-                class="image-container"
-                :style="{ borderColor: getBorderColor(image) }"
-            >
+            <div v-for="image in sortedImages" class="image-container" :style="{ borderColor: getBorderColor(image) }">
                 <p v-if="images.perRow <= 4" class="image-info">
-                    <a :href="getSinglePropertyFilterUrl('models', image.model)">{{ image.model }}</a> -
-                    <a :href="getSinglePropertyFilterUrl('functions', image.function)">{{ image.function }}</a> -
-                    <a :href="getSinglePropertyFilterUrl('layers', image.layer)">L{{ image.layer }}</a> -
-                    <a :href="getSinglePropertyFilterUrl('heads', image.head)">H{{ image.head }}</a> -
-                    <a :href="getSinglePropertyFilterUrl('prompts', image.promptHash)">{{ image.promptHash }}</a>
+                    <a :href="getSinglePropertyFilterUrl('models', image.model)">{{ image.model }}</a> - <a :href="getSinglePropertyFilterUrl('functions', image.function)">{{ image.function }}</a> - <a :href="getSinglePropertyFilterUrl('layers', image.layer)">L{{ image.layer }}</a> - <a :href="getSinglePropertyFilterUrl('heads', image.head)">H{{ image.head }}</a> - <a :href="getSinglePropertyFilterUrl('prompts', image.promptHash)">{{ image.promptHash }}</a>
                 </p>
-                <a href="#" @click.prevent="openSingleView(image.promptHash, image.model, image.layer, image.head)" 
-                class="img-container" v-html="image.content"
-                :title="images.perRow > 4 ? image.name : ''"
-                style="cursor: pointer;">
+                <a href="#" @click.prevent="openSingleView(image.promptHash, image.model, image.layer, image.head)" class="img-container" v-html="image.content" :title="images.perRow > 4 ? image.name : ''" style="cursor: pointer;">
                 </a>
             </div>
         </div>
-
-
         <!-- no images found -->
         <div v-else-if="images.requested" class="error">No images found for the selected criteria.</div>
-
     </div>
 </body>
 

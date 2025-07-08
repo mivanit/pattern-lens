@@ -4,7 +4,7 @@
  */
 
 class AttentionDataLoader {
-    constructor() {}
+    constructor() { }
 
     async loadAttentionPattern(model, promptHash, layerIdx, headIdx) {
         const pngPath = `${CONFIG.data.basePath}/${model}/prompts/${promptHash}/L${layerIdx}/H${headIdx}/${CONFIG.data.attentionFilename}`;
