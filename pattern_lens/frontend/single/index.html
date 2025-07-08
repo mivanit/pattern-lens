@@ -9,8 +9,30 @@
 </head>
 
 <body>
+    <div class="header">
+        <a href="https://github.com/mivanit/pattern-lens/" class="source-link" title="Pattern Lens GitHub Repository"> pattern-lens v$$PATTERN_LENS_VERSION$$ </a>
+        <div id="info" class="info-center"></div>
+        <div class="help-menu" title="Help & Controls">
+            <span class="help-button">?</span>
+            <div class="help-content">
+                <h3>Controls</h3>
+                <ul>
+                    <li><strong>Mouse:</strong> Hover to highlight attention patterns</li>
+                    <li><strong>Click:</strong> Enter keyboard mode for precise navigation</li>
+                    <li><strong>Arrow keys:</strong> Navigate in keyboard mode</li>
+                    <li><strong>Ctrl + arrows:</strong> Move faster in keyboard mode</li>
+                    <li><strong>Escape:</strong> Exit keyboard mode</li>
+                    <li><strong>Token clicks:</strong> Left click sets K-axis, right click sets Q-axis</li>
+                </ul>
+                <h3>Color Legend</h3>
+                <ul>
+                    <li><span class="color-demo k-color"></span> K-axis (Key tokens)</li>
+                    <li><span class="color-demo q-color"></span> Q-axis (Query tokens)</li>
+                </ul>
+            </div>
+        </div>
+    </div>
     <div id="controls">
-        <div id="info"></div>
         <div class="cell-info" id="cellInfo"></div>
     </div>
     <div class="main-content">
@@ -38,10 +60,10 @@
             root.style.setProperty('--k-axis-light', CONFIG.visualization.colors.kAxisLight);
             root.style.setProperty('--q-axis-light', CONFIG.visualization.colors.qAxisLight);
 
-            // Parse URL parameters with defaults for debugging
+            // Parse URL parameters with defaults from config
             const urlParams = new URLSearchParams(window.location.search);
-            const promptHash = urlParams.get('prompt') || 'LQc1qlQHZHOVpI7zEWAeEA';
-            const headParam = urlParams.get('head') || 'gpt2-small.L0.H0';
+            const promptHash = urlParams.get('prompt') || CONFIG.data.defaults.promptHash;
+            const headParam = urlParams.get('head') || CONFIG.data.defaults.head;
 
             // Parse head parameter: {model}.L{layer}.H{head}
             const parts = headParam.split('.');

@@ -137,37 +137,25 @@ def generate_functions_jsonl(path: Path) -> None:
 
 
 def write_html_index(path: Path) -> None:
-	"""writes an index.html file to the path"""
+	"""writes index.html and single.html files to the path"""
 	# TYPING: error: Argument 1 to "Path" has incompatible type "Traversable"; expected "str | PathLike[str]"  [arg-type]
 	frontend_resources_path: Path = Path(
 		importlib.resources.files(pattern_lens).joinpath("frontend"),  # type: ignore[arg-type]
 	)
 
-	# Check if pre-built patternlens.html exists
-	prebuilt_path: Path = frontend_resources_path / "patternlens.html"
-	if prebuilt_path.exists():
-		# Use pre-built version
-		html_index: str = prebuilt_path.read_text(encoding="utf-8")
-	else:
-		# Build from source using muutils
-		from tempfile import NamedTemporaryFile
+	pl_index_html: str = (frontend_resources_path / "patternlens.html").read_text()
+	sg_html: str = (frontend_resources_path / "single.html").read_text()
 
-		with NamedTemporaryFile(mode="w", suffix=".html", delete=False) as tmp:
-			tmp_path = Path(tmp.name)
-
-		# Bundle the HTML file
-		inline_html_file(
-			html_path=frontend_resources_path / "patternlens" / "index.html",
-			output_path=tmp_path,
-		)
-
-		# Read the bundled content
-		html_index = tmp_path.read_text(encoding="utf-8")
-		tmp_path.unlink()  # Clean up temp file
-
-	# add version
+	# Get version
 	pattern_lens_version: str = importlib.metadata.version("pattern-lens")
-	html_index = html_index.replace("$$PATTERN_LENS_VERSION$$", pattern_lens_version)
-	# write the index.html file
+
+	# Replace version placeholder in both files
+	pl_index_html = pl_index_html.replace("$$PATTERN_LENS_VERSION$$", pattern_lens_version)
+	sg_html = sg_html.replace("$$PATTERN_LENS_VERSION$$", pattern_lens_version)
+
+	# Write both files
 	with open(path / "index.html", "w", encoding="utf-8") as f:
-		f.write(html_index)
+		f.write(pl_index_html)
+
+	with open(path / "single.html", "w", encoding="utf-8") as f:
+		f.write(sg_html)

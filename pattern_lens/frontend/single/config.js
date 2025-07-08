@@ -58,6 +58,11 @@ function getDefaultConfig() {
 			tokenBoundary: {
 				start: ["<BOS>"],  // Tokens to add at start
 				end: []            // Tokens to add at end
+			},
+			// Default values for URL parameters when not specified
+			defaults: {
+				promptHash: "LQc1qlQHZHOVpI7zEWAeEA",
+				head: "gpt2-small.L0.H0"
 			}
 		},
 
