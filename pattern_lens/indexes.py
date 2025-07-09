@@ -133,8 +133,12 @@ def generate_functions_jsonl(path: Path) -> None:
 			f.write("\n")
 
 
-def write_html_index(path: Path) -> None:
-	"""writes index.html and single.html files to the path (version replacement handled by makefile)"""
+def write_html_index(
+	path: Path,
+	cfg_single: dict | None = None,
+	cfg_patternlens: dict | None = None,
+) -> None:
+	"""writes index.html and single.html files to the path"""
 	# TYPING: error: Argument 1 to "Path" has incompatible type "Traversable"; expected "str | PathLike[str]"  [arg-type]
 	frontend_resources_path: Path = Path(
 		importlib.resources.files(pattern_lens).joinpath("frontend"),  # type: ignore[arg-type]
@@ -143,9 +147,18 @@ def write_html_index(path: Path) -> None:
 	pl_index_html: str = (frontend_resources_path / "patternlens.html").read_text()
 	sg_html: str = (frontend_resources_path / "single.html").read_text()
 
-	# Write both files (version replacement now handled by makefile)
+	# Write both html files
 	with open(path / "index.html", "w", encoding="utf-8") as f:
 		f.write(pl_index_html)
 
 	with open(path / "single.html", "w", encoding="utf-8") as f:
 		f.write(sg_html)
+
+	# write the config files if they are provided
+	if cfg_single is not None:
+		with open(path / "sg_cfg.json", "w", encoding="utf-8") as f:
+			json.dump(cfg_single, f, indent="\t")
+
+	if cfg_patternlens is not None:
+		with open(path / "pl_cfg.json", "w", encoding="utf-8") as f:
+			json.dump(cfg_patternlens, f, indent="\t")
