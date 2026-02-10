@@ -1,14 +1,15 @@
 [project]
     name = "pattern_lens"
-    version = "0.5.1"
+    version = "0.5.2"
     description = ""
     readme = "README.md"
     requires-python = ">=3.11"
     dependencies = [
         # standard
-        "numpy>=1.26.1,<2.0.0",
+        # "numpy>=1.26.1,<2.0.0",
+        "numpy",
         "torch>=2.5.1",
-        "jaxtyping>=0.2.33",
+        "jaxtyping>=0.2.11",
         "tqdm>=4.66.5",
         "pandas>=2.2.2",
         "scipy>=1.14.1",
