@@ -68,6 +68,14 @@ from pattern_lens.load_activations import (
 from pattern_lens.prompts import load_text_data
 
 
+def _rel_path(p: Path) -> str:
+	"""Return path relative to cwd if possible, otherwise absolute."""
+	try:
+		return p.relative_to(Path.cwd()).as_posix()
+	except ValueError:
+		return p.as_posix()
+
+
 # return nothing, but `stack_heads` still affects how we save the activations
 @overload
 def compute_activations(
@@ -447,7 +455,7 @@ def activations_main(
 	save_path_p.mkdir(parents=True, exist_ok=True)
 	model_path: Path = save_path_p / model_name
 	with SpinnerContext(
-		message=f"saving model info to {model_path.as_posix()}",
+		message=f"saving model info to {_rel_path(model_path)}",
 		**SPINNER_KWARGS,
 	):
 		model_cfg: HookedTransformerConfig
@@ -458,7 +466,7 @@ def activations_main(
 
 	# load prompts
 	with SpinnerContext(
-		message=f"loading prompts from {prompts_path = }",
+		message=f"loading prompts from {Path(prompts_path).as_posix()}",
 		**SPINNER_KWARGS,
 	):
 		prompts: list[dict]
@@ -475,10 +483,10 @@ def activations_main(
 		# truncate to n_samples
 		prompts = prompts[:n_samples]
 
-	print(f"{len(prompts)} prompts loaded")
+	print(f"  {len(prompts)} prompts loaded")
 
 	# write index.html
-	with SpinnerContext(message="writing index.html", **SPINNER_KWARGS):
+	with SpinnerContext(message=f"writing {_rel_path(save_path_p / 'index.html')}", **SPINNER_KWARGS):
 		if not no_index_html:
 			write_html_index(save_path_p)
 
