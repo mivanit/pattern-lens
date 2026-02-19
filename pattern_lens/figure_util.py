@@ -61,7 +61,7 @@ def matplotlib_figure_saver(
 	func: None = None,
 	fmt: str = MATPLOTLIB_FIGURE_FMT,
 ) -> Callable[
-	[Callable[[AttentionMatrix, plt.Axes], None], str],
+	[Callable[[AttentionMatrix, plt.Axes], None]],
 	AttentionMatrixFigureFunc,
 ]: ...
 def matplotlib_figure_saver(
@@ -70,7 +70,7 @@ def matplotlib_figure_saver(
 ) -> (
 	AttentionMatrixFigureFunc
 	| Callable[
-		[Callable[[AttentionMatrix, plt.Axes], None], str],
+		[Callable[[AttentionMatrix, plt.Axes], None]],
 		AttentionMatrixFigureFunc,
 	]
 ):

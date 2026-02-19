@@ -486,7 +486,10 @@ def activations_main(
 	print(f"  {len(prompts)} prompts loaded")
 
 	# write index.html
-	with SpinnerContext(message=f"writing {_rel_path(save_path_p / 'index.html')}", **SPINNER_KWARGS):
+	with SpinnerContext(
+		message=f"writing {_rel_path(save_path_p / 'index.html')}",
+		**SPINNER_KWARGS,
+	):
 		if not no_index_html:
 			write_html_index(save_path_p)
 

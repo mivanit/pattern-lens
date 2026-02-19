@@ -286,7 +286,7 @@ def select_attn_figure_funcs(
 
 def figures_main(
 	model_name: str,
-	save_path: str,
+	save_path: str | Path,
 	n_samples: int,
 	force: bool,
 	figure_funcs_select: set[str] | str | None = None,
@@ -297,7 +297,7 @@ def figures_main(
 	# Parameters:
 	- `model_name : str`
 		model name to use, used for loading the model config, prompts, activations, and saving the figures
-	- `save_path : str`
+	- `save_path : str | Path`
 		base path to look in
 	- `n_samples : int`
 		max number of samples to process
