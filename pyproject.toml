@@ -159,6 +159,9 @@
     [tool.ty.src]
         exclude = [".meta/scripts"]
 
+    [tool.ty.rules]
+        unused-type-ignore-comment = "ignore"
+
     [tool.basedpyright]
         exclude = [".meta/scripts"]
 

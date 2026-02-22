@@ -51,7 +51,7 @@ def test_compute_activations_torch_return():
 	prompt = {"text": "test prompt", "hash": "testhash123"}
 
 	# Test with stack_heads=True
-	_path, result = compute_activations(
+	_path, result = compute_activations(  # type: ignore[call-overload]
 		prompt=prompt,
 		model=model,
 		save_path=temp_dir,
@@ -70,7 +70,7 @@ def test_compute_activations_torch_return():
 	)
 
 	# Test with stack_heads=False
-	_path, result = compute_activations(
+	_path, result = compute_activations(  # type: ignore[call-overload]
 		prompt=prompt,
 		model=model,
 		save_path=temp_dir,
@@ -95,12 +95,12 @@ def test_compute_activations_invalid_return():
 
 	# Test with an invalid return_cache value
 	with pytest.raises(ValueError, match="invalid return_cache"):
-		compute_activations(
+		compute_activations(  # type: ignore[call-overload]
 			prompt=prompt,
 			model=model,
 			save_path=temp_dir,
 			# intentionally invalid
-			return_cache="invalid",  # type: ignore[call-overload]
+			return_cache="invalid",
 			stack_heads=True,
 		)
 
@@ -130,7 +130,7 @@ def test_get_activations_torch_return():
 		mock_load.return_value = (Path("mock/path"), mock_cache)
 
 		# Call get_activations with torch return format
-		_path, cache = get_activations(
+		_path, cache = get_activations(  # type: ignore[call-overload]
 			prompt=prompt,
 			model=model,
 			save_path=temp_dir,
@@ -156,7 +156,7 @@ def test_get_activations_none_return():
 		mock_load.return_value = (mock_path, {})  # Cache will be ignored
 
 		# Call get_activations with None return format
-		path, cache = get_activations(
+		path, cache = get_activations(  # type: ignore[call-overload]
 			prompt=prompt,
 			model=model,
 			save_path=temp_dir,

@@ -31,7 +31,7 @@ def get_all_figure_names() -> list[str]:
 			getattr(
 				func,
 				_FIGURE_NAMES_KEY,
-				[func.__name__],
+				[getattr(func, "__name__", "<unknown>")],
 			)
 			for func in ATTENTION_MATRIX_FIGURE_FUNCS
 		),
@@ -66,7 +66,7 @@ def register_attn_figure_func(
 	```
 
 	"""
-	setattr(func, _FIGURE_NAMES_KEY, (func.__name__,))
+	setattr(func, _FIGURE_NAMES_KEY, (getattr(func, "__name__", "<unknown>"),))
 	global ATTENTION_MATRIX_FIGURE_FUNCS  # noqa: PLW0602
 	ATTENTION_MATRIX_FIGURE_FUNCS.append(func)
 
@@ -79,10 +79,11 @@ def register_attn_figure_multifunc(
 	"decorator which registers a function as a multi-figure function"
 
 	def decorator(func: AttentionMatrixFigureFunc) -> AttentionMatrixFigureFunc:
+		func_name: str = getattr(func, "__name__", "<unknown>")
 		setattr(
 			func,
 			_FIGURE_NAMES_KEY,
-			tuple([f"{func.__name__}.{name}" for name in names]),
+			tuple([f"{func_name}.{name}" for name in names]),
 		)
 		global ATTENTION_MATRIX_FIGURE_FUNCS  # noqa: PLW0602
 		ATTENTION_MATRIX_FIGURE_FUNCS.append(func)

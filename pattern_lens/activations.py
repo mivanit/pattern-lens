@@ -180,6 +180,7 @@ def compute_activations(  # noqa: PLR0915
 	prompt_str: str = prompt["text"]
 
 	# compute or get prompt metadata
+	assert model.tokenizer is not None
 	prompt_tokenized: list[str] = prompt.get(
 		"tokens",
 		model.tokenizer.tokenize(prompt_str),
@@ -270,7 +271,7 @@ def compute_activations(  # noqa: PLR0915
 
 		np.savez_compressed(
 			activations_path,
-			**cache_np,
+			**cache_np,  # type: ignore[arg-type]
 		)
 
 		# return
@@ -369,7 +370,7 @@ def get_activations(
 	if isinstance(model, str):
 		model = HookedTransformer.from_pretrained(model_name)
 
-	return compute_activations(
+	return compute_activations(  # type: ignore[return-value]
 		prompt=prompt,
 		model=model,
 		save_path=save_path,
@@ -384,7 +385,7 @@ DEFAULT_DEVICE: torch.device = torch.device(
 
 def activations_main(
 	model_name: str,
-	save_path: str,
+	save_path: str | Path,
 	prompts_path: str,
 	raw_prompts: bool,
 	min_chars: int,
@@ -443,7 +444,7 @@ def activations_main(
 			model_name,
 			device=device_,
 		)
-		model.model_name = model_name
+		model.model_name = model_name  # type: ignore[unresolved-attribute]
 		model.cfg.model_name = model_name
 		n_params: int = sum(p.numel() for p in model.parameters())
 	print(

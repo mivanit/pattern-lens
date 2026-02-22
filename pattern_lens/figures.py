@@ -99,7 +99,7 @@ def process_single_head(
 	funcs_status: dict[str, bool | Exception] = dict()
 
 	for func in figure_funcs:
-		func_name: str = func.__name__
+		func_name: str = getattr(func, "__name__", "<unknown>")
 		fig_path: list[Path] = list(save_dir.glob(f"{func_name}.*"))
 
 		if not force_overwrite and len(fig_path) > 0:
@@ -112,10 +112,10 @@ def process_single_head(
 
 		# bling catch any exception
 		except Exception as e:  # noqa: BLE001
-			error_file = save_dir / f"{func.__name__}.error.txt"
+			error_file = save_dir / f"{func_name}.error.txt"
 			error_file.write_text(str(e))
 			warnings.warn(
-				f"Error in {func.__name__} for L{layer_idx}H{head_idx}: {e!s}",
+				f"Error in {func_name} for L{layer_idx}H{head_idx}: {e!s}",
 				stacklevel=2,
 			)
 			funcs_status[func_name] = e
@@ -266,14 +266,14 @@ def select_attn_figure_funcs(
 		figure_funcs = [
 			func
 			for func in ATTENTION_MATRIX_FIGURE_FUNCS
-			if pattern.match(func.__name__)
+			if pattern.match(getattr(func, "__name__", "<unknown>"))
 		]
 	elif isinstance(figure_funcs_select, set):
 		# if a set, assume a set of function names
 		figure_funcs = [
 			func
 			for func in ATTENTION_MATRIX_FIGURE_FUNCS
-			if func.__name__ in figure_funcs_select
+			if getattr(func, "__name__", "<unknown>") in figure_funcs_select
 		]
 	else:
 		err_msg: str = (
@@ -330,7 +330,7 @@ def figures_main(
 		figure_funcs_select=figure_funcs_select,
 	)
 	print(f"{len(figure_funcs)} figure functions loaded")
-	print("\t" + ", ".join([func.__name__ for func in figure_funcs]))
+	print("\t" + ", ".join([getattr(func, "__name__", "<unknown>") for func in figure_funcs]))
 
 	chunksize: int = int(
 		max(

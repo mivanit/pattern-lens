@@ -1,0 +1,16 @@
+# ty: All checks passed!
+# mypy: Success: no issues found in 13 source files
+
+[type_errors.ty]
+total_errors = 0
+
+[type_errors.ty.by_type]
+
+[type_errors.ty.by_file]
+
+[type_errors.mypy]
+total_errors = 0
+
+[type_errors.mypy.by_type]
+
+[type_errors.mypy.by_file]

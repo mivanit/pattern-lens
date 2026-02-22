@@ -71,9 +71,10 @@ def get_func_metadata(func: Callable) -> list[dict[str, str | None]]:
 
 	"""
 	source_file: str | None = inspect.getsourcefile(func)
+	func_name: str = getattr(func, "__name__", "<unknown>")
 	output: dict[str, str | None] = dict(
-		func_name=func.__name__,
-		doc=func.__doc__,
+		func_name=func_name,
+		doc=getattr(func, "__doc__", None),
 		figure_save_fmt=getattr(func, "figure_save_fmt", None),
 		source=Path(source_file).as_posix() if source_file else None,
 	)
@@ -87,15 +88,15 @@ def get_func_metadata(func: Callable) -> list[dict[str, str | None]]:
 	if fig_names:
 		return [
 			{
-				"name": func_name,
+				"name": fig_name,
 				**output,
 			}
-			for func_name in fig_names
+			for fig_name in fig_names
 		]
 	else:
 		return [
 			{
-				"name": func.__name__,
+				"name": func_name,
 				**output,
 			},
 		]

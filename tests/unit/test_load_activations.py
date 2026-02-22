@@ -65,7 +65,7 @@ def test_load_activations_success():
 	fake_activations = {
 		"blocks.0.attn.hook_pattern": np.random.rand(1, 2, 10, 10).astype(np.float32),
 	}
-	np.savez(prompt_dir / "activations.npz", **fake_activations)
+	np.savez(prompt_dir / "activations.npz", **fake_activations)  # type: ignore[arg-type]
 
 	# Test loading with numpy format
 	with mock.patch(
