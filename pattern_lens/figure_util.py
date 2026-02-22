@@ -105,7 +105,9 @@ def matplotlib_figure_saver(
 	) -> AttentionMatrixFigureFunc:
 		@functools.wraps(func)
 		def wrapped(attn_matrix: AttentionMatrix, save_dir: Path) -> None:
-			fig_path: Path = save_dir / f"{getattr(func, '__name__', '<unknown>')}.{fmt}"
+			fig_path: Path = (
+				save_dir / f"{getattr(func, '__name__', '<unknown>')}.{fmt}"
+			)
 
 			fig, ax = plt.subplots(figsize=(10, 10))
 			func(attn_matrix, ax)
@@ -473,7 +475,9 @@ def save_matrix_wrapper(
 	) -> AttentionMatrixFigureFunc:
 		@functools.wraps(func)
 		def wrapped(attn_matrix: AttentionMatrix, save_dir: Path) -> None:
-			fig_path: Path = save_dir / f"{getattr(func, '__name__', '<unknown>')}.{fmt}"
+			fig_path: Path = (
+				save_dir / f"{getattr(func, '__name__', '<unknown>')}.{fmt}"
+			)
 			processed_matrix: Matrix2D = func(attn_matrix)
 
 			if fmt == "png":

@@ -330,7 +330,10 @@ def figures_main(
 		figure_funcs_select=figure_funcs_select,
 	)
 	print(f"{len(figure_funcs)} figure functions loaded")
-	print("\t" + ", ".join([getattr(func, "__name__", "<unknown>") for func in figure_funcs]))
+	print(
+		"\t"
+		+ ", ".join([getattr(func, "__name__", "<unknown>") for func in figure_funcs]),
+	)
 
 	chunksize: int = int(
 		max(
