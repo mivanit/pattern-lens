@@ -2,7 +2,7 @@
 # custom ignores
 
 data/pile_1k.jsonl
-tests/_temp/**
+tests/.temp/**
 .meta/local/**
 test.ipynb
 

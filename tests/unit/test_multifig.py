@@ -5,7 +5,7 @@ import numpy as np
 
 from pattern_lens.figure_util import matplotlib_multifigure_saver
 
-TEMP_DIR: Path = Path("tests/_temp")
+TEMP_DIR: Path = Path("tests/.temp")
 
 
 def test_matplotlib_multifigure_saver():

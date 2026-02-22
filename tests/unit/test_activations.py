@@ -8,7 +8,7 @@ from transformer_lens import HookedTransformer  # type: ignore[import-untyped]
 from pattern_lens.activations import compute_activations, get_activations
 from pattern_lens.load_activations import ActivationsMissingError
 
-TEMP_DIR: Path = Path("tests/_temp")
+TEMP_DIR: Path = Path("tests/.temp")
 
 
 class MockHookedTransformer:

@@ -3,7 +3,7 @@ import pytest
 from pattern_lens.activations import activations_main
 from pattern_lens.figures import figures_main
 
-SAVE_PATH_BASE: str = "tests/_temp/pipeline"
+SAVE_PATH_BASE: str = "tests/.temp/pipeline"
 PROMPTS_PATH: str = "data/pile_100.jsonl"
 N_SAMPLES: int = 3
 MIN_CHARS: int = 32

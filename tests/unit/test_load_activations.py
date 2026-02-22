@@ -14,7 +14,7 @@ from pattern_lens.load_activations import (
 	load_activations,
 )
 
-TEMP_DIR: Path = Path("tests/_temp")
+TEMP_DIR: Path = Path("tests/.temp")
 
 
 def test_augment_prompt_with_hash():
@@ -164,7 +164,7 @@ def test_load_activations_missing_npz_is_subclass_of_file_not_found():
 def test_load_activations_invalid_return_fmt():
 	"""Test that invalid return_fmt raises ValueError."""
 	with pytest.raises(ValueError, match="Invalid return_fmt"):
-		load_activations(
+		load_activations(  # type: ignore[no-matching-overload]
 			model_name="test-model",
 			prompt={"text": "test", "hash": "test"},
 			save_path=Path("/nonexistent"),

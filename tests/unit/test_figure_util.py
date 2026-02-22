@@ -17,7 +17,7 @@ from pattern_lens.figure_util import (
 	save_matrix_wrapper,
 )
 
-TEMP_DIR: Path = Path("tests/_temp")
+TEMP_DIR: Path = Path("tests/.temp")
 
 
 def test_matplotlib_figure_saver():

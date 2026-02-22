@@ -8,7 +8,7 @@ from pattern_lens.attn_figure_funcs import ATTENTION_MATRIX_FIGURE_FUNCS
 from pattern_lens.figure_util import save_matrix_wrapper
 from pattern_lens.figures import compute_and_save_figures, process_single_head
 
-TEMP_DIR: Path = Path("tests/_temp")
+TEMP_DIR: Path = Path("tests/.temp")
 
 
 def test_process_single_head():
