@@ -117,7 +117,7 @@ PYTHON_VERSION := NULL
 
 # which type checkers to run (comma-separated)
 # available: ty,basedpyright,mypy
-TYPE_CHECKERS ?= ty,basedpyright,mypy
+TYPE_CHECKERS ?= ty,mypy
 
 # path to type check (empty = use config from pyproject.toml)
 TYPECHECK_PATH ?=

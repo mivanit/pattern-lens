@@ -6,13 +6,13 @@ accelerate==1.12.0
 aiohappyeyeballs==2.6.1
     # via aiohttp
 aiohttp==3.13.3
-    # via
-    #   datasets
-    #   fsspec
+    # via fsspec
 aiosignal==1.4.0
     # via aiohttp
 annotated-types==0.7.0
     # via pydantic
+anyio==4.12.1
+    # via httpx
 appnope==0.1.4 ; sys_platform == 'darwin'
     # via ipykernel
 asttokens==3.0.1
@@ -25,6 +25,7 @@ attrs==25.4.0
     #   referencing
 backports-tarfile==1.2.0 ; python_full_version < '3.12' and platform_machine != 'ppc64le' and platform_machine != 's390x'
     # via jaraco-context
+basedpyright==1.38.1
 beartype==0.14.1
     # via
     #   pattern-lens
@@ -39,6 +40,8 @@ bracex==2.6
     # via wcmatch
 certifi==2026.1.4
     # via
+    #   httpcore
+    #   httpx
     #   requests
     #   sentry-sdk
 cffi==2.0.0 ; (implementation_name == 'pypy' and platform_machine == 'ppc64le') or (implementation_name == 'pypy' and platform_machine == 's390x') or (implementation_name == 'pypy' and platform_machine != 'ppc64le' and platform_machine != 's390x' and platform_python_implementation == 'PyPy') or (implementation_name == 'pypy' and sys_platform != 'linux') or (platform_machine != 'ppc64le' and platform_machine != 's390x' and platform_python_implementation != 'PyPy' and sys_platform == 'linux')
@@ -81,8 +84,10 @@ cuda-pathfinder==1.3.4 ; platform_machine == 'x86_64' and sys_platform == 'linux
     # via cuda-bindings
 cycler==0.12.1
     # via matplotlib
-datasets==2.14.4
-    # via transformer-lens
+datasets==4.5.0
+    # via
+    #   pattern-lens
+    #   transformer-lens
 debugpy==1.8.20
     # via ipykernel
 decorator==5.2.1
@@ -105,6 +110,7 @@ fastjsonschema==2.21.2
     # via nbformat
 filelock==3.24.3
     # via
+    #   datasets
     #   huggingface-hub
     #   torch
     #   transformers
@@ -114,7 +120,7 @@ frozenlist==1.8.0
     # via
     #   aiohttp
     #   aiosignal
-fsspec==2026.2.0
+fsspec==2025.10.0
     # via
     #   datasets
     #   huggingface-hub
@@ -123,8 +129,14 @@ gitdb==4.0.12
     # via gitpython
 gitpython==3.1.46
     # via wandb
+h11==0.16.0
+    # via httpcore
 hf-xet==1.2.0 ; platform_machine == 'aarch64' or platform_machine == 'amd64' or platform_machine == 'arm64' or platform_machine == 'x86_64'
     # via huggingface-hub
+httpcore==1.0.9
+    # via httpx
+httpx==0.28.1
+    # via datasets
 huggingface-hub==0.36.2
     # via
     #   accelerate
@@ -136,6 +148,8 @@ id==1.6.1
     # via twine
 idna==3.11
     # via
+    #   anyio
+    #   httpx
     #   requests
     #   yarl
 igittigitt==2.1.5
@@ -258,6 +272,8 @@ networkx==3.6.1
     # via torch
 nh3==0.3.3
     # via readme-renderer
+nodejs-wheel-binaries==24.13.1
+    # via basedpyright
 numpy==2.4.2
     # via
     #   accelerate
@@ -520,6 +536,7 @@ types-tqdm==4.67.3.20260205
 typing-extensions==4.15.0
     # via
     #   aiosignal
+    #   anyio
     #   beautifulsoup4
     #   huggingface-hub
     #   ipython

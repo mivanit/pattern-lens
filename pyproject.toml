@@ -26,6 +26,8 @@
         "zanj>=0.3.1",
         # TL
         "transformer-lens>=2.10.0",
+        # pin datasets for pyarrow 21+ compatibility (fixes PyExtensionType removal)
+        "datasets>=2.14.7",
         # this TL dep not listed? is this in an extra?
         "typeguard>=4.4.1",
     ]
@@ -43,6 +45,7 @@
         "mypy>=1.0.1",
         "types-tqdm",
         "ty",
+        "basedpyright",
         # docs
         'pdoc>=14.6.0',
         "nbconvert>=7.16.4",
@@ -151,8 +154,9 @@
     [tool.mypy]
         check_untyped_defs = true
         exclude = [".meta/scripts"]
+        packages = ["pattern_lens"]
 
-    [tool.ty]
+    [tool.ty.src]
         exclude = [".meta/scripts"]
 
     [tool.basedpyright]
