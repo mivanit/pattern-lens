@@ -155,7 +155,7 @@ def test_get_activations_missing():
 		mock_compute.return_value = (Path("mock/path"), {"mock": "cache"})
 
 		# Call get_activations
-		path, cache = get_activations(
+		_path, _cache = get_activations(
 			prompt=prompt,
 			model=model,
 			save_path=temp_dir,
@@ -164,7 +164,7 @@ def test_get_activations_missing():
 
 		# Check that compute_activations was called with the right arguments
 		mock_compute.assert_called_once()
-		args, kwargs = mock_compute.call_args
+		_args, kwargs = mock_compute.call_args
 		assert kwargs["prompt"] == prompt
 		assert kwargs["save_path"] == temp_dir
 		assert kwargs["return_cache"] == "numpy"

@@ -83,7 +83,7 @@ def compute_activations(
 	model: HookedTransformer | None = None,
 	save_path: Path = Path(DATA_DIR),
 	names_filter: Callable[[str], bool] | re.Pattern = ATTN_PATTERN_REGEX,
-	return_cache: Literal[None] = None,
+	return_cache: None = None,
 	stack_heads: bool = False,
 ) -> tuple[Path, None]: ...
 # return stacked heads in numpy or torch form
@@ -292,7 +292,7 @@ def get_activations(
 	model: HookedTransformer | str,
 	save_path: Path = Path(DATA_DIR),
 	allow_disk_cache: bool = True,
-	return_cache: Literal[None] = None,
+	return_cache: None = None,
 ) -> tuple[Path, None]: ...
 @overload
 def get_activations(

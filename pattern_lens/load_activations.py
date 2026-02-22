@@ -138,7 +138,7 @@ def load_activations(
 			msg,
 		)
 	if return_fmt == "torch":
-		import torch
+		import torch  # noqa: PLC0415
 
 	augment_prompt_with_hash(prompt)
 

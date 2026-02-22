@@ -43,7 +43,7 @@ def test_activations_cli():
 
 		# Check that activations_main was called with the right arguments
 		mock_activations_main.assert_called_once()
-		args, kwargs = mock_activations_main.call_args
+		_args, kwargs = mock_activations_main.call_args
 
 		assert kwargs["model_name"] == "gpt2"
 		assert kwargs["prompts_path"] == "test_prompts.jsonl"
@@ -81,7 +81,7 @@ def test_figures_cli():
 
 		# Check that figures_main was called with the right arguments
 		mock_figures_main.assert_called_once()
-		args, kwargs = mock_figures_main.call_args
+		_args, kwargs = mock_figures_main.call_args
 
 		assert kwargs["model_name"] == "gpt2"
 		assert kwargs["save_path"] == "test_data"
@@ -111,11 +111,11 @@ def test_figures_cli_with_multiple_models():
 		assert mock_figures_main.call_count == 2
 
 		# First call should be for gpt2
-		args1, kwargs1 = mock_figures_main.call_args_list[0]
+		_args1, kwargs1 = mock_figures_main.call_args_list[0]
 		assert kwargs1["model_name"] == "gpt2"
 
 		# Second call should be for pythia-70m
-		args2, kwargs2 = mock_figures_main.call_args_list[1]
+		_args2, kwargs2 = mock_figures_main.call_args_list[1]
 		assert kwargs2["model_name"] == "pythia-70m"
 
 

@@ -51,7 +51,7 @@ def test_compute_activations_torch_return():
 	prompt = {"text": "test prompt", "hash": "testhash123"}
 
 	# Test with stack_heads=True
-	path, result = compute_activations(
+	_path, result = compute_activations(
 		prompt=prompt,
 		model=model,
 		save_path=temp_dir,
@@ -70,7 +70,7 @@ def test_compute_activations_torch_return():
 	)
 
 	# Test with stack_heads=False
-	path, result = compute_activations(
+	_path, result = compute_activations(
 		prompt=prompt,
 		model=model,
 		save_path=temp_dir,
@@ -130,7 +130,7 @@ def test_get_activations_torch_return():
 		mock_load.return_value = (Path("mock/path"), mock_cache)
 
 		# Call get_activations with torch return format
-		path, cache = get_activations(
+		_path, cache = get_activations(
 			prompt=prompt,
 			model=model,
 			save_path=temp_dir,

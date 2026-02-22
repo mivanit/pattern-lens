@@ -33,5 +33,5 @@ DIVIDER_S1: str = "=" * 70
 DIVIDER_S2: str = "-" * 50
 "divider string for separating subsections"
 
-ReturnCache = Literal[None, "numpy", "torch"]
+ReturnCache = Literal["numpy", "torch"] | None
 "return type for a cache of activations"
