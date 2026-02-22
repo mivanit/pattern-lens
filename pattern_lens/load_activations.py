@@ -153,6 +153,10 @@ def load_activations(
 
 	activations_path: Path = prompt_dir / "activations.npz"
 
+	if not activations_path.exists():
+		msg = f"Activations file {activations_path} does not exist"
+		raise ActivationsMissingError(msg)
+
 	cache: dict
 
 	with np.load(activations_path) as npz_data:

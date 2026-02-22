@@ -16,7 +16,7 @@ def test_process_single_head():
 	# Setup
 	temp_dir = TEMP_DIR / "test_process_single_head"
 	head_dir = temp_dir / "L0" / "H0"
-	head_dir.mkdir(parents=True)
+	head_dir.mkdir(parents=True, exist_ok=True)
 
 	# Create a simple test attention matrix
 	attn_pattern = np.random.rand(10, 10).astype(np.float32)
@@ -49,7 +49,7 @@ def test_process_single_head_error_handling():
 	# Setup
 	temp_dir = TEMP_DIR / "test_process_single_head_error_handling"
 	head_dir = temp_dir / "L0" / "H0"
-	head_dir.mkdir(parents=True)
+	head_dir.mkdir(parents=True, exist_ok=True)
 
 	# Create a simple test attention matrix
 	attn_pattern = np.random.rand(10, 10).astype(np.float32)
@@ -81,7 +81,7 @@ def test_compute_and_save_figures():
 	# Setup
 	temp_dir = TEMP_DIR / "test_compute_and_save_figures"
 	prompt_dir = temp_dir / "test-model" / "prompts" / "test-hash"
-	prompt_dir.mkdir(parents=True)
+	prompt_dir.mkdir(parents=True, exist_ok=True)
 
 	# Create a mock model config
 	class MockConfig:

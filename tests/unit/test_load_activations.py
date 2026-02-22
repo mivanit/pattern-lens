@@ -55,7 +55,7 @@ def test_load_activations_success():
 
 	# Create the necessary directory structure
 	prompt_dir = temp_dir / model_name / "prompts" / prompt["hash"]
-	prompt_dir.mkdir(parents=True)
+	prompt_dir.mkdir(parents=True, exist_ok=True)
 
 	# Create a dummy prompt.json file
 	with open(prompt_dir / "prompt.json", "w") as f:
@@ -108,7 +108,7 @@ def test_load_activations_errors():
 
 	# Create the necessary directory structure
 	prompt_dir = temp_dir / model_name / "prompts" / prompt["hash"]
-	prompt_dir.mkdir(parents=True)
+	prompt_dir.mkdir(parents=True, exist_ok=True)
 
 	# Create a prompt.json file with different content
 	different_prompt = {"text": "different prompt", "hash": prompt["hash"]}
@@ -128,11 +128,45 @@ def test_load_activations_errors():
 	with open(prompt_dir / "prompt.json", "w") as f:
 		json.dump(prompt, f)
 
-	# Test with missing activations file
-	with pytest.raises(FileNotFoundError):
+	# Test with missing activations file (prompt.json exists but activations.npz does not)
+	with pytest.raises(ActivationsMissingError, match="Activations file"):
 		load_activations(
 			model_name=model_name,
 			prompt=prompt,
 			save_path=temp_dir,
 			return_fmt="numpy",
+		)
+
+
+def test_load_activations_missing_npz_is_subclass_of_file_not_found():
+	"""ActivationsMissingError for missing activations.npz is also a FileNotFoundError."""
+	temp_dir = TEMP_DIR / "test_load_activations_missing_npz_subclass"
+	model_name = "test-model"
+	prompt = {"text": "test prompt", "hash": "testhash_sub"}
+
+	prompt_dir = temp_dir / model_name / "prompts" / prompt["hash"]
+	prompt_dir.mkdir(parents=True, exist_ok=True)
+
+	with open(prompt_dir / "prompt.json", "w") as f:
+		json.dump(prompt, f)
+
+	# Should raise ActivationsMissingError, which is also a FileNotFoundError
+	with pytest.raises(ActivationsMissingError) as exc_info:
+		load_activations(
+			model_name=model_name,
+			prompt=prompt,
+			save_path=temp_dir,
+			return_fmt="numpy",
+		)
+	assert isinstance(exc_info.value, FileNotFoundError)
+
+
+def test_load_activations_invalid_return_fmt():
+	"""Test that invalid return_fmt raises ValueError."""
+	with pytest.raises(ValueError, match="Invalid return_fmt"):
+		load_activations(
+			model_name="test-model",
+			prompt={"text": "test", "hash": "test"},
+			save_path=Path("/nonexistent"),
+			return_fmt="invalid",
 		)
