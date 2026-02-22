@@ -1,6 +1,6 @@
 [project]
     name = "pattern_lens"
-    version = "0.5.3"
+    version = "0.6.0"
     description = ""
     readme = "README.md"
     requires-python = ">=3.11"
