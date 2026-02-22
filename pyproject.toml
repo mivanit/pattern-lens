@@ -151,6 +151,9 @@
             "ignore: PEP 484 type hint*:beartype.roar._roarwarn.BeartypeDecorHintPep585DeprecationWarning",
         ]
 
+    [tool.coverage.run]
+        omit = ["_remote_module_non_scriptable"]
+
     [tool.mypy]
         check_untyped_defs = true
         exclude = [".meta/scripts"]
