@@ -7,7 +7,7 @@ pattern_lens/consts.py                     23      0   100%
 pattern_lens/figure_util.py               143     16    89%   235-238, 245-246, 251-253, 262-265, 276-280, 327-328, 516
 pattern_lens/figures.py                   133     19    86%   62, 106-107, 157, 175-178, 194-195, 263-283, 436-439, 475
 pattern_lens/indexes.py                    73      7    90%   84-85, 97, 160-161, 164-165
-pattern_lens/load_activations.py           56      5    91%   141, 148-149, 165-166
+pattern_lens/load_activations.py           56      3    95%   141, 165-166
 pattern_lens/prompts.py                    24      1    96%   80
 pattern_lens/server.py                     26      8    69%   34-59
 tests/integration/test_clis.py             51      0   100%
@@ -20,4 +20,4 @@ tests/unit/test_load_activations.py        68      0   100%
 tests/unit/test_multifig.py                64      1    98%   101
 tests/unit/test_server.py                  11      0   100%
 ---------------------------------------------------------------------
-TOTAL                                    1233     92    93%
+TOTAL                                    1233     90    93%
