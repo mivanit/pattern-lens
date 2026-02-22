@@ -436,7 +436,7 @@ rpds-py==0.30.0
     # via
     #   jsonschema
     #   referencing
-ruff==0.15.1
+ruff==0.15.2
 safetensors==0.7.0
     # via
     #   accelerate

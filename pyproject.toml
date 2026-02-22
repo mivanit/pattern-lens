@@ -74,7 +74,7 @@
 
     # ruff config
     [tool.ruff]
-        exclude = ["__pycache__"]
+        exclude = ["__pycache__", ".meta/scripts"]
 
         [tool.ruff.lint]
             ignore = [
@@ -150,6 +150,13 @@
 
     [tool.mypy]
         check_untyped_defs = true
+        exclude = [".meta/scripts"]
+
+    [tool.ty]
+        exclude = [".meta/scripts"]
+
+    [tool.basedpyright]
+        exclude = [".meta/scripts"]
 
     # `make lmcat` depends on the lmcat and can be configured here
     [tool.lmcat]
