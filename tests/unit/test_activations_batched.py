@@ -123,13 +123,6 @@ class MockHookedTransformerBatched:
 		return None, cache
 
 
-# -- Test prompts of varying lengths --
-
-SHORT_PROMPT = {"text": "hi", "hash": "hash_short"}  # seq_len = 3 (BOS + 2 chars)
-MEDIUM_PROMPT = {"text": "hello world", "hash": "hash_medium"}  # seq_len = 12
-LONG_PROMPT = {"text": "the quick brown fox jumps", "hash": "hash_long"}  # seq_len = 26
-
-
 def _make_prompts() -> list[dict]:
 	"""Return fresh copies of test prompts (dicts get mutated during processing)."""
 	return [
@@ -832,3 +825,145 @@ def test_compute_activations_batched_missing_hash_raises():
 			model=model,  # type: ignore[arg-type]
 			save_path=TEMP_DIR / "test_missing_hash",
 		)
+
+
+# ============================================================================
+# Test: activations_main with batch_size=1
+# ============================================================================
+
+
+def test_activations_main_batch_size_1():
+	"""batch_size=1 processes each prompt individually (one call per prompt)."""
+	temp_dir = TEMP_DIR / "test_main_batch_size_1"
+	if temp_dir.exists():
+		shutil.rmtree(temp_dir)
+	all_prompts = _make_5_prompts()
+
+	spy = _run_activations_main_mocked(
+		save_path=temp_dir,
+		prompts=[dict(p) for p in all_prompts],
+		force=True,
+		batch_size=1,
+	)
+
+	# With batch_size=1 and 5 prompts, should be called 5 times (one prompt each)
+	assert spy.call_count == 5
+	for call in spy.call_args_list:
+		assert len(call[1]["prompts"]) == 1
+
+	# All 5 should now be cached
+	for p in all_prompts:
+		augment_prompt_with_hash(p)
+		assert activations_exist("test-model", p, temp_dir)
+
+
+# ============================================================================
+# Test: activations_main with force=True recomputes cached prompts
+# ============================================================================
+
+
+def test_activations_main_force_recomputes():
+	"""With force=True, all prompts are recomputed even if already cached."""
+	temp_dir = TEMP_DIR / "test_main_force_recompute"
+	if temp_dir.exists():
+		shutil.rmtree(temp_dir)
+	model = MockHookedTransformerBatched()
+	all_prompts = _make_5_prompts()
+
+	# Pre-compute activations for ALL prompts
+	pre_cached = [dict(p) for p in all_prompts]
+	for p in pre_cached:
+		augment_prompt_with_hash(p)
+	compute_activations_batched(
+		prompts=pre_cached,
+		model=model,  # type: ignore[arg-type]
+		save_path=temp_dir,
+	)
+
+	# Verify they're all cached
+	for p in pre_cached:
+		assert activations_exist("test-model", p, temp_dir)
+
+	# Run with force=True — should recompute all 5
+	spy = _run_activations_main_mocked(
+		save_path=temp_dir,
+		prompts=[dict(p) for p in all_prompts],
+		force=True,
+	)
+
+	# compute_activations_batched should have been called with all 5 prompts
+	total_computed = sum(len(call[1]["prompts"]) for call in spy.call_args_list)
+	assert total_computed == 5
+
+
+# ============================================================================
+# Test: activations_main sorts prompts by length (longest first)
+# ============================================================================
+
+
+def test_activations_main_sorts_by_length():
+	"""Prompts are sorted longest-first within each batch for padding efficiency."""
+	temp_dir = TEMP_DIR / "test_main_sorts_by_length"
+	if temp_dir.exists():
+		shutil.rmtree(temp_dir)
+
+	# Deliberately pass prompts in SHORT-first order
+	prompts = [
+		{"text": "a"},  # shortest
+		{"text": "bb"},
+		{"text": "ccc"},
+		{"text": "dddd"},
+		{"text": "eeeee"},  # longest
+	]
+
+	spy = _run_activations_main_mocked(
+		save_path=temp_dir,
+		prompts=[dict(p) for p in prompts],
+		force=True,
+		batch_size=100,  # large enough to fit all in one batch
+	)
+
+	# All prompts in one call — check they're sorted longest-first
+	assert spy.call_count == 1
+	called_prompts = spy.call_args[1]["prompts"]
+	called_texts = [p["text"] for p in called_prompts]
+	called_lengths = [len(t) for t in called_texts]
+	assert called_lengths == sorted(called_lengths, reverse=True), (
+		f"Prompts not sorted longest-first: {called_texts}"
+	)
+
+	# seq_lens must be sorted in the same order as prompts
+	called_seq_lens = spy.call_args[1]["seq_lens"]
+	assert called_seq_lens == sorted(called_seq_lens, reverse=True), (
+		f"seq_lens not sorted longest-first: {called_seq_lens}"
+	)
+
+
+# ============================================================================
+# Test: activations_main splits into multiple batches correctly
+# ============================================================================
+
+
+def test_activations_main_multiple_batches():
+	"""batch_size=2 with 5 prompts produces 3 batched calls (2+2+1)."""
+	temp_dir = TEMP_DIR / "test_main_multi_batch"
+	if temp_dir.exists():
+		shutil.rmtree(temp_dir)
+	all_prompts = _make_5_prompts()
+
+	spy = _run_activations_main_mocked(
+		save_path=temp_dir,
+		prompts=[dict(p) for p in all_prompts],
+		force=True,
+		batch_size=2,
+	)
+
+	# 5 prompts / batch_size=2 => 3 calls: 2, 2, 1
+	assert spy.call_count == 3
+	batch_sizes = [len(call[1]["prompts"]) for call in spy.call_args_list]
+	assert batch_sizes == [2, 2, 1], f"Unexpected batch sizes: {batch_sizes}"
+
+	# All 5 should be cached
+	for p in all_prompts:
+		augment_prompt_with_hash(p)
+		assert activations_exist("test-model", p, temp_dir)

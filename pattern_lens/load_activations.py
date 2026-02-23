@@ -171,6 +171,11 @@ def load_activations(
 def activations_exist(model_name: str, prompt: dict, save_path: Path) -> bool:
 	"""check if activations exist on disk without loading them
 
+	cheap alternative to calling `load_activations` when you only need to know
+	whether a prompt has been processed. `load_activations` decompresses the full
+	`.npz` into numpy arrays, which is wasteful when the data is immediately
+	discarded. this function just checks `.exists()` on the two expected files.
+
 	# Parameters:
 	- `model_name : str`
 	- `prompt : dict`

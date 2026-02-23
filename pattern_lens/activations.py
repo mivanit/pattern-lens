@@ -140,9 +140,10 @@ def compute_activations(  # noqa: PLR0915
 	| Float[torch.Tensor, "n_layers n_heads n_ctx n_ctx"]
 	| None,
 ]:
-	"""get activations for a given model and prompt, possibly from a cache
+	"""compute activations for a single prompt and save to disk
 
-	if from a cache, prompt_meta must be passed and contain the prompt hash
+	always runs a forward pass -- does NOT load from disk cache.
+	for cache-aware loading, use `get_activations` which tries disk first.
 
 	# Parameters:
 	- `prompt : dict | None`
@@ -185,6 +186,8 @@ def compute_activations(  # noqa: PLR0915
 		"tokens",
 		model.tokenizer.tokenize(prompt_str),
 	)
+	# n_tokens counts subword tokens (no BOS); attention patterns include BOS
+	# so have dim n_tokens+1. see also compute_activations_batched Phase B.
 	prompt.update(
 		dict(
 			n_tokens=len(prompt_tokenized),
@@ -206,6 +209,9 @@ def compute_activations(  # noqa: PLR0915
 		names_filter_fn = names_filter
 
 	# compute activations
+	# NOTE: no padding_side kwarg here -- it's only meaningful for multi-sequence
+	# batches where padding is needed. single-string input has no padding.
+	# see compute_activations_batched for the batched path that passes padding_side="right".
 	cache_torch: ActivationCache
 	with torch.no_grad():
 		model.eval()
@@ -307,10 +313,10 @@ def compute_activations_batched(
 
 	## Why right-padding makes trimming correct without an explicit attention mask
 
-	With right-padding, pad tokens sit at positions n, n+1, ..., max_seq_len-1 (higher
-	than any real token). The causal attention mask prevents position i from attending
-	to any j > i. So for real tokens at positions 0..n-1, they can only attend to
-	0..i -- all real tokens. The softmax is computed over the same set of positions
+	With right-padding, pad tokens sit at positions seq_len, seq_len+1, ...,
+	max_seq_len-1 (higher than any real token). The causal attention mask prevents
+	position i from attending to any j > i. So for real tokens at positions
+	0..seq_len-1, they can only attend to 0..i -- all real tokens. The softmax is computed over the same set of positions
 	as in single-prompt inference, producing identical attention patterns.
 
 	We explicitly pass `padding_side="right"` to `run_with_cache` to guarantee this
@@ -341,6 +347,10 @@ def compute_activations_batched(
 	# Returns:
 	- `list[Path]`
 		paths to the saved activations files, one per prompt
+
+	# Modifies:
+	each prompt dict in `prompts` -- adds/overwrites `n_tokens` and `tokens` keys
+	with tokenization metadata (same mutation as `compute_activations`).
 	"""
 	assert model is not None, "model must be passed"
 	assert len(prompts) > 0, "prompts must not be empty"
@@ -491,21 +501,25 @@ def get_activations(
 
 	# from cache
 	if allow_disk_cache:
-		try:
-			path, cache = load_activations(
-				model_name=model_name,
-				prompt=prompt,
-				save_path=save_path,
-			)
-			if return_cache:
-				return path, cache
+		if return_cache is None:
+			# fast path: check file existence without loading data into memory.
+			# activations_exist just calls .exists() on two paths, whereas
+			# load_activations would decompress the full .npz into numpy arrays
+			# only for us to discard them immediately.
+			if activations_exist(model_name, prompt, save_path):
+				prompt_dir: Path = save_path / model_name / "prompts" / prompt["hash"]
+				return prompt_dir / "activations.npz", None
+		else:
+			try:
+				path, cache = load_activations(
+					model_name=model_name,
+					prompt=prompt,
+					save_path=save_path,
+				)
+			except ActivationsMissingError:
+				pass
 			else:
-				# TODO: this basically does nothing, since we load the activations and then immediately get rid of them.
-				# maybe refactor this so that load_activations can take a parameter to simply assert that the cache exists?
-				# this will let us avoid loading it, which slows things down
-				return path, None
-		except ActivationsMissingError:
-			pass
+				return path, cache
 
 	# compute them
 	if isinstance(model, str):
@@ -544,7 +558,7 @@ def activations_main(  # noqa: C901, PLR0912, PLR0915
 	# Parameters:
 	- `model_name : str`
 		name of a model to load with `HookedTransformer.from_pretrained`
-	- `save_path : str`
+	- `save_path : str | Path`
 		path to save the activations to
 	- `prompts_path : str`
 		path to the prompts file
@@ -572,7 +586,10 @@ def activations_main(  # noqa: C901, PLR0912, PLR0915
 		number of prompts per forward pass. prompts are sorted by token length
 		(longest first) and grouped so that similar-length prompts share a batch,
 		minimizing padding waste. use `batch_size=1` for one prompt per forward
-		pass (functionally equivalent to the old sequential behavior).
+		pass (largely equivalent to the old sequential behavior, but note: prompts
+		are still sorted by length and cache checking uses file-existence only,
+		unlike the old path which processed prompts in order and validated cache
+		contents via `load_activations`).
 		the single-prompt functions `compute_activations` and `get_activations`
 		are still available for programmatic use outside of `activations_main`.
 		(defaults to `32`)
@@ -664,9 +681,16 @@ def activations_main(  # noqa: C901, PLR0912, PLR0915
 		uncached = list(prompts)
 
 	if uncached:
-		# sort by token length descending: longest first so the slowest batches
-		# run first (better progress estimation), and similar lengths are grouped
-		# together to minimize padding waste
+		# sort by token length descending so that:
+		# 1. the longest (slowest, most memory-hungry) batches run first --
+		#    OOM errors surface immediately rather than after all the cheap work,
+		#    and tqdm's ETA stabilizes early for better progress estimation
+		# 2. similar-length prompts are grouped together, minimizing padding waste
+		#
+		# pre-tokenization is a separate step from compute_activations_batched because
+		# we need token lengths *before* batching to sort and group. the resulting
+		# seq_lens are then passed through so compute_activations_batched can skip
+		# re-tokenizing each prompt internally.
 		with SpinnerContext(
 			message="pre-tokenizing prompts for length sorting",
 			**SPINNER_KWARGS,

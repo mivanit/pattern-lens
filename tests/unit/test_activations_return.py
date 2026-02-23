@@ -145,24 +145,28 @@ def test_get_activations_torch_return():
 
 
 def test_get_activations_none_return():
-	"""Test get_activations with return_cache=None."""
+	"""Test get_activations with return_cache=None uses the fast existence-check path.
+
+	When return_cache=None and the activations already exist on disk,
+	get_activations should use activations_exist (cheap file-existence check)
+	instead of load_activations (which would decompress the full .npz).
+	"""
 	temp_dir = TEMP_DIR / "test_get_activations_none_return"
 	prompt = {"text": "test prompt", "hash": "testhash123"}
-	model = MockHookedTransformer(model_name="test-model")
 
-	# Create a mock for load_activations that returns a path but no cache
-	with mock.patch("pattern_lens.activations.load_activations") as mock_load:
-		mock_path = Path("mock/path")
-		mock_load.return_value = (mock_path, {})  # Cache will be ignored
-
-		# Call get_activations with None return format
+	# pass model as a string -- get_activations accepts HookedTransformer | str,
+	# and the fast path (return_cache=None) only needs the model name for path construction
+	with mock.patch("pattern_lens.activations.activations_exist", return_value=True):
 		path, cache = get_activations(  # type: ignore[call-overload]
 			prompt=prompt,
-			model=model,
+			model="test-model",
 			save_path=temp_dir,
 			return_cache=None,
 		)
 
-		# Check that we got the path but no cache
-		assert path == mock_path
+		# Check that we got the reconstructed path but no cache
+		expected_path = (
+			temp_dir / "test-model" / "prompts" / prompt["hash"] / "activations.npz"
+		)
+		assert path == expected_path
 		assert cache is None
