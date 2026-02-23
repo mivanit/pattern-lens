@@ -22,7 +22,6 @@ activations_main(
 """
 
 import argparse
-import functools
 import json
 import re
 from collections.abc import Callable
@@ -62,6 +61,7 @@ from pattern_lens.indexes import (
 )
 from pattern_lens.load_activations import (
 	ActivationsMissingError,
+	activations_exist,
 	augment_prompt_with_hash,
 	load_activations,
 )
@@ -209,7 +209,6 @@ def compute_activations(  # noqa: PLR0915
 	cache_torch: ActivationCache
 	with torch.no_grad():
 		model.eval()
-		# TODO: batching?
 		_, cache_torch = model.run_with_cache(
 			prompt_str,
 			names_filter=names_filter_fn,
@@ -285,6 +284,148 @@ def compute_activations(  # noqa: PLR0915
 			case _:
 				msg = f"invalid return_cache: {return_cache = }"
 				raise ValueError(msg)
+
+
+def compute_activations_batched(
+	prompts: list[dict],
+	model: HookedTransformer,
+	save_path: Path = Path(DATA_DIR),
+	names_filter: Callable[[str], bool] | re.Pattern = ATTN_PATTERN_REGEX,
+	seq_lens: list[int] | None = None,
+) -> list[Path]:
+	"""compute and save activations for a batch of prompts in a single forward pass
+
+	Batched companion to `compute_activations` -- instead of one forward pass per
+	prompt, this runs a single `model.run_with_cache(list_of_strings)` call for the
+	whole batch. TransformerLens tokenizes and right-pads automatically. Each prompt's
+	attention patterns are then trimmed to their actual (unpadded) size and saved
+	individually, producing files identical to the single-prompt path.
+
+	Does not support `stack_heads` or `return_cache` -- this function is intended for
+	the bulk processing path in `activations_main`, not for interactive use. Use
+	`compute_activations` directly for single-prompt use cases that need those features.
+
+	## Why right-padding makes trimming correct without an explicit attention mask
+
+	With right-padding, pad tokens sit at positions n, n+1, ..., max_seq_len-1 (higher
+	than any real token). The causal attention mask prevents position i from attending
+	to any j > i. So for real tokens at positions 0..n-1, they can only attend to
+	0..i -- all real tokens. The softmax is computed over the same set of positions
+	as in single-prompt inference, producing identical attention patterns.
+
+	We explicitly pass `padding_side="right"` to `run_with_cache` to guarantee this
+	regardless of the model's default padding side.
+
+	# Parameters:
+	- `prompts : list[dict]`
+		each prompt must contain 'text' and 'hash' keys. call
+		`augment_prompt_with_hash` on each prompt before passing them here.
+	- `model : HookedTransformer`
+		the model to compute activations with
+	- `save_path : Path`
+		path to save the activations to
+		(defaults to `Path(DATA_DIR)`)
+	- `names_filter : Callable[[str], bool] | re.Pattern`
+		filter for which activations to save. must only match activations with
+		4D shape `[batch, n_heads, seq, seq]` (e.g. attention patterns).
+		non-attention activations will cause incorrect trimming.
+		(defaults to `ATTN_PATTERN_REGEX`)
+	- `seq_lens : list[int] | None`
+		pre-computed model sequence lengths per prompt (from `model.to_tokens`).
+		if `None`, will be computed internally. pass this to avoid redundant
+		tokenization when lengths are already known (e.g. from length-sorting).
+		**important**: these must be from `model.to_tokens()` (includes BOS),
+		NOT from `model.tokenizer.tokenize()` (excludes BOS).
+		(defaults to `None`)
+
+	# Returns:
+	- `list[Path]`
+		paths to the saved activations files, one per prompt
+	"""
+	assert model is not None, "model must be passed"
+	assert len(prompts) > 0, "prompts must not be empty"
+	assert "text" in prompts[0], f"prompt must contain 'text' key: {prompts[0].keys()}"
+	assert "hash" in prompts[0], (
+		f"prompt must contain 'hash' key (call augment_prompt_with_hash first): {prompts[0].keys()}"
+	)
+
+	# --- Phase A: get actual model sequence lengths ---
+	# model.to_tokens() includes BOS if applicable, matching the attention pattern dims
+	# model.tokenizer.tokenize() gives subword strings WITHOUT BOS, used for metadata
+	# these differ by 1 when BOS is prepended -- using the wrong one for trimming
+	# would silently truncate or include garbage
+	if seq_lens is None:
+		seq_lens = [model.to_tokens(p["text"]).shape[1] for p in prompts]
+	assert len(seq_lens) == len(prompts), (
+		f"seq_lens length mismatch: {len(seq_lens)} != {len(prompts)}"
+	)
+
+	# --- Phase B: save prompt metadata (mirrors compute_activations's metadata logic) ---
+	assert model.tokenizer is not None
+	for p in prompts:
+		prompt_str: str = p["text"]
+		prompt_tokenized: list[str] = p.get(
+			"tokens",
+			model.tokenizer.tokenize(prompt_str),
+		)
+		# n_tokens counts subword tokens (no BOS); attention patterns include BOS so have dim n_tokens+1
+		p.update(
+			dict(
+				n_tokens=len(prompt_tokenized),
+				tokens=prompt_tokenized,
+			),
+		)
+		prompt_dir: Path = save_path / model.cfg.model_name / "prompts" / p["hash"]
+		prompt_dir.mkdir(parents=True, exist_ok=True)
+		with open(prompt_dir / "prompt.json", "w") as f:
+			json.dump(p, f)
+
+	# --- Phase C: batched forward pass ---
+	names_filter_fn: Callable[[str], bool]
+	if isinstance(names_filter, re.Pattern):
+		names_filter_fn = lambda key: names_filter.match(key) is not None  # noqa: E731
+	else:
+		names_filter_fn = names_filter
+
+	texts: list[str] = [p["text"] for p in prompts]
+	cache_torch: ActivationCache
+	with torch.no_grad():
+		model.eval()
+		_, cache_torch = model.run_with_cache(
+			texts,
+			names_filter=names_filter_fn,
+			return_type=None,
+			padding_side="right",
+		)
+
+	# --- Phase D: split, trim padding, and save per-prompt ---
+	# For each prompt i with actual sequence length seq_len_i:
+	#   v[i : i+1, :, :seq_len_i, :seq_len_i]
+	#     ^^^^^^^                               i:i+1 not i -- keeps batch dim [1,...] for
+	#                                           format compatibility with compute_activations
+	#              ^^                           all attention heads
+	#                  ^^^^^^^^^^  ^^^^^^^^^^   trim both query and key dims to actual length,
+	#                                           discarding meaningless padding positions
+	paths: list[Path] = []
+	for i, (prompt, seq_len) in enumerate(zip(prompts, seq_lens, strict=True)):
+		prompt_dir = save_path / model.cfg.model_name / "prompts" / prompt["hash"]
+		activations_path: Path = prompt_dir / "activations.npz"
+		cache_np: ActivationCacheNp = {}
+		for k, v in cache_torch.items():
+			assert v.ndim == 4, (  # noqa: PLR2004
+				f"expected 4D attention pattern tensor for {k!r}, "
+				f"got shape {v.shape}. names_filter must only match "
+				f"attention pattern activations [batch, n_heads, seq, seq]"
+			)
+			cache_np[k] = v[i : i + 1, :, :seq_len, :seq_len].detach().cpu().numpy()
+
+		np.savez_compressed(
+			activations_path,
+			**cache_np,  # type: ignore[arg-type]
+		)
+		paths.append(activations_path)
+
+	return paths
 
 
 @overload
@@ -383,7 +524,7 @@ DEFAULT_DEVICE: torch.device = torch.device(
 )
 
 
-def activations_main(
+def activations_main(  # noqa: C901, PLR0912, PLR0915
 	model_name: str,
 	save_path: str | Path,
 	prompts_path: str,
@@ -396,6 +537,7 @@ def activations_main(
 	shuffle: bool = False,
 	stacked_heads: bool = False,
 	device: str | torch.device = DEFAULT_DEVICE,
+	batch_size: int = 32,
 ) -> None:
 	"""main function for computing activations
 
@@ -426,6 +568,14 @@ def activations_main(
 		(defaults to `False`)
 	- `device : str | torch.device`
 		the device to use. if a string, will be passed to `torch.device`
+	- `batch_size : int`
+		number of prompts per forward pass. prompts are sorted by token length
+		(longest first) and grouped so that similar-length prompts share a batch,
+		minimizing padding waste. use `batch_size=1` for one prompt per forward
+		pass (functionally equivalent to the old sequential behavior).
+		the single-prompt functions `compute_activations` and `get_activations`
+		are still available for programmatic use outside of `activations_main`.
+		(defaults to `32`)
 	"""
 	# figure out the device to use
 	device_: torch.device
@@ -498,25 +648,59 @@ def activations_main(
 	if stacked_heads:
 		raise NotImplementedError("stacked_heads not implemented yet")
 
-	# get activations
-	list(
-		tqdm.tqdm(
-			map(
-				functools.partial(
-					get_activations,
-					model=model,
-					save_path=save_path_p,
-					allow_disk_cache=not force,
-					return_cache=None,
-					# stacked_heads=stacked_heads,
-				),
-				prompts,
-			),
-			total=len(prompts),
+	# augment all prompts with hashes
+	for prompt in prompts:
+		augment_prompt_with_hash(prompt)
+
+	# filter out cached prompts
+	if not force:
+		uncached: list[dict] = [
+			p for p in prompts if not activations_exist(model_name, p, save_path_p)
+		]
+		n_cached: int = len(prompts) - len(uncached)
+		if n_cached > 0:
+			print(f"  {n_cached} prompts already cached, {len(uncached)} to compute")
+	else:
+		uncached = list(prompts)
+
+	if uncached:
+		# sort by token length descending: longest first so the slowest batches
+		# run first (better progress estimation), and similar lengths are grouped
+		# together to minimize padding waste
+		with SpinnerContext(
+			message="pre-tokenizing prompts for length sorting",
+			**SPINNER_KWARGS,
+		):
+			uncached_with_lens: list[tuple[dict, int]] = [
+				(p, model.to_tokens(p["text"]).shape[1]) for p in uncached
+			]
+			uncached_with_lens.sort(key=lambda x: x[1], reverse=True)
+			sorted_uncached: list[dict] = [p for p, _ in uncached_with_lens]
+			sorted_seq_lens: list[int] = [sl for _, sl in uncached_with_lens]
+
+		# process in batches
+		n_prompts: int = len(sorted_uncached)
+		with tqdm.tqdm(
+			total=n_prompts,
 			desc="Computing activations",
 			unit="prompt",
-		),
-	)
+		) as pbar:
+			for batch_start in range(0, n_prompts, batch_size):
+				batch_end: int = min(batch_start + batch_size, n_prompts)
+				batch: list[dict] = sorted_uncached[batch_start:batch_end]
+				batch_seq_lens: list[int] = sorted_seq_lens[batch_start:batch_end]
+				pbar.set_postfix(
+					n_ctx=batch_seq_lens[0],
+				)  # longest in batch (sorted descending)
+				compute_activations_batched(
+					prompts=batch,
+					model=model,
+					save_path=save_path_p,
+					seq_lens=batch_seq_lens,
+				)
+				pbar.update(len(batch))
+	else:
+		print("  all prompts cached, nothing to compute")
 
 	with SpinnerContext(
 		message="updating jsonl metadata for models and prompts",
@@ -582,6 +766,16 @@ def main() -> None:
 			required=False,
 			help="The max number of samples to process, do all in the file if None",
 			default=None,
+		)
+
+		# batch size
+		arg_parser.add_argument(
+			"--batch-size",
+			"-b",
+			type=int,
+			required=False,
+			help="Batch size for computing activations (number of prompts per forward pass)",
+			default=32,
 		)
 
 		# force overwrite
@@ -659,6 +853,7 @@ def main() -> None:
 			shuffle=args.shuffle,
 			stacked_heads=args.stacked_heads,
 			device=args.device,
+			batch_size=args.batch_size,
 		)
 		del model
 

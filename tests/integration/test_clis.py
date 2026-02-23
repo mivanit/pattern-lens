@@ -24,6 +24,8 @@ def test_activations_cli():
 		"1000",
 		"--n-samples",
 		"5",
+		"--batch-size",
+		"16",
 		"--force",
 		"--raw-prompts",
 		"--shuffle",
@@ -55,6 +57,7 @@ def test_activations_cli():
 		assert kwargs["raw_prompts"] is True
 		assert kwargs["shuffle"] is True
 		assert kwargs["device"] == "cpu"
+		assert kwargs["batch_size"] == 16
 
 
 def test_figures_cli():

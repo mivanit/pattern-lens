@@ -168,4 +168,29 @@ def load_activations(
 	return activations_path, cache
 
 
+def activations_exist(model_name: str, prompt: dict, save_path: Path) -> bool:
+	"""check if activations exist on disk without loading them
+
+	# Parameters:
+	- `model_name : str`
+	- `prompt : dict`
+		must contain a 'hash' key (call `augment_prompt_with_hash` first)
+	- `save_path : Path`
+
+	# Returns:
+	- `bool`
+		True if both prompt.json and activations.npz exist for this prompt
+
+	# Raises:
+	- `InvalidPromptError` : if the prompt does not have a 'hash' key
+	"""
+	if "hash" not in prompt:
+		msg = f"Prompt must have 'hash' key (call augment_prompt_with_hash first): {prompt}"
+		raise InvalidPromptError(msg)
+	prompt_dir: Path = save_path / model_name / "prompts" / prompt["hash"]
+	return (prompt_dir / "prompt.json").exists() and (
+		prompt_dir / "activations.npz"
+	).exists()
+
+
 # def load_activations_stacked()
