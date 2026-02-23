@@ -1,8 +1,8 @@
 # Stats
 - 34 files
 - 11573 (12K) lines
-- 388890 (389K) chars
-- 164212 (164K) `gpt2` tokens
+- 389013 (389K) chars
+- 164239 (164K) `gpt2` tokens
 
 # File Tree
 
@@ -45,7 +45,7 @@ pattern-lens
 │   ├── prompts.py             [   82L  1,721C    743T]
 │   ├── py.typed               [    0L      0C      0T]
 │   └── server.py              [   59L  1,372C    493T]
-├── CHANGELOG.txt              [  148L  5,854C  1,648T]
+├── CHANGELOG.txt              [  148L  5,977C  1,675T]
 ├── README.md                  [  125L  5,583C  1,912T]
 ├── demo.ipynb                 [  284L 13,242C  5,511T]
 ├── makefile                   [  777L 30,289C 11,097T]
@@ -6230,7 +6230,7 @@ class AttentionPatternViewer {
     <div id="app" class="container" :class="{ 'dark-mode': isDarkMode }">
         <div class="header-container">
             <h1 class="header-title">Attention Pattern Analysis</h1>
-            <a href="https://github.com/mivanit/pattern-lens/">built with pattern-lens v0.5.0 </a>
+            <a href="https://github.com/mivanit/pattern-lens/">built with pattern-lens v0.6.0 </a>
             <div class="header-controls">
                 <button class="btn btn-header dark-mode-button" @click="toggleDarkMode">
                     <span>Dark Mode</span>
@@ -6669,7 +6669,7 @@ class AttentionPatternViewer {
 
 <body>
     <div class="header">
-        <a href="https://github.com/mivanit/pattern-lens/" class="source-link" title="Pattern Lens GitHub Repository"> pattern-lens v0.5.0  </a>
+        <a href="https://github.com/mivanit/pattern-lens/" class="source-link" title="Pattern Lens GitHub Repository"> pattern-lens v0.6.0  </a>
         <div id="info" class="info-center"></div>
         <div class="help-menu" title="Help & Controls">
             <span class="help-button">?</span>
@@ -10589,9 +10589,9 @@ if __name__ == "__main__":
 ``````{ end_of_file="pattern_lens/server.py" }
 
 ``````{ path="CHANGELOG.txt"  }
+batched activations support, fast cache checks, config support in write_html_index, and various bug fixes and improvements.
+
 v0.6.0
-
-
 
 Features
 --------
