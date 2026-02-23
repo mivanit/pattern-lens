@@ -1,6 +1,6 @@
 [project]
     name = "pattern_lens"
-    version = "0.6.0"
+    version = "0.7.0"
     description = ""
     readme = "README.md"
     requires-python = ">=3.11"
@@ -113,6 +113,7 @@
                 "TD002", # don't care about author
                 "TD003", # `make todo` will give us a table where we can create issues
                 "PLR0913", # sometimes you have to have a lot of args
+                "COM812", # conflicts with ruff formatter
             ]
             select = ["ALL"]
             # select = ["ICN001"]
