@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="generator" content="pdoc 15.0.1"/>
+    <meta name="generator" content="pdoc 16.0.0"/>
     <title>pattern_lens.attn_figure_funcs API documentation</title>
 <link rel="stylesheet" href="../resources/css/bootstrap-reboot.min.css"><link rel="stylesheet" href="../resources/css/syntax-highlighting.css"><link rel="stylesheet" href="../resources/css/theme.css"><link rel="stylesheet" href="../resources/css/layout.css"><link rel="stylesheet" href="../resources/css/content.css"><link rel="stylesheet" href="../resources/css/custom.css"><script>
     window.MathJax = {
@@ -46,7 +46,7 @@
 </script></head>
 <body>
 <div class="package-version">
-    docs for <a href="https://github.com/mivanit/pattern-lens">pattern_lens</a> v0.5.0<br>
+    docs for <a href="https://github.com/mivanit/pattern-lens">pattern_lens</a> v0.6.0<br>
 </div>
     <nav class="pdoc">
         <label id="navtoggle" for="togglestate" class="pdoc-button">
@@ -106,7 +106,7 @@
     </nav>
     <main class="pdoc">
             <section class="module-info">
-                        <a class="pdoc-button git-button" href="https://github.com/mivanit/pattern-lens/blob/0.5.0attn_figure_funcs.py">View Source on GitHub</a>
+                        <a class="pdoc-button git-button" href="https://github.com/mivanit/pattern-lens/blob/0.6.0attn_figure_funcs.py">View Source on GitHub</a>
                     <h1 class="modulename">
 <a href="./../pattern_lens.html">pattern_lens</a><wbr>.attn_figure_funcs    </h1>
 
@@ -126,7 +126,7 @@ which adds your function to <code><a href="#ATTENTION_MATRIX_FIGURE_FUNCS">ATTEN
                         <div class="source-button-container">
             <label class="pdoc-button view-source-button" for="mod-attn_figure_funcs-view-source"><span>View Source</span></label>
             <div class="github-button-wrapper">
-                <a class="pdoc-button github-link-button" href="https://github.com/mivanit/pattern-lens/blob/0.5.0attn_figure_funcs.py#L0-L117" target="_blank">
+                <a class="pdoc-button github-link-button" href="https://github.com/mivanit/pattern-lens/blob/0.6.0attn_figure_funcs.py#L0-L118" target="_blank">
                     <span>View on GitHub</span>
                 </a>
             </div>
@@ -166,7 +166,7 @@ which adds your function to <code><a href="#ATTENTION_MATRIX_FIGURE_FUNCS">ATTEN
 </span><span id="L-31"><a href="#L-31"><span class="linenos"> 31</span></a>			<span class="nb">getattr</span><span class="p">(</span>
 </span><span id="L-32"><a href="#L-32"><span class="linenos"> 32</span></a>				<span class="n">func</span><span class="p">,</span>
 </span><span id="L-33"><a href="#L-33"><span class="linenos"> 33</span></a>				<span class="n">_FIGURE_NAMES_KEY</span><span class="p">,</span>
-</span><span id="L-34"><a href="#L-34"><span class="linenos"> 34</span></a>				<span class="p">[</span><span class="n">func</span><span class="o">.</span><span class="vm">__name__</span><span class="p">],</span>
+</span><span id="L-34"><a href="#L-34"><span class="linenos"> 34</span></a>				<span class="p">[</span><span class="nb">getattr</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="s2">&quot;__name__&quot;</span><span class="p">,</span> <span class="s2">&quot;&lt;unknown&gt;&quot;</span><span class="p">)],</span>
 </span><span id="L-35"><a href="#L-35"><span class="linenos"> 35</span></a>			<span class="p">)</span>
 </span><span id="L-36"><a href="#L-36"><span class="linenos"> 36</span></a>			<span class="k">for</span> <span class="n">func</span> <span class="ow">in</span> <span class="n">ATTENTION_MATRIX_FIGURE_FUNCS</span>
 </span><span id="L-37"><a href="#L-37"><span class="linenos"> 37</span></a>		<span class="p">),</span>
@@ -201,7 +201,7 @@ which adds your function to <code><a href="#ATTENTION_MATRIX_FIGURE_FUNCS">ATTEN
 </span><span id="L-66"><a href="#L-66"><span class="linenos"> 66</span></a><span class="sd">	```</span>
 </span><span id="L-67"><a href="#L-67"><span class="linenos"> 67</span></a>
 </span><span id="L-68"><a href="#L-68"><span class="linenos"> 68</span></a><span class="sd">	&quot;&quot;&quot;</span>
-</span><span id="L-69"><a href="#L-69"><span class="linenos"> 69</span></a>	<span class="nb">setattr</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="n">_FIGURE_NAMES_KEY</span><span class="p">,</span> <span class="p">(</span><span class="n">func</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,))</span>
+</span><span id="L-69"><a href="#L-69"><span class="linenos"> 69</span></a>	<span class="nb">setattr</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="n">_FIGURE_NAMES_KEY</span><span class="p">,</span> <span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="s2">&quot;__name__&quot;</span><span class="p">,</span> <span class="s2">&quot;&lt;unknown&gt;&quot;</span><span class="p">),))</span>
 </span><span id="L-70"><a href="#L-70"><span class="linenos"> 70</span></a>	<span class="k">global</span> <span class="n">ATTENTION_MATRIX_FIGURE_FUNCS</span>  <span class="c1"># noqa: PLW0602</span>
 </span><span id="L-71"><a href="#L-71"><span class="linenos"> 71</span></a>	<span class="n">ATTENTION_MATRIX_FIGURE_FUNCS</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
 </span><span id="L-72"><a href="#L-72"><span class="linenos"> 72</span></a>
@@ -214,43 +214,44 @@ which adds your function to <code><a href="#ATTENTION_MATRIX_FIGURE_FUNCS">ATTEN
 </span><span id="L-79"><a href="#L-79"><span class="linenos"> 79</span></a>	<span class="s2">&quot;decorator which registers a function as a multi-figure function&quot;</span>
 </span><span id="L-80"><a href="#L-80"><span class="linenos"> 80</span></a>
 </span><span id="L-81"><a href="#L-81"><span class="linenos"> 81</span></a>	<span class="k">def</span><span class="w"> </span><span class="nf">decorator</span><span class="p">(</span><span class="n">func</span><span class="p">:</span> <span class="n">AttentionMatrixFigureFunc</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">AttentionMatrixFigureFunc</span><span class="p">:</span>
-</span><span id="L-82"><a href="#L-82"><span class="linenos"> 82</span></a>		<span class="nb">setattr</span><span class="p">(</span>
-</span><span id="L-83"><a href="#L-83"><span class="linenos"> 83</span></a>			<span class="n">func</span><span class="p">,</span>
-</span><span id="L-84"><a href="#L-84"><span class="linenos"> 84</span></a>			<span class="n">_FIGURE_NAMES_KEY</span><span class="p">,</span>
-</span><span id="L-85"><a href="#L-85"><span class="linenos"> 85</span></a>			<span class="nb">tuple</span><span class="p">([</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">func</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">.</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">&quot;</span> <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">names</span><span class="p">]),</span>
-</span><span id="L-86"><a href="#L-86"><span class="linenos"> 86</span></a>		<span class="p">)</span>
-</span><span id="L-87"><a href="#L-87"><span class="linenos"> 87</span></a>		<span class="k">global</span> <span class="n">ATTENTION_MATRIX_FIGURE_FUNCS</span>  <span class="c1"># noqa: PLW0602</span>
-</span><span id="L-88"><a href="#L-88"><span class="linenos"> 88</span></a>		<span class="n">ATTENTION_MATRIX_FIGURE_FUNCS</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
-</span><span id="L-89"><a href="#L-89"><span class="linenos"> 89</span></a>		<span class="k">return</span> <span class="n">func</span>
-</span><span id="L-90"><a href="#L-90"><span class="linenos"> 90</span></a>
-</span><span id="L-91"><a href="#L-91"><span class="linenos"> 91</span></a>	<span class="k">return</span> <span class="n">decorator</span>
-</span><span id="L-92"><a href="#L-92"><span class="linenos"> 92</span></a>
+</span><span id="L-82"><a href="#L-82"><span class="linenos"> 82</span></a>		<span class="n">func_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="s2">&quot;__name__&quot;</span><span class="p">,</span> <span class="s2">&quot;&lt;unknown&gt;&quot;</span><span class="p">)</span>
+</span><span id="L-83"><a href="#L-83"><span class="linenos"> 83</span></a>		<span class="nb">setattr</span><span class="p">(</span>
+</span><span id="L-84"><a href="#L-84"><span class="linenos"> 84</span></a>			<span class="n">func</span><span class="p">,</span>
+</span><span id="L-85"><a href="#L-85"><span class="linenos"> 85</span></a>			<span class="n">_FIGURE_NAMES_KEY</span><span class="p">,</span>
+</span><span id="L-86"><a href="#L-86"><span class="linenos"> 86</span></a>			<span class="nb">tuple</span><span class="p">([</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">func_name</span><span class="si">}</span><span class="s2">.</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">&quot;</span> <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">names</span><span class="p">]),</span>
+</span><span id="L-87"><a href="#L-87"><span class="linenos"> 87</span></a>		<span class="p">)</span>
+</span><span id="L-88"><a href="#L-88"><span class="linenos"> 88</span></a>		<span class="k">global</span> <span class="n">ATTENTION_MATRIX_FIGURE_FUNCS</span>  <span class="c1"># noqa: PLW0602</span>
+</span><span id="L-89"><a href="#L-89"><span class="linenos"> 89</span></a>		<span class="n">ATTENTION_MATRIX_FIGURE_FUNCS</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
+</span><span id="L-90"><a href="#L-90"><span class="linenos"> 90</span></a>		<span class="k">return</span> <span class="n">func</span>
+</span><span id="L-91"><a href="#L-91"><span class="linenos"> 91</span></a>
+</span><span id="L-92"><a href="#L-92"><span class="linenos"> 92</span></a>	<span class="k">return</span> <span class="n">decorator</span>
 </span><span id="L-93"><a href="#L-93"><span class="linenos"> 93</span></a>
-</span><span id="L-94"><a href="#L-94"><span class="linenos"> 94</span></a><span class="nd">@register_attn_figure_func</span>
-</span><span id="L-95"><a href="#L-95"><span class="linenos"> 95</span></a><span class="nd">@save_matrix_wrapper</span><span class="p">(</span><span class="n">fmt</span><span class="o">=</span><span class="s2">&quot;png&quot;</span><span class="p">,</span> <span class="n">normalize</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="s2">&quot;Blues&quot;</span><span class="p">)</span>
-</span><span id="L-96"><a href="#L-96"><span class="linenos"> 96</span></a><span class="k">def</span><span class="w"> </span><span class="nf">raw</span><span class="p">(</span><span class="n">attn_matrix</span><span class="p">:</span> <span class="n">AttentionMatrix</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Matrix2D</span><span class="p">:</span>
-</span><span id="L-97"><a href="#L-97"><span class="linenos"> 97</span></a>	<span class="s2">&quot;raw attention matrix&quot;</span>
-</span><span id="L-98"><a href="#L-98"><span class="linenos"> 98</span></a>	<span class="k">return</span> <span class="n">attn_matrix</span>
-</span><span id="L-99"><a href="#L-99"><span class="linenos"> 99</span></a>
+</span><span id="L-94"><a href="#L-94"><span class="linenos"> 94</span></a>
+</span><span id="L-95"><a href="#L-95"><span class="linenos"> 95</span></a><span class="nd">@register_attn_figure_func</span>
+</span><span id="L-96"><a href="#L-96"><span class="linenos"> 96</span></a><span class="nd">@save_matrix_wrapper</span><span class="p">(</span><span class="n">fmt</span><span class="o">=</span><span class="s2">&quot;png&quot;</span><span class="p">,</span> <span class="n">normalize</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="s2">&quot;Blues&quot;</span><span class="p">)</span>
+</span><span id="L-97"><a href="#L-97"><span class="linenos"> 97</span></a><span class="k">def</span><span class="w"> </span><span class="nf">raw</span><span class="p">(</span><span class="n">attn_matrix</span><span class="p">:</span> <span class="n">AttentionMatrix</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Matrix2D</span><span class="p">:</span>
+</span><span id="L-98"><a href="#L-98"><span class="linenos"> 98</span></a>	<span class="s2">&quot;raw attention matrix&quot;</span>
+</span><span id="L-99"><a href="#L-99"><span class="linenos"> 99</span></a>	<span class="k">return</span> <span class="n">attn_matrix</span>
 </span><span id="L-100"><a href="#L-100"><span class="linenos">100</span></a>
-</span><span id="L-101"><a href="#L-101"><span class="linenos">101</span></a><span class="c1"># some more examples:</span>
-</span><span id="L-102"><a href="#L-102"><span class="linenos">102</span></a>
-</span><span id="L-103"><a href="#L-103"><span class="linenos">103</span></a><span class="c1"># @register_attn_figure_func</span>
-</span><span id="L-104"><a href="#L-104"><span class="linenos">104</span></a><span class="c1"># @matplotlib_figure_saver</span>
-</span><span id="L-105"><a href="#L-105"><span class="linenos">105</span></a><span class="c1"># def raw(attn_matrix: AttentionMatrix, ax: plt.Axes) -&gt; None:</span>
-</span><span id="L-106"><a href="#L-106"><span class="linenos">106</span></a><span class="c1">#     ax.matshow(attn_matrix, cmap=&quot;viridis&quot;)</span>
-</span><span id="L-107"><a href="#L-107"><span class="linenos">107</span></a><span class="c1">#     ax.set_title(&quot;Raw Attention Pattern&quot;)</span>
-</span><span id="L-108"><a href="#L-108"><span class="linenos">108</span></a><span class="c1">#     ax.axis(&quot;off&quot;)</span>
-</span><span id="L-109"><a href="#L-109"><span class="linenos">109</span></a>
-</span><span id="L-110"><a href="#L-110"><span class="linenos">110</span></a><span class="c1"># @register_attn_figure_func</span>
-</span><span id="L-111"><a href="#L-111"><span class="linenos">111</span></a><span class="c1"># @save_matrix_wrapper(fmt=&quot;svg&quot;)</span>
-</span><span id="L-112"><a href="#L-112"><span class="linenos">112</span></a><span class="c1"># def raw_svg(attn_matrix: AttentionMatrix) -&gt; Matrix2D:</span>
-</span><span id="L-113"><a href="#L-113"><span class="linenos">113</span></a><span class="c1">#     return attn_matrix</span>
-</span><span id="L-114"><a href="#L-114"><span class="linenos">114</span></a>
-</span><span id="L-115"><a href="#L-115"><span class="linenos">115</span></a><span class="c1"># @register_attn_figure_func</span>
-</span><span id="L-116"><a href="#L-116"><span class="linenos">116</span></a><span class="c1"># @save_matrix_wrapper(fmt=&quot;svgz&quot;)</span>
-</span><span id="L-117"><a href="#L-117"><span class="linenos">117</span></a><span class="c1"># def raw_svgz(attn_matrix: AttentionMatrix) -&gt; Matrix2D:</span>
-</span><span id="L-118"><a href="#L-118"><span class="linenos">118</span></a><span class="c1">#     return attn_matrix</span>
+</span><span id="L-101"><a href="#L-101"><span class="linenos">101</span></a>
+</span><span id="L-102"><a href="#L-102"><span class="linenos">102</span></a><span class="c1"># some more examples:</span>
+</span><span id="L-103"><a href="#L-103"><span class="linenos">103</span></a>
+</span><span id="L-104"><a href="#L-104"><span class="linenos">104</span></a><span class="c1"># @register_attn_figure_func</span>
+</span><span id="L-105"><a href="#L-105"><span class="linenos">105</span></a><span class="c1"># @matplotlib_figure_saver</span>
+</span><span id="L-106"><a href="#L-106"><span class="linenos">106</span></a><span class="c1"># def raw(attn_matrix: AttentionMatrix, ax: plt.Axes) -&gt; None:</span>
+</span><span id="L-107"><a href="#L-107"><span class="linenos">107</span></a><span class="c1">#     ax.matshow(attn_matrix, cmap=&quot;viridis&quot;)</span>
+</span><span id="L-108"><a href="#L-108"><span class="linenos">108</span></a><span class="c1">#     ax.set_title(&quot;Raw Attention Pattern&quot;)</span>
+</span><span id="L-109"><a href="#L-109"><span class="linenos">109</span></a><span class="c1">#     ax.axis(&quot;off&quot;)</span>
+</span><span id="L-110"><a href="#L-110"><span class="linenos">110</span></a>
+</span><span id="L-111"><a href="#L-111"><span class="linenos">111</span></a><span class="c1"># @register_attn_figure_func</span>
+</span><span id="L-112"><a href="#L-112"><span class="linenos">112</span></a><span class="c1"># @save_matrix_wrapper(fmt=&quot;svg&quot;)</span>
+</span><span id="L-113"><a href="#L-113"><span class="linenos">113</span></a><span class="c1"># def raw_svg(attn_matrix: AttentionMatrix) -&gt; Matrix2D:</span>
+</span><span id="L-114"><a href="#L-114"><span class="linenos">114</span></a><span class="c1">#     return attn_matrix</span>
+</span><span id="L-115"><a href="#L-115"><span class="linenos">115</span></a>
+</span><span id="L-116"><a href="#L-116"><span class="linenos">116</span></a><span class="c1"># @register_attn_figure_func</span>
+</span><span id="L-117"><a href="#L-117"><span class="linenos">117</span></a><span class="c1"># @save_matrix_wrapper(fmt=&quot;svgz&quot;)</span>
+</span><span id="L-118"><a href="#L-118"><span class="linenos">118</span></a><span class="c1"># def raw_svgz(attn_matrix: AttentionMatrix) -&gt; Matrix2D:</span>
+</span><span id="L-119"><a href="#L-119"><span class="linenos">119</span></a><span class="c1">#     return attn_matrix</span>
 </span></pre></div>
 
 
@@ -258,7 +259,7 @@ which adds your function to <code><a href="#ATTENTION_MATRIX_FIGURE_FUNCS">ATTEN
             </section>
                 <section id="ATTENTION_MATRIX_FIGURE_FUNCS">
                     <div class="attr variable">
-            <span class="name">ATTENTION_MATRIX_FIGURE_FUNCS</span><span class="annotation">: list[Callable[[jaxtyping.Float[ndarray, &#39;n_ctx n_ctx&#39;], pathlib.Path], None]]</span>        =
+            <span class="name">ATTENTION_MATRIX_FIGURE_FUNCS</span><span class="annotation">: list[Callable[[jaxtyping.Float[ndarray, &#39;n_ctx n_ctx&#39;], pathlib._local.Path], None]]</span>        =
 <span class="default_value">[&lt;function raw&gt;]</span>
 
         
@@ -278,7 +279,7 @@ which adds your function to <code><a href="#ATTENTION_MATRIX_FIGURE_FUNCS">ATTEN
                 <div class="source-button-container">
             <label class="pdoc-button view-source-button" for="get_all_figure_names-view-source"><span>View Source</span></label>
             <div class="github-button-wrapper">
-                <a class="pdoc-button github-link-button" href="https://github.com/mivanit/pattern-lens/blob/0.5.0attn_figure_funcs.py#L27-L38" target="_blank">
+                <a class="pdoc-button github-link-button" href="https://github.com/mivanit/pattern-lens/blob/0.6.0attn_figure_funcs.py#L27-L38" target="_blank">
                     <span>View on GitHub</span>
                 </a>
             </div>
@@ -293,7 +294,7 @@ which adds your function to <code><a href="#ATTENTION_MATRIX_FIGURE_FUNCS">ATTEN
 </span><span id="get_all_figure_names-32"><a href="#get_all_figure_names-32"><span class="linenos">32</span></a>			<span class="nb">getattr</span><span class="p">(</span>
 </span><span id="get_all_figure_names-33"><a href="#get_all_figure_names-33"><span class="linenos">33</span></a>				<span class="n">func</span><span class="p">,</span>
 </span><span id="get_all_figure_names-34"><a href="#get_all_figure_names-34"><span class="linenos">34</span></a>				<span class="n">_FIGURE_NAMES_KEY</span><span class="p">,</span>
-</span><span id="get_all_figure_names-35"><a href="#get_all_figure_names-35"><span class="linenos">35</span></a>				<span class="p">[</span><span class="n">func</span><span class="o">.</span><span class="vm">__name__</span><span class="p">],</span>
+</span><span id="get_all_figure_names-35"><a href="#get_all_figure_names-35"><span class="linenos">35</span></a>				<span class="p">[</span><span class="nb">getattr</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="s2">&quot;__name__&quot;</span><span class="p">,</span> <span class="s2">&quot;&lt;unknown&gt;&quot;</span><span class="p">)],</span>
 </span><span id="get_all_figure_names-36"><a href="#get_all_figure_names-36"><span class="linenos">36</span></a>			<span class="p">)</span>
 </span><span id="get_all_figure_names-37"><a href="#get_all_figure_names-37"><span class="linenos">37</span></a>			<span class="k">for</span> <span class="n">func</span> <span class="ow">in</span> <span class="n">ATTENTION_MATRIX_FIGURE_FUNCS</span>
 </span><span id="get_all_figure_names-38"><a href="#get_all_figure_names-38"><span class="linenos">38</span></a>		<span class="p">),</span>
@@ -311,12 +312,12 @@ which adds your function to <code><a href="#ATTENTION_MATRIX_FIGURE_FUNCS">ATTEN
 <div class="attr function">
             
         <span class="def">def</span>
-        <span class="name">register_attn_figure_func</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">func</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">jaxtyping</span><span class="o">.</span><span class="n">Float</span><span class="p">[</span><span class="n">ndarray</span><span class="p">,</span> <span class="s1">&#39;n_ctx n_ctx&#39;</span><span class="p">],</span> <span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">],</span> <span class="kc">None</span><span class="p">]</span></span><span class="return-annotation">) -> <span class="n">Callable</span><span class="p">[[</span><span class="n">jaxtyping</span><span class="o">.</span><span class="n">Float</span><span class="p">[</span><span class="n">ndarray</span><span class="p">,</span> <span class="s1">&#39;n_ctx n_ctx&#39;</span><span class="p">],</span> <span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">],</span> <span class="kc">None</span><span class="p">]</span>:</span></span>
+        <span class="name">register_attn_figure_func</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">func</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">jaxtyping</span><span class="o">.</span><span class="n">Float</span><span class="p">[</span><span class="n">ndarray</span><span class="p">,</span> <span class="s1">&#39;n_ctx n_ctx&#39;</span><span class="p">],</span> <span class="n">pathlib</span><span class="o">.</span><span class="n">_local</span><span class="o">.</span><span class="n">Path</span><span class="p">],</span> <span class="kc">None</span><span class="p">]</span></span><span class="return-annotation">) -> <span class="n">Callable</span><span class="p">[[</span><span class="n">jaxtyping</span><span class="o">.</span><span class="n">Float</span><span class="p">[</span><span class="n">ndarray</span><span class="p">,</span> <span class="s1">&#39;n_ctx n_ctx&#39;</span><span class="p">],</span> <span class="n">pathlib</span><span class="o">.</span><span class="n">_local</span><span class="o">.</span><span class="n">Path</span><span class="p">],</span> <span class="kc">None</span><span class="p">]</span>:</span></span>
 
                 <div class="source-button-container">
             <label class="pdoc-button view-source-button" for="register_attn_figure_func-view-source"><span>View Source</span></label>
             <div class="github-button-wrapper">
-                <a class="pdoc-button github-link-button" href="https://github.com/mivanit/pattern-lens/blob/0.5.0attn_figure_funcs.py#L41-L73" target="_blank">
+                <a class="pdoc-button github-link-button" href="https://github.com/mivanit/pattern-lens/blob/0.6.0attn_figure_funcs.py#L41-L73" target="_blank">
                     <span>View on GitHub</span>
                 </a>
             </div>
@@ -352,7 +353,7 @@ which adds your function to <code><a href="#ATTENTION_MATRIX_FIGURE_FUNCS">ATTEN
 </span><span id="register_attn_figure_func-67"><a href="#register_attn_figure_func-67"><span class="linenos">67</span></a><span class="sd">	```</span>
 </span><span id="register_attn_figure_func-68"><a href="#register_attn_figure_func-68"><span class="linenos">68</span></a>
 </span><span id="register_attn_figure_func-69"><a href="#register_attn_figure_func-69"><span class="linenos">69</span></a><span class="sd">	&quot;&quot;&quot;</span>
-</span><span id="register_attn_figure_func-70"><a href="#register_attn_figure_func-70"><span class="linenos">70</span></a>	<span class="nb">setattr</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="n">_FIGURE_NAMES_KEY</span><span class="p">,</span> <span class="p">(</span><span class="n">func</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,))</span>
+</span><span id="register_attn_figure_func-70"><a href="#register_attn_figure_func-70"><span class="linenos">70</span></a>	<span class="nb">setattr</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="n">_FIGURE_NAMES_KEY</span><span class="p">,</span> <span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="s2">&quot;__name__&quot;</span><span class="p">,</span> <span class="s2">&quot;&lt;unknown&gt;&quot;</span><span class="p">),))</span>
 </span><span id="register_attn_figure_func-71"><a href="#register_attn_figure_func-71"><span class="linenos">71</span></a>	<span class="k">global</span> <span class="n">ATTENTION_MATRIX_FIGURE_FUNCS</span>  <span class="c1"># noqa: PLW0602</span>
 </span><span id="register_attn_figure_func-72"><a href="#register_attn_figure_func-72"><span class="linenos">72</span></a>	<span class="n">ATTENTION_MATRIX_FIGURE_FUNCS</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
 </span><span id="register_attn_figure_func-73"><a href="#register_attn_figure_func-73"><span class="linenos">73</span></a>
@@ -400,12 +401,12 @@ your function, after we add it to <code><a href="#ATTENTION_MATRIX_FIGURE_FUNCS"
 <div class="attr function">
             
         <span class="def">def</span>
-        <span class="name">register_attn_figure_multifunc</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">names</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span></span><span class="return-annotation">) -> <span class="n">Callable</span><span class="p">[[</span><span class="n">Callable</span><span class="p">[[</span><span class="n">jaxtyping</span><span class="o">.</span><span class="n">Float</span><span class="p">[</span><span class="n">ndarray</span><span class="p">,</span> <span class="s1">&#39;n_ctx n_ctx&#39;</span><span class="p">],</span> <span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">],</span> <span class="kc">None</span><span class="p">]],</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">jaxtyping</span><span class="o">.</span><span class="n">Float</span><span class="p">[</span><span class="n">ndarray</span><span class="p">,</span> <span class="s1">&#39;n_ctx n_ctx&#39;</span><span class="p">],</span> <span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">],</span> <span class="kc">None</span><span class="p">]]</span>:</span></span>
+        <span class="name">register_attn_figure_multifunc</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">names</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span></span><span class="return-annotation">) -> <span class="n">Callable</span><span class="p">[[</span><span class="n">Callable</span><span class="p">[[</span><span class="n">jaxtyping</span><span class="o">.</span><span class="n">Float</span><span class="p">[</span><span class="n">ndarray</span><span class="p">,</span> <span class="s1">&#39;n_ctx n_ctx&#39;</span><span class="p">],</span> <span class="n">pathlib</span><span class="o">.</span><span class="n">_local</span><span class="o">.</span><span class="n">Path</span><span class="p">],</span> <span class="kc">None</span><span class="p">]],</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">jaxtyping</span><span class="o">.</span><span class="n">Float</span><span class="p">[</span><span class="n">ndarray</span><span class="p">,</span> <span class="s1">&#39;n_ctx n_ctx&#39;</span><span class="p">],</span> <span class="n">pathlib</span><span class="o">.</span><span class="n">_local</span><span class="o">.</span><span class="n">Path</span><span class="p">],</span> <span class="kc">None</span><span class="p">]]</span>:</span></span>
 
                 <div class="source-button-container">
             <label class="pdoc-button view-source-button" for="register_attn_figure_multifunc-view-source"><span>View Source</span></label>
             <div class="github-button-wrapper">
-                <a class="pdoc-button github-link-button" href="https://github.com/mivanit/pattern-lens/blob/0.5.0attn_figure_funcs.py#L76-L91" target="_blank">
+                <a class="pdoc-button github-link-button" href="https://github.com/mivanit/pattern-lens/blob/0.6.0attn_figure_funcs.py#L76-L92" target="_blank">
                     <span>View on GitHub</span>
                 </a>
             </div>
@@ -419,16 +420,17 @@ your function, after we add it to <code><a href="#ATTENTION_MATRIX_FIGURE_FUNCS"
 </span><span id="register_attn_figure_multifunc-80"><a href="#register_attn_figure_multifunc-80"><span class="linenos">80</span></a>	<span class="s2">&quot;decorator which registers a function as a multi-figure function&quot;</span>
 </span><span id="register_attn_figure_multifunc-81"><a href="#register_attn_figure_multifunc-81"><span class="linenos">81</span></a>
 </span><span id="register_attn_figure_multifunc-82"><a href="#register_attn_figure_multifunc-82"><span class="linenos">82</span></a>	<span class="k">def</span><span class="w"> </span><span class="nf">decorator</span><span class="p">(</span><span class="n">func</span><span class="p">:</span> <span class="n">AttentionMatrixFigureFunc</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">AttentionMatrixFigureFunc</span><span class="p">:</span>
-</span><span id="register_attn_figure_multifunc-83"><a href="#register_attn_figure_multifunc-83"><span class="linenos">83</span></a>		<span class="nb">setattr</span><span class="p">(</span>
-</span><span id="register_attn_figure_multifunc-84"><a href="#register_attn_figure_multifunc-84"><span class="linenos">84</span></a>			<span class="n">func</span><span class="p">,</span>
-</span><span id="register_attn_figure_multifunc-85"><a href="#register_attn_figure_multifunc-85"><span class="linenos">85</span></a>			<span class="n">_FIGURE_NAMES_KEY</span><span class="p">,</span>
-</span><span id="register_attn_figure_multifunc-86"><a href="#register_attn_figure_multifunc-86"><span class="linenos">86</span></a>			<span class="nb">tuple</span><span class="p">([</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">func</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">.</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">&quot;</span> <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">names</span><span class="p">]),</span>
-</span><span id="register_attn_figure_multifunc-87"><a href="#register_attn_figure_multifunc-87"><span class="linenos">87</span></a>		<span class="p">)</span>
-</span><span id="register_attn_figure_multifunc-88"><a href="#register_attn_figure_multifunc-88"><span class="linenos">88</span></a>		<span class="k">global</span> <span class="n">ATTENTION_MATRIX_FIGURE_FUNCS</span>  <span class="c1"># noqa: PLW0602</span>
-</span><span id="register_attn_figure_multifunc-89"><a href="#register_attn_figure_multifunc-89"><span class="linenos">89</span></a>		<span class="n">ATTENTION_MATRIX_FIGURE_FUNCS</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
-</span><span id="register_attn_figure_multifunc-90"><a href="#register_attn_figure_multifunc-90"><span class="linenos">90</span></a>		<span class="k">return</span> <span class="n">func</span>
-</span><span id="register_attn_figure_multifunc-91"><a href="#register_attn_figure_multifunc-91"><span class="linenos">91</span></a>
-</span><span id="register_attn_figure_multifunc-92"><a href="#register_attn_figure_multifunc-92"><span class="linenos">92</span></a>	<span class="k">return</span> <span class="n">decorator</span>
+</span><span id="register_attn_figure_multifunc-83"><a href="#register_attn_figure_multifunc-83"><span class="linenos">83</span></a>		<span class="n">func_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="s2">&quot;__name__&quot;</span><span class="p">,</span> <span class="s2">&quot;&lt;unknown&gt;&quot;</span><span class="p">)</span>
+</span><span id="register_attn_figure_multifunc-84"><a href="#register_attn_figure_multifunc-84"><span class="linenos">84</span></a>		<span class="nb">setattr</span><span class="p">(</span>
+</span><span id="register_attn_figure_multifunc-85"><a href="#register_attn_figure_multifunc-85"><span class="linenos">85</span></a>			<span class="n">func</span><span class="p">,</span>
+</span><span id="register_attn_figure_multifunc-86"><a href="#register_attn_figure_multifunc-86"><span class="linenos">86</span></a>			<span class="n">_FIGURE_NAMES_KEY</span><span class="p">,</span>
+</span><span id="register_attn_figure_multifunc-87"><a href="#register_attn_figure_multifunc-87"><span class="linenos">87</span></a>			<span class="nb">tuple</span><span class="p">([</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">func_name</span><span class="si">}</span><span class="s2">.</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">&quot;</span> <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">names</span><span class="p">]),</span>
+</span><span id="register_attn_figure_multifunc-88"><a href="#register_attn_figure_multifunc-88"><span class="linenos">88</span></a>		<span class="p">)</span>
+</span><span id="register_attn_figure_multifunc-89"><a href="#register_attn_figure_multifunc-89"><span class="linenos">89</span></a>		<span class="k">global</span> <span class="n">ATTENTION_MATRIX_FIGURE_FUNCS</span>  <span class="c1"># noqa: PLW0602</span>
+</span><span id="register_attn_figure_multifunc-90"><a href="#register_attn_figure_multifunc-90"><span class="linenos">90</span></a>		<span class="n">ATTENTION_MATRIX_FIGURE_FUNCS</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
+</span><span id="register_attn_figure_multifunc-91"><a href="#register_attn_figure_multifunc-91"><span class="linenos">91</span></a>		<span class="k">return</span> <span class="n">func</span>
+</span><span id="register_attn_figure_multifunc-92"><a href="#register_attn_figure_multifunc-92"><span class="linenos">92</span></a>
+</span><span id="register_attn_figure_multifunc-93"><a href="#register_attn_figure_multifunc-93"><span class="linenos">93</span></a>	<span class="k">return</span> <span class="n">decorator</span>
 </span></pre></div>
 
 
@@ -449,7 +451,7 @@ your function, after we add it to <code><a href="#ATTENTION_MATRIX_FIGURE_FUNCS"
                 <div class="source-button-container">
             <label class="pdoc-button view-source-button" for="raw-view-source"><span>View Source</span></label>
             <div class="github-button-wrapper">
-                <a class="pdoc-button github-link-button" href="https://github.com/mivanit/pattern-lens/blob/0.5.0attn_figure_funcs.py#L94-L98" target="_blank">
+                <a class="pdoc-button github-link-button" href="https://github.com/mivanit/pattern-lens/blob/0.6.0attn_figure_funcs.py#L95-L99" target="_blank">
                     <span>View on GitHub</span>
                 </a>
             </div>
@@ -457,11 +459,11 @@ your function, after we add it to <code><a href="#ATTENTION_MATRIX_FIGURE_FUNCS"
 
     </div>
     <a class="headerlink" href="#raw"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="raw-95"><a href="#raw-95"><span class="linenos">95</span></a><span class="nd">@register_attn_figure_func</span>
-</span><span id="raw-96"><a href="#raw-96"><span class="linenos">96</span></a><span class="nd">@save_matrix_wrapper</span><span class="p">(</span><span class="n">fmt</span><span class="o">=</span><span class="s2">&quot;png&quot;</span><span class="p">,</span> <span class="n">normalize</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="s2">&quot;Blues&quot;</span><span class="p">)</span>
-</span><span id="raw-97"><a href="#raw-97"><span class="linenos">97</span></a><span class="k">def</span><span class="w"> </span><span class="nf">raw</span><span class="p">(</span><span class="n">attn_matrix</span><span class="p">:</span> <span class="n">AttentionMatrix</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Matrix2D</span><span class="p">:</span>
-</span><span id="raw-98"><a href="#raw-98"><span class="linenos">98</span></a>	<span class="s2">&quot;raw attention matrix&quot;</span>
-</span><span id="raw-99"><a href="#raw-99"><span class="linenos">99</span></a>	<span class="k">return</span> <span class="n">attn_matrix</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="raw-96"><a href="#raw-96"><span class="linenos"> 96</span></a><span class="nd">@register_attn_figure_func</span>
+</span><span id="raw-97"><a href="#raw-97"><span class="linenos"> 97</span></a><span class="nd">@save_matrix_wrapper</span><span class="p">(</span><span class="n">fmt</span><span class="o">=</span><span class="s2">&quot;png&quot;</span><span class="p">,</span> <span class="n">normalize</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="s2">&quot;Blues&quot;</span><span class="p">)</span>
+</span><span id="raw-98"><a href="#raw-98"><span class="linenos"> 98</span></a><span class="k">def</span><span class="w"> </span><span class="nf">raw</span><span class="p">(</span><span class="n">attn_matrix</span><span class="p">:</span> <span class="n">AttentionMatrix</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Matrix2D</span><span class="p">:</span>
+</span><span id="raw-99"><a href="#raw-99"><span class="linenos"> 99</span></a>	<span class="s2">&quot;raw attention matrix&quot;</span>
+</span><span id="raw-100"><a href="#raw-100"><span class="linenos">100</span></a>	<span class="k">return</span> <span class="n">attn_matrix</span>
 </span></pre></div>
 
 

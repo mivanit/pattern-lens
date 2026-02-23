@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="generator" content="pdoc 15.0.1"/>
+    <meta name="generator" content="pdoc 16.0.0"/>
     <title>pattern_lens.figures API documentation</title>
 <link rel="stylesheet" href="../resources/css/bootstrap-reboot.min.css"><link rel="stylesheet" href="../resources/css/syntax-highlighting.css"><link rel="stylesheet" href="../resources/css/theme.css"><link rel="stylesheet" href="../resources/css/layout.css"><link rel="stylesheet" href="../resources/css/content.css"><link rel="stylesheet" href="../resources/css/custom.css"><script>
     window.MathJax = {
@@ -46,7 +46,7 @@
 </script></head>
 <body>
 <div class="package-version">
-    docs for <a href="https://github.com/mivanit/pattern-lens">pattern_lens</a> v0.5.0<br>
+    docs for <a href="https://github.com/mivanit/pattern-lens">pattern_lens</a> v0.6.0<br>
 </div>
     <nav class="pdoc">
         <label id="navtoggle" for="togglestate" class="pdoc-button">
@@ -133,7 +133,7 @@
     </nav>
     <main class="pdoc">
             <section class="module-info">
-                        <a class="pdoc-button git-button" href="https://github.com/mivanit/pattern-lens/blob/0.5.0figures.py">View Source on GitHub</a>
+                        <a class="pdoc-button git-button" href="https://github.com/mivanit/pattern-lens/blob/0.6.0figures.py">View Source on GitHub</a>
                     <h1 class="modulename">
 <a href="./../pattern_lens.html">pattern_lens</a><wbr>.figures    </h1>
 
@@ -145,7 +145,7 @@
                         <div class="source-button-container">
             <label class="pdoc-button view-source-button" for="mod-figures-view-source"><span>View Source</span></label>
             <div class="github-button-wrapper">
-                <a class="pdoc-button github-link-button" href="https://github.com/mivanit/pattern-lens/blob/0.5.0figures.py#L0-L471" target="_blank">
+                <a class="pdoc-button github-link-button" href="https://github.com/mivanit/pattern-lens/blob/0.6.0figures.py#L0-L474" target="_blank">
                     <span>View on GitHub</span>
                 </a>
             </div>
@@ -253,7 +253,7 @@
 </span><span id="L-99"><a href="#L-99"><span class="linenos"> 99</span></a>	<span class="n">funcs_status</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">bool</span> <span class="o">|</span> <span class="ne">Exception</span><span class="p">]</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
 </span><span id="L-100"><a href="#L-100"><span class="linenos">100</span></a>
 </span><span id="L-101"><a href="#L-101"><span class="linenos">101</span></a>	<span class="k">for</span> <span class="n">func</span> <span class="ow">in</span> <span class="n">figure_funcs</span><span class="p">:</span>
-</span><span id="L-102"><a href="#L-102"><span class="linenos">102</span></a>		<span class="n">func_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">func</span><span class="o">.</span><span class="vm">__name__</span>
+</span><span id="L-102"><a href="#L-102"><span class="linenos">102</span></a>		<span class="n">func_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="s2">&quot;__name__&quot;</span><span class="p">,</span> <span class="s2">&quot;&lt;unknown&gt;&quot;</span><span class="p">)</span>
 </span><span id="L-103"><a href="#L-103"><span class="linenos">103</span></a>		<span class="n">fig_path</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Path</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">save_dir</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">func_name</span><span class="si">}</span><span class="s2">.*&quot;</span><span class="p">))</span>
 </span><span id="L-104"><a href="#L-104"><span class="linenos">104</span></a>
 </span><span id="L-105"><a href="#L-105"><span class="linenos">105</span></a>		<span class="k">if</span> <span class="ow">not</span> <span class="n">force_overwrite</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">fig_path</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
@@ -266,10 +266,10 @@
 </span><span id="L-112"><a href="#L-112"><span class="linenos">112</span></a>
 </span><span id="L-113"><a href="#L-113"><span class="linenos">113</span></a>		<span class="c1"># bling catch any exception</span>
 </span><span id="L-114"><a href="#L-114"><span class="linenos">114</span></a>		<span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>  <span class="c1"># noqa: BLE001</span>
-</span><span id="L-115"><a href="#L-115"><span class="linenos">115</span></a>			<span class="n">error_file</span> <span class="o">=</span> <span class="n">save_dir</span> <span class="o">/</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">func</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">.error.txt&quot;</span>
+</span><span id="L-115"><a href="#L-115"><span class="linenos">115</span></a>			<span class="n">error_file</span> <span class="o">=</span> <span class="n">save_dir</span> <span class="o">/</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">func_name</span><span class="si">}</span><span class="s2">.error.txt&quot;</span>
 </span><span id="L-116"><a href="#L-116"><span class="linenos">116</span></a>			<span class="n">error_file</span><span class="o">.</span><span class="n">write_text</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">))</span>
 </span><span id="L-117"><a href="#L-117"><span class="linenos">117</span></a>			<span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
-</span><span id="L-118"><a href="#L-118"><span class="linenos">118</span></a>				<span class="sa">f</span><span class="s2">&quot;Error in </span><span class="si">{</span><span class="n">func</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2"> for L</span><span class="si">{</span><span class="n">layer_idx</span><span class="si">}</span><span class="s2">H</span><span class="si">{</span><span class="n">head_idx</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">e</span><span class="si">!s}</span><span class="s2">&quot;</span><span class="p">,</span>
+</span><span id="L-118"><a href="#L-118"><span class="linenos">118</span></a>				<span class="sa">f</span><span class="s2">&quot;Error in </span><span class="si">{</span><span class="n">func_name</span><span class="si">}</span><span class="s2"> for L</span><span class="si">{</span><span class="n">layer_idx</span><span class="si">}</span><span class="s2">H</span><span class="si">{</span><span class="n">head_idx</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">e</span><span class="si">!s}</span><span class="s2">&quot;</span><span class="p">,</span>
 </span><span id="L-119"><a href="#L-119"><span class="linenos">119</span></a>				<span class="n">stacklevel</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
 </span><span id="L-120"><a href="#L-120"><span class="linenos">120</span></a>			<span class="p">)</span>
 </span><span id="L-121"><a href="#L-121"><span class="linenos">121</span></a>			<span class="n">funcs_status</span><span class="p">[</span><span class="n">func_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">e</span>
@@ -420,14 +420,14 @@
 </span><span id="L-266"><a href="#L-266"><span class="linenos">266</span></a>		<span class="n">figure_funcs</span> <span class="o">=</span> <span class="p">[</span>
 </span><span id="L-267"><a href="#L-267"><span class="linenos">267</span></a>			<span class="n">func</span>
 </span><span id="L-268"><a href="#L-268"><span class="linenos">268</span></a>			<span class="k">for</span> <span class="n">func</span> <span class="ow">in</span> <span class="n">ATTENTION_MATRIX_FIGURE_FUNCS</span>
-</span><span id="L-269"><a href="#L-269"><span class="linenos">269</span></a>			<span class="k">if</span> <span class="n">pattern</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">func</span><span class="o">.</span><span class="vm">__name__</span><span class="p">)</span>
+</span><span id="L-269"><a href="#L-269"><span class="linenos">269</span></a>			<span class="k">if</span> <span class="n">pattern</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="s2">&quot;__name__&quot;</span><span class="p">,</span> <span class="s2">&quot;&lt;unknown&gt;&quot;</span><span class="p">))</span>
 </span><span id="L-270"><a href="#L-270"><span class="linenos">270</span></a>		<span class="p">]</span>
 </span><span id="L-271"><a href="#L-271"><span class="linenos">271</span></a>	<span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">figure_funcs_select</span><span class="p">,</span> <span class="nb">set</span><span class="p">):</span>
 </span><span id="L-272"><a href="#L-272"><span class="linenos">272</span></a>		<span class="c1"># if a set, assume a set of function names</span>
 </span><span id="L-273"><a href="#L-273"><span class="linenos">273</span></a>		<span class="n">figure_funcs</span> <span class="o">=</span> <span class="p">[</span>
 </span><span id="L-274"><a href="#L-274"><span class="linenos">274</span></a>			<span class="n">func</span>
 </span><span id="L-275"><a href="#L-275"><span class="linenos">275</span></a>			<span class="k">for</span> <span class="n">func</span> <span class="ow">in</span> <span class="n">ATTENTION_MATRIX_FIGURE_FUNCS</span>
-</span><span id="L-276"><a href="#L-276"><span class="linenos">276</span></a>			<span class="k">if</span> <span class="n">func</span><span class="o">.</span><span class="vm">__name__</span> <span class="ow">in</span> <span class="n">figure_funcs_select</span>
+</span><span id="L-276"><a href="#L-276"><span class="linenos">276</span></a>			<span class="k">if</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="s2">&quot;__name__&quot;</span><span class="p">,</span> <span class="s2">&quot;&lt;unknown&gt;&quot;</span><span class="p">)</span> <span class="ow">in</span> <span class="n">figure_funcs_select</span>
 </span><span id="L-277"><a href="#L-277"><span class="linenos">277</span></a>		<span class="p">]</span>
 </span><span id="L-278"><a href="#L-278"><span class="linenos">278</span></a>	<span class="k">else</span><span class="p">:</span>
 </span><span id="L-279"><a href="#L-279"><span class="linenos">279</span></a>		<span class="n">err_msg</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="p">(</span>
@@ -440,7 +440,7 @@
 </span><span id="L-286"><a href="#L-286"><span class="linenos">286</span></a>
 </span><span id="L-287"><a href="#L-287"><span class="linenos">287</span></a><span class="k">def</span><span class="w"> </span><span class="nf">figures_main</span><span class="p">(</span>
 </span><span id="L-288"><a href="#L-288"><span class="linenos">288</span></a>	<span class="n">model_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-</span><span id="L-289"><a href="#L-289"><span class="linenos">289</span></a>	<span class="n">save_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+</span><span id="L-289"><a href="#L-289"><span class="linenos">289</span></a>	<span class="n">save_path</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">Path</span><span class="p">,</span>
 </span><span id="L-290"><a href="#L-290"><span class="linenos">290</span></a>	<span class="n">n_samples</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
 </span><span id="L-291"><a href="#L-291"><span class="linenos">291</span></a>	<span class="n">force</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
 </span><span id="L-292"><a href="#L-292"><span class="linenos">292</span></a>	<span class="n">figure_funcs_select</span><span class="p">:</span> <span class="nb">set</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -451,7 +451,7 @@
 </span><span id="L-297"><a href="#L-297"><span class="linenos">297</span></a><span class="sd">	# Parameters:</span>
 </span><span id="L-298"><a href="#L-298"><span class="linenos">298</span></a><span class="sd">	- `model_name : str`</span>
 </span><span id="L-299"><a href="#L-299"><span class="linenos">299</span></a><span class="sd">		model name to use, used for loading the model config, prompts, activations, and saving the figures</span>
-</span><span id="L-300"><a href="#L-300"><span class="linenos">300</span></a><span class="sd">	- `save_path : str`</span>
+</span><span id="L-300"><a href="#L-300"><span class="linenos">300</span></a><span class="sd">	- `save_path : str | Path`</span>
 </span><span id="L-301"><a href="#L-301"><span class="linenos">301</span></a><span class="sd">		base path to look in</span>
 </span><span id="L-302"><a href="#L-302"><span class="linenos">302</span></a><span class="sd">	- `n_samples : int`</span>
 </span><span id="L-303"><a href="#L-303"><span class="linenos">303</span></a><span class="sd">		max number of samples to process</span>
@@ -484,146 +484,149 @@
 </span><span id="L-330"><a href="#L-330"><span class="linenos">330</span></a>		<span class="n">figure_funcs_select</span><span class="o">=</span><span class="n">figure_funcs_select</span><span class="p">,</span>
 </span><span id="L-331"><a href="#L-331"><span class="linenos">331</span></a>	<span class="p">)</span>
 </span><span id="L-332"><a href="#L-332"><span class="linenos">332</span></a>	<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">figure_funcs</span><span class="p">)</span><span class="si">}</span><span class="s2"> figure functions loaded&quot;</span><span class="p">)</span>
-</span><span id="L-333"><a href="#L-333"><span class="linenos">333</span></a>	<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span> <span class="o">+</span> <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">func</span><span class="o">.</span><span class="vm">__name__</span> <span class="k">for</span> <span class="n">func</span> <span class="ow">in</span> <span class="n">figure_funcs</span><span class="p">]))</span>
-</span><span id="L-334"><a href="#L-334"><span class="linenos">334</span></a>
-</span><span id="L-335"><a href="#L-335"><span class="linenos">335</span></a>	<span class="n">chunksize</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span>
-</span><span id="L-336"><a href="#L-336"><span class="linenos">336</span></a>		<span class="nb">max</span><span class="p">(</span>
-</span><span id="L-337"><a href="#L-337"><span class="linenos">337</span></a>			<span class="mi">1</span><span class="p">,</span>
-</span><span id="L-338"><a href="#L-338"><span class="linenos">338</span></a>			<span class="nb">len</span><span class="p">(</span><span class="n">prompts</span><span class="p">)</span> <span class="o">//</span> <span class="p">(</span><span class="mi">5</span> <span class="o">*</span> <span class="n">multiprocessing</span><span class="o">.</span><span class="n">cpu_count</span><span class="p">()),</span>
-</span><span id="L-339"><a href="#L-339"><span class="linenos">339</span></a>		<span class="p">),</span>
-</span><span id="L-340"><a href="#L-340"><span class="linenos">340</span></a>	<span class="p">)</span>
-</span><span id="L-341"><a href="#L-341"><span class="linenos">341</span></a>	<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;chunksize: </span><span class="si">{</span><span class="n">chunksize</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-</span><span id="L-342"><a href="#L-342"><span class="linenos">342</span></a>
-</span><span id="L-343"><a href="#L-343"><span class="linenos">343</span></a>	<span class="nb">list</span><span class="p">(</span>
-</span><span id="L-344"><a href="#L-344"><span class="linenos">344</span></a>		<span class="n">run_maybe_parallel</span><span class="p">(</span>
-</span><span id="L-345"><a href="#L-345"><span class="linenos">345</span></a>			<span class="n">func</span><span class="o">=</span><span class="n">functools</span><span class="o">.</span><span class="n">partial</span><span class="p">(</span>
-</span><span id="L-346"><a href="#L-346"><span class="linenos">346</span></a>				<span class="n">process_prompt</span><span class="p">,</span>
-</span><span id="L-347"><a href="#L-347"><span class="linenos">347</span></a>				<span class="n">model_cfg</span><span class="o">=</span><span class="n">model_cfg</span><span class="p">,</span>
-</span><span id="L-348"><a href="#L-348"><span class="linenos">348</span></a>				<span class="n">save_path</span><span class="o">=</span><span class="n">save_path_p</span><span class="p">,</span>
-</span><span id="L-349"><a href="#L-349"><span class="linenos">349</span></a>				<span class="n">figure_funcs</span><span class="o">=</span><span class="n">figure_funcs</span><span class="p">,</span>
-</span><span id="L-350"><a href="#L-350"><span class="linenos">350</span></a>				<span class="n">force_overwrite</span><span class="o">=</span><span class="n">force</span><span class="p">,</span>
-</span><span id="L-351"><a href="#L-351"><span class="linenos">351</span></a>			<span class="p">),</span>
-</span><span id="L-352"><a href="#L-352"><span class="linenos">352</span></a>			<span class="n">iterable</span><span class="o">=</span><span class="n">prompts</span><span class="p">,</span>
-</span><span id="L-353"><a href="#L-353"><span class="linenos">353</span></a>			<span class="n">parallel</span><span class="o">=</span><span class="n">parallel</span><span class="p">,</span>
-</span><span id="L-354"><a href="#L-354"><span class="linenos">354</span></a>			<span class="n">chunksize</span><span class="o">=</span><span class="n">chunksize</span><span class="p">,</span>
-</span><span id="L-355"><a href="#L-355"><span class="linenos">355</span></a>			<span class="n">pbar</span><span class="o">=</span><span class="s2">&quot;tqdm&quot;</span><span class="p">,</span>
-</span><span id="L-356"><a href="#L-356"><span class="linenos">356</span></a>			<span class="n">pbar_kwargs</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span>
-</span><span id="L-357"><a href="#L-357"><span class="linenos">357</span></a>				<span class="n">desc</span><span class="o">=</span><span class="s2">&quot;Making figures&quot;</span><span class="p">,</span>
-</span><span id="L-358"><a href="#L-358"><span class="linenos">358</span></a>				<span class="n">unit</span><span class="o">=</span><span class="s2">&quot;prompt&quot;</span><span class="p">,</span>
-</span><span id="L-359"><a href="#L-359"><span class="linenos">359</span></a>			<span class="p">),</span>
-</span><span id="L-360"><a href="#L-360"><span class="linenos">360</span></a>		<span class="p">),</span>
-</span><span id="L-361"><a href="#L-361"><span class="linenos">361</span></a>	<span class="p">)</span>
-</span><span id="L-362"><a href="#L-362"><span class="linenos">362</span></a>
-</span><span id="L-363"><a href="#L-363"><span class="linenos">363</span></a>	<span class="k">with</span> <span class="n">SpinnerContext</span><span class="p">(</span>
-</span><span id="L-364"><a href="#L-364"><span class="linenos">364</span></a>		<span class="n">message</span><span class="o">=</span><span class="s2">&quot;updating jsonl metadata for models and functions&quot;</span><span class="p">,</span>
-</span><span id="L-365"><a href="#L-365"><span class="linenos">365</span></a>		<span class="o">**</span><span class="n">SPINNER_KWARGS</span><span class="p">,</span>
-</span><span id="L-366"><a href="#L-366"><span class="linenos">366</span></a>	<span class="p">):</span>
-</span><span id="L-367"><a href="#L-367"><span class="linenos">367</span></a>		<span class="n">generate_models_jsonl</span><span class="p">(</span><span class="n">save_path_p</span><span class="p">)</span>
-</span><span id="L-368"><a href="#L-368"><span class="linenos">368</span></a>		<span class="n">generate_functions_jsonl</span><span class="p">(</span><span class="n">save_path_p</span><span class="p">)</span>
-</span><span id="L-369"><a href="#L-369"><span class="linenos">369</span></a>
-</span><span id="L-370"><a href="#L-370"><span class="linenos">370</span></a>
-</span><span id="L-371"><a href="#L-371"><span class="linenos">371</span></a><span class="k">def</span><span class="w"> </span><span class="nf">_parse_args</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span>
-</span><span id="L-372"><a href="#L-372"><span class="linenos">372</span></a>	<span class="n">argparse</span><span class="o">.</span><span class="n">Namespace</span><span class="p">,</span>
-</span><span id="L-373"><a href="#L-373"><span class="linenos">373</span></a>	<span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>  <span class="c1"># models</span>
-</span><span id="L-374"><a href="#L-374"><span class="linenos">374</span></a>	<span class="nb">set</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span>  <span class="c1"># figure_funcs_select</span>
-</span><span id="L-375"><a href="#L-375"><span class="linenos">375</span></a><span class="p">]:</span>
-</span><span id="L-376"><a href="#L-376"><span class="linenos">376</span></a>	<span class="n">arg_parser</span><span class="p">:</span> <span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentParser</span> <span class="o">=</span> <span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentParser</span><span class="p">()</span>
-</span><span id="L-377"><a href="#L-377"><span class="linenos">377</span></a>	<span class="c1"># input and output</span>
-</span><span id="L-378"><a href="#L-378"><span class="linenos">378</span></a>	<span class="n">arg_parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
-</span><span id="L-379"><a href="#L-379"><span class="linenos">379</span></a>		<span class="s2">&quot;--model&quot;</span><span class="p">,</span>
-</span><span id="L-380"><a href="#L-380"><span class="linenos">380</span></a>		<span class="s2">&quot;-m&quot;</span><span class="p">,</span>
-</span><span id="L-381"><a href="#L-381"><span class="linenos">381</span></a>		<span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span>
-</span><span id="L-382"><a href="#L-382"><span class="linenos">382</span></a>		<span class="n">required</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-</span><span id="L-383"><a href="#L-383"><span class="linenos">383</span></a>		<span class="n">help</span><span class="o">=</span><span class="s2">&quot;The model name(s) to use. comma separated with no whitespace if multiple&quot;</span><span class="p">,</span>
-</span><span id="L-384"><a href="#L-384"><span class="linenos">384</span></a>	<span class="p">)</span>
-</span><span id="L-385"><a href="#L-385"><span class="linenos">385</span></a>	<span class="n">arg_parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
-</span><span id="L-386"><a href="#L-386"><span class="linenos">386</span></a>		<span class="s2">&quot;--save-path&quot;</span><span class="p">,</span>
-</span><span id="L-387"><a href="#L-387"><span class="linenos">387</span></a>		<span class="s2">&quot;-s&quot;</span><span class="p">,</span>
-</span><span id="L-388"><a href="#L-388"><span class="linenos">388</span></a>		<span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span>
-</span><span id="L-389"><a href="#L-389"><span class="linenos">389</span></a>		<span class="n">required</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-</span><span id="L-390"><a href="#L-390"><span class="linenos">390</span></a>		<span class="n">help</span><span class="o">=</span><span class="s2">&quot;The path to save the attention patterns&quot;</span><span class="p">,</span>
-</span><span id="L-391"><a href="#L-391"><span class="linenos">391</span></a>		<span class="n">default</span><span class="o">=</span><span class="n">DATA_DIR</span><span class="p">,</span>
-</span><span id="L-392"><a href="#L-392"><span class="linenos">392</span></a>	<span class="p">)</span>
-</span><span id="L-393"><a href="#L-393"><span class="linenos">393</span></a>	<span class="c1"># number of samples</span>
-</span><span id="L-394"><a href="#L-394"><span class="linenos">394</span></a>	<span class="n">arg_parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
-</span><span id="L-395"><a href="#L-395"><span class="linenos">395</span></a>		<span class="s2">&quot;--n-samples&quot;</span><span class="p">,</span>
-</span><span id="L-396"><a href="#L-396"><span class="linenos">396</span></a>		<span class="s2">&quot;-n&quot;</span><span class="p">,</span>
-</span><span id="L-397"><a href="#L-397"><span class="linenos">397</span></a>		<span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span>
-</span><span id="L-398"><a href="#L-398"><span class="linenos">398</span></a>		<span class="n">required</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-</span><span id="L-399"><a href="#L-399"><span class="linenos">399</span></a>		<span class="n">help</span><span class="o">=</span><span class="s2">&quot;The max number of samples to process, do all in the file if None&quot;</span><span class="p">,</span>
-</span><span id="L-400"><a href="#L-400"><span class="linenos">400</span></a>		<span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-</span><span id="L-401"><a href="#L-401"><span class="linenos">401</span></a>	<span class="p">)</span>
-</span><span id="L-402"><a href="#L-402"><span class="linenos">402</span></a>	<span class="c1"># force overwrite of existing figures</span>
-</span><span id="L-403"><a href="#L-403"><span class="linenos">403</span></a>	<span class="n">arg_parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
-</span><span id="L-404"><a href="#L-404"><span class="linenos">404</span></a>		<span class="s2">&quot;--force&quot;</span><span class="p">,</span>
-</span><span id="L-405"><a href="#L-405"><span class="linenos">405</span></a>		<span class="s2">&quot;-f&quot;</span><span class="p">,</span>
-</span><span id="L-406"><a href="#L-406"><span class="linenos">406</span></a>		<span class="nb">type</span><span class="o">=</span><span class="nb">bool</span><span class="p">,</span>
-</span><span id="L-407"><a href="#L-407"><span class="linenos">407</span></a>		<span class="n">required</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-</span><span id="L-408"><a href="#L-408"><span class="linenos">408</span></a>		<span class="n">help</span><span class="o">=</span><span class="s2">&quot;Force overwrite of existing figures&quot;</span><span class="p">,</span>
-</span><span id="L-409"><a href="#L-409"><span class="linenos">409</span></a>		<span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-</span><span id="L-410"><a href="#L-410"><span class="linenos">410</span></a>	<span class="p">)</span>
-</span><span id="L-411"><a href="#L-411"><span class="linenos">411</span></a>	<span class="c1"># figure functions</span>
-</span><span id="L-412"><a href="#L-412"><span class="linenos">412</span></a>	<span class="n">arg_parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
-</span><span id="L-413"><a href="#L-413"><span class="linenos">413</span></a>		<span class="s2">&quot;--figure-funcs&quot;</span><span class="p">,</span>
-</span><span id="L-414"><a href="#L-414"><span class="linenos">414</span></a>		<span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span>
-</span><span id="L-415"><a href="#L-415"><span class="linenos">415</span></a>		<span class="n">required</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-</span><span id="L-416"><a href="#L-416"><span class="linenos">416</span></a>		<span class="n">help</span><span class="o">=</span><span class="s2">&quot;The figure functions to use. if &#39;None&#39; (default), will use all functions. if a string, will use the function names which match the string. if a comma-separated list of strings, will use the function names in the set&quot;</span><span class="p">,</span>
-</span><span id="L-417"><a href="#L-417"><span class="linenos">417</span></a>		<span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-</span><span id="L-418"><a href="#L-418"><span class="linenos">418</span></a>	<span class="p">)</span>
-</span><span id="L-419"><a href="#L-419"><span class="linenos">419</span></a>
-</span><span id="L-420"><a href="#L-420"><span class="linenos">420</span></a>	<span class="n">args</span><span class="p">:</span> <span class="n">argparse</span><span class="o">.</span><span class="n">Namespace</span> <span class="o">=</span> <span class="n">arg_parser</span><span class="o">.</span><span class="n">parse_args</span><span class="p">()</span>
-</span><span id="L-421"><a href="#L-421"><span class="linenos">421</span></a>
-</span><span id="L-422"><a href="#L-422"><span class="linenos">422</span></a>	<span class="c1"># figure out models</span>
-</span><span id="L-423"><a href="#L-423"><span class="linenos">423</span></a>	<span class="n">models</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>
-</span><span id="L-424"><a href="#L-424"><span class="linenos">424</span></a>	<span class="k">if</span> <span class="s2">&quot;,&quot;</span> <span class="ow">in</span> <span class="n">args</span><span class="o">.</span><span class="n">model</span><span class="p">:</span>
-</span><span id="L-425"><a href="#L-425"><span class="linenos">425</span></a>		<span class="n">models</span> <span class="o">=</span> <span class="n">args</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;,&quot;</span><span class="p">)</span>
-</span><span id="L-426"><a href="#L-426"><span class="linenos">426</span></a>	<span class="k">else</span><span class="p">:</span>
-</span><span id="L-427"><a href="#L-427"><span class="linenos">427</span></a>		<span class="n">models</span> <span class="o">=</span> <span class="p">[</span><span class="n">args</span><span class="o">.</span><span class="n">model</span><span class="p">]</span>
-</span><span id="L-428"><a href="#L-428"><span class="linenos">428</span></a>
-</span><span id="L-429"><a href="#L-429"><span class="linenos">429</span></a>	<span class="c1"># figure out figures</span>
-</span><span id="L-430"><a href="#L-430"><span class="linenos">430</span></a>	<span class="n">figure_funcs_select</span><span class="p">:</span> <span class="nb">set</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span>
-</span><span id="L-431"><a href="#L-431"><span class="linenos">431</span></a>	<span class="k">if</span> <span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">figure_funcs</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">figure_funcs</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;none&quot;</span><span class="p">):</span>
-</span><span id="L-432"><a href="#L-432"><span class="linenos">432</span></a>		<span class="n">figure_funcs_select</span> <span class="o">=</span> <span class="kc">None</span>
-</span><span id="L-433"><a href="#L-433"><span class="linenos">433</span></a>	<span class="k">elif</span> <span class="s2">&quot;,&quot;</span> <span class="ow">in</span> <span class="n">args</span><span class="o">.</span><span class="n">figure_funcs</span><span class="p">:</span>
-</span><span id="L-434"><a href="#L-434"><span class="linenos">434</span></a>		<span class="n">figure_funcs_select</span> <span class="o">=</span> <span class="p">{</span><span class="n">x</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">args</span><span class="o">.</span><span class="n">figure_funcs</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;,&quot;</span><span class="p">)}</span>
-</span><span id="L-435"><a href="#L-435"><span class="linenos">435</span></a>	<span class="k">else</span><span class="p">:</span>
-</span><span id="L-436"><a href="#L-436"><span class="linenos">436</span></a>		<span class="n">figure_funcs_select</span> <span class="o">=</span> <span class="n">args</span><span class="o">.</span><span class="n">figure_funcs</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
-</span><span id="L-437"><a href="#L-437"><span class="linenos">437</span></a>
-</span><span id="L-438"><a href="#L-438"><span class="linenos">438</span></a>	<span class="k">return</span> <span class="n">args</span><span class="p">,</span> <span class="n">models</span><span class="p">,</span> <span class="n">figure_funcs_select</span>
-</span><span id="L-439"><a href="#L-439"><span class="linenos">439</span></a>
+</span><span id="L-333"><a href="#L-333"><span class="linenos">333</span></a>	<span class="nb">print</span><span class="p">(</span>
+</span><span id="L-334"><a href="#L-334"><span class="linenos">334</span></a>		<span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span>
+</span><span id="L-335"><a href="#L-335"><span class="linenos">335</span></a>		<span class="o">+</span> <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="nb">getattr</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="s2">&quot;__name__&quot;</span><span class="p">,</span> <span class="s2">&quot;&lt;unknown&gt;&quot;</span><span class="p">)</span> <span class="k">for</span> <span class="n">func</span> <span class="ow">in</span> <span class="n">figure_funcs</span><span class="p">]),</span>
+</span><span id="L-336"><a href="#L-336"><span class="linenos">336</span></a>	<span class="p">)</span>
+</span><span id="L-337"><a href="#L-337"><span class="linenos">337</span></a>
+</span><span id="L-338"><a href="#L-338"><span class="linenos">338</span></a>	<span class="n">chunksize</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span>
+</span><span id="L-339"><a href="#L-339"><span class="linenos">339</span></a>		<span class="nb">max</span><span class="p">(</span>
+</span><span id="L-340"><a href="#L-340"><span class="linenos">340</span></a>			<span class="mi">1</span><span class="p">,</span>
+</span><span id="L-341"><a href="#L-341"><span class="linenos">341</span></a>			<span class="nb">len</span><span class="p">(</span><span class="n">prompts</span><span class="p">)</span> <span class="o">//</span> <span class="p">(</span><span class="mi">5</span> <span class="o">*</span> <span class="n">multiprocessing</span><span class="o">.</span><span class="n">cpu_count</span><span class="p">()),</span>
+</span><span id="L-342"><a href="#L-342"><span class="linenos">342</span></a>		<span class="p">),</span>
+</span><span id="L-343"><a href="#L-343"><span class="linenos">343</span></a>	<span class="p">)</span>
+</span><span id="L-344"><a href="#L-344"><span class="linenos">344</span></a>	<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;chunksize: </span><span class="si">{</span><span class="n">chunksize</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</span><span id="L-345"><a href="#L-345"><span class="linenos">345</span></a>
+</span><span id="L-346"><a href="#L-346"><span class="linenos">346</span></a>	<span class="nb">list</span><span class="p">(</span>
+</span><span id="L-347"><a href="#L-347"><span class="linenos">347</span></a>		<span class="n">run_maybe_parallel</span><span class="p">(</span>
+</span><span id="L-348"><a href="#L-348"><span class="linenos">348</span></a>			<span class="n">func</span><span class="o">=</span><span class="n">functools</span><span class="o">.</span><span class="n">partial</span><span class="p">(</span>
+</span><span id="L-349"><a href="#L-349"><span class="linenos">349</span></a>				<span class="n">process_prompt</span><span class="p">,</span>
+</span><span id="L-350"><a href="#L-350"><span class="linenos">350</span></a>				<span class="n">model_cfg</span><span class="o">=</span><span class="n">model_cfg</span><span class="p">,</span>
+</span><span id="L-351"><a href="#L-351"><span class="linenos">351</span></a>				<span class="n">save_path</span><span class="o">=</span><span class="n">save_path_p</span><span class="p">,</span>
+</span><span id="L-352"><a href="#L-352"><span class="linenos">352</span></a>				<span class="n">figure_funcs</span><span class="o">=</span><span class="n">figure_funcs</span><span class="p">,</span>
+</span><span id="L-353"><a href="#L-353"><span class="linenos">353</span></a>				<span class="n">force_overwrite</span><span class="o">=</span><span class="n">force</span><span class="p">,</span>
+</span><span id="L-354"><a href="#L-354"><span class="linenos">354</span></a>			<span class="p">),</span>
+</span><span id="L-355"><a href="#L-355"><span class="linenos">355</span></a>			<span class="n">iterable</span><span class="o">=</span><span class="n">prompts</span><span class="p">,</span>
+</span><span id="L-356"><a href="#L-356"><span class="linenos">356</span></a>			<span class="n">parallel</span><span class="o">=</span><span class="n">parallel</span><span class="p">,</span>
+</span><span id="L-357"><a href="#L-357"><span class="linenos">357</span></a>			<span class="n">chunksize</span><span class="o">=</span><span class="n">chunksize</span><span class="p">,</span>
+</span><span id="L-358"><a href="#L-358"><span class="linenos">358</span></a>			<span class="n">pbar</span><span class="o">=</span><span class="s2">&quot;tqdm&quot;</span><span class="p">,</span>
+</span><span id="L-359"><a href="#L-359"><span class="linenos">359</span></a>			<span class="n">pbar_kwargs</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span>
+</span><span id="L-360"><a href="#L-360"><span class="linenos">360</span></a>				<span class="n">desc</span><span class="o">=</span><span class="s2">&quot;Making figures&quot;</span><span class="p">,</span>
+</span><span id="L-361"><a href="#L-361"><span class="linenos">361</span></a>				<span class="n">unit</span><span class="o">=</span><span class="s2">&quot;prompt&quot;</span><span class="p">,</span>
+</span><span id="L-362"><a href="#L-362"><span class="linenos">362</span></a>			<span class="p">),</span>
+</span><span id="L-363"><a href="#L-363"><span class="linenos">363</span></a>		<span class="p">),</span>
+</span><span id="L-364"><a href="#L-364"><span class="linenos">364</span></a>	<span class="p">)</span>
+</span><span id="L-365"><a href="#L-365"><span class="linenos">365</span></a>
+</span><span id="L-366"><a href="#L-366"><span class="linenos">366</span></a>	<span class="k">with</span> <span class="n">SpinnerContext</span><span class="p">(</span>
+</span><span id="L-367"><a href="#L-367"><span class="linenos">367</span></a>		<span class="n">message</span><span class="o">=</span><span class="s2">&quot;updating jsonl metadata for models and functions&quot;</span><span class="p">,</span>
+</span><span id="L-368"><a href="#L-368"><span class="linenos">368</span></a>		<span class="o">**</span><span class="n">SPINNER_KWARGS</span><span class="p">,</span>
+</span><span id="L-369"><a href="#L-369"><span class="linenos">369</span></a>	<span class="p">):</span>
+</span><span id="L-370"><a href="#L-370"><span class="linenos">370</span></a>		<span class="n">generate_models_jsonl</span><span class="p">(</span><span class="n">save_path_p</span><span class="p">)</span>
+</span><span id="L-371"><a href="#L-371"><span class="linenos">371</span></a>		<span class="n">generate_functions_jsonl</span><span class="p">(</span><span class="n">save_path_p</span><span class="p">)</span>
+</span><span id="L-372"><a href="#L-372"><span class="linenos">372</span></a>
+</span><span id="L-373"><a href="#L-373"><span class="linenos">373</span></a>
+</span><span id="L-374"><a href="#L-374"><span class="linenos">374</span></a><span class="k">def</span><span class="w"> </span><span class="nf">_parse_args</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span>
+</span><span id="L-375"><a href="#L-375"><span class="linenos">375</span></a>	<span class="n">argparse</span><span class="o">.</span><span class="n">Namespace</span><span class="p">,</span>
+</span><span id="L-376"><a href="#L-376"><span class="linenos">376</span></a>	<span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>  <span class="c1"># models</span>
+</span><span id="L-377"><a href="#L-377"><span class="linenos">377</span></a>	<span class="nb">set</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span>  <span class="c1"># figure_funcs_select</span>
+</span><span id="L-378"><a href="#L-378"><span class="linenos">378</span></a><span class="p">]:</span>
+</span><span id="L-379"><a href="#L-379"><span class="linenos">379</span></a>	<span class="n">arg_parser</span><span class="p">:</span> <span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentParser</span> <span class="o">=</span> <span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentParser</span><span class="p">()</span>
+</span><span id="L-380"><a href="#L-380"><span class="linenos">380</span></a>	<span class="c1"># input and output</span>
+</span><span id="L-381"><a href="#L-381"><span class="linenos">381</span></a>	<span class="n">arg_parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+</span><span id="L-382"><a href="#L-382"><span class="linenos">382</span></a>		<span class="s2">&quot;--model&quot;</span><span class="p">,</span>
+</span><span id="L-383"><a href="#L-383"><span class="linenos">383</span></a>		<span class="s2">&quot;-m&quot;</span><span class="p">,</span>
+</span><span id="L-384"><a href="#L-384"><span class="linenos">384</span></a>		<span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span>
+</span><span id="L-385"><a href="#L-385"><span class="linenos">385</span></a>		<span class="n">required</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+</span><span id="L-386"><a href="#L-386"><span class="linenos">386</span></a>		<span class="n">help</span><span class="o">=</span><span class="s2">&quot;The model name(s) to use. comma separated with no whitespace if multiple&quot;</span><span class="p">,</span>
+</span><span id="L-387"><a href="#L-387"><span class="linenos">387</span></a>	<span class="p">)</span>
+</span><span id="L-388"><a href="#L-388"><span class="linenos">388</span></a>	<span class="n">arg_parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+</span><span id="L-389"><a href="#L-389"><span class="linenos">389</span></a>		<span class="s2">&quot;--save-path&quot;</span><span class="p">,</span>
+</span><span id="L-390"><a href="#L-390"><span class="linenos">390</span></a>		<span class="s2">&quot;-s&quot;</span><span class="p">,</span>
+</span><span id="L-391"><a href="#L-391"><span class="linenos">391</span></a>		<span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span>
+</span><span id="L-392"><a href="#L-392"><span class="linenos">392</span></a>		<span class="n">required</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+</span><span id="L-393"><a href="#L-393"><span class="linenos">393</span></a>		<span class="n">help</span><span class="o">=</span><span class="s2">&quot;The path to save the attention patterns&quot;</span><span class="p">,</span>
+</span><span id="L-394"><a href="#L-394"><span class="linenos">394</span></a>		<span class="n">default</span><span class="o">=</span><span class="n">DATA_DIR</span><span class="p">,</span>
+</span><span id="L-395"><a href="#L-395"><span class="linenos">395</span></a>	<span class="p">)</span>
+</span><span id="L-396"><a href="#L-396"><span class="linenos">396</span></a>	<span class="c1"># number of samples</span>
+</span><span id="L-397"><a href="#L-397"><span class="linenos">397</span></a>	<span class="n">arg_parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+</span><span id="L-398"><a href="#L-398"><span class="linenos">398</span></a>		<span class="s2">&quot;--n-samples&quot;</span><span class="p">,</span>
+</span><span id="L-399"><a href="#L-399"><span class="linenos">399</span></a>		<span class="s2">&quot;-n&quot;</span><span class="p">,</span>
+</span><span id="L-400"><a href="#L-400"><span class="linenos">400</span></a>		<span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span>
+</span><span id="L-401"><a href="#L-401"><span class="linenos">401</span></a>		<span class="n">required</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+</span><span id="L-402"><a href="#L-402"><span class="linenos">402</span></a>		<span class="n">help</span><span class="o">=</span><span class="s2">&quot;The max number of samples to process, do all in the file if None&quot;</span><span class="p">,</span>
+</span><span id="L-403"><a href="#L-403"><span class="linenos">403</span></a>		<span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+</span><span id="L-404"><a href="#L-404"><span class="linenos">404</span></a>	<span class="p">)</span>
+</span><span id="L-405"><a href="#L-405"><span class="linenos">405</span></a>	<span class="c1"># force overwrite of existing figures</span>
+</span><span id="L-406"><a href="#L-406"><span class="linenos">406</span></a>	<span class="n">arg_parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+</span><span id="L-407"><a href="#L-407"><span class="linenos">407</span></a>		<span class="s2">&quot;--force&quot;</span><span class="p">,</span>
+</span><span id="L-408"><a href="#L-408"><span class="linenos">408</span></a>		<span class="s2">&quot;-f&quot;</span><span class="p">,</span>
+</span><span id="L-409"><a href="#L-409"><span class="linenos">409</span></a>		<span class="nb">type</span><span class="o">=</span><span class="nb">bool</span><span class="p">,</span>
+</span><span id="L-410"><a href="#L-410"><span class="linenos">410</span></a>		<span class="n">required</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+</span><span id="L-411"><a href="#L-411"><span class="linenos">411</span></a>		<span class="n">help</span><span class="o">=</span><span class="s2">&quot;Force overwrite of existing figures&quot;</span><span class="p">,</span>
+</span><span id="L-412"><a href="#L-412"><span class="linenos">412</span></a>		<span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+</span><span id="L-413"><a href="#L-413"><span class="linenos">413</span></a>	<span class="p">)</span>
+</span><span id="L-414"><a href="#L-414"><span class="linenos">414</span></a>	<span class="c1"># figure functions</span>
+</span><span id="L-415"><a href="#L-415"><span class="linenos">415</span></a>	<span class="n">arg_parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+</span><span id="L-416"><a href="#L-416"><span class="linenos">416</span></a>		<span class="s2">&quot;--figure-funcs&quot;</span><span class="p">,</span>
+</span><span id="L-417"><a href="#L-417"><span class="linenos">417</span></a>		<span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span>
+</span><span id="L-418"><a href="#L-418"><span class="linenos">418</span></a>		<span class="n">required</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+</span><span id="L-419"><a href="#L-419"><span class="linenos">419</span></a>		<span class="n">help</span><span class="o">=</span><span class="s2">&quot;The figure functions to use. if &#39;None&#39; (default), will use all functions. if a string, will use the function names which match the string. if a comma-separated list of strings, will use the function names in the set&quot;</span><span class="p">,</span>
+</span><span id="L-420"><a href="#L-420"><span class="linenos">420</span></a>		<span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+</span><span id="L-421"><a href="#L-421"><span class="linenos">421</span></a>	<span class="p">)</span>
+</span><span id="L-422"><a href="#L-422"><span class="linenos">422</span></a>
+</span><span id="L-423"><a href="#L-423"><span class="linenos">423</span></a>	<span class="n">args</span><span class="p">:</span> <span class="n">argparse</span><span class="o">.</span><span class="n">Namespace</span> <span class="o">=</span> <span class="n">arg_parser</span><span class="o">.</span><span class="n">parse_args</span><span class="p">()</span>
+</span><span id="L-424"><a href="#L-424"><span class="linenos">424</span></a>
+</span><span id="L-425"><a href="#L-425"><span class="linenos">425</span></a>	<span class="c1"># figure out models</span>
+</span><span id="L-426"><a href="#L-426"><span class="linenos">426</span></a>	<span class="n">models</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>
+</span><span id="L-427"><a href="#L-427"><span class="linenos">427</span></a>	<span class="k">if</span> <span class="s2">&quot;,&quot;</span> <span class="ow">in</span> <span class="n">args</span><span class="o">.</span><span class="n">model</span><span class="p">:</span>
+</span><span id="L-428"><a href="#L-428"><span class="linenos">428</span></a>		<span class="n">models</span> <span class="o">=</span> <span class="n">args</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;,&quot;</span><span class="p">)</span>
+</span><span id="L-429"><a href="#L-429"><span class="linenos">429</span></a>	<span class="k">else</span><span class="p">:</span>
+</span><span id="L-430"><a href="#L-430"><span class="linenos">430</span></a>		<span class="n">models</span> <span class="o">=</span> <span class="p">[</span><span class="n">args</span><span class="o">.</span><span class="n">model</span><span class="p">]</span>
+</span><span id="L-431"><a href="#L-431"><span class="linenos">431</span></a>
+</span><span id="L-432"><a href="#L-432"><span class="linenos">432</span></a>	<span class="c1"># figure out figures</span>
+</span><span id="L-433"><a href="#L-433"><span class="linenos">433</span></a>	<span class="n">figure_funcs_select</span><span class="p">:</span> <span class="nb">set</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span>
+</span><span id="L-434"><a href="#L-434"><span class="linenos">434</span></a>	<span class="k">if</span> <span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">figure_funcs</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">figure_funcs</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;none&quot;</span><span class="p">):</span>
+</span><span id="L-435"><a href="#L-435"><span class="linenos">435</span></a>		<span class="n">figure_funcs_select</span> <span class="o">=</span> <span class="kc">None</span>
+</span><span id="L-436"><a href="#L-436"><span class="linenos">436</span></a>	<span class="k">elif</span> <span class="s2">&quot;,&quot;</span> <span class="ow">in</span> <span class="n">args</span><span class="o">.</span><span class="n">figure_funcs</span><span class="p">:</span>
+</span><span id="L-437"><a href="#L-437"><span class="linenos">437</span></a>		<span class="n">figure_funcs_select</span> <span class="o">=</span> <span class="p">{</span><span class="n">x</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">args</span><span class="o">.</span><span class="n">figure_funcs</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;,&quot;</span><span class="p">)}</span>
+</span><span id="L-438"><a href="#L-438"><span class="linenos">438</span></a>	<span class="k">else</span><span class="p">:</span>
+</span><span id="L-439"><a href="#L-439"><span class="linenos">439</span></a>		<span class="n">figure_funcs_select</span> <span class="o">=</span> <span class="n">args</span><span class="o">.</span><span class="n">figure_funcs</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
 </span><span id="L-440"><a href="#L-440"><span class="linenos">440</span></a>
-</span><span id="L-441"><a href="#L-441"><span class="linenos">441</span></a><span class="k">def</span><span class="w"> </span><span class="nf">main</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-</span><span id="L-442"><a href="#L-442"><span class="linenos">442</span></a>	<span class="s2">&quot;generates figures from the activations using the functions decorated with `register_attn_figure_func`&quot;</span>
-</span><span id="L-443"><a href="#L-443"><span class="linenos">443</span></a>	<span class="c1"># parse args</span>
-</span><span id="L-444"><a href="#L-444"><span class="linenos">444</span></a>	<span class="nb">print</span><span class="p">(</span><span class="n">DIVIDER_S1</span><span class="p">)</span>
-</span><span id="L-445"><a href="#L-445"><span class="linenos">445</span></a>	<span class="n">args</span><span class="p">:</span> <span class="n">argparse</span><span class="o">.</span><span class="n">Namespace</span>
-</span><span id="L-446"><a href="#L-446"><span class="linenos">446</span></a>	<span class="n">models</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>
-</span><span id="L-447"><a href="#L-447"><span class="linenos">447</span></a>	<span class="n">figure_funcs_select</span><span class="p">:</span> <span class="nb">set</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span>
-</span><span id="L-448"><a href="#L-448"><span class="linenos">448</span></a>	<span class="k">with</span> <span class="n">SpinnerContext</span><span class="p">(</span><span class="n">message</span><span class="o">=</span><span class="s2">&quot;parsing args&quot;</span><span class="p">,</span> <span class="o">**</span><span class="n">SPINNER_KWARGS</span><span class="p">):</span>
-</span><span id="L-449"><a href="#L-449"><span class="linenos">449</span></a>		<span class="n">args</span><span class="p">,</span> <span class="n">models</span><span class="p">,</span> <span class="n">figure_funcs_select</span> <span class="o">=</span> <span class="n">_parse_args</span><span class="p">()</span>
-</span><span id="L-450"><a href="#L-450"><span class="linenos">450</span></a>	<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">args parsed: &#39;</span><span class="si">{</span><span class="n">args</span><span class="si">}</span><span class="s2">&#39;&quot;</span><span class="p">)</span>
-</span><span id="L-451"><a href="#L-451"><span class="linenos">451</span></a>	<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">models: &#39;</span><span class="si">{</span><span class="n">models</span><span class="si">}</span><span class="s2">&#39;&quot;</span><span class="p">)</span>
-</span><span id="L-452"><a href="#L-452"><span class="linenos">452</span></a>	<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">figure_funcs_select: &#39;</span><span class="si">{</span><span class="n">figure_funcs_select</span><span class="si">}</span><span class="s2">&#39;&quot;</span><span class="p">)</span>
-</span><span id="L-453"><a href="#L-453"><span class="linenos">453</span></a>
-</span><span id="L-454"><a href="#L-454"><span class="linenos">454</span></a>	<span class="c1"># compute for each model</span>
-</span><span id="L-455"><a href="#L-455"><span class="linenos">455</span></a>	<span class="n">n_models</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">models</span><span class="p">)</span>
-</span><span id="L-456"><a href="#L-456"><span class="linenos">456</span></a>	<span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">model</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">models</span><span class="p">):</span>
-</span><span id="L-457"><a href="#L-457"><span class="linenos">457</span></a>		<span class="nb">print</span><span class="p">(</span><span class="n">DIVIDER_S2</span><span class="p">)</span>
-</span><span id="L-458"><a href="#L-458"><span class="linenos">458</span></a>		<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;processing model </span><span class="si">{</span><span class="n">idx</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="si">}</span><span class="s2"> / </span><span class="si">{</span><span class="n">n_models</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">model</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-</span><span id="L-459"><a href="#L-459"><span class="linenos">459</span></a>		<span class="nb">print</span><span class="p">(</span><span class="n">DIVIDER_S2</span><span class="p">)</span>
-</span><span id="L-460"><a href="#L-460"><span class="linenos">460</span></a>		<span class="n">figures_main</span><span class="p">(</span>
-</span><span id="L-461"><a href="#L-461"><span class="linenos">461</span></a>			<span class="n">model_name</span><span class="o">=</span><span class="n">model</span><span class="p">,</span>
-</span><span id="L-462"><a href="#L-462"><span class="linenos">462</span></a>			<span class="n">save_path</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">save_path</span><span class="p">,</span>
-</span><span id="L-463"><a href="#L-463"><span class="linenos">463</span></a>			<span class="n">n_samples</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">n_samples</span><span class="p">,</span>
-</span><span id="L-464"><a href="#L-464"><span class="linenos">464</span></a>			<span class="n">force</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">force</span><span class="p">,</span>
-</span><span id="L-465"><a href="#L-465"><span class="linenos">465</span></a>			<span class="n">figure_funcs_select</span><span class="o">=</span><span class="n">figure_funcs_select</span><span class="p">,</span>
-</span><span id="L-466"><a href="#L-466"><span class="linenos">466</span></a>		<span class="p">)</span>
-</span><span id="L-467"><a href="#L-467"><span class="linenos">467</span></a>
-</span><span id="L-468"><a href="#L-468"><span class="linenos">468</span></a>	<span class="nb">print</span><span class="p">(</span><span class="n">DIVIDER_S1</span><span class="p">)</span>
-</span><span id="L-469"><a href="#L-469"><span class="linenos">469</span></a>
+</span><span id="L-441"><a href="#L-441"><span class="linenos">441</span></a>	<span class="k">return</span> <span class="n">args</span><span class="p">,</span> <span class="n">models</span><span class="p">,</span> <span class="n">figure_funcs_select</span>
+</span><span id="L-442"><a href="#L-442"><span class="linenos">442</span></a>
+</span><span id="L-443"><a href="#L-443"><span class="linenos">443</span></a>
+</span><span id="L-444"><a href="#L-444"><span class="linenos">444</span></a><span class="k">def</span><span class="w"> </span><span class="nf">main</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="L-445"><a href="#L-445"><span class="linenos">445</span></a>	<span class="s2">&quot;generates figures from the activations using the functions decorated with `register_attn_figure_func`&quot;</span>
+</span><span id="L-446"><a href="#L-446"><span class="linenos">446</span></a>	<span class="c1"># parse args</span>
+</span><span id="L-447"><a href="#L-447"><span class="linenos">447</span></a>	<span class="nb">print</span><span class="p">(</span><span class="n">DIVIDER_S1</span><span class="p">)</span>
+</span><span id="L-448"><a href="#L-448"><span class="linenos">448</span></a>	<span class="n">args</span><span class="p">:</span> <span class="n">argparse</span><span class="o">.</span><span class="n">Namespace</span>
+</span><span id="L-449"><a href="#L-449"><span class="linenos">449</span></a>	<span class="n">models</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>
+</span><span id="L-450"><a href="#L-450"><span class="linenos">450</span></a>	<span class="n">figure_funcs_select</span><span class="p">:</span> <span class="nb">set</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span>
+</span><span id="L-451"><a href="#L-451"><span class="linenos">451</span></a>	<span class="k">with</span> <span class="n">SpinnerContext</span><span class="p">(</span><span class="n">message</span><span class="o">=</span><span class="s2">&quot;parsing args&quot;</span><span class="p">,</span> <span class="o">**</span><span class="n">SPINNER_KWARGS</span><span class="p">):</span>
+</span><span id="L-452"><a href="#L-452"><span class="linenos">452</span></a>		<span class="n">args</span><span class="p">,</span> <span class="n">models</span><span class="p">,</span> <span class="n">figure_funcs_select</span> <span class="o">=</span> <span class="n">_parse_args</span><span class="p">()</span>
+</span><span id="L-453"><a href="#L-453"><span class="linenos">453</span></a>	<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">args parsed: &#39;</span><span class="si">{</span><span class="n">args</span><span class="si">}</span><span class="s2">&#39;&quot;</span><span class="p">)</span>
+</span><span id="L-454"><a href="#L-454"><span class="linenos">454</span></a>	<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">models: &#39;</span><span class="si">{</span><span class="n">models</span><span class="si">}</span><span class="s2">&#39;&quot;</span><span class="p">)</span>
+</span><span id="L-455"><a href="#L-455"><span class="linenos">455</span></a>	<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">figure_funcs_select: &#39;</span><span class="si">{</span><span class="n">figure_funcs_select</span><span class="si">}</span><span class="s2">&#39;&quot;</span><span class="p">)</span>
+</span><span id="L-456"><a href="#L-456"><span class="linenos">456</span></a>
+</span><span id="L-457"><a href="#L-457"><span class="linenos">457</span></a>	<span class="c1"># compute for each model</span>
+</span><span id="L-458"><a href="#L-458"><span class="linenos">458</span></a>	<span class="n">n_models</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">models</span><span class="p">)</span>
+</span><span id="L-459"><a href="#L-459"><span class="linenos">459</span></a>	<span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">model</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">models</span><span class="p">):</span>
+</span><span id="L-460"><a href="#L-460"><span class="linenos">460</span></a>		<span class="nb">print</span><span class="p">(</span><span class="n">DIVIDER_S2</span><span class="p">)</span>
+</span><span id="L-461"><a href="#L-461"><span class="linenos">461</span></a>		<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;processing model </span><span class="si">{</span><span class="n">idx</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="si">}</span><span class="s2"> / </span><span class="si">{</span><span class="n">n_models</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">model</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</span><span id="L-462"><a href="#L-462"><span class="linenos">462</span></a>		<span class="nb">print</span><span class="p">(</span><span class="n">DIVIDER_S2</span><span class="p">)</span>
+</span><span id="L-463"><a href="#L-463"><span class="linenos">463</span></a>		<span class="n">figures_main</span><span class="p">(</span>
+</span><span id="L-464"><a href="#L-464"><span class="linenos">464</span></a>			<span class="n">model_name</span><span class="o">=</span><span class="n">model</span><span class="p">,</span>
+</span><span id="L-465"><a href="#L-465"><span class="linenos">465</span></a>			<span class="n">save_path</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">save_path</span><span class="p">,</span>
+</span><span id="L-466"><a href="#L-466"><span class="linenos">466</span></a>			<span class="n">n_samples</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">n_samples</span><span class="p">,</span>
+</span><span id="L-467"><a href="#L-467"><span class="linenos">467</span></a>			<span class="n">force</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">force</span><span class="p">,</span>
+</span><span id="L-468"><a href="#L-468"><span class="linenos">468</span></a>			<span class="n">figure_funcs_select</span><span class="o">=</span><span class="n">figure_funcs_select</span><span class="p">,</span>
+</span><span id="L-469"><a href="#L-469"><span class="linenos">469</span></a>		<span class="p">)</span>
 </span><span id="L-470"><a href="#L-470"><span class="linenos">470</span></a>
-</span><span id="L-471"><a href="#L-471"><span class="linenos">471</span></a><span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
-</span><span id="L-472"><a href="#L-472"><span class="linenos">472</span></a>	<span class="n">main</span><span class="p">()</span>
+</span><span id="L-471"><a href="#L-471"><span class="linenos">471</span></a>	<span class="nb">print</span><span class="p">(</span><span class="n">DIVIDER_S1</span><span class="p">)</span>
+</span><span id="L-472"><a href="#L-472"><span class="linenos">472</span></a>
+</span><span id="L-473"><a href="#L-473"><span class="linenos">473</span></a>
+</span><span id="L-474"><a href="#L-474"><span class="linenos">474</span></a><span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+</span><span id="L-475"><a href="#L-475"><span class="linenos">475</span></a>	<span class="n">main</span><span class="p">()</span>
 </span></pre></div>
 
 
@@ -639,7 +642,7 @@
                 <div class="source-button-container">
             <label class="pdoc-button view-source-button" for="HTConfigMock-view-source"><span>View Source</span></label>
             <div class="github-button-wrapper">
-                <a class="pdoc-button github-link-button" href="https://github.com/mivanit/pattern-lens/blob/0.5.0figures.py#L41-L67" target="_blank">
+                <a class="pdoc-button github-link-button" href="https://github.com/mivanit/pattern-lens/blob/0.6.0figures.py#L41-L67" target="_blank">
                     <span>View on GitHub</span>
                 </a>
             </div>
@@ -700,7 +703,7 @@
                 <div class="source-button-container">
             <label class="pdoc-button view-source-button" for="HTConfigMock.__init__-view-source"><span>View Source</span></label>
             <div class="github-button-wrapper">
-                <a class="pdoc-button github-link-button" href="https://github.com/mivanit/pattern-lens/blob/0.5.0figures.py#L52-L57" target="_blank">
+                <a class="pdoc-button github-link-button" href="https://github.com/mivanit/pattern-lens/blob/0.6.0figures.py#L52-L57" target="_blank">
                     <span>View on GitHub</span>
                 </a>
             </div>
@@ -765,7 +768,7 @@
                 <div class="source-button-container">
             <label class="pdoc-button view-source-button" for="HTConfigMock.serialize-view-source"><span>View Source</span></label>
             <div class="github-button-wrapper">
-                <a class="pdoc-button github-link-button" href="https://github.com/mivanit/pattern-lens/blob/0.5.0figures.py#L59-L62" target="_blank">
+                <a class="pdoc-button github-link-button" href="https://github.com/mivanit/pattern-lens/blob/0.6.0figures.py#L59-L62" target="_blank">
                     <span>View on GitHub</span>
                 </a>
             </div>
@@ -796,7 +799,7 @@
                 <div class="source-button-container">
             <label class="pdoc-button view-source-button" for="HTConfigMock.load-view-source"><span>View Source</span></label>
             <div class="github-button-wrapper">
-                <a class="pdoc-button github-link-button" href="https://github.com/mivanit/pattern-lens/blob/0.5.0figures.py#L64-L67" target="_blank">
+                <a class="pdoc-button github-link-button" href="https://github.com/mivanit/pattern-lens/blob/0.6.0figures.py#L64-L67" target="_blank">
                     <span>View on GitHub</span>
                 </a>
             </div>
@@ -822,12 +825,12 @@
 <div class="attr function">
             
         <span class="def">def</span>
-        <span class="name">process_single_head</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">layer_idx</span><span class="p">:</span> <span class="nb">int</span>,</span><span class="param">	<span class="n">head_idx</span><span class="p">:</span> <span class="nb">int</span>,</span><span class="param">	<span class="n">attn_pattern</span><span class="p">:</span> <span class="n">jaxtyping</span><span class="o">.</span><span class="n">Float</span><span class="p">[</span><span class="n">ndarray</span><span class="p">,</span> <span class="s1">&#39;n_ctx n_ctx&#39;</span><span class="p">]</span>,</span><span class="param">	<span class="n">save_dir</span><span class="p">:</span> <span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span>,</span><span class="param">	<span class="n">figure_funcs</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Callable</span><span class="p">[[</span><span class="n">jaxtyping</span><span class="o">.</span><span class="n">Float</span><span class="p">[</span><span class="n">ndarray</span><span class="p">,</span> <span class="s1">&#39;n_ctx n_ctx&#39;</span><span class="p">],</span> <span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">],</span> <span class="kc">None</span><span class="p">]]</span>,</span><span class="param">	<span class="n">force_overwrite</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span></span><span class="return-annotation">) -> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">bool</span> <span class="o">|</span> <span class="ne">Exception</span><span class="p">]</span>:</span></span>
+        <span class="name">process_single_head</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">layer_idx</span><span class="p">:</span> <span class="nb">int</span>,</span><span class="param">	<span class="n">head_idx</span><span class="p">:</span> <span class="nb">int</span>,</span><span class="param">	<span class="n">attn_pattern</span><span class="p">:</span> <span class="n">jaxtyping</span><span class="o">.</span><span class="n">Float</span><span class="p">[</span><span class="n">ndarray</span><span class="p">,</span> <span class="s1">&#39;n_ctx n_ctx&#39;</span><span class="p">]</span>,</span><span class="param">	<span class="n">save_dir</span><span class="p">:</span> <span class="n">pathlib</span><span class="o">.</span><span class="n">_local</span><span class="o">.</span><span class="n">Path</span>,</span><span class="param">	<span class="n">figure_funcs</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Callable</span><span class="p">[[</span><span class="n">jaxtyping</span><span class="o">.</span><span class="n">Float</span><span class="p">[</span><span class="n">ndarray</span><span class="p">,</span> <span class="s1">&#39;n_ctx n_ctx&#39;</span><span class="p">],</span> <span class="n">pathlib</span><span class="o">.</span><span class="n">_local</span><span class="o">.</span><span class="n">Path</span><span class="p">],</span> <span class="kc">None</span><span class="p">]]</span>,</span><span class="param">	<span class="n">force_overwrite</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span></span><span class="return-annotation">) -> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">bool</span> <span class="o">|</span> <span class="ne">Exception</span><span class="p">]</span>:</span></span>
 
                 <div class="source-button-container">
             <label class="pdoc-button view-source-button" for="process_single_head-view-source"><span>View Source</span></label>
             <div class="github-button-wrapper">
-                <a class="pdoc-button github-link-button" href="https://github.com/mivanit/pattern-lens/blob/0.5.0figures.py#L70-L123" target="_blank">
+                <a class="pdoc-button github-link-button" href="https://github.com/mivanit/pattern-lens/blob/0.6.0figures.py#L70-L123" target="_blank">
                     <span>View on GitHub</span>
                 </a>
             </div>
@@ -867,7 +870,7 @@
 </span><span id="process_single_head-100"><a href="#process_single_head-100"><span class="linenos">100</span></a>	<span class="n">funcs_status</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">bool</span> <span class="o">|</span> <span class="ne">Exception</span><span class="p">]</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
 </span><span id="process_single_head-101"><a href="#process_single_head-101"><span class="linenos">101</span></a>
 </span><span id="process_single_head-102"><a href="#process_single_head-102"><span class="linenos">102</span></a>	<span class="k">for</span> <span class="n">func</span> <span class="ow">in</span> <span class="n">figure_funcs</span><span class="p">:</span>
-</span><span id="process_single_head-103"><a href="#process_single_head-103"><span class="linenos">103</span></a>		<span class="n">func_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">func</span><span class="o">.</span><span class="vm">__name__</span>
+</span><span id="process_single_head-103"><a href="#process_single_head-103"><span class="linenos">103</span></a>		<span class="n">func_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="s2">&quot;__name__&quot;</span><span class="p">,</span> <span class="s2">&quot;&lt;unknown&gt;&quot;</span><span class="p">)</span>
 </span><span id="process_single_head-104"><a href="#process_single_head-104"><span class="linenos">104</span></a>		<span class="n">fig_path</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Path</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">save_dir</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">func_name</span><span class="si">}</span><span class="s2">.*&quot;</span><span class="p">))</span>
 </span><span id="process_single_head-105"><a href="#process_single_head-105"><span class="linenos">105</span></a>
 </span><span id="process_single_head-106"><a href="#process_single_head-106"><span class="linenos">106</span></a>		<span class="k">if</span> <span class="ow">not</span> <span class="n">force_overwrite</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">fig_path</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
@@ -880,10 +883,10 @@
 </span><span id="process_single_head-113"><a href="#process_single_head-113"><span class="linenos">113</span></a>
 </span><span id="process_single_head-114"><a href="#process_single_head-114"><span class="linenos">114</span></a>		<span class="c1"># bling catch any exception</span>
 </span><span id="process_single_head-115"><a href="#process_single_head-115"><span class="linenos">115</span></a>		<span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>  <span class="c1"># noqa: BLE001</span>
-</span><span id="process_single_head-116"><a href="#process_single_head-116"><span class="linenos">116</span></a>			<span class="n">error_file</span> <span class="o">=</span> <span class="n">save_dir</span> <span class="o">/</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">func</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">.error.txt&quot;</span>
+</span><span id="process_single_head-116"><a href="#process_single_head-116"><span class="linenos">116</span></a>			<span class="n">error_file</span> <span class="o">=</span> <span class="n">save_dir</span> <span class="o">/</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">func_name</span><span class="si">}</span><span class="s2">.error.txt&quot;</span>
 </span><span id="process_single_head-117"><a href="#process_single_head-117"><span class="linenos">117</span></a>			<span class="n">error_file</span><span class="o">.</span><span class="n">write_text</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">))</span>
 </span><span id="process_single_head-118"><a href="#process_single_head-118"><span class="linenos">118</span></a>			<span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
-</span><span id="process_single_head-119"><a href="#process_single_head-119"><span class="linenos">119</span></a>				<span class="sa">f</span><span class="s2">&quot;Error in </span><span class="si">{</span><span class="n">func</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2"> for L</span><span class="si">{</span><span class="n">layer_idx</span><span class="si">}</span><span class="s2">H</span><span class="si">{</span><span class="n">head_idx</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">e</span><span class="si">!s}</span><span class="s2">&quot;</span><span class="p">,</span>
+</span><span id="process_single_head-119"><a href="#process_single_head-119"><span class="linenos">119</span></a>				<span class="sa">f</span><span class="s2">&quot;Error in </span><span class="si">{</span><span class="n">func_name</span><span class="si">}</span><span class="s2"> for L</span><span class="si">{</span><span class="n">layer_idx</span><span class="si">}</span><span class="s2">H</span><span class="si">{</span><span class="n">head_idx</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">e</span><span class="si">!s}</span><span class="s2">&quot;</span><span class="p">,</span>
 </span><span id="process_single_head-120"><a href="#process_single_head-120"><span class="linenos">120</span></a>				<span class="n">stacklevel</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
 </span><span id="process_single_head-121"><a href="#process_single_head-121"><span class="linenos">121</span></a>			<span class="p">)</span>
 </span><span id="process_single_head-122"><a href="#process_single_head-122"><span class="linenos">122</span></a>			<span class="n">funcs_status</span><span class="p">[</span><span class="n">func_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">e</span>
@@ -929,12 +932,12 @@ a dictionary of the status of each function, with the function name as the key a
 <div class="attr function">
             
         <span class="def">def</span>
-        <span class="name">compute_and_save_figures</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">model_cfg</span><span class="p">:</span> <span class="s1">&#39;HookedTransformerConfig|HTConfigMock&#39;</span>,</span><span class="param">	<span class="n">activations_path</span><span class="p">:</span> <span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span>,</span><span class="param">	<span class="n">cache</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">numpy</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]</span> <span class="o">|</span> <span class="n">jaxtyping</span><span class="o">.</span><span class="n">Float</span><span class="p">[</span><span class="n">ndarray</span><span class="p">,</span> <span class="s1">&#39;n_layers n_heads n_ctx n_ctx&#39;</span><span class="p">]</span>,</span><span class="param">	<span class="n">figure_funcs</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Callable</span><span class="p">[[</span><span class="n">jaxtyping</span><span class="o">.</span><span class="n">Float</span><span class="p">[</span><span class="n">ndarray</span><span class="p">,</span> <span class="s1">&#39;n_ctx n_ctx&#39;</span><span class="p">],</span> <span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">],</span> <span class="kc">None</span><span class="p">]]</span>,</span><span class="param">	<span class="n">save_path</span><span class="p">:</span> <span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span> <span class="o">=</span> <span class="n">PosixPath</span><span class="p">(</span><span class="s1">&#39;attn_data&#39;</span><span class="p">)</span>,</span><span class="param">	<span class="n">force_overwrite</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>,</span><span class="param">	<span class="n">track_results</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span></span><span class="return-annotation">) -> <span class="kc">None</span>:</span></span>
+        <span class="name">compute_and_save_figures</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">model_cfg</span><span class="p">:</span> <span class="s1">&#39;HookedTransformerConfig|HTConfigMock&#39;</span>,</span><span class="param">	<span class="n">activations_path</span><span class="p">:</span> <span class="n">pathlib</span><span class="o">.</span><span class="n">_local</span><span class="o">.</span><span class="n">Path</span>,</span><span class="param">	<span class="n">cache</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">numpy</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]</span> <span class="o">|</span> <span class="n">jaxtyping</span><span class="o">.</span><span class="n">Float</span><span class="p">[</span><span class="n">ndarray</span><span class="p">,</span> <span class="s1">&#39;n_layers n_heads n_ctx n_ctx&#39;</span><span class="p">]</span>,</span><span class="param">	<span class="n">figure_funcs</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Callable</span><span class="p">[[</span><span class="n">jaxtyping</span><span class="o">.</span><span class="n">Float</span><span class="p">[</span><span class="n">ndarray</span><span class="p">,</span> <span class="s1">&#39;n_ctx n_ctx&#39;</span><span class="p">],</span> <span class="n">pathlib</span><span class="o">.</span><span class="n">_local</span><span class="o">.</span><span class="n">Path</span><span class="p">],</span> <span class="kc">None</span><span class="p">]]</span>,</span><span class="param">	<span class="n">save_path</span><span class="p">:</span> <span class="n">pathlib</span><span class="o">.</span><span class="n">_local</span><span class="o">.</span><span class="n">Path</span> <span class="o">=</span> <span class="n">PosixPath</span><span class="p">(</span><span class="s1">&#39;attn_data&#39;</span><span class="p">)</span>,</span><span class="param">	<span class="n">force_overwrite</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>,</span><span class="param">	<span class="n">track_results</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span></span><span class="return-annotation">) -> <span class="kc">None</span>:</span></span>
 
                 <div class="source-button-container">
             <label class="pdoc-button view-source-button" for="compute_and_save_figures-view-source"><span>View Source</span></label>
             <div class="github-button-wrapper">
-                <a class="pdoc-button github-link-button" href="https://github.com/mivanit/pattern-lens/blob/0.5.0figures.py#L126-L199" target="_blank">
+                <a class="pdoc-button github-link-button" href="https://github.com/mivanit/pattern-lens/blob/0.6.0figures.py#L126-L199" target="_blank">
                     <span>View on GitHub</span>
                 </a>
             </div>
@@ -1049,12 +1052,12 @@ whether to track the results of each function for each head. Isn't used for anyt
 <div class="attr function">
             
         <span class="def">def</span>
-        <span class="name">process_prompt</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">prompt</span><span class="p">:</span> <span class="nb">dict</span>,</span><span class="param">	<span class="n">model_cfg</span><span class="p">:</span> <span class="s1">&#39;HookedTransformerConfig|HTConfigMock&#39;</span>,</span><span class="param">	<span class="n">save_path</span><span class="p">:</span> <span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span>,</span><span class="param">	<span class="n">figure_funcs</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Callable</span><span class="p">[[</span><span class="n">jaxtyping</span><span class="o">.</span><span class="n">Float</span><span class="p">[</span><span class="n">ndarray</span><span class="p">,</span> <span class="s1">&#39;n_ctx n_ctx&#39;</span><span class="p">],</span> <span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">],</span> <span class="kc">None</span><span class="p">]]</span>,</span><span class="param">	<span class="n">force_overwrite</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span></span><span class="return-annotation">) -> <span class="kc">None</span>:</span></span>
+        <span class="name">process_prompt</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">prompt</span><span class="p">:</span> <span class="nb">dict</span>,</span><span class="param">	<span class="n">model_cfg</span><span class="p">:</span> <span class="s1">&#39;HookedTransformerConfig|HTConfigMock&#39;</span>,</span><span class="param">	<span class="n">save_path</span><span class="p">:</span> <span class="n">pathlib</span><span class="o">.</span><span class="n">_local</span><span class="o">.</span><span class="n">Path</span>,</span><span class="param">	<span class="n">figure_funcs</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Callable</span><span class="p">[[</span><span class="n">jaxtyping</span><span class="o">.</span><span class="n">Float</span><span class="p">[</span><span class="n">ndarray</span><span class="p">,</span> <span class="s1">&#39;n_ctx n_ctx&#39;</span><span class="p">],</span> <span class="n">pathlib</span><span class="o">.</span><span class="n">_local</span><span class="o">.</span><span class="n">Path</span><span class="p">],</span> <span class="kc">None</span><span class="p">]]</span>,</span><span class="param">	<span class="n">force_overwrite</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span></span><span class="return-annotation">) -> <span class="kc">None</span>:</span></span>
 
                 <div class="source-button-container">
             <label class="pdoc-button view-source-button" for="process_prompt-view-source"><span>View Source</span></label>
             <div class="github-button-wrapper">
-                <a class="pdoc-button github-link-button" href="https://github.com/mivanit/pattern-lens/blob/0.5.0figures.py#L202-L245" target="_blank">
+                <a class="pdoc-button github-link-button" href="https://github.com/mivanit/pattern-lens/blob/0.6.0figures.py#L202-L245" target="_blank">
                     <span>View on GitHub</span>
                 </a>
             </div>
@@ -1140,12 +1143,12 @@ list of functions to run</li>
 <div class="attr function">
             
         <span class="def">def</span>
-        <span class="name">select_attn_figure_funcs</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">figure_funcs_select</span><span class="p">:</span> <span class="nb">set</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span></span><span class="return-annotation">) -> <span class="nb">list</span><span class="p">[</span><span class="n">Callable</span><span class="p">[[</span><span class="n">jaxtyping</span><span class="o">.</span><span class="n">Float</span><span class="p">[</span><span class="n">ndarray</span><span class="p">,</span> <span class="s1">&#39;n_ctx n_ctx&#39;</span><span class="p">],</span> <span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">],</span> <span class="kc">None</span><span class="p">]]</span>:</span></span>
+        <span class="name">select_attn_figure_funcs</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">figure_funcs_select</span><span class="p">:</span> <span class="nb">set</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span></span><span class="return-annotation">) -> <span class="nb">list</span><span class="p">[</span><span class="n">Callable</span><span class="p">[[</span><span class="n">jaxtyping</span><span class="o">.</span><span class="n">Float</span><span class="p">[</span><span class="n">ndarray</span><span class="p">,</span> <span class="s1">&#39;n_ctx n_ctx&#39;</span><span class="p">],</span> <span class="n">pathlib</span><span class="o">.</span><span class="n">_local</span><span class="o">.</span><span class="n">Path</span><span class="p">],</span> <span class="kc">None</span><span class="p">]]</span>:</span></span>
 
                 <div class="source-button-container">
             <label class="pdoc-button view-source-button" for="select_attn_figure_funcs-view-source"><span>View Source</span></label>
             <div class="github-button-wrapper">
-                <a class="pdoc-button github-link-button" href="https://github.com/mivanit/pattern-lens/blob/0.5.0figures.py#L248-L284" target="_blank">
+                <a class="pdoc-button github-link-button" href="https://github.com/mivanit/pattern-lens/blob/0.6.0figures.py#L248-L284" target="_blank">
                     <span>View on GitHub</span>
                 </a>
             </div>
@@ -1174,14 +1177,14 @@ list of functions to run</li>
 </span><span id="select_attn_figure_funcs-267"><a href="#select_attn_figure_funcs-267"><span class="linenos">267</span></a>		<span class="n">figure_funcs</span> <span class="o">=</span> <span class="p">[</span>
 </span><span id="select_attn_figure_funcs-268"><a href="#select_attn_figure_funcs-268"><span class="linenos">268</span></a>			<span class="n">func</span>
 </span><span id="select_attn_figure_funcs-269"><a href="#select_attn_figure_funcs-269"><span class="linenos">269</span></a>			<span class="k">for</span> <span class="n">func</span> <span class="ow">in</span> <span class="n">ATTENTION_MATRIX_FIGURE_FUNCS</span>
-</span><span id="select_attn_figure_funcs-270"><a href="#select_attn_figure_funcs-270"><span class="linenos">270</span></a>			<span class="k">if</span> <span class="n">pattern</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">func</span><span class="o">.</span><span class="vm">__name__</span><span class="p">)</span>
+</span><span id="select_attn_figure_funcs-270"><a href="#select_attn_figure_funcs-270"><span class="linenos">270</span></a>			<span class="k">if</span> <span class="n">pattern</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="s2">&quot;__name__&quot;</span><span class="p">,</span> <span class="s2">&quot;&lt;unknown&gt;&quot;</span><span class="p">))</span>
 </span><span id="select_attn_figure_funcs-271"><a href="#select_attn_figure_funcs-271"><span class="linenos">271</span></a>		<span class="p">]</span>
 </span><span id="select_attn_figure_funcs-272"><a href="#select_attn_figure_funcs-272"><span class="linenos">272</span></a>	<span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">figure_funcs_select</span><span class="p">,</span> <span class="nb">set</span><span class="p">):</span>
 </span><span id="select_attn_figure_funcs-273"><a href="#select_attn_figure_funcs-273"><span class="linenos">273</span></a>		<span class="c1"># if a set, assume a set of function names</span>
 </span><span id="select_attn_figure_funcs-274"><a href="#select_attn_figure_funcs-274"><span class="linenos">274</span></a>		<span class="n">figure_funcs</span> <span class="o">=</span> <span class="p">[</span>
 </span><span id="select_attn_figure_funcs-275"><a href="#select_attn_figure_funcs-275"><span class="linenos">275</span></a>			<span class="n">func</span>
 </span><span id="select_attn_figure_funcs-276"><a href="#select_attn_figure_funcs-276"><span class="linenos">276</span></a>			<span class="k">for</span> <span class="n">func</span> <span class="ow">in</span> <span class="n">ATTENTION_MATRIX_FIGURE_FUNCS</span>
-</span><span id="select_attn_figure_funcs-277"><a href="#select_attn_figure_funcs-277"><span class="linenos">277</span></a>			<span class="k">if</span> <span class="n">func</span><span class="o">.</span><span class="vm">__name__</span> <span class="ow">in</span> <span class="n">figure_funcs_select</span>
+</span><span id="select_attn_figure_funcs-277"><a href="#select_attn_figure_funcs-277"><span class="linenos">277</span></a>			<span class="k">if</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="s2">&quot;__name__&quot;</span><span class="p">,</span> <span class="s2">&quot;&lt;unknown&gt;&quot;</span><span class="p">)</span> <span class="ow">in</span> <span class="n">figure_funcs_select</span>
 </span><span id="select_attn_figure_funcs-278"><a href="#select_attn_figure_funcs-278"><span class="linenos">278</span></a>		<span class="p">]</span>
 </span><span id="select_attn_figure_funcs-279"><a href="#select_attn_figure_funcs-279"><span class="linenos">279</span></a>	<span class="k">else</span><span class="p">:</span>
 </span><span id="select_attn_figure_funcs-280"><a href="#select_attn_figure_funcs-280"><span class="linenos">280</span></a>		<span class="n">err_msg</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="p">(</span>
@@ -1209,12 +1212,12 @@ list of functions to run</li>
 <div class="attr function">
             
         <span class="def">def</span>
-        <span class="name">figures_main</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">model_name</span><span class="p">:</span> <span class="nb">str</span>,</span><span class="param">	<span class="n">save_path</span><span class="p">:</span> <span class="nb">str</span>,</span><span class="param">	<span class="n">n_samples</span><span class="p">:</span> <span class="nb">int</span>,</span><span class="param">	<span class="n">force</span><span class="p">:</span> <span class="nb">bool</span>,</span><span class="param">	<span class="n">figure_funcs_select</span><span class="p">:</span> <span class="nb">set</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">parallel</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">|</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">True</span></span><span class="return-annotation">) -> <span class="kc">None</span>:</span></span>
+        <span class="name">figures_main</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">model_name</span><span class="p">:</span> <span class="nb">str</span>,</span><span class="param">	<span class="n">save_path</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">pathlib</span><span class="o">.</span><span class="n">_local</span><span class="o">.</span><span class="n">Path</span>,</span><span class="param">	<span class="n">n_samples</span><span class="p">:</span> <span class="nb">int</span>,</span><span class="param">	<span class="n">force</span><span class="p">:</span> <span class="nb">bool</span>,</span><span class="param">	<span class="n">figure_funcs_select</span><span class="p">:</span> <span class="nb">set</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">parallel</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">|</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">True</span></span><span class="return-annotation">) -> <span class="kc">None</span>:</span></span>
 
                 <div class="source-button-container">
             <label class="pdoc-button view-source-button" for="figures_main-view-source"><span>View Source</span></label>
             <div class="github-button-wrapper">
-                <a class="pdoc-button github-link-button" href="https://github.com/mivanit/pattern-lens/blob/0.5.0figures.py#L287-L368" target="_blank">
+                <a class="pdoc-button github-link-button" href="https://github.com/mivanit/pattern-lens/blob/0.6.0figures.py#L287-L371" target="_blank">
                     <span>View on GitHub</span>
                 </a>
             </div>
@@ -1224,7 +1227,7 @@ list of functions to run</li>
     <a class="headerlink" href="#figures_main"></a>
             <div class="pdoc-code codehilite"><pre><span></span><span id="figures_main-288"><a href="#figures_main-288"><span class="linenos">288</span></a><span class="k">def</span><span class="w"> </span><span class="nf">figures_main</span><span class="p">(</span>
 </span><span id="figures_main-289"><a href="#figures_main-289"><span class="linenos">289</span></a>	<span class="n">model_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-</span><span id="figures_main-290"><a href="#figures_main-290"><span class="linenos">290</span></a>	<span class="n">save_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+</span><span id="figures_main-290"><a href="#figures_main-290"><span class="linenos">290</span></a>	<span class="n">save_path</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">Path</span><span class="p">,</span>
 </span><span id="figures_main-291"><a href="#figures_main-291"><span class="linenos">291</span></a>	<span class="n">n_samples</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
 </span><span id="figures_main-292"><a href="#figures_main-292"><span class="linenos">292</span></a>	<span class="n">force</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
 </span><span id="figures_main-293"><a href="#figures_main-293"><span class="linenos">293</span></a>	<span class="n">figure_funcs_select</span><span class="p">:</span> <span class="nb">set</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -1235,7 +1238,7 @@ list of functions to run</li>
 </span><span id="figures_main-298"><a href="#figures_main-298"><span class="linenos">298</span></a><span class="sd">	# Parameters:</span>
 </span><span id="figures_main-299"><a href="#figures_main-299"><span class="linenos">299</span></a><span class="sd">	- `model_name : str`</span>
 </span><span id="figures_main-300"><a href="#figures_main-300"><span class="linenos">300</span></a><span class="sd">		model name to use, used for loading the model config, prompts, activations, and saving the figures</span>
-</span><span id="figures_main-301"><a href="#figures_main-301"><span class="linenos">301</span></a><span class="sd">	- `save_path : str`</span>
+</span><span id="figures_main-301"><a href="#figures_main-301"><span class="linenos">301</span></a><span class="sd">	- `save_path : str | Path`</span>
 </span><span id="figures_main-302"><a href="#figures_main-302"><span class="linenos">302</span></a><span class="sd">		base path to look in</span>
 </span><span id="figures_main-303"><a href="#figures_main-303"><span class="linenos">303</span></a><span class="sd">	- `n_samples : int`</span>
 </span><span id="figures_main-304"><a href="#figures_main-304"><span class="linenos">304</span></a><span class="sd">		max number of samples to process</span>
@@ -1268,42 +1271,45 @@ list of functions to run</li>
 </span><span id="figures_main-331"><a href="#figures_main-331"><span class="linenos">331</span></a>		<span class="n">figure_funcs_select</span><span class="o">=</span><span class="n">figure_funcs_select</span><span class="p">,</span>
 </span><span id="figures_main-332"><a href="#figures_main-332"><span class="linenos">332</span></a>	<span class="p">)</span>
 </span><span id="figures_main-333"><a href="#figures_main-333"><span class="linenos">333</span></a>	<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">figure_funcs</span><span class="p">)</span><span class="si">}</span><span class="s2"> figure functions loaded&quot;</span><span class="p">)</span>
-</span><span id="figures_main-334"><a href="#figures_main-334"><span class="linenos">334</span></a>	<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span> <span class="o">+</span> <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">func</span><span class="o">.</span><span class="vm">__name__</span> <span class="k">for</span> <span class="n">func</span> <span class="ow">in</span> <span class="n">figure_funcs</span><span class="p">]))</span>
-</span><span id="figures_main-335"><a href="#figures_main-335"><span class="linenos">335</span></a>
-</span><span id="figures_main-336"><a href="#figures_main-336"><span class="linenos">336</span></a>	<span class="n">chunksize</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span>
-</span><span id="figures_main-337"><a href="#figures_main-337"><span class="linenos">337</span></a>		<span class="nb">max</span><span class="p">(</span>
-</span><span id="figures_main-338"><a href="#figures_main-338"><span class="linenos">338</span></a>			<span class="mi">1</span><span class="p">,</span>
-</span><span id="figures_main-339"><a href="#figures_main-339"><span class="linenos">339</span></a>			<span class="nb">len</span><span class="p">(</span><span class="n">prompts</span><span class="p">)</span> <span class="o">//</span> <span class="p">(</span><span class="mi">5</span> <span class="o">*</span> <span class="n">multiprocessing</span><span class="o">.</span><span class="n">cpu_count</span><span class="p">()),</span>
-</span><span id="figures_main-340"><a href="#figures_main-340"><span class="linenos">340</span></a>		<span class="p">),</span>
-</span><span id="figures_main-341"><a href="#figures_main-341"><span class="linenos">341</span></a>	<span class="p">)</span>
-</span><span id="figures_main-342"><a href="#figures_main-342"><span class="linenos">342</span></a>	<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;chunksize: </span><span class="si">{</span><span class="n">chunksize</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-</span><span id="figures_main-343"><a href="#figures_main-343"><span class="linenos">343</span></a>
-</span><span id="figures_main-344"><a href="#figures_main-344"><span class="linenos">344</span></a>	<span class="nb">list</span><span class="p">(</span>
-</span><span id="figures_main-345"><a href="#figures_main-345"><span class="linenos">345</span></a>		<span class="n">run_maybe_parallel</span><span class="p">(</span>
-</span><span id="figures_main-346"><a href="#figures_main-346"><span class="linenos">346</span></a>			<span class="n">func</span><span class="o">=</span><span class="n">functools</span><span class="o">.</span><span class="n">partial</span><span class="p">(</span>
-</span><span id="figures_main-347"><a href="#figures_main-347"><span class="linenos">347</span></a>				<span class="n">process_prompt</span><span class="p">,</span>
-</span><span id="figures_main-348"><a href="#figures_main-348"><span class="linenos">348</span></a>				<span class="n">model_cfg</span><span class="o">=</span><span class="n">model_cfg</span><span class="p">,</span>
-</span><span id="figures_main-349"><a href="#figures_main-349"><span class="linenos">349</span></a>				<span class="n">save_path</span><span class="o">=</span><span class="n">save_path_p</span><span class="p">,</span>
-</span><span id="figures_main-350"><a href="#figures_main-350"><span class="linenos">350</span></a>				<span class="n">figure_funcs</span><span class="o">=</span><span class="n">figure_funcs</span><span class="p">,</span>
-</span><span id="figures_main-351"><a href="#figures_main-351"><span class="linenos">351</span></a>				<span class="n">force_overwrite</span><span class="o">=</span><span class="n">force</span><span class="p">,</span>
-</span><span id="figures_main-352"><a href="#figures_main-352"><span class="linenos">352</span></a>			<span class="p">),</span>
-</span><span id="figures_main-353"><a href="#figures_main-353"><span class="linenos">353</span></a>			<span class="n">iterable</span><span class="o">=</span><span class="n">prompts</span><span class="p">,</span>
-</span><span id="figures_main-354"><a href="#figures_main-354"><span class="linenos">354</span></a>			<span class="n">parallel</span><span class="o">=</span><span class="n">parallel</span><span class="p">,</span>
-</span><span id="figures_main-355"><a href="#figures_main-355"><span class="linenos">355</span></a>			<span class="n">chunksize</span><span class="o">=</span><span class="n">chunksize</span><span class="p">,</span>
-</span><span id="figures_main-356"><a href="#figures_main-356"><span class="linenos">356</span></a>			<span class="n">pbar</span><span class="o">=</span><span class="s2">&quot;tqdm&quot;</span><span class="p">,</span>
-</span><span id="figures_main-357"><a href="#figures_main-357"><span class="linenos">357</span></a>			<span class="n">pbar_kwargs</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span>
-</span><span id="figures_main-358"><a href="#figures_main-358"><span class="linenos">358</span></a>				<span class="n">desc</span><span class="o">=</span><span class="s2">&quot;Making figures&quot;</span><span class="p">,</span>
-</span><span id="figures_main-359"><a href="#figures_main-359"><span class="linenos">359</span></a>				<span class="n">unit</span><span class="o">=</span><span class="s2">&quot;prompt&quot;</span><span class="p">,</span>
-</span><span id="figures_main-360"><a href="#figures_main-360"><span class="linenos">360</span></a>			<span class="p">),</span>
-</span><span id="figures_main-361"><a href="#figures_main-361"><span class="linenos">361</span></a>		<span class="p">),</span>
-</span><span id="figures_main-362"><a href="#figures_main-362"><span class="linenos">362</span></a>	<span class="p">)</span>
-</span><span id="figures_main-363"><a href="#figures_main-363"><span class="linenos">363</span></a>
-</span><span id="figures_main-364"><a href="#figures_main-364"><span class="linenos">364</span></a>	<span class="k">with</span> <span class="n">SpinnerContext</span><span class="p">(</span>
-</span><span id="figures_main-365"><a href="#figures_main-365"><span class="linenos">365</span></a>		<span class="n">message</span><span class="o">=</span><span class="s2">&quot;updating jsonl metadata for models and functions&quot;</span><span class="p">,</span>
-</span><span id="figures_main-366"><a href="#figures_main-366"><span class="linenos">366</span></a>		<span class="o">**</span><span class="n">SPINNER_KWARGS</span><span class="p">,</span>
-</span><span id="figures_main-367"><a href="#figures_main-367"><span class="linenos">367</span></a>	<span class="p">):</span>
-</span><span id="figures_main-368"><a href="#figures_main-368"><span class="linenos">368</span></a>		<span class="n">generate_models_jsonl</span><span class="p">(</span><span class="n">save_path_p</span><span class="p">)</span>
-</span><span id="figures_main-369"><a href="#figures_main-369"><span class="linenos">369</span></a>		<span class="n">generate_functions_jsonl</span><span class="p">(</span><span class="n">save_path_p</span><span class="p">)</span>
+</span><span id="figures_main-334"><a href="#figures_main-334"><span class="linenos">334</span></a>	<span class="nb">print</span><span class="p">(</span>
+</span><span id="figures_main-335"><a href="#figures_main-335"><span class="linenos">335</span></a>		<span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span>
+</span><span id="figures_main-336"><a href="#figures_main-336"><span class="linenos">336</span></a>		<span class="o">+</span> <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="nb">getattr</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="s2">&quot;__name__&quot;</span><span class="p">,</span> <span class="s2">&quot;&lt;unknown&gt;&quot;</span><span class="p">)</span> <span class="k">for</span> <span class="n">func</span> <span class="ow">in</span> <span class="n">figure_funcs</span><span class="p">]),</span>
+</span><span id="figures_main-337"><a href="#figures_main-337"><span class="linenos">337</span></a>	<span class="p">)</span>
+</span><span id="figures_main-338"><a href="#figures_main-338"><span class="linenos">338</span></a>
+</span><span id="figures_main-339"><a href="#figures_main-339"><span class="linenos">339</span></a>	<span class="n">chunksize</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span>
+</span><span id="figures_main-340"><a href="#figures_main-340"><span class="linenos">340</span></a>		<span class="nb">max</span><span class="p">(</span>
+</span><span id="figures_main-341"><a href="#figures_main-341"><span class="linenos">341</span></a>			<span class="mi">1</span><span class="p">,</span>
+</span><span id="figures_main-342"><a href="#figures_main-342"><span class="linenos">342</span></a>			<span class="nb">len</span><span class="p">(</span><span class="n">prompts</span><span class="p">)</span> <span class="o">//</span> <span class="p">(</span><span class="mi">5</span> <span class="o">*</span> <span class="n">multiprocessing</span><span class="o">.</span><span class="n">cpu_count</span><span class="p">()),</span>
+</span><span id="figures_main-343"><a href="#figures_main-343"><span class="linenos">343</span></a>		<span class="p">),</span>
+</span><span id="figures_main-344"><a href="#figures_main-344"><span class="linenos">344</span></a>	<span class="p">)</span>
+</span><span id="figures_main-345"><a href="#figures_main-345"><span class="linenos">345</span></a>	<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;chunksize: </span><span class="si">{</span><span class="n">chunksize</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</span><span id="figures_main-346"><a href="#figures_main-346"><span class="linenos">346</span></a>
+</span><span id="figures_main-347"><a href="#figures_main-347"><span class="linenos">347</span></a>	<span class="nb">list</span><span class="p">(</span>
+</span><span id="figures_main-348"><a href="#figures_main-348"><span class="linenos">348</span></a>		<span class="n">run_maybe_parallel</span><span class="p">(</span>
+</span><span id="figures_main-349"><a href="#figures_main-349"><span class="linenos">349</span></a>			<span class="n">func</span><span class="o">=</span><span class="n">functools</span><span class="o">.</span><span class="n">partial</span><span class="p">(</span>
+</span><span id="figures_main-350"><a href="#figures_main-350"><span class="linenos">350</span></a>				<span class="n">process_prompt</span><span class="p">,</span>
+</span><span id="figures_main-351"><a href="#figures_main-351"><span class="linenos">351</span></a>				<span class="n">model_cfg</span><span class="o">=</span><span class="n">model_cfg</span><span class="p">,</span>
+</span><span id="figures_main-352"><a href="#figures_main-352"><span class="linenos">352</span></a>				<span class="n">save_path</span><span class="o">=</span><span class="n">save_path_p</span><span class="p">,</span>
+</span><span id="figures_main-353"><a href="#figures_main-353"><span class="linenos">353</span></a>				<span class="n">figure_funcs</span><span class="o">=</span><span class="n">figure_funcs</span><span class="p">,</span>
+</span><span id="figures_main-354"><a href="#figures_main-354"><span class="linenos">354</span></a>				<span class="n">force_overwrite</span><span class="o">=</span><span class="n">force</span><span class="p">,</span>
+</span><span id="figures_main-355"><a href="#figures_main-355"><span class="linenos">355</span></a>			<span class="p">),</span>
+</span><span id="figures_main-356"><a href="#figures_main-356"><span class="linenos">356</span></a>			<span class="n">iterable</span><span class="o">=</span><span class="n">prompts</span><span class="p">,</span>
+</span><span id="figures_main-357"><a href="#figures_main-357"><span class="linenos">357</span></a>			<span class="n">parallel</span><span class="o">=</span><span class="n">parallel</span><span class="p">,</span>
+</span><span id="figures_main-358"><a href="#figures_main-358"><span class="linenos">358</span></a>			<span class="n">chunksize</span><span class="o">=</span><span class="n">chunksize</span><span class="p">,</span>
+</span><span id="figures_main-359"><a href="#figures_main-359"><span class="linenos">359</span></a>			<span class="n">pbar</span><span class="o">=</span><span class="s2">&quot;tqdm&quot;</span><span class="p">,</span>
+</span><span id="figures_main-360"><a href="#figures_main-360"><span class="linenos">360</span></a>			<span class="n">pbar_kwargs</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span>
+</span><span id="figures_main-361"><a href="#figures_main-361"><span class="linenos">361</span></a>				<span class="n">desc</span><span class="o">=</span><span class="s2">&quot;Making figures&quot;</span><span class="p">,</span>
+</span><span id="figures_main-362"><a href="#figures_main-362"><span class="linenos">362</span></a>				<span class="n">unit</span><span class="o">=</span><span class="s2">&quot;prompt&quot;</span><span class="p">,</span>
+</span><span id="figures_main-363"><a href="#figures_main-363"><span class="linenos">363</span></a>			<span class="p">),</span>
+</span><span id="figures_main-364"><a href="#figures_main-364"><span class="linenos">364</span></a>		<span class="p">),</span>
+</span><span id="figures_main-365"><a href="#figures_main-365"><span class="linenos">365</span></a>	<span class="p">)</span>
+</span><span id="figures_main-366"><a href="#figures_main-366"><span class="linenos">366</span></a>
+</span><span id="figures_main-367"><a href="#figures_main-367"><span class="linenos">367</span></a>	<span class="k">with</span> <span class="n">SpinnerContext</span><span class="p">(</span>
+</span><span id="figures_main-368"><a href="#figures_main-368"><span class="linenos">368</span></a>		<span class="n">message</span><span class="o">=</span><span class="s2">&quot;updating jsonl metadata for models and functions&quot;</span><span class="p">,</span>
+</span><span id="figures_main-369"><a href="#figures_main-369"><span class="linenos">369</span></a>		<span class="o">**</span><span class="n">SPINNER_KWARGS</span><span class="p">,</span>
+</span><span id="figures_main-370"><a href="#figures_main-370"><span class="linenos">370</span></a>	<span class="p">):</span>
+</span><span id="figures_main-371"><a href="#figures_main-371"><span class="linenos">371</span></a>		<span class="n">generate_models_jsonl</span><span class="p">(</span><span class="n">save_path_p</span><span class="p">)</span>
+</span><span id="figures_main-372"><a href="#figures_main-372"><span class="linenos">372</span></a>		<span class="n">generate_functions_jsonl</span><span class="p">(</span><span class="n">save_path_p</span><span class="p">)</span>
 </span></pre></div>
 
 
@@ -1314,7 +1320,7 @@ list of functions to run</li>
 <ul>
 <li><code>model_name : str</code>
 model name to use, used for loading the model config, prompts, activations, and saving the figures</li>
-<li><code>save_path : str</code>
+<li><code>save_path : str | Path</code>
 base path to look in</li>
 <li><code>n_samples : int</code>
 max number of samples to process</li>
@@ -1341,7 +1347,7 @@ whether to run in parallel. if <code>True</code>, will use all available cores. 
                 <div class="source-button-container">
             <label class="pdoc-button view-source-button" for="main-view-source"><span>View Source</span></label>
             <div class="github-button-wrapper">
-                <a class="pdoc-button github-link-button" href="https://github.com/mivanit/pattern-lens/blob/0.5.0figures.py#L441-L468" target="_blank">
+                <a class="pdoc-button github-link-button" href="https://github.com/mivanit/pattern-lens/blob/0.6.0figures.py#L444-L471" target="_blank">
                     <span>View on GitHub</span>
                 </a>
             </div>
@@ -1349,34 +1355,34 @@ whether to run in parallel. if <code>True</code>, will use all available cores. 
 
     </div>
     <a class="headerlink" href="#main"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="main-442"><a href="#main-442"><span class="linenos">442</span></a><span class="k">def</span><span class="w"> </span><span class="nf">main</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-</span><span id="main-443"><a href="#main-443"><span class="linenos">443</span></a>	<span class="s2">&quot;generates figures from the activations using the functions decorated with `register_attn_figure_func`&quot;</span>
-</span><span id="main-444"><a href="#main-444"><span class="linenos">444</span></a>	<span class="c1"># parse args</span>
-</span><span id="main-445"><a href="#main-445"><span class="linenos">445</span></a>	<span class="nb">print</span><span class="p">(</span><span class="n">DIVIDER_S1</span><span class="p">)</span>
-</span><span id="main-446"><a href="#main-446"><span class="linenos">446</span></a>	<span class="n">args</span><span class="p">:</span> <span class="n">argparse</span><span class="o">.</span><span class="n">Namespace</span>
-</span><span id="main-447"><a href="#main-447"><span class="linenos">447</span></a>	<span class="n">models</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>
-</span><span id="main-448"><a href="#main-448"><span class="linenos">448</span></a>	<span class="n">figure_funcs_select</span><span class="p">:</span> <span class="nb">set</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span>
-</span><span id="main-449"><a href="#main-449"><span class="linenos">449</span></a>	<span class="k">with</span> <span class="n">SpinnerContext</span><span class="p">(</span><span class="n">message</span><span class="o">=</span><span class="s2">&quot;parsing args&quot;</span><span class="p">,</span> <span class="o">**</span><span class="n">SPINNER_KWARGS</span><span class="p">):</span>
-</span><span id="main-450"><a href="#main-450"><span class="linenos">450</span></a>		<span class="n">args</span><span class="p">,</span> <span class="n">models</span><span class="p">,</span> <span class="n">figure_funcs_select</span> <span class="o">=</span> <span class="n">_parse_args</span><span class="p">()</span>
-</span><span id="main-451"><a href="#main-451"><span class="linenos">451</span></a>	<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">args parsed: &#39;</span><span class="si">{</span><span class="n">args</span><span class="si">}</span><span class="s2">&#39;&quot;</span><span class="p">)</span>
-</span><span id="main-452"><a href="#main-452"><span class="linenos">452</span></a>	<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">models: &#39;</span><span class="si">{</span><span class="n">models</span><span class="si">}</span><span class="s2">&#39;&quot;</span><span class="p">)</span>
-</span><span id="main-453"><a href="#main-453"><span class="linenos">453</span></a>	<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">figure_funcs_select: &#39;</span><span class="si">{</span><span class="n">figure_funcs_select</span><span class="si">}</span><span class="s2">&#39;&quot;</span><span class="p">)</span>
-</span><span id="main-454"><a href="#main-454"><span class="linenos">454</span></a>
-</span><span id="main-455"><a href="#main-455"><span class="linenos">455</span></a>	<span class="c1"># compute for each model</span>
-</span><span id="main-456"><a href="#main-456"><span class="linenos">456</span></a>	<span class="n">n_models</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">models</span><span class="p">)</span>
-</span><span id="main-457"><a href="#main-457"><span class="linenos">457</span></a>	<span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">model</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">models</span><span class="p">):</span>
-</span><span id="main-458"><a href="#main-458"><span class="linenos">458</span></a>		<span class="nb">print</span><span class="p">(</span><span class="n">DIVIDER_S2</span><span class="p">)</span>
-</span><span id="main-459"><a href="#main-459"><span class="linenos">459</span></a>		<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;processing model </span><span class="si">{</span><span class="n">idx</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="si">}</span><span class="s2"> / </span><span class="si">{</span><span class="n">n_models</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">model</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-</span><span id="main-460"><a href="#main-460"><span class="linenos">460</span></a>		<span class="nb">print</span><span class="p">(</span><span class="n">DIVIDER_S2</span><span class="p">)</span>
-</span><span id="main-461"><a href="#main-461"><span class="linenos">461</span></a>		<span class="n">figures_main</span><span class="p">(</span>
-</span><span id="main-462"><a href="#main-462"><span class="linenos">462</span></a>			<span class="n">model_name</span><span class="o">=</span><span class="n">model</span><span class="p">,</span>
-</span><span id="main-463"><a href="#main-463"><span class="linenos">463</span></a>			<span class="n">save_path</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">save_path</span><span class="p">,</span>
-</span><span id="main-464"><a href="#main-464"><span class="linenos">464</span></a>			<span class="n">n_samples</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">n_samples</span><span class="p">,</span>
-</span><span id="main-465"><a href="#main-465"><span class="linenos">465</span></a>			<span class="n">force</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">force</span><span class="p">,</span>
-</span><span id="main-466"><a href="#main-466"><span class="linenos">466</span></a>			<span class="n">figure_funcs_select</span><span class="o">=</span><span class="n">figure_funcs_select</span><span class="p">,</span>
-</span><span id="main-467"><a href="#main-467"><span class="linenos">467</span></a>		<span class="p">)</span>
-</span><span id="main-468"><a href="#main-468"><span class="linenos">468</span></a>
-</span><span id="main-469"><a href="#main-469"><span class="linenos">469</span></a>	<span class="nb">print</span><span class="p">(</span><span class="n">DIVIDER_S1</span><span class="p">)</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="main-445"><a href="#main-445"><span class="linenos">445</span></a><span class="k">def</span><span class="w"> </span><span class="nf">main</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="main-446"><a href="#main-446"><span class="linenos">446</span></a>	<span class="s2">&quot;generates figures from the activations using the functions decorated with `register_attn_figure_func`&quot;</span>
+</span><span id="main-447"><a href="#main-447"><span class="linenos">447</span></a>	<span class="c1"># parse args</span>
+</span><span id="main-448"><a href="#main-448"><span class="linenos">448</span></a>	<span class="nb">print</span><span class="p">(</span><span class="n">DIVIDER_S1</span><span class="p">)</span>
+</span><span id="main-449"><a href="#main-449"><span class="linenos">449</span></a>	<span class="n">args</span><span class="p">:</span> <span class="n">argparse</span><span class="o">.</span><span class="n">Namespace</span>
+</span><span id="main-450"><a href="#main-450"><span class="linenos">450</span></a>	<span class="n">models</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>
+</span><span id="main-451"><a href="#main-451"><span class="linenos">451</span></a>	<span class="n">figure_funcs_select</span><span class="p">:</span> <span class="nb">set</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span>
+</span><span id="main-452"><a href="#main-452"><span class="linenos">452</span></a>	<span class="k">with</span> <span class="n">SpinnerContext</span><span class="p">(</span><span class="n">message</span><span class="o">=</span><span class="s2">&quot;parsing args&quot;</span><span class="p">,</span> <span class="o">**</span><span class="n">SPINNER_KWARGS</span><span class="p">):</span>
+</span><span id="main-453"><a href="#main-453"><span class="linenos">453</span></a>		<span class="n">args</span><span class="p">,</span> <span class="n">models</span><span class="p">,</span> <span class="n">figure_funcs_select</span> <span class="o">=</span> <span class="n">_parse_args</span><span class="p">()</span>
+</span><span id="main-454"><a href="#main-454"><span class="linenos">454</span></a>	<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">args parsed: &#39;</span><span class="si">{</span><span class="n">args</span><span class="si">}</span><span class="s2">&#39;&quot;</span><span class="p">)</span>
+</span><span id="main-455"><a href="#main-455"><span class="linenos">455</span></a>	<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">models: &#39;</span><span class="si">{</span><span class="n">models</span><span class="si">}</span><span class="s2">&#39;&quot;</span><span class="p">)</span>
+</span><span id="main-456"><a href="#main-456"><span class="linenos">456</span></a>	<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">figure_funcs_select: &#39;</span><span class="si">{</span><span class="n">figure_funcs_select</span><span class="si">}</span><span class="s2">&#39;&quot;</span><span class="p">)</span>
+</span><span id="main-457"><a href="#main-457"><span class="linenos">457</span></a>
+</span><span id="main-458"><a href="#main-458"><span class="linenos">458</span></a>	<span class="c1"># compute for each model</span>
+</span><span id="main-459"><a href="#main-459"><span class="linenos">459</span></a>	<span class="n">n_models</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">models</span><span class="p">)</span>
+</span><span id="main-460"><a href="#main-460"><span class="linenos">460</span></a>	<span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">model</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">models</span><span class="p">):</span>
+</span><span id="main-461"><a href="#main-461"><span class="linenos">461</span></a>		<span class="nb">print</span><span class="p">(</span><span class="n">DIVIDER_S2</span><span class="p">)</span>
+</span><span id="main-462"><a href="#main-462"><span class="linenos">462</span></a>		<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;processing model </span><span class="si">{</span><span class="n">idx</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="si">}</span><span class="s2"> / </span><span class="si">{</span><span class="n">n_models</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">model</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</span><span id="main-463"><a href="#main-463"><span class="linenos">463</span></a>		<span class="nb">print</span><span class="p">(</span><span class="n">DIVIDER_S2</span><span class="p">)</span>
+</span><span id="main-464"><a href="#main-464"><span class="linenos">464</span></a>		<span class="n">figures_main</span><span class="p">(</span>
+</span><span id="main-465"><a href="#main-465"><span class="linenos">465</span></a>			<span class="n">model_name</span><span class="o">=</span><span class="n">model</span><span class="p">,</span>
+</span><span id="main-466"><a href="#main-466"><span class="linenos">466</span></a>			<span class="n">save_path</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">save_path</span><span class="p">,</span>
+</span><span id="main-467"><a href="#main-467"><span class="linenos">467</span></a>			<span class="n">n_samples</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">n_samples</span><span class="p">,</span>
+</span><span id="main-468"><a href="#main-468"><span class="linenos">468</span></a>			<span class="n">force</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">force</span><span class="p">,</span>
+</span><span id="main-469"><a href="#main-469"><span class="linenos">469</span></a>			<span class="n">figure_funcs_select</span><span class="o">=</span><span class="n">figure_funcs_select</span><span class="p">,</span>
+</span><span id="main-470"><a href="#main-470"><span class="linenos">470</span></a>		<span class="p">)</span>
+</span><span id="main-471"><a href="#main-471"><span class="linenos">471</span></a>
+</span><span id="main-472"><a href="#main-472"><span class="linenos">472</span></a>	<span class="nb">print</span><span class="p">(</span><span class="n">DIVIDER_S1</span><span class="p">)</span>
 </span></pre></div>
 
 

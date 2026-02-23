@@ -1,7 +1,7 @@
 Name                                     Stmts   Miss  Cover   Missing
 ----------------------------------------------------------------------
 pattern_lens/__init__.py                     1      0   100%
-pattern_lens/activations.py                221     14    94%   206, 284-286, 512, 584-588, 632-633, 649, 833, 864
+pattern_lens/activations.py                223     14    94%   209, 290-292, 526, 601-605, 649-650, 666, 857, 888
 pattern_lens/attn_figure_funcs.py           23      7    70%   29, 81-92
 pattern_lens/consts.py                      23      0   100%
 pattern_lens/figure_util.py                143     16    89%   235-238, 245-246, 251-253, 262-265, 276-280, 327-328, 516
@@ -10,15 +10,16 @@ pattern_lens/indexes.py                     73      7    90%   84-85, 97, 160-16
 pattern_lens/load_activations.py            62      3    95%   141, 165-166
 pattern_lens/prompts.py                     24      1    96%   80
 pattern_lens/server.py                      26      8    69%   34-59
+tests/conftest.py                            9      1    89%   22
 tests/integration/test_clis.py              52      0   100%
 tests/integration/test_pipeline.py          15      0   100%
 tests/unit/test_activations.py              65     13    80%   18-23, 26, 31-43
-tests/unit/test_activations_batched.py     298      6    98%   78-80, 694, 737, 774
-tests/unit/test_activations_return.py       65      0   100%
+tests/unit/test_activations_batched.py     347     10    97%   78-80, 687, 730, 767, 839, 869, 908, 951
+tests/unit/test_activations_return.py       63      0   100%
 tests/unit/test_figure_util.py             175      0   100%
 tests/unit/test_figures.py                  54      1    98%   102
 tests/unit/test_load_activations.py         68      0   100%
 tests/unit/test_multifig.py                 64      1    98%   101
 tests/unit/test_server.py                   11      0   100%
 ----------------------------------------------------------------------
-TOTAL                                     1596     96    94%
+TOTAL                                     1654    101    94%

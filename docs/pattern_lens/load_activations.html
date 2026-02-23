@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="generator" content="pdoc 15.0.1"/>
+    <meta name="generator" content="pdoc 16.0.0"/>
     <title>pattern_lens.load_activations API documentation</title>
 <link rel="stylesheet" href="../resources/css/bootstrap-reboot.min.css"><link rel="stylesheet" href="../resources/css/syntax-highlighting.css"><link rel="stylesheet" href="../resources/css/theme.css"><link rel="stylesheet" href="../resources/css/layout.css"><link rel="stylesheet" href="../resources/css/content.css"><link rel="stylesheet" href="../resources/css/custom.css"><script>
     window.MathJax = {
@@ -46,7 +46,7 @@
 </script></head>
 <body>
 <div class="package-version">
-    docs for <a href="https://github.com/mivanit/pattern-lens">pattern_lens</a> v0.5.0<br>
+    docs for <a href="https://github.com/mivanit/pattern-lens">pattern_lens</a> v0.6.0<br>
 </div>
     <nav class="pdoc">
         <label id="navtoggle" for="togglestate" class="pdoc-button">
@@ -98,6 +98,9 @@
             <li>
                     <a class="function" href="#load_activations">load_activations</a>
             </li>
+            <li>
+                    <a class="function" href="#activations_exist">activations_exist</a>
+            </li>
     </ul>
 
 
@@ -124,7 +127,7 @@
     </nav>
     <main class="pdoc">
             <section class="module-info">
-                        <a class="pdoc-button git-button" href="https://github.com/mivanit/pattern-lens/blob/0.5.0load_activations.py">View Source on GitHub</a>
+                        <a class="pdoc-button git-button" href="https://github.com/mivanit/pattern-lens/blob/0.6.0load_activations.py">View Source on GitHub</a>
                     <h1 class="modulename">
 <a href="./../pattern_lens.html">pattern_lens</a><wbr>.load_activations    </h1>
 
@@ -136,7 +139,7 @@
                         <div class="source-button-container">
             <label class="pdoc-button view-source-button" for="mod-load_activations-view-source"><span>View Source</span></label>
             <div class="github-button-wrapper">
-                <a class="pdoc-button github-link-button" href="https://github.com/mivanit/pattern-lens/blob/0.5.0load_activations.py#L0-L166" target="_blank">
+                <a class="pdoc-button github-link-button" href="https://github.com/mivanit/pattern-lens/blob/0.6.0load_activations.py#L0-L200" target="_blank">
                     <span>View on GitHub</span>
                 </a>
             </div>
@@ -283,7 +286,7 @@
 </span><span id="L-138"><a href="#L-138"><span class="linenos">138</span></a>			<span class="n">msg</span><span class="p">,</span>
 </span><span id="L-139"><a href="#L-139"><span class="linenos">139</span></a>		<span class="p">)</span>
 </span><span id="L-140"><a href="#L-140"><span class="linenos">140</span></a>	<span class="k">if</span> <span class="n">return_fmt</span> <span class="o">==</span> <span class="s2">&quot;torch&quot;</span><span class="p">:</span>
-</span><span id="L-141"><a href="#L-141"><span class="linenos">141</span></a>		<span class="kn">import</span><span class="w"> </span><span class="nn">torch</span>
+</span><span id="L-141"><a href="#L-141"><span class="linenos">141</span></a>		<span class="kn">import</span><span class="w"> </span><span class="nn">torch</span>  <span class="c1"># noqa: PLC0415</span>
 </span><span id="L-142"><a href="#L-142"><span class="linenos">142</span></a>
 </span><span id="L-143"><a href="#L-143"><span class="linenos">143</span></a>	<span class="n">augment_prompt_with_hash</span><span class="p">(</span><span class="n">prompt</span><span class="p">)</span>
 </span><span id="L-144"><a href="#L-144"><span class="linenos">144</span></a>
@@ -298,18 +301,52 @@
 </span><span id="L-153"><a href="#L-153"><span class="linenos">153</span></a>
 </span><span id="L-154"><a href="#L-154"><span class="linenos">154</span></a>	<span class="n">activations_path</span><span class="p">:</span> <span class="n">Path</span> <span class="o">=</span> <span class="n">prompt_dir</span> <span class="o">/</span> <span class="s2">&quot;activations.npz&quot;</span>
 </span><span id="L-155"><a href="#L-155"><span class="linenos">155</span></a>
-</span><span id="L-156"><a href="#L-156"><span class="linenos">156</span></a>	<span class="n">cache</span><span class="p">:</span> <span class="nb">dict</span>
-</span><span id="L-157"><a href="#L-157"><span class="linenos">157</span></a>
-</span><span id="L-158"><a href="#L-158"><span class="linenos">158</span></a>	<span class="k">with</span> <span class="n">np</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">activations_path</span><span class="p">)</span> <span class="k">as</span> <span class="n">npz_data</span><span class="p">:</span>
-</span><span id="L-159"><a href="#L-159"><span class="linenos">159</span></a>		<span class="k">if</span> <span class="n">return_fmt</span> <span class="o">==</span> <span class="s2">&quot;numpy&quot;</span><span class="p">:</span>
-</span><span id="L-160"><a href="#L-160"><span class="linenos">160</span></a>			<span class="n">cache</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">npz_data</span><span class="o">.</span><span class="n">items</span><span class="p">())</span>
-</span><span id="L-161"><a href="#L-161"><span class="linenos">161</span></a>		<span class="k">elif</span> <span class="n">return_fmt</span> <span class="o">==</span> <span class="s2">&quot;torch&quot;</span><span class="p">:</span>
-</span><span id="L-162"><a href="#L-162"><span class="linenos">162</span></a>			<span class="n">cache</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">from_numpy</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">npz_data</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
-</span><span id="L-163"><a href="#L-163"><span class="linenos">163</span></a>
-</span><span id="L-164"><a href="#L-164"><span class="linenos">164</span></a>	<span class="k">return</span> <span class="n">activations_path</span><span class="p">,</span> <span class="n">cache</span>
-</span><span id="L-165"><a href="#L-165"><span class="linenos">165</span></a>
-</span><span id="L-166"><a href="#L-166"><span class="linenos">166</span></a>
-</span><span id="L-167"><a href="#L-167"><span class="linenos">167</span></a><span class="c1"># def load_activations_stacked()</span>
+</span><span id="L-156"><a href="#L-156"><span class="linenos">156</span></a>	<span class="k">if</span> <span class="ow">not</span> <span class="n">activations_path</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+</span><span id="L-157"><a href="#L-157"><span class="linenos">157</span></a>		<span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Activations file </span><span class="si">{</span><span class="n">activations_path</span><span class="si">}</span><span class="s2"> does not exist&quot;</span>
+</span><span id="L-158"><a href="#L-158"><span class="linenos">158</span></a>		<span class="k">raise</span> <span class="n">ActivationsMissingError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+</span><span id="L-159"><a href="#L-159"><span class="linenos">159</span></a>
+</span><span id="L-160"><a href="#L-160"><span class="linenos">160</span></a>	<span class="n">cache</span><span class="p">:</span> <span class="nb">dict</span>
+</span><span id="L-161"><a href="#L-161"><span class="linenos">161</span></a>
+</span><span id="L-162"><a href="#L-162"><span class="linenos">162</span></a>	<span class="k">with</span> <span class="n">np</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">activations_path</span><span class="p">)</span> <span class="k">as</span> <span class="n">npz_data</span><span class="p">:</span>
+</span><span id="L-163"><a href="#L-163"><span class="linenos">163</span></a>		<span class="k">if</span> <span class="n">return_fmt</span> <span class="o">==</span> <span class="s2">&quot;numpy&quot;</span><span class="p">:</span>
+</span><span id="L-164"><a href="#L-164"><span class="linenos">164</span></a>			<span class="n">cache</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">npz_data</span><span class="o">.</span><span class="n">items</span><span class="p">())</span>
+</span><span id="L-165"><a href="#L-165"><span class="linenos">165</span></a>		<span class="k">elif</span> <span class="n">return_fmt</span> <span class="o">==</span> <span class="s2">&quot;torch&quot;</span><span class="p">:</span>
+</span><span id="L-166"><a href="#L-166"><span class="linenos">166</span></a>			<span class="n">cache</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">from_numpy</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">npz_data</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
+</span><span id="L-167"><a href="#L-167"><span class="linenos">167</span></a>
+</span><span id="L-168"><a href="#L-168"><span class="linenos">168</span></a>	<span class="k">return</span> <span class="n">activations_path</span><span class="p">,</span> <span class="n">cache</span>
+</span><span id="L-169"><a href="#L-169"><span class="linenos">169</span></a>
+</span><span id="L-170"><a href="#L-170"><span class="linenos">170</span></a>
+</span><span id="L-171"><a href="#L-171"><span class="linenos">171</span></a><span class="k">def</span><span class="w"> </span><span class="nf">activations_exist</span><span class="p">(</span><span class="n">model_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">prompt</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">save_path</span><span class="p">:</span> <span class="n">Path</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+</span><span id="L-172"><a href="#L-172"><span class="linenos">172</span></a><span class="w">	</span><span class="sd">&quot;&quot;&quot;check if activations exist on disk without loading them</span>
+</span><span id="L-173"><a href="#L-173"><span class="linenos">173</span></a>
+</span><span id="L-174"><a href="#L-174"><span class="linenos">174</span></a><span class="sd">	cheap alternative to calling `load_activations` when you only need to know</span>
+</span><span id="L-175"><a href="#L-175"><span class="linenos">175</span></a><span class="sd">	whether a prompt has been processed. `load_activations` decompresses the full</span>
+</span><span id="L-176"><a href="#L-176"><span class="linenos">176</span></a><span class="sd">	`.npz` into numpy arrays, which is wasteful when the data is immediately</span>
+</span><span id="L-177"><a href="#L-177"><span class="linenos">177</span></a><span class="sd">	discarded. this function just checks `.exists()` on the two expected files.</span>
+</span><span id="L-178"><a href="#L-178"><span class="linenos">178</span></a>
+</span><span id="L-179"><a href="#L-179"><span class="linenos">179</span></a><span class="sd">	# Parameters:</span>
+</span><span id="L-180"><a href="#L-180"><span class="linenos">180</span></a><span class="sd">	- `model_name : str`</span>
+</span><span id="L-181"><a href="#L-181"><span class="linenos">181</span></a><span class="sd">	- `prompt : dict`</span>
+</span><span id="L-182"><a href="#L-182"><span class="linenos">182</span></a><span class="sd">		must contain a &#39;hash&#39; key (call `augment_prompt_with_hash` first)</span>
+</span><span id="L-183"><a href="#L-183"><span class="linenos">183</span></a><span class="sd">	- `save_path : Path`</span>
+</span><span id="L-184"><a href="#L-184"><span class="linenos">184</span></a>
+</span><span id="L-185"><a href="#L-185"><span class="linenos">185</span></a><span class="sd">	# Returns:</span>
+</span><span id="L-186"><a href="#L-186"><span class="linenos">186</span></a><span class="sd">	- `bool`</span>
+</span><span id="L-187"><a href="#L-187"><span class="linenos">187</span></a><span class="sd">		True if both prompt.json and activations.npz exist for this prompt</span>
+</span><span id="L-188"><a href="#L-188"><span class="linenos">188</span></a>
+</span><span id="L-189"><a href="#L-189"><span class="linenos">189</span></a><span class="sd">	# Raises:</span>
+</span><span id="L-190"><a href="#L-190"><span class="linenos">190</span></a><span class="sd">	- `InvalidPromptError` : if the prompt does not have a &#39;hash&#39; key</span>
+</span><span id="L-191"><a href="#L-191"><span class="linenos">191</span></a><span class="sd">	&quot;&quot;&quot;</span>
+</span><span id="L-192"><a href="#L-192"><span class="linenos">192</span></a>	<span class="k">if</span> <span class="s2">&quot;hash&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">prompt</span><span class="p">:</span>
+</span><span id="L-193"><a href="#L-193"><span class="linenos">193</span></a>		<span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Prompt must have &#39;hash&#39; key (call augment_prompt_with_hash first): </span><span class="si">{</span><span class="n">prompt</span><span class="si">}</span><span class="s2">&quot;</span>
+</span><span id="L-194"><a href="#L-194"><span class="linenos">194</span></a>		<span class="k">raise</span> <span class="n">InvalidPromptError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+</span><span id="L-195"><a href="#L-195"><span class="linenos">195</span></a>	<span class="n">prompt_dir</span><span class="p">:</span> <span class="n">Path</span> <span class="o">=</span> <span class="n">save_path</span> <span class="o">/</span> <span class="n">model_name</span> <span class="o">/</span> <span class="s2">&quot;prompts&quot;</span> <span class="o">/</span> <span class="n">prompt</span><span class="p">[</span><span class="s2">&quot;hash&quot;</span><span class="p">]</span>
+</span><span id="L-196"><a href="#L-196"><span class="linenos">196</span></a>	<span class="k">return</span> <span class="p">(</span><span class="n">prompt_dir</span> <span class="o">/</span> <span class="s2">&quot;prompt.json&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">exists</span><span class="p">()</span> <span class="ow">and</span> <span class="p">(</span>
+</span><span id="L-197"><a href="#L-197"><span class="linenos">197</span></a>		<span class="n">prompt_dir</span> <span class="o">/</span> <span class="s2">&quot;activations.npz&quot;</span>
+</span><span id="L-198"><a href="#L-198"><span class="linenos">198</span></a>	<span class="p">)</span><span class="o">.</span><span class="n">exists</span><span class="p">()</span>
+</span><span id="L-199"><a href="#L-199"><span class="linenos">199</span></a>
+</span><span id="L-200"><a href="#L-200"><span class="linenos">200</span></a>
+</span><span id="L-201"><a href="#L-201"><span class="linenos">201</span></a><span class="c1"># def load_activations_stacked()</span>
 </span></pre></div>
 
 
@@ -325,7 +362,7 @@
                 <div class="source-button-container">
             <label class="pdoc-button view-source-button" for="GetActivationsError-view-source"><span>View Source</span></label>
             <div class="github-button-wrapper">
-                <a class="pdoc-button github-link-button" href="https://github.com/mivanit/pattern-lens/blob/0.5.0load_activations.py#L14-L17" target="_blank">
+                <a class="pdoc-button github-link-button" href="https://github.com/mivanit/pattern-lens/blob/0.6.0load_activations.py#L14-L17" target="_blank">
                     <span>View on GitHub</span>
                 </a>
             </div>
@@ -370,7 +407,7 @@
                 <div class="source-button-container">
             <label class="pdoc-button view-source-button" for="ActivationsMissingError-view-source"><span>View Source</span></label>
             <div class="github-button-wrapper">
-                <a class="pdoc-button github-link-button" href="https://github.com/mivanit/pattern-lens/blob/0.5.0load_activations.py#L20-L23" target="_blank">
+                <a class="pdoc-button github-link-button" href="https://github.com/mivanit/pattern-lens/blob/0.6.0load_activations.py#L20-L23" target="_blank">
                     <span>View on GitHub</span>
                 </a>
             </div>
@@ -423,7 +460,7 @@
                 <div class="source-button-container">
             <label class="pdoc-button view-source-button" for="ActivationsMismatchError-view-source"><span>View Source</span></label>
             <div class="github-button-wrapper">
-                <a class="pdoc-button github-link-button" href="https://github.com/mivanit/pattern-lens/blob/0.5.0load_activations.py#L26-L32" target="_blank">
+                <a class="pdoc-button github-link-button" href="https://github.com/mivanit/pattern-lens/blob/0.6.0load_activations.py#L26-L32" target="_blank">
                     <span>View on GitHub</span>
                 </a>
             </div>
@@ -473,7 +510,7 @@
                 <div class="source-button-container">
             <label class="pdoc-button view-source-button" for="InvalidPromptError-view-source"><span>View Source</span></label>
             <div class="github-button-wrapper">
-                <a class="pdoc-button github-link-button" href="https://github.com/mivanit/pattern-lens/blob/0.5.0load_activations.py#L35-L41" target="_blank">
+                <a class="pdoc-button github-link-button" href="https://github.com/mivanit/pattern-lens/blob/0.6.0load_activations.py#L35-L41" target="_blank">
                     <span>View on GitHub</span>
                 </a>
             </div>
@@ -523,7 +560,7 @@
                 <div class="source-button-container">
             <label class="pdoc-button view-source-button" for="compare_prompt_to_loaded-view-source"><span>View Source</span></label>
             <div class="github-button-wrapper">
-                <a class="pdoc-button github-link-button" href="https://github.com/mivanit/pattern-lens/blob/0.5.0load_activations.py#L44-L62" target="_blank">
+                <a class="pdoc-button github-link-button" href="https://github.com/mivanit/pattern-lens/blob/0.6.0load_activations.py#L44-L62" target="_blank">
                     <span>View on GitHub</span>
                 </a>
             </div>
@@ -587,7 +624,7 @@
                 <div class="source-button-container">
             <label class="pdoc-button view-source-button" for="augment_prompt_with_hash-view-source"><span>View Source</span></label>
             <div class="github-button-wrapper">
-                <a class="pdoc-button github-link-button" href="https://github.com/mivanit/pattern-lens/blob/0.5.0load_activations.py#L65-L93" target="_blank">
+                <a class="pdoc-button github-link-button" href="https://github.com/mivanit/pattern-lens/blob/0.6.0load_activations.py#L65-L93" target="_blank">
                     <span>View on GitHub</span>
                 </a>
             </div>
@@ -655,12 +692,12 @@
 <div class="attr function">
             
         <span class="def">def</span>
-        <span class="name">load_activations</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">model_name</span><span class="p">:</span> <span class="nb">str</span>,</span><span class="param">	<span class="n">prompt</span><span class="p">:</span> <span class="nb">dict</span>,</span><span class="param">	<span class="n">save_path</span><span class="p">:</span> <span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span>,</span><span class="param">	<span class="n">return_fmt</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="s1">&#39;numpy&#39;</span><span class="p">,</span> <span class="s1">&#39;torch&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;torch&#39;</span></span><span class="return-annotation">) -> <span class="nb">tuple</span><span class="p">[</span><span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">,</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">]</span> <span class="o">|</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">numpy</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]]</span>:</span></span>
+        <span class="name">load_activations</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">model_name</span><span class="p">:</span> <span class="nb">str</span>,</span><span class="param">	<span class="n">prompt</span><span class="p">:</span> <span class="nb">dict</span>,</span><span class="param">	<span class="n">save_path</span><span class="p">:</span> <span class="n">pathlib</span><span class="o">.</span><span class="n">_local</span><span class="o">.</span><span class="n">Path</span>,</span><span class="param">	<span class="n">return_fmt</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Literal</span><span class="p">[</span><span class="s1">&#39;numpy&#39;</span><span class="p">,</span> <span class="s1">&#39;torch&#39;</span><span class="p">]]</span> <span class="o">=</span> <span class="s1">&#39;torch&#39;</span></span><span class="return-annotation">) -> <span class="nb">tuple</span><span class="p">[</span><span class="n">pathlib</span><span class="o">.</span><span class="n">_local</span><span class="o">.</span><span class="n">Path</span><span class="p">,</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">]</span> <span class="o">|</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">numpy</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]]</span>:</span></span>
 
                 <div class="source-button-container">
             <label class="pdoc-button view-source-button" for="load_activations-view-source"><span>View Source</span></label>
             <div class="github-button-wrapper">
-                <a class="pdoc-button github-link-button" href="https://github.com/mivanit/pattern-lens/blob/0.5.0load_activations.py#L111-L164" target="_blank">
+                <a class="pdoc-button github-link-button" href="https://github.com/mivanit/pattern-lens/blob/0.6.0load_activations.py#L111-L168" target="_blank">
                     <span>View on GitHub</span>
                 </a>
             </div>
@@ -698,7 +735,7 @@
 </span><span id="load_activations-139"><a href="#load_activations-139"><span class="linenos">139</span></a>			<span class="n">msg</span><span class="p">,</span>
 </span><span id="load_activations-140"><a href="#load_activations-140"><span class="linenos">140</span></a>		<span class="p">)</span>
 </span><span id="load_activations-141"><a href="#load_activations-141"><span class="linenos">141</span></a>	<span class="k">if</span> <span class="n">return_fmt</span> <span class="o">==</span> <span class="s2">&quot;torch&quot;</span><span class="p">:</span>
-</span><span id="load_activations-142"><a href="#load_activations-142"><span class="linenos">142</span></a>		<span class="kn">import</span><span class="w"> </span><span class="nn">torch</span>
+</span><span id="load_activations-142"><a href="#load_activations-142"><span class="linenos">142</span></a>		<span class="kn">import</span><span class="w"> </span><span class="nn">torch</span>  <span class="c1"># noqa: PLC0415</span>
 </span><span id="load_activations-143"><a href="#load_activations-143"><span class="linenos">143</span></a>
 </span><span id="load_activations-144"><a href="#load_activations-144"><span class="linenos">144</span></a>	<span class="n">augment_prompt_with_hash</span><span class="p">(</span><span class="n">prompt</span><span class="p">)</span>
 </span><span id="load_activations-145"><a href="#load_activations-145"><span class="linenos">145</span></a>
@@ -713,15 +750,19 @@
 </span><span id="load_activations-154"><a href="#load_activations-154"><span class="linenos">154</span></a>
 </span><span id="load_activations-155"><a href="#load_activations-155"><span class="linenos">155</span></a>	<span class="n">activations_path</span><span class="p">:</span> <span class="n">Path</span> <span class="o">=</span> <span class="n">prompt_dir</span> <span class="o">/</span> <span class="s2">&quot;activations.npz&quot;</span>
 </span><span id="load_activations-156"><a href="#load_activations-156"><span class="linenos">156</span></a>
-</span><span id="load_activations-157"><a href="#load_activations-157"><span class="linenos">157</span></a>	<span class="n">cache</span><span class="p">:</span> <span class="nb">dict</span>
-</span><span id="load_activations-158"><a href="#load_activations-158"><span class="linenos">158</span></a>
-</span><span id="load_activations-159"><a href="#load_activations-159"><span class="linenos">159</span></a>	<span class="k">with</span> <span class="n">np</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">activations_path</span><span class="p">)</span> <span class="k">as</span> <span class="n">npz_data</span><span class="p">:</span>
-</span><span id="load_activations-160"><a href="#load_activations-160"><span class="linenos">160</span></a>		<span class="k">if</span> <span class="n">return_fmt</span> <span class="o">==</span> <span class="s2">&quot;numpy&quot;</span><span class="p">:</span>
-</span><span id="load_activations-161"><a href="#load_activations-161"><span class="linenos">161</span></a>			<span class="n">cache</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">npz_data</span><span class="o">.</span><span class="n">items</span><span class="p">())</span>
-</span><span id="load_activations-162"><a href="#load_activations-162"><span class="linenos">162</span></a>		<span class="k">elif</span> <span class="n">return_fmt</span> <span class="o">==</span> <span class="s2">&quot;torch&quot;</span><span class="p">:</span>
-</span><span id="load_activations-163"><a href="#load_activations-163"><span class="linenos">163</span></a>			<span class="n">cache</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">from_numpy</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">npz_data</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
-</span><span id="load_activations-164"><a href="#load_activations-164"><span class="linenos">164</span></a>
-</span><span id="load_activations-165"><a href="#load_activations-165"><span class="linenos">165</span></a>	<span class="k">return</span> <span class="n">activations_path</span><span class="p">,</span> <span class="n">cache</span>
+</span><span id="load_activations-157"><a href="#load_activations-157"><span class="linenos">157</span></a>	<span class="k">if</span> <span class="ow">not</span> <span class="n">activations_path</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+</span><span id="load_activations-158"><a href="#load_activations-158"><span class="linenos">158</span></a>		<span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Activations file </span><span class="si">{</span><span class="n">activations_path</span><span class="si">}</span><span class="s2"> does not exist&quot;</span>
+</span><span id="load_activations-159"><a href="#load_activations-159"><span class="linenos">159</span></a>		<span class="k">raise</span> <span class="n">ActivationsMissingError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+</span><span id="load_activations-160"><a href="#load_activations-160"><span class="linenos">160</span></a>
+</span><span id="load_activations-161"><a href="#load_activations-161"><span class="linenos">161</span></a>	<span class="n">cache</span><span class="p">:</span> <span class="nb">dict</span>
+</span><span id="load_activations-162"><a href="#load_activations-162"><span class="linenos">162</span></a>
+</span><span id="load_activations-163"><a href="#load_activations-163"><span class="linenos">163</span></a>	<span class="k">with</span> <span class="n">np</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">activations_path</span><span class="p">)</span> <span class="k">as</span> <span class="n">npz_data</span><span class="p">:</span>
+</span><span id="load_activations-164"><a href="#load_activations-164"><span class="linenos">164</span></a>		<span class="k">if</span> <span class="n">return_fmt</span> <span class="o">==</span> <span class="s2">&quot;numpy&quot;</span><span class="p">:</span>
+</span><span id="load_activations-165"><a href="#load_activations-165"><span class="linenos">165</span></a>			<span class="n">cache</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">npz_data</span><span class="o">.</span><span class="n">items</span><span class="p">())</span>
+</span><span id="load_activations-166"><a href="#load_activations-166"><span class="linenos">166</span></a>		<span class="k">elif</span> <span class="n">return_fmt</span> <span class="o">==</span> <span class="s2">&quot;torch&quot;</span><span class="p">:</span>
+</span><span id="load_activations-167"><a href="#load_activations-167"><span class="linenos">167</span></a>			<span class="n">cache</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">from_numpy</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">npz_data</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
+</span><span id="load_activations-168"><a href="#load_activations-168"><span class="linenos">168</span></a>
+</span><span id="load_activations-169"><a href="#load_activations-169"><span class="linenos">169</span></a>	<span class="k">return</span> <span class="n">activations_path</span><span class="p">,</span> <span class="n">cache</span>
 </span></pre></div>
 
 
@@ -750,6 +791,87 @@ of numpy arrays or torch tensors, depending on <code>return_fmt</code></li>
 <ul>
 <li><code><a href="#ActivationsMissingError">ActivationsMissingError</a></code> : if the activations file is missing</li>
 <li><code>ValueError</code> : if <code>return_fmt</code> is not <code>"torch"</code> or <code>"numpy"</code></li>
+</ul>
+</div>
+
+
+                </section>
+                <section id="activations_exist">
+                            <input id="activations_exist-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
+<div class="attr function">
+            
+        <span class="def">def</span>
+        <span class="name">activations_exist</span><span class="signature pdoc-code condensed">(<span class="param"><span class="n">model_name</span><span class="p">:</span> <span class="nb">str</span>, </span><span class="param"><span class="n">prompt</span><span class="p">:</span> <span class="nb">dict</span>, </span><span class="param"><span class="n">save_path</span><span class="p">:</span> <span class="n">pathlib</span><span class="o">.</span><span class="n">_local</span><span class="o">.</span><span class="n">Path</span></span><span class="return-annotation">) -> <span class="nb">bool</span>:</span></span>
+
+                <div class="source-button-container">
+            <label class="pdoc-button view-source-button" for="activations_exist-view-source"><span>View Source</span></label>
+            <div class="github-button-wrapper">
+                <a class="pdoc-button github-link-button" href="https://github.com/mivanit/pattern-lens/blob/0.6.0load_activations.py#L171-L198" target="_blank">
+                    <span>View on GitHub</span>
+                </a>
+            </div>
+        </div>
+
+    </div>
+    <a class="headerlink" href="#activations_exist"></a>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="activations_exist-172"><a href="#activations_exist-172"><span class="linenos">172</span></a><span class="k">def</span><span class="w"> </span><span class="nf">activations_exist</span><span class="p">(</span><span class="n">model_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">prompt</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">save_path</span><span class="p">:</span> <span class="n">Path</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+</span><span id="activations_exist-173"><a href="#activations_exist-173"><span class="linenos">173</span></a><span class="w">	</span><span class="sd">&quot;&quot;&quot;check if activations exist on disk without loading them</span>
+</span><span id="activations_exist-174"><a href="#activations_exist-174"><span class="linenos">174</span></a>
+</span><span id="activations_exist-175"><a href="#activations_exist-175"><span class="linenos">175</span></a><span class="sd">	cheap alternative to calling `load_activations` when you only need to know</span>
+</span><span id="activations_exist-176"><a href="#activations_exist-176"><span class="linenos">176</span></a><span class="sd">	whether a prompt has been processed. `load_activations` decompresses the full</span>
+</span><span id="activations_exist-177"><a href="#activations_exist-177"><span class="linenos">177</span></a><span class="sd">	`.npz` into numpy arrays, which is wasteful when the data is immediately</span>
+</span><span id="activations_exist-178"><a href="#activations_exist-178"><span class="linenos">178</span></a><span class="sd">	discarded. this function just checks `.exists()` on the two expected files.</span>
+</span><span id="activations_exist-179"><a href="#activations_exist-179"><span class="linenos">179</span></a>
+</span><span id="activations_exist-180"><a href="#activations_exist-180"><span class="linenos">180</span></a><span class="sd">	# Parameters:</span>
+</span><span id="activations_exist-181"><a href="#activations_exist-181"><span class="linenos">181</span></a><span class="sd">	- `model_name : str`</span>
+</span><span id="activations_exist-182"><a href="#activations_exist-182"><span class="linenos">182</span></a><span class="sd">	- `prompt : dict`</span>
+</span><span id="activations_exist-183"><a href="#activations_exist-183"><span class="linenos">183</span></a><span class="sd">		must contain a &#39;hash&#39; key (call `augment_prompt_with_hash` first)</span>
+</span><span id="activations_exist-184"><a href="#activations_exist-184"><span class="linenos">184</span></a><span class="sd">	- `save_path : Path`</span>
+</span><span id="activations_exist-185"><a href="#activations_exist-185"><span class="linenos">185</span></a>
+</span><span id="activations_exist-186"><a href="#activations_exist-186"><span class="linenos">186</span></a><span class="sd">	# Returns:</span>
+</span><span id="activations_exist-187"><a href="#activations_exist-187"><span class="linenos">187</span></a><span class="sd">	- `bool`</span>
+</span><span id="activations_exist-188"><a href="#activations_exist-188"><span class="linenos">188</span></a><span class="sd">		True if both prompt.json and activations.npz exist for this prompt</span>
+</span><span id="activations_exist-189"><a href="#activations_exist-189"><span class="linenos">189</span></a>
+</span><span id="activations_exist-190"><a href="#activations_exist-190"><span class="linenos">190</span></a><span class="sd">	# Raises:</span>
+</span><span id="activations_exist-191"><a href="#activations_exist-191"><span class="linenos">191</span></a><span class="sd">	- `InvalidPromptError` : if the prompt does not have a &#39;hash&#39; key</span>
+</span><span id="activations_exist-192"><a href="#activations_exist-192"><span class="linenos">192</span></a><span class="sd">	&quot;&quot;&quot;</span>
+</span><span id="activations_exist-193"><a href="#activations_exist-193"><span class="linenos">193</span></a>	<span class="k">if</span> <span class="s2">&quot;hash&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">prompt</span><span class="p">:</span>
+</span><span id="activations_exist-194"><a href="#activations_exist-194"><span class="linenos">194</span></a>		<span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Prompt must have &#39;hash&#39; key (call augment_prompt_with_hash first): </span><span class="si">{</span><span class="n">prompt</span><span class="si">}</span><span class="s2">&quot;</span>
+</span><span id="activations_exist-195"><a href="#activations_exist-195"><span class="linenos">195</span></a>		<span class="k">raise</span> <span class="n">InvalidPromptError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+</span><span id="activations_exist-196"><a href="#activations_exist-196"><span class="linenos">196</span></a>	<span class="n">prompt_dir</span><span class="p">:</span> <span class="n">Path</span> <span class="o">=</span> <span class="n">save_path</span> <span class="o">/</span> <span class="n">model_name</span> <span class="o">/</span> <span class="s2">&quot;prompts&quot;</span> <span class="o">/</span> <span class="n">prompt</span><span class="p">[</span><span class="s2">&quot;hash&quot;</span><span class="p">]</span>
+</span><span id="activations_exist-197"><a href="#activations_exist-197"><span class="linenos">197</span></a>	<span class="k">return</span> <span class="p">(</span><span class="n">prompt_dir</span> <span class="o">/</span> <span class="s2">&quot;prompt.json&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">exists</span><span class="p">()</span> <span class="ow">and</span> <span class="p">(</span>
+</span><span id="activations_exist-198"><a href="#activations_exist-198"><span class="linenos">198</span></a>		<span class="n">prompt_dir</span> <span class="o">/</span> <span class="s2">&quot;activations.npz&quot;</span>
+</span><span id="activations_exist-199"><a href="#activations_exist-199"><span class="linenos">199</span></a>	<span class="p">)</span><span class="o">.</span><span class="n">exists</span><span class="p">()</span>
+</span></pre></div>
+
+
+            <div class="docstring"><p>check if activations exist on disk without loading them</p>
+
+<p>cheap alternative to calling <code><a href="#load_activations">load_activations</a></code> when you only need to know
+whether a prompt has been processed. <code><a href="#load_activations">load_activations</a></code> decompresses the full
+<code>.npz</code> into numpy arrays, which is wasteful when the data is immediately
+discarded. this function just checks <code>.exists()</code> on the two expected files.</p>
+
+<h1 id="parameters">Parameters:</h1>
+
+<ul>
+<li><code>model_name : str</code></li>
+<li><code>prompt : dict</code>
+must contain a 'hash' key (call <code><a href="#augment_prompt_with_hash">augment_prompt_with_hash</a></code> first)</li>
+<li><code>save_path : Path</code></li>
+</ul>
+
+<h1 id="returns">Returns:</h1>
+
+<ul>
+<li><code>bool</code>
+True if both prompt.json and activations.npz exist for this prompt</li>
+</ul>
+
+<h1 id="raises">Raises:</h1>
+
+<ul>
+<li><code><a href="#InvalidPromptError">InvalidPromptError</a></code> : if the prompt does not have a 'hash' key</li>
 </ul>
 </div>
 

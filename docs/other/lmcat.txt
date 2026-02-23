@@ -1,8 +1,8 @@
 # Stats
 - 34 files
-- 11219 (11K) lines
-- 372287 (372K) chars
-- 158452 (158K) `gpt2` tokens
+- 11573 (12K) lines
+- 388890 (389K) chars
+- 164212 (164K) `gpt2` tokens
 
 # File Tree
 
@@ -35,21 +35,21 @@ pattern-lens
 │   │   ├── sg_cfg.json        [   10L    183C    101T]
 │   │   └── single.html        [1,606L 56,939C 27,104T]
 │   ├── __init__.py            [   13L    180C     83T]
-│   ├── activations.py         [  657L 18,397C  7,077T]
-│   ├── attn_figure_funcs.py   [  118L  3,157C  1,170T]
-│   ├── consts.py              [   37L  1,093C    354T]
-│   ├── figure_util.py         [  515L 16,788C  6,213T]
-│   ├── figures.py             [  472L 14,402C  5,289T]
-│   ├── indexes.py             [  151L  4,696C  1,770T]
-│   ├── load_activations.py    [  167L  4,270C  1,579T]
+│   ├── activations.py         [  888L 28,415C 10,688T]
+│   ├── attn_figure_funcs.py   [  119L  3,261C  1,208T]
+│   ├── consts.py              [   37L  1,094C    353T]
+│   ├── figure_util.py         [  519L 16,875C  6,262T]
+│   ├── figures.py             [  475L 14,516C  5,333T]
+│   ├── indexes.py             [  165L  5,076C  1,937T]
+│   ├── load_activations.py    [  201L  5,507C  1,988T]
 │   ├── prompts.py             [   82L  1,721C    743T]
 │   ├── py.typed               [    0L      0C      0T]
 │   └── server.py              [   59L  1,372C    493T]
-├── CLAUDE.md                  [  184L  5,915C  1,802T]
+├── CHANGELOG.txt              [  148L  5,854C  1,648T]
 ├── README.md                  [  125L  5,583C  1,912T]
-├── demo.ipynb                 [  284L 13,237C  5,509T]
-├── makefile                   [1,703L 52,234C 20,077T]
-├── pyproject.toml             [  229L  7,246C  3,803T]
+├── demo.ipynb                 [  284L 13,242C  5,511T]
+├── makefile                   [  777L 30,289C 11,097T]
+├── pyproject.toml             [  248L  7,806C  4,056T]
 ```
 
 # File Contents
@@ -8028,7 +8028,6 @@ activations_main(
 """
 
 import argparse
-import functools
 import json
 import re
 from collections.abc import Callable
@@ -8068,10 +8067,19 @@ from pattern_lens.indexes import (
 )
 from pattern_lens.load_activations import (
 	ActivationsMissingError,
+	activations_exist,
 	augment_prompt_with_hash,
 	load_activations,
 )
 from pattern_lens.prompts import load_text_data
+
+
+def _rel_path(p: Path) -> str:
+	"""Return path relative to cwd if possible, otherwise absolute."""
+	try:
+		return p.relative_to(Path.cwd()).as_posix()
+	except ValueError:
+		return p.as_posix()
 
 
 # return nothing, but `stack_heads` still affects how we save the activations
@@ -8081,7 +8089,7 @@ def compute_activations(
 	model: HookedTransformer | None = None,
 	save_path: Path = Path(DATA_DIR),
 	names_filter: Callable[[str], bool] | re.Pattern = ATTN_PATTERN_REGEX,
-	return_cache: Literal[None] = None,
+	return_cache: None = None,
 	stack_heads: bool = False,
 ) -> tuple[Path, None]: ...
 # return stacked heads in numpy or torch form
@@ -8138,9 +8146,10 @@ def compute_activations(  # noqa: PLR0915
 	| Float[torch.Tensor, "n_layers n_heads n_ctx n_ctx"]
 	| None,
 ]:
-	"""get activations for a given model and prompt, possibly from a cache
+	"""compute activations for a single prompt and save to disk
 
-	if from a cache, prompt_meta must be passed and contain the prompt hash
+	always runs a forward pass -- does NOT load from disk cache.
+	for cache-aware loading, use `get_activations` which tries disk first.
 
 	# Parameters:
 	- `prompt : dict | None`
@@ -8178,10 +8187,13 @@ def compute_activations(  # noqa: PLR0915
 	prompt_str: str = prompt["text"]
 
 	# compute or get prompt metadata
+	assert model.tokenizer is not None
 	prompt_tokenized: list[str] = prompt.get(
 		"tokens",
 		model.tokenizer.tokenize(prompt_str),
 	)
+	# n_tokens counts subword tokens (no BOS); attention patterns include BOS
+	# so have dim n_tokens+1. see also compute_activations_batched Phase B.
 	prompt.update(
 		dict(
 			n_tokens=len(prompt_tokenized),
@@ -8203,10 +8215,12 @@ def compute_activations(  # noqa: PLR0915
 		names_filter_fn = names_filter
 
 	# compute activations
+	# NOTE: no padding_side kwarg here -- it's only meaningful for multi-sequence
+	# batches where padding is needed. single-string input has no padding.
+	# see compute_activations_batched for the batched path that passes padding_side="right".
 	cache_torch: ActivationCache
 	with torch.no_grad():
 		model.eval()
-		# TODO: batching?
 		_, cache_torch = model.run_with_cache(
 			prompt_str,
 			names_filter=names_filter_fn,
@@ -8268,7 +8282,7 @@ def compute_activations(  # noqa: PLR0915
 
 		np.savez_compressed(
 			activations_path,
-			**cache_np,
+			**cache_np,  # type: ignore[arg-type]
 		)
 
 		# return
@@ -8284,13 +8298,159 @@ def compute_activations(  # noqa: PLR0915
 				raise ValueError(msg)
 
 
+def compute_activations_batched(
+	prompts: list[dict],
+	model: HookedTransformer,
+	save_path: Path = Path(DATA_DIR),
+	names_filter: Callable[[str], bool] | re.Pattern = ATTN_PATTERN_REGEX,
+	seq_lens: list[int] | None = None,
+) -> list[Path]:
+	"""compute and save activations for a batch of prompts in a single forward pass
+
+	Batched companion to `compute_activations` -- instead of one forward pass per
+	prompt, this runs a single `model.run_with_cache(list_of_strings)` call for the
+	whole batch. TransformerLens tokenizes and right-pads automatically. Each prompt's
+	attention patterns are then trimmed to their actual (unpadded) size and saved
+	individually, producing files identical to the single-prompt path.
+
+	Does not support `stack_heads` or `return_cache` -- this function is intended for
+	the bulk processing path in `activations_main`, not for interactive use. Use
+	`compute_activations` directly for single-prompt use cases that need those features.
+
+	## Why right-padding makes trimming correct without an explicit attention mask
+
+	With right-padding, pad tokens sit at positions seq_len, seq_len+1, ...,
+	max_seq_len-1 (higher than any real token). The causal attention mask prevents
+	position i from attending to any j > i. So for real tokens at positions
+	0..seq_len-1, they can only attend to 0..i -- all real tokens. The softmax is computed over the same set of positions
+	as in single-prompt inference, producing identical attention patterns.
+
+	We explicitly pass `padding_side="right"` to `run_with_cache` to guarantee this
+	regardless of the model's default padding side.
+
+	# Parameters:
+	- `prompts : list[dict]`
+		each prompt must contain 'text' and 'hash' keys. call
+		`augment_prompt_with_hash` on each prompt before passing them here.
+	- `model : HookedTransformer`
+		the model to compute activations with
+	- `save_path : Path`
+		path to save the activations to
+		(defaults to `Path(DATA_DIR)`)
+	- `names_filter : Callable[[str], bool] | re.Pattern`
+		filter for which activations to save. must only match activations with
+		4D shape `[batch, n_heads, seq, seq]` (e.g. attention patterns).
+		non-attention activations will cause incorrect trimming.
+		(defaults to `ATTN_PATTERN_REGEX`)
+	- `seq_lens : list[int] | None`
+		pre-computed model sequence lengths per prompt (from `model.to_tokens`).
+		if `None`, will be computed internally. pass this to avoid redundant
+		tokenization when lengths are already known (e.g. from length-sorting).
+		**important**: these must be from `model.to_tokens()` (includes BOS),
+		NOT from `model.tokenizer.tokenize()` (excludes BOS).
+		(defaults to `None`)
+
+	# Returns:
+	- `list[Path]`
+		paths to the saved activations files, one per prompt
+
+	# Modifies:
+	each prompt dict in `prompts` -- adds/overwrites `n_tokens` and `tokens` keys
+	with tokenization metadata (same mutation as `compute_activations`).
+	"""
+	assert model is not None, "model must be passed"
+	assert len(prompts) > 0, "prompts must not be empty"
+	assert "text" in prompts[0], f"prompt must contain 'text' key: {prompts[0].keys()}"
+	assert "hash" in prompts[0], (
+		f"prompt must contain 'hash' key (call augment_prompt_with_hash first): {prompts[0].keys()}"
+	)
+
+	# --- Phase A: get actual model sequence lengths ---
+	# model.to_tokens() includes BOS if applicable, matching the attention pattern dims
+	# model.tokenizer.tokenize() gives subword strings WITHOUT BOS, used for metadata
+	# these differ by 1 when BOS is prepended -- using the wrong one for trimming
+	# would silently truncate or include garbage
+	if seq_lens is None:
+		seq_lens = [model.to_tokens(p["text"]).shape[1] for p in prompts]
+	assert len(seq_lens) == len(prompts), (
+		f"seq_lens length mismatch: {len(seq_lens)} != {len(prompts)}"
+	)
+
+	# --- Phase B: save prompt metadata (mirrors compute_activations's metadata logic) ---
+	assert model.tokenizer is not None
+	for p in prompts:
+		prompt_str: str = p["text"]
+		prompt_tokenized: list[str] = p.get(
+			"tokens",
+			model.tokenizer.tokenize(prompt_str),
+		)
+		# n_tokens counts subword tokens (no BOS); attention patterns include BOS so have dim n_tokens+1
+		p.update(
+			dict(
+				n_tokens=len(prompt_tokenized),
+				tokens=prompt_tokenized,
+			),
+		)
+		prompt_dir: Path = save_path / model.cfg.model_name / "prompts" / p["hash"]
+		prompt_dir.mkdir(parents=True, exist_ok=True)
+		with open(prompt_dir / "prompt.json", "w") as f:
+			json.dump(p, f)
+
+	# --- Phase C: batched forward pass ---
+	names_filter_fn: Callable[[str], bool]
+	if isinstance(names_filter, re.Pattern):
+		names_filter_fn = lambda key: names_filter.match(key) is not None  # noqa: E731
+	else:
+		names_filter_fn = names_filter
+
+	texts: list[str] = [p["text"] for p in prompts]
+	cache_torch: ActivationCache
+	with torch.no_grad():
+		model.eval()
+		_, cache_torch = model.run_with_cache(
+			texts,
+			names_filter=names_filter_fn,
+			return_type=None,
+			padding_side="right",
+		)
+
+	# --- Phase D: split, trim padding, and save per-prompt ---
+	# For each prompt i with actual sequence length seq_len_i:
+	#   v[i : i+1, :, :seq_len_i, :seq_len_i]
+	#     ^^^^^^^                               i:i+1 not i -- keeps batch dim [1,...] for
+	#                                           format compatibility with compute_activations
+	#              ^^                           all attention heads
+	#                  ^^^^^^^^^^  ^^^^^^^^^^   trim both query and key dims to actual length,
+	#                                           discarding meaningless padding positions
+	paths: list[Path] = []
+	for i, (prompt, seq_len) in enumerate(zip(prompts, seq_lens, strict=True)):
+		prompt_dir = save_path / model.cfg.model_name / "prompts" / prompt["hash"]
+		activations_path: Path = prompt_dir / "activations.npz"
+		cache_np: ActivationCacheNp = {}
+		for k, v in cache_torch.items():
+			assert v.ndim == 4, (  # noqa: PLR2004
+				f"expected 4D attention pattern tensor for {k!r}, "
+				f"got shape {v.shape}. names_filter must only match "
+				f"attention pattern activations [batch, n_heads, seq, seq]"
+			)
+			cache_np[k] = v[i : i + 1, :, :seq_len, :seq_len].detach().cpu().numpy()
+
+		np.savez_compressed(
+			activations_path,
+			**cache_np,  # type: ignore[arg-type]
+		)
+		paths.append(activations_path)
+
+	return paths
+
+
 @overload
 def get_activations(
 	prompt: dict,
 	model: HookedTransformer | str,
 	save_path: Path = Path(DATA_DIR),
 	allow_disk_cache: bool = True,
-	return_cache: Literal[None] = None,
+	return_cache: None = None,
 ) -> tuple[Path, None]: ...
 @overload
 def get_activations(
@@ -8347,27 +8507,31 @@ def get_activations(
 
 	# from cache
 	if allow_disk_cache:
-		try:
-			path, cache = load_activations(
-				model_name=model_name,
-				prompt=prompt,
-				save_path=save_path,
-			)
-			if return_cache:
-				return path, cache
+		if return_cache is None:
+			# fast path: check file existence without loading data into memory.
+			# activations_exist just calls .exists() on two paths, whereas
+			# load_activations would decompress the full .npz into numpy arrays
+			# only for us to discard them immediately.
+			if activations_exist(model_name, prompt, save_path):
+				prompt_dir: Path = save_path / model_name / "prompts" / prompt["hash"]
+				return prompt_dir / "activations.npz", None
+		else:
+			try:
+				path, cache = load_activations(
+					model_name=model_name,
+					prompt=prompt,
+					save_path=save_path,
+				)
+			except ActivationsMissingError:
+				pass
 			else:
-				# TODO: this basically does nothing, since we load the activations and then immediately get rid of them.
-				# maybe refactor this so that load_activations can take a parameter to simply assert that the cache exists?
-				# this will let us avoid loading it, which slows things down
-				return path, None
-		except ActivationsMissingError:
-			pass
+				return path, cache
 
 	# compute them
 	if isinstance(model, str):
 		model = HookedTransformer.from_pretrained(model_name)
 
-	return compute_activations(
+	return compute_activations(  # type: ignore[return-value]
 		prompt=prompt,
 		model=model,
 		save_path=save_path,
@@ -8380,9 +8544,9 @@ DEFAULT_DEVICE: torch.device = torch.device(
 )
 
 
-def activations_main(
+def activations_main(  # noqa: C901, PLR0912, PLR0915
 	model_name: str,
-	save_path: str,
+	save_path: str | Path,
 	prompts_path: str,
 	raw_prompts: bool,
 	min_chars: int,
@@ -8393,13 +8557,14 @@ def activations_main(
 	shuffle: bool = False,
 	stacked_heads: bool = False,
 	device: str | torch.device = DEFAULT_DEVICE,
+	batch_size: int = 32,
 ) -> None:
 	"""main function for computing activations
 
 	# Parameters:
 	- `model_name : str`
 		name of a model to load with `HookedTransformer.from_pretrained`
-	- `save_path : str`
+	- `save_path : str | Path`
 		path to save the activations to
 	- `prompts_path : str`
 		path to the prompts file
@@ -8423,6 +8588,17 @@ def activations_main(
 		(defaults to `False`)
 	- `device : str | torch.device`
 		the device to use. if a string, will be passed to `torch.device`
+	- `batch_size : int`
+		number of prompts per forward pass. prompts are sorted by token length
+		(longest first) and grouped so that similar-length prompts share a batch,
+		minimizing padding waste. use `batch_size=1` for one prompt per forward
+		pass (largely equivalent to the old sequential behavior, but note: prompts
+		are still sorted by length and cache checking uses file-existence only,
+		unlike the old path which processed prompts in order and validated cache
+		contents via `load_activations`).
+		the single-prompt functions `compute_activations` and `get_activations`
+		are still available for programmatic use outside of `activations_main`.
+		(defaults to `32`)
 	"""
 	# figure out the device to use
 	device_: torch.device
@@ -8441,7 +8617,7 @@ def activations_main(
 			model_name,
 			device=device_,
 		)
-		model.model_name = model_name
+		model.model_name = model_name  # type: ignore[unresolved-attribute]
 		model.cfg.model_name = model_name
 		n_params: int = sum(p.numel() for p in model.parameters())
 	print(
@@ -8453,7 +8629,7 @@ def activations_main(
 	save_path_p.mkdir(parents=True, exist_ok=True)
 	model_path: Path = save_path_p / model_name
 	with SpinnerContext(
-		message=f"saving model info to {model_path.as_posix()}",
+		message=f"saving model info to {_rel_path(model_path)}",
 		**SPINNER_KWARGS,
 	):
 		model_cfg: HookedTransformerConfig
@@ -8464,7 +8640,7 @@ def activations_main(
 
 	# load prompts
 	with SpinnerContext(
-		message=f"loading prompts from {prompts_path = }",
+		message=f"loading prompts from {Path(prompts_path).as_posix()}",
 		**SPINNER_KWARGS,
 	):
 		prompts: list[dict]
@@ -8481,10 +8657,13 @@ def activations_main(
 		# truncate to n_samples
 		prompts = prompts[:n_samples]
 
-	print(f"{len(prompts)} prompts loaded")
+	print(f"  {len(prompts)} prompts loaded")
 
 	# write index.html
-	with SpinnerContext(message="writing index.html", **SPINNER_KWARGS):
+	with SpinnerContext(
+		message=f"writing {_rel_path(save_path_p / 'index.html')}",
+		**SPINNER_KWARGS,
+	):
 		if not no_index_html:
 			write_html_index(save_path_p)
 
@@ -8492,25 +8671,66 @@ def activations_main(
 	if stacked_heads:
 		raise NotImplementedError("stacked_heads not implemented yet")
 
-	# get activations
-	list(
-		tqdm.tqdm(
-			map(
-				functools.partial(
-					get_activations,
-					model=model,
-					save_path=save_path_p,
-					allow_disk_cache=not force,
-					return_cache=None,
-					# stacked_heads=stacked_heads,
-				),
-				prompts,
-			),
-			total=len(prompts),
+	# augment all prompts with hashes
+	for prompt in prompts:
+		augment_prompt_with_hash(prompt)
+
+	# filter out cached prompts
+	if not force:
+		uncached: list[dict] = [
+			p for p in prompts if not activations_exist(model_name, p, save_path_p)
+		]
+		n_cached: int = len(prompts) - len(uncached)
+		if n_cached > 0:
+			print(f"  {n_cached} prompts already cached, {len(uncached)} to compute")
+	else:
+		uncached = list(prompts)
+
+	if uncached:
+		# sort by token length descending so that:
+		# 1. the longest (slowest, most memory-hungry) batches run first --
+		#    OOM errors surface immediately rather than after all the cheap work,
+		#    and tqdm's ETA stabilizes early for better progress estimation
+		# 2. similar-length prompts are grouped together, minimizing padding waste
+		#
+		# pre-tokenization is a separate step from compute_activations_batched because
+		# we need token lengths *before* batching to sort and group. the resulting
+		# seq_lens are then passed through so compute_activations_batched can skip
+		# re-tokenizing each prompt internally.
+		with SpinnerContext(
+			message="pre-tokenizing prompts for length sorting",
+			**SPINNER_KWARGS,
+		):
+			uncached_with_lens: list[tuple[dict, int]] = [
+				(p, model.to_tokens(p["text"]).shape[1]) for p in uncached
+			]
+			uncached_with_lens.sort(key=lambda x: x[1], reverse=True)
+			sorted_uncached: list[dict] = [p for p, _ in uncached_with_lens]
+			sorted_seq_lens: list[int] = [sl for _, sl in uncached_with_lens]
+
+		# process in batches
+		n_prompts: int = len(sorted_uncached)
+		with tqdm.tqdm(
+			total=n_prompts,
 			desc="Computing activations",
 			unit="prompt",
-		),
-	)
+		) as pbar:
+			for batch_start in range(0, n_prompts, batch_size):
+				batch_end: int = min(batch_start + batch_size, n_prompts)
+				batch: list[dict] = sorted_uncached[batch_start:batch_end]
+				batch_seq_lens: list[int] = sorted_seq_lens[batch_start:batch_end]
+				pbar.set_postfix(
+					n_ctx=batch_seq_lens[0],
+				)  # longest in batch (sorted descending)
+				compute_activations_batched(
+					prompts=batch,
+					model=model,
+					save_path=save_path_p,
+					seq_lens=batch_seq_lens,
+				)
+				pbar.update(len(batch))
+	else:
+		print("  all prompts cached, nothing to compute")
 
 	with SpinnerContext(
 		message="updating jsonl metadata for models and prompts",
@@ -8576,6 +8796,16 @@ def main() -> None:
 			required=False,
 			help="The max number of samples to process, do all in the file if None",
 			default=None,
+		)
+
+		# batch size
+		arg_parser.add_argument(
+			"--batch-size",
+			"-b",
+			type=int,
+			required=False,
+			help="Batch size for computing activations (number of prompts per forward pass)",
+			default=32,
 		)
 
 		# force overwrite
@@ -8653,6 +8883,7 @@ def main() -> None:
 			shuffle=args.shuffle,
 			stacked_heads=args.stacked_heads,
 			device=args.device,
+			batch_size=args.batch_size,
 		)
 		del model
 
@@ -8698,7 +8929,7 @@ def get_all_figure_names() -> list[str]:
 			getattr(
 				func,
 				_FIGURE_NAMES_KEY,
-				[func.__name__],
+				[getattr(func, "__name__", "<unknown>")],
 			)
 			for func in ATTENTION_MATRIX_FIGURE_FUNCS
 		),
@@ -8733,7 +8964,7 @@ def register_attn_figure_func(
 	```
 
 	"""
-	setattr(func, _FIGURE_NAMES_KEY, (func.__name__,))
+	setattr(func, _FIGURE_NAMES_KEY, (getattr(func, "__name__", "<unknown>"),))
 	global ATTENTION_MATRIX_FIGURE_FUNCS  # noqa: PLW0602
 	ATTENTION_MATRIX_FIGURE_FUNCS.append(func)
 
@@ -8746,10 +8977,11 @@ def register_attn_figure_multifunc(
 	"decorator which registers a function as a multi-figure function"
 
 	def decorator(func: AttentionMatrixFigureFunc) -> AttentionMatrixFigureFunc:
+		func_name: str = getattr(func, "__name__", "<unknown>")
 		setattr(
 			func,
 			_FIGURE_NAMES_KEY,
-			tuple([f"{func.__name__}.{name}" for name in names]),
+			tuple([f"{func_name}.{name}" for name in names]),
 		)
 		global ATTENTION_MATRIX_FIGURE_FUNCS  # noqa: PLW0602
 		ATTENTION_MATRIX_FIGURE_FUNCS.append(func)
@@ -8822,7 +9054,7 @@ DIVIDER_S1: str = "=" * 70
 DIVIDER_S2: str = "-" * 50
 "divider string for separating subsections"
 
-ReturnCache = Literal[None, "numpy", "torch"]
+ReturnCache = Literal["numpy", "torch"] | None
 "return type for a cache of activations"
 
 ``````{ end_of_file="pattern_lens/consts.py" }
@@ -8891,7 +9123,7 @@ def matplotlib_figure_saver(
 	func: None = None,
 	fmt: str = MATPLOTLIB_FIGURE_FMT,
 ) -> Callable[
-	[Callable[[AttentionMatrix, plt.Axes], None], str],
+	[Callable[[AttentionMatrix, plt.Axes], None]],
 	AttentionMatrixFigureFunc,
 ]: ...
 def matplotlib_figure_saver(
@@ -8900,7 +9132,7 @@ def matplotlib_figure_saver(
 ) -> (
 	AttentionMatrixFigureFunc
 	| Callable[
-		[Callable[[AttentionMatrix, plt.Axes], None], str],
+		[Callable[[AttentionMatrix, plt.Axes], None]],
 		AttentionMatrixFigureFunc,
 	]
 ):
@@ -8935,7 +9167,9 @@ def matplotlib_figure_saver(
 	) -> AttentionMatrixFigureFunc:
 		@functools.wraps(func)
 		def wrapped(attn_matrix: AttentionMatrix, save_dir: Path) -> None:
-			fig_path: Path = save_dir / f"{func.__name__}.{fmt}"
+			fig_path: Path = (
+				save_dir / f"{getattr(func, '__name__', '<unknown>')}.{fmt}"
+			)
 
 			fig, ax = plt.subplots(figsize=(10, 10))
 			func(attn_matrix, ax)
@@ -8984,7 +9218,7 @@ def matplotlib_multifigure_saver(
 	def decorator(
 		func: Callable[[AttentionMatrix, dict[str, plt.Axes]], None],
 	) -> AttentionMatrixFigureFunc:
-		func_name: str = func.__name__
+		func_name: str = getattr(func, "__name__", "<unknown>")
 
 		@functools.wraps(func)
 		def wrapped(attn_matrix: AttentionMatrix, save_dir: Path) -> None:
@@ -9303,7 +9537,9 @@ def save_matrix_wrapper(
 	) -> AttentionMatrixFigureFunc:
 		@functools.wraps(func)
 		def wrapped(attn_matrix: AttentionMatrix, save_dir: Path) -> None:
-			fig_path: Path = save_dir / f"{func.__name__}.{fmt}"
+			fig_path: Path = (
+				save_dir / f"{getattr(func, '__name__', '<unknown>')}.{fmt}"
+			)
 			processed_matrix: Matrix2D = func(attn_matrix)
 
 			if fmt == "png":
@@ -9448,7 +9684,7 @@ def process_single_head(
 	funcs_status: dict[str, bool | Exception] = dict()
 
 	for func in figure_funcs:
-		func_name: str = func.__name__
+		func_name: str = getattr(func, "__name__", "<unknown>")
 		fig_path: list[Path] = list(save_dir.glob(f"{func_name}.*"))
 
 		if not force_overwrite and len(fig_path) > 0:
@@ -9461,10 +9697,10 @@ def process_single_head(
 
 		# bling catch any exception
 		except Exception as e:  # noqa: BLE001
-			error_file = save_dir / f"{func.__name__}.error.txt"
+			error_file = save_dir / f"{func_name}.error.txt"
 			error_file.write_text(str(e))
 			warnings.warn(
-				f"Error in {func.__name__} for L{layer_idx}H{head_idx}: {e!s}",
+				f"Error in {func_name} for L{layer_idx}H{head_idx}: {e!s}",
 				stacklevel=2,
 			)
 			funcs_status[func_name] = e
@@ -9615,14 +9851,14 @@ def select_attn_figure_funcs(
 		figure_funcs = [
 			func
 			for func in ATTENTION_MATRIX_FIGURE_FUNCS
-			if pattern.match(func.__name__)
+			if pattern.match(getattr(func, "__name__", "<unknown>"))
 		]
 	elif isinstance(figure_funcs_select, set):
 		# if a set, assume a set of function names
 		figure_funcs = [
 			func
 			for func in ATTENTION_MATRIX_FIGURE_FUNCS
-			if func.__name__ in figure_funcs_select
+			if getattr(func, "__name__", "<unknown>") in figure_funcs_select
 		]
 	else:
 		err_msg: str = (
@@ -9635,7 +9871,7 @@ def select_attn_figure_funcs(
 
 def figures_main(
 	model_name: str,
-	save_path: str,
+	save_path: str | Path,
 	n_samples: int,
 	force: bool,
 	figure_funcs_select: set[str] | str | None = None,
@@ -9646,7 +9882,7 @@ def figures_main(
 	# Parameters:
 	- `model_name : str`
 		model name to use, used for loading the model config, prompts, activations, and saving the figures
-	- `save_path : str`
+	- `save_path : str | Path`
 		base path to look in
 	- `n_samples : int`
 		max number of samples to process
@@ -9679,7 +9915,10 @@ def figures_main(
 		figure_funcs_select=figure_funcs_select,
 	)
 	print(f"{len(figure_funcs)} figure functions loaded")
-	print("\t" + ", ".join([func.__name__ for func in figure_funcs]))
+	print(
+		"\t"
+		+ ", ".join([getattr(func, "__name__", "<unknown>") for func in figure_funcs]),
+	)
 
 	chunksize: int = int(
 		max(
@@ -9896,9 +10135,10 @@ def get_func_metadata(func: Callable) -> list[dict[str, str | None]]:
 
 	"""
 	source_file: str | None = inspect.getsourcefile(func)
+	func_name: str = getattr(func, "__name__", "<unknown>")
 	output: dict[str, str | None] = dict(
-		func_name=func.__name__,
-		doc=func.__doc__,
+		func_name=func_name,
+		doc=getattr(func, "__doc__", None),
 		figure_save_fmt=getattr(func, "figure_save_fmt", None),
 		source=Path(source_file).as_posix() if source_file else None,
 	)
@@ -9912,15 +10152,15 @@ def get_func_metadata(func: Callable) -> list[dict[str, str | None]]:
 	if fig_names:
 		return [
 			{
-				"name": func_name,
+				"name": fig_name,
 				**output,
 			}
-			for func_name in fig_names
+			for fig_name in fig_names
 		]
 	else:
 		return [
 			{
-				"name": func.__name__,
+				"name": func_name,
 				**output,
 			},
 		]
@@ -9958,8 +10198,12 @@ def generate_functions_jsonl(path: Path) -> None:
 			f.write("\n")
 
 
-def write_html_index(path: Path) -> None:
-	"""writes index.html and single.html files to the path (version replacement handled by makefile)"""
+def write_html_index(
+	path: Path,
+	cfg_single: dict | None = None,
+	cfg_patternlens: dict | None = None,
+) -> None:
+	"""writes index.html and single.html files to the path"""
 	# TYPING: error: Argument 1 to "Path" has incompatible type "Traversable"; expected "str | PathLike[str]"  [arg-type]
 	frontend_resources_path: Path = Path(
 		importlib.resources.files(pattern_lens).joinpath("frontend"),  # type: ignore[arg-type]
@@ -9968,12 +10212,21 @@ def write_html_index(path: Path) -> None:
 	pl_index_html: str = (frontend_resources_path / "patternlens.html").read_text()
 	sg_html: str = (frontend_resources_path / "single.html").read_text()
 
-	# Write both files (version replacement now handled by makefile)
+	# Write both html files
 	with open(path / "index.html", "w", encoding="utf-8") as f:
 		f.write(pl_index_html)
 
 	with open(path / "single.html", "w", encoding="utf-8") as f:
 		f.write(sg_html)
+
+	# write the config files if they are provided
+	if cfg_single is not None:
+		with open(path / "sg_cfg.json", "w", encoding="utf-8") as f:
+			json.dump(cfg_single, f, indent="\t")
+
+	if cfg_patternlens is not None:
+		with open(path / "pl_cfg.json", "w", encoding="utf-8") as f:
+			json.dump(cfg_patternlens, f, indent="\t")
 
 ``````{ end_of_file="pattern_lens/indexes.py" }
 
@@ -10118,7 +10371,7 @@ def load_activations(
 			msg,
 		)
 	if return_fmt == "torch":
-		import torch
+		import torch  # noqa: PLC0415
 
 	augment_prompt_with_hash(prompt)
 
@@ -10133,6 +10386,10 @@ def load_activations(
 
 	activations_path: Path = prompt_dir / "activations.npz"
 
+	if not activations_path.exists():
+		msg = f"Activations file {activations_path} does not exist"
+		raise ActivationsMissingError(msg)
+
 	cache: dict
 
 	with np.load(activations_path) as npz_data:
@@ -10142,6 +10399,36 @@ def load_activations(
 			cache = {k: torch.from_numpy(v) for k, v in npz_data.items()}
 
 	return activations_path, cache
+
+
+def activations_exist(model_name: str, prompt: dict, save_path: Path) -> bool:
+	"""check if activations exist on disk without loading them
+
+	cheap alternative to calling `load_activations` when you only need to know
+	whether a prompt has been processed. `load_activations` decompresses the full
+	`.npz` into numpy arrays, which is wasteful when the data is immediately
+	discarded. this function just checks `.exists()` on the two expected files.
+
+	# Parameters:
+	- `model_name : str`
+	- `prompt : dict`
+		must contain a 'hash' key (call `augment_prompt_with_hash` first)
+	- `save_path : Path`
+
+	# Returns:
+	- `bool`
+		True if both prompt.json and activations.npz exist for this prompt
+
+	# Raises:
+	- `InvalidPromptError` : if the prompt does not have a 'hash' key
+	"""
+	if "hash" not in prompt:
+		msg = f"Prompt must have 'hash' key (call augment_prompt_with_hash first): {prompt}"
+		raise InvalidPromptError(msg)
+	prompt_dir: Path = save_path / model_name / "prompts" / prompt["hash"]
+	return (prompt_dir / "prompt.json").exists() and (
+		prompt_dir / "activations.npz"
+	).exists()
 
 
 # def load_activations_stacked()
@@ -10301,192 +10588,157 @@ if __name__ == "__main__":
 
 ``````{ end_of_file="pattern_lens/server.py" }
 
-``````{ path="CLAUDE.md"  }
-# Pattern Lens Frontend Refactoring Plan
-
-## Overview
-This document outlines the plan to streamline the pattern_lens frontend build process and configuration system with minimal changes to the existing code.
-
-## Current State Analysis
-
-### Build Process
-- Currently, HTML bundling is done in `pattern_lens/indexes.py` using a custom `inline_assets()` function
-- The `write_html_index()` function in indexes.py:
-  - Reads `frontend/patternlens/index.html`
-  - Inlines CSS and JS files (style.css, util.js, app.js)
-  - Replaces version placeholder
-  - Writes to `{data_path}/index.html`
-- No build process exists for the single/ view - it's served as separate files
-
-### Configuration System
-- `single/` already has a robust config system in `config.js` with:
-  - Default configuration
-  - External config.json loading
-  - URL parameter overrides
-  - Inline config support
-- `patternlens/` has the same config.js file (appears to be copied)
-- Both use the same configuration approach but with different defaults
-
-### Integration Status
-- Currently no integration between patternlens and single views
-- Each view operates independently
-
-## Proposed Changes
-
-### 1. Build Process Migration
-
-#### Replace inline_assets() with muutils.web.bundle_html
-- Remove the custom `inline_assets()` function from indexes.py
-- Use muutils.web.bundle_html for bundling instead
-- Benefits:
-  - More robust (handles edge cases, proper regex/BS4 parsing)
-  - Supports additional asset types (SVG, PNG)
-  - Better error handling
-
-#### Add Makefile Targets
-Add these targets to the end of the makefile:
-
-```makefile
-# Frontend build targets
-.PHONY: build-patternlens
-build-patternlens:
-	@echo "Building patternlens frontend"
-	$(PYTHON) -m muutils.web.bundle_html pattern_lens/frontend/patternlens/index.html \
-		--output pattern_lens/frontend/patternlens.html
-
-.PHONY: build-single
-build-single:
-	@echo "Building single pattern viewer frontend"
-	$(PYTHON) -m muutils.web.bundle_html pattern_lens/frontend/single/index.html \
-		--output pattern_lens/frontend/single.html
-
-.PHONY: build-frontend
-build-frontend: build-patternlens build-single
-	@echo "Built all frontend components"
-```
-
-#### Update indexes.py
-- Modify `write_html_index()` to:
-  - Check if pre-built `frontend/patternlens.html` exists
-  - If yes, read it directly
-  - If no, use `muutils.web.bundle_html`
-  - Still handle version replacement
+``````{ path="CHANGELOG.txt"  }
+v0.6.0
 
 
 
-```python
-# this function exists in `muutils.web.bundle_html`, we can import it from there
-def inline_html_file(
-    html_path: Path,
-    output_path: Path,
-    base_path: Path | None = None,
-    config: InlineConfig | None = None,
-    prettify: bool = False,
-) -> Path:
-    """Read *html_path*, inline its assets, and write the result.
+Features
+--------
 
-    # Parameters
-    - `html_path : Path`
-        Source HTML file.
-    - `output_path : Path`
-        Destination path to write the modified HTML.
-    - `base_path : Path | None`
-        Directory used to resolve relative asset paths (defaults to the HTML file's directory).
-        If `None`, uses the directory of *html_path*.
-        (default: `None` -> use `html_path.parent`)
-    - `config : InlineConfig | None`
-        Inlining options.
-        If `None`, uses default configuration.
-        (default: `None` -> use `InlineConfig()`)
-    - `prettify : bool`
-        Pretty-print when `use_bs4=True`.
-        (default: `False`)
+Batched activation computation (pattern_lens/activations.py)
 
-    # Returns
-    - `Path`
-        Path actually written.
-    """
-    ...
-```
+  New function: compute_activations_batched. Takes a list of prompts and runs
+  a single model.run_with_cache() call per batch. TransformerLens tokenizes and
+  right-pads automatically; padding_side="right" is passed explicitly to
+  guarantee correct causal masking. Each prompt's attention patterns are trimmed
+  from the padded batch output to their actual unpadded shape and saved
+  individually, producing files equivalent to the old single-prompt path.
 
-### 2. Configuration System Enhancement
+  activations_main rewritten to use batching:
+    1. All prompts are hash-augmented up front.
+    2. Fast cache-existence check filters out already-computed prompts.
+    3. Uncached prompts are pre-tokenized, sorted descending by length (longest
+       first to surface OOM errors early, stabilize tqdm ETA, and minimize
+       padding waste), then processed in batches.
+    4. The old functools.partial + map loop is removed.
 
-#### Minimal Changes to patternlens/app.js
-Since both config.js files are identical, we only need to:
+  New CLI flag: --batch-size / -b (default 32). Setting --batch-size 1
+  approximates the old sequential behavior.
 
-1. Update the default configuration in patternlens/config.js to include:
-   ```javascript
-   // In getDefaultConfig()
-   data: {
-       basePath: "./",  // Will be overridden by config.json
-       singleViewerPath: "single.html"  // Path to single viewer
-   }
-   ```
+Fast cache-existence check (pattern_lens/load_activations.py)
 
-2. Add hardcoded values that should be configurable:
-   - Search for literal strings/numbers in app.js
-   - Move them to config defaults
-   - Access via `getConfigValue()` or `CONFIG.path.to.value`
+  New function: activations_exist(model_name, prompt, save_path) -> bool.
+  Checks whether both prompt.json and activations.npz exist on disk via
+  .exists() -- no decompression, no numpy loading. Raises InvalidPromptError
+  if the prompt dict lacks a "hash" key.
 
-### 3. Integration Between Views
+  get_activations fast path improved: when return_cache=None, now uses
+  activations_exist() instead of calling load_activations(). The old code
+  decompressed the full .npz into numpy arrays only to immediately discard them.
 
-#### Click Handler in patternlens
-Add a method to handle pattern clicks in app.js:
+write_html_index config support (pattern_lens/indexes.py)
 
-```javascript
-// In methods section
-openSingleView(promptHash, model, layer, head) {
-    const singlePath = getConfigValue('data.singleViewerPath', 'single.html');
-    const params = new URLSearchParams({
-        prompt: promptHash,
-        head: `${model}.L${layer}.H${head}`
-    });
-    window.open(`${singlePath}?${params.toString()}`, '_blank');
-}
-```
+  write_html_index now accepts optional cfg_single and cfg_patternlens dicts,
+  writing sg_cfg.json and pl_cfg.json alongside index.html and single.html.
+  Config injection previously handled only by the makefile is now a first-class
+  Python API.
 
-#### Wire up the click handler
-- Find where pattern images are displayed
-- Add click handler that calls `openSingleView()` with appropriate parameters
-- The single view already accepts these URL parameters
 
-## Implementation Order
+Bug fixes
+---------
 
-1. **Update Makefile** - Add the build targets
-2. **Test muutils bundling** - Verify it works with both frontends
-3. **Update indexes.py** - Modify to use pre-built files
-4. **Config enhancement** - Move hardcoded values to config
-5. **Add integration** - Implement click handlers
+load_activations raised wrong exception type (pattern_lens/load_activations.py)
 
-## Minimal Impact Design
+  When prompt.json existed but activations.npz did not, np.load() raised a raw
+  FileNotFoundError that get_activations's except ActivationsMissingError block
+  did not catch, preventing fallback to compute_activations. Fix: explicit
+  activations_path.exists() check before np.load now raises
+  ActivationsMissingError with a clear message.
 
-### What We're NOT Changing
-- Core functionality of either viewer
-- The config.js system (already good)
-- File structure
-- Most of the existing code
+func.__name__ on typed Callable (figures.py, figure_util.py, indexes.py)
 
-### What We ARE Changing
-- Build process (indexes.py and makefile)
-- A few hardcoded values → config
-- Adding click handlers for integration
-- Output location of built files
+  __name__ is not part of the Callable protocol -- type checkers correctly
+  flagged direct access as an error. All such accesses replaced with
+  getattr(func, "__name__", "<unknown>"). Same for __doc__. Affected:
+  matplotlib_figure_saver, matplotlib_multifigure_saver, save_matrix_wrapper,
+  process_single_head, select_attn_figure_funcs, get_func_metadata.
 
-## Testing Plan
+matplotlib_figure_saver overload signatures (pattern_lens/figure_util.py)
 
-1. Build both frontends with new makefile targets
-2. Verify bundled HTML files work correctly
-3. Test configuration loading and overrides
-4. Test navigation from patternlens to single view
-5. Ensure backwards compatibility
+  The returned decorator takes only the wrapped function as its argument; fmt
+  is captured in the closure. The overload signatures incorrectly listed
+  [Callable[...], str]; corrected to [Callable[...]].
 
-## Notes
+Variable shadowing in get_func_metadata (pattern_lens/indexes.py)
 
-- The inline config feature (`INLINE_CONFIG`) can be used for deployment-specific settings
-- URL parameters will continue to work as before
-- Config.json files can be placed alongside the HTML for easy customization
-- The build process is optional - the old way still works
-``````{ end_of_file="CLAUDE.md" }
+  In the multi-figure-name branch, the loop variable func_name shadowed the
+  outer func_name. Renamed to fig_name.
+
+
+Improvements
+------------
+
+36 type errors fixed (ty + mypy)
+
+  Systematic pass to resolve type errors reported by ty and mypy across the
+  codebase.
+
+pyarrow 21+ compatibility (pyproject.toml)
+
+  datasets>=2.14.7 added as dependency. pa.PyExtensionType was removed in
+  pyarrow 21; the datasets pin ensures a compatible version is pulled in.
+
+Pipeline logging output formatting (pattern_lens/activations.py)
+
+  - New _rel_path() helper displays paths relative to cwd when possible.
+  - Spinner messages use relative paths instead of verbose absolute paths.
+  - Cache-skip reporting: prints "N prompts already cached, M to compute"
+    or "all prompts cached, nothing to compute".
+  - Batched progress bar shows n_ctx=<longest_in_batch> as postfix.
+
+Type signature improvements
+
+  - activations_main and figures_main: save_path parameter widened from str
+    to str | Path.
+  - return_cache: Literal[None] overload parameter corrected to return_cache:
+    None.
+  - Added type: ignore annotations where type checkers have known limitations
+    (numpy savez_compressed stubs, HookedTransformer dynamic attributes).
+
+
+Testing
+-------
+
+New tests/conftest.py
+
+  Session-scoped autouse fixture that wipes tests/.temp/ before each test
+  session. Prevents stale artifacts from a previous run from masking
+  regressions.
+
+New tests/unit/test_activations_batched.py (23 tests)
+
+  Covers: activations_exist (5 tests), compute_activations_batched shapes and
+  padding correctness (5 tests), batched-vs-single equivalence (2 tests),
+  metadata saving, file path structure, input validation, pre-computed seq_lens
+  handling, activations_main cache-skip integration (full and partial),
+  names_filter callable support, and post-compute existence check.
+
+  Uses MockHookedTransformerBatched with character-level tokenization,
+  deterministic attention values seeded by hash(text), and padding positions
+  set to exactly 0.0 for padding-leakage detection.
+
+Updated tests/integration/test_clis.py
+
+  Activations CLI test now passes --batch-size 16 and asserts
+  kwargs["batch_size"] == 16.
+
+Test temp dir renamed from tests/_temp/ to tests/.temp/.
+
+
+Dependencies / Tooling
+----------------------
+
+  - Version: 0.5.0 -> 0.6.0
+  - numpy pin relaxed from >=1.26.1,<2.0.0 to unconstrained
+  - jaxtyping lower bound relaxed from >=0.2.33 to >=0.2.11
+  - datasets>=2.14.7 added
+  - basedpyright added to dev dependencies
+  - Ruff updated to 0.15.2; COM812 added to ignore list
+  - Makefile template updated v0.3.4 -> v0.5.1
+  - Test temp dir: tests/_temp/ -> tests/.temp/
+
+``````{ end_of_file="CHANGELOG.txt" }
 
 ``````{ path="README.md"  }
 [![PyPI](https://img.shields.io/pypi/v/pattern-lens)](https://pypi.org/project/pattern-lens/)
@@ -10644,7 +10896,7 @@ by default, only the raw attention matrices (saved as png) are saved. you can de
 @matplotlib_figure_saver(fmt="svgz")
 def svd_spectra(attn_matrix: np.ndarray, ax: plt.Axes) -> None:
 	# Perform SVD
-	U, s, Vh = svd(attn_matrix)
+	_U, s, _Vh = svd(attn_matrix)
 
 	# Plot singular values
 	ax.plot(s, "o-")
@@ -10739,11 +10991,19 @@ figures_main(
 default: help
 	...
 
+# download makefile helper scripts from GitHub
+# uses curl to fetch scripts from the template repository
+# override version: make self-setup-scripts SCRIPTS_VERSION=v0.5.0
+.PHONY: self-setup-scripts
+self-setup-scripts:
+	@echo "downloading makefile scripts (version: $(SCRIPTS_VERSION))"
+	...
+
 # this recipe is weird. we need it because:
 # - a one liner for getting the version with toml is unwieldy, and using regex is fragile
 # - using $$SCRIPT_GET_VERSION within $(shell ...) doesn't work because of escaping issues
 # - trying to write to the file inside the `gen-version-info` recipe doesn't work, 
-# 	shell eval happens before our `python -c ...` gets run and `cat` doesn't see the new file
+#   shell eval happens before our `python ...` gets run and `cat` doesn't see the new file
 .PHONY: write-proj-version
 write-proj-version:
 	...
@@ -10770,8 +11030,8 @@ version: gen-commit-log
 	...
 
 .PHONY: setup
-setup: dep-check
-	@echo "install and update via uv"
+setup: self-setup-scripts dep-check
+	@echo "download scripts and sync dependencies"
 	...
 
 .PHONY: dep-check-torch
@@ -10779,11 +11039,32 @@ dep-check-torch:
 	@echo "see if torch is installed, and which CUDA version and devices it sees"
 	...
 
+# sync dependencies and export to requirements.txt files
+# - syncs all extras and groups with uv (including dev dependencies)
+# - compiles bytecode for faster imports
+# - exports to requirements.txt files per tool.uv-exports.exports config
+# configure via pyproject.toml:[tool.uv-exports]:
+#   [tool.uv-exports]
+#   exports = [
+#     { name = "base", extras = [], groups = [] },  # base package deps only
+#     { name = "dev", extras = [], groups = ["dev"] },  # dev dependencies
+#     { name = "all", extras = ["all"], groups = ["dev"] }  # everything
+#   ]
 .PHONY: dep
 dep:
-	@echo "Exporting dependencies as per $(PYPROJECT) section 'tool.uv-exports.exports'"
+	@echo "syncing and exporting dependencies as per $(PYPROJECT) section 'tool.uv-exports.exports'"
 	...
 
+.PHONY: dep-compile
+dep-compile:
+	@echo "syncing dependencies with bytecode compilation"
+	...
+
+# verify that requirements.txt files match current dependencies
+# - exports deps to temp directory
+# - diffs temp against existing requirements files
+# - FAILS if any differences found (means you need to run `make dep`)
+# useful in CI to catch when pyproject.toml changed but requirements weren't regenerated
 .PHONY: dep-check
 dep-check:
 	@echo "Checking that exported requirements are up to date"
@@ -10794,7 +11075,9 @@ dep-clean:
 	@echo "clean up lock files, .venv, and requirements files"
 	...
 
-# runs ruff
+# format code AND auto-fix linting issues
+# performs TWO operations: reformats code, then auto-fixes safe linting issues
+# configure in pyproject.toml:[tool.ruff]
 .PHONY: format
 format:
 	@echo "format the source code"
@@ -10806,25 +11089,34 @@ format-check:
 	@echo "check if the source code is formatted correctly"
 	...
 
-# runs type checks with mypy
+# runs type checks with configured checkers
+# set TYPE_CHECKERS to customize which checkers run (e.g., TYPE_CHECKERS=mypy,basedpyright)
+# set TYPING_OUTPUT_DIR to save outputs to files (used by typing-summary)
+# returns exit code 1 if any checker fails
 .PHONY: typing
-typing: clean
+typing:
 	@echo "running type checks"
 	...
 
-# generates a report of the mypy output
-.PHONY: typing-report
-typing-report:
-	@echo "generate a report of the type check output -- errors per file"
+# save type check outputs and generate detailed breakdown
+# outputs are saved to $(TYPE_ERRORS_DIR)/*.txt
+# summary is generated to $(TYPING_SUMMARY_FILE)
+.PHONY: typing-summary
+typing-summary:
+	@echo "running type checks and saving to $(TYPE_ERRORS_DIR)/"
 	...
 
+# run tests with pytest
+# you can pass custom args. for example:
+# make test PYTEST_OPTIONS="--maxfail=1 -x"
+# pytest config in pyproject.toml:[tool.pytest.ini_options]
 .PHONY: test
-test: clean
+test:
 	@echo "running tests"
 	...
 
 .PHONY: check
-check: clean format-check test typing
+check: format-check test typing
 	@echo "run format checks, tests, and typing checks"
 	...
 
@@ -10837,24 +11129,17 @@ docs-html:
 
 # instead of a whole website, generates a single markdown file with all docs using the templates in `$(DOCS_RESOURCES_DIR)/templates/markdown/`.
 # this is useful if you want to have a copy that you can grep/search, but those docs are much messier.
-# docs-combined will use pandoc to convert them to other formats.
 .PHONY: docs-md
 docs-md:
 	@echo "generate combined (single-file) docs in markdown"
 	...
 
-# after running docs-md, this will convert the combined markdown file to other formats:
-# gfm (github-flavored markdown), plain text, and html
-# requires pandoc in path, pointed to by $(PANDOC)
-# pdf output would be nice but requires other deps
-.PHONY: docs-combined
-docs-combined: docs-md
-	@echo "generate combined (single-file) docs in markdown and convert to other formats"
-	...
-
-# generates coverage reports as html and text with `pytest-cov`, and a badge with `coverage-badge`
-# if `.coverage` is not found, will run tests first
-# also removes the `.gitignore` file that `coverage html` creates, since we count that as part of the docs
+# generate coverage reports from test results
+# WARNING: if .coverage file not found, will automatically run `make test` first
+# - generates text report: $(COVERAGE_REPORTS_DIR)/coverage.txt
+# - generates SVG badge: $(COVERAGE_REPORTS_DIR)/coverage.svg
+# - generates HTML report: $(COVERAGE_REPORTS_DIR)/html/
+# - removes .gitignore from html dir (we publish coverage with docs)
 .PHONY: cov
 cov:
 	@echo "generate coverage reports"
@@ -10862,19 +11147,42 @@ cov:
 
 # runs the coverage report, then the docs, then the combined docs
 .PHONY: docs
-docs: cov docs-html docs-combined todo lmcat
+docs: cov docs-html docs-md todo lmcat
 	@echo "generate all documentation and coverage reports"
 	...
 
-# removed all generated documentation files, but leaves everything in `$DOCS_RESOURCES_DIR`
-# and leaves things defined in `pyproject.toml:tool.makefile.docs.no_clean`
-# (templates, svg, css, make_docs.py script)
-# distinct from `make clean`
+# remove generated documentation files, but preserve resources
+# - removes all docs except those in DOCS_RESOURCES_DIR
+# - preserves files/patterns specified in pyproject.toml config
+# - distinct from `make clean` (which removes temp build files, not docs)
+# configure via pyproject.toml:[tool.makefile.docs]:
+#   [tool.makefile.docs]
+#   output_dir = "docs"  # must match DOCS_DIR in makefile
+#   no_clean = [  # files/patterns to preserve when cleaning
+#     "resources/**",
+#     "*.svg",
+#     "*.css"
+#   ]
 .PHONY: docs-clean
 docs-clean:
 	@echo "remove generated docs except resources"
 	...
 
+# get all TODO's from the code
+# configure via pyproject.toml:[tool.makefile.inline-todo]:
+#   [tool.makefile.inline-todo]
+#   search_dir = "."  # directory to search for TODOs
+#   out_file_base = "docs/other/todo-inline"  # output file path (without extension)
+#   context_lines = 2  # lines of context around each TODO
+#   extensions = ["py", "md"]  # file extensions to search
+#   tags = ["CRIT", "TODO", "FIXME", "HACK", "BUG", "DOC"]  # tags to look for
+#   exclude = ["docs/**", ".venv/**", "scripts/get_todos.py"]  # patterns to exclude
+#   branch = "main"  # git branch for URLs
+#   # repo_url = "..."  # repository URL (defaults to [project.urls.{repository,github}])
+#   # template_md = "..."  # custom jinja2 template for markdown output
+#   # template_issue = "..."  # custom format string for issues
+#   # template_html_source = "..."  # custom html template path
+#   tag_label_map = { "BUG" = "bug", "TODO" = "enhancement", "DOC" = "documentation" } # mapping of tags to GitHub issue labels
 .PHONY: todo
 todo:
 	@echo "get all TODO's from the code"
@@ -10890,38 +11198,58 @@ lmcat:
 	@echo "write the lmcat full output to pyproject.toml:[tool.lmcat.output]"
 	...
 
-# verifies that the current branch is $(PUBLISH_BRANCH) and that git is clean
-# used before publishing
+# verify git is ready for publishing
+# REQUIRES:
+# - current branch must be $(PUBLISH_BRANCH)
+# - no uncommitted changes (git status --porcelain must be empty)
+# EXITS with error if either condition fails
 .PHONY: verify-git
-verify-git: 
+verify-git:
 	@echo "checking git status"
 	...
 
-# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# build package distribution files
+# creates wheel (.whl) and source distribution (.tar.gz) in dist/
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # frontend build required for package build
 .PHONY: build
-build: build-frontend 
+build: build-frontend
 	@echo "build the package"
 	...
 
-# gets the commit log, checks everything, builds, and then publishes with twine
-# will ask the user to confirm the new version number (and this allows for editing the tag info)
-# will also print the contents of $(PYPI_TOKEN_FILE) to the console for the user to copy and paste in when prompted by twine
+# publish package to PyPI and create git tag
+# PREREQUISITES:
+# - must be on $(PUBLISH_BRANCH) branch with clean git status (verified by verify-git)
+# - must have $(PYPI_TOKEN_FILE) with your PyPI token
+# - version in pyproject.toml must be different from $(LAST_VERSION_FILE)
+# PROCESS:
+# 1. runs checks, validates version, builds package, verifies git clean
+# 2. prompts for version confirmation (you can edit $(COMMIT_LOG_FILE) at this point)
+# 3. creates git commit updating $(LAST_VERSION_FILE)
+# 4. creates annotated git tag with commit log as description
+# 5. pushes tag to origin
+# 6. uploads to PyPI via twine
 .PHONY: publish
-publish: gen-commit-log check build verify-git version gen-version-info
-	@echo "run all checks, build, and then publish"
+publish: check version build verify-git
+	@echo "Ready to publish $(PROJ_VERSION) to PyPI"
 	...
 
-# cleans up temp files from formatter, type checking, tests, coverage
-# removes all built files
-# removes $(TESTS_TEMP_DIR) to remove temporary test files
-# recursively removes all `__pycache__` directories and `*.pyc` or `*.pyo` files
-# distinct from `make docs-clean`, which only removes generated documentation files
+# cleans up temporary files:
+# - caches: .mypy_cache, .ruff_cache, .pytest_cache, .coverage
+# - build artifacts: dist/, build/, *.egg-info
+# - test temp files: $(TESTS_TEMP_DIR)
+# - __pycache__ directories and *.pyc/*.pyo files in $(PACKAGE_NAME), $(TESTS_DIR), $(DOCS_DIR)
+# uses `-` prefix on find commands to continue even if directories don't exist
+# distinct from `make docs-clean`, which removes generated documentation
 .PHONY: clean
 clean:
 	@echo "clean up temporary files"
 	...
 
+# remove all generated/build files including .venv
+# runs: clean + docs-clean + dep-clean
+# removes .venv, uv.lock, requirements.txt files, generated docs, build artifacts
+# run `make dep` after this to reinstall dependencies
 .PHONY: clean-all
 clean-all: clean docs-clean dep-clean
 	@echo "clean up all temporary files, dep files, venv, and generated docs"
@@ -10937,10 +11265,17 @@ info-long: info
 	@echo "# other variables"
 	...
 
-# immediately print out the help targets, and then local variables (but those take a bit longer)
+# Smart help command: shows general help, or detailed info about specific targets
+# Usage:
+#   make help              - shows general help (list of targets + makefile variables)
+#   make help="test"       - shows detailed info about the 'test' recipe
+#   make HELP="test clean" - shows detailed info about multiple recipes
+#   make h=*               - shows detailed info about all recipes (wildcard expansion)
+#   make H="test"          - same as HELP (case variations supported)
+#
+# All variations work: help/HELP/h/H with values like "foo", "foo bar", "*", "--all"
 .PHONY: help
-help: help-targets info
-	@echo -n ""
+help:
 	...
 
 .PHONY: demo-clean
@@ -10995,15 +11330,16 @@ build-frontend: build-patternlens build-single
 ``````{ path="pyproject.toml"  }
 [project]
     name = "pattern_lens"
-    version = "0.5.0"
+    version = "0.6.0"
     description = ""
     readme = "README.md"
     requires-python = ">=3.11"
     dependencies = [
         # standard
-        "numpy>=1.26.1,<2.0.0",
+        # "numpy>=1.26.1,<2.0.0",
+        "numpy",
         "torch>=2.5.1",
-        "jaxtyping>=0.2.33",
+        "jaxtyping>=0.2.11",
         "tqdm>=4.66.5",
         "pandas>=2.2.2",
         "scipy>=1.14.1",
@@ -11020,6 +11356,8 @@ build-frontend: build-patternlens build-single
         "zanj>=0.3.1",
         # TL
         "transformer-lens>=2.10.0",
+        # pin datasets for pyarrow 21+ compatibility (fixes PyExtensionType removal)
+        "datasets>=2.14.7",
         # this TL dep not listed? is this in an extra?
         "typeguard>=4.4.1",
     ]
@@ -11037,6 +11375,7 @@ build-frontend: build-patternlens build-single
         "mypy>=1.0.1",
         "types-tqdm",
         "ty",
+        "basedpyright",
         # docs
         'pdoc>=14.6.0',
         "nbconvert>=7.16.4",
@@ -11068,7 +11407,7 @@ build-frontend: build-patternlens build-single
 
     # ruff config
     [tool.ruff]
-        exclude = ["__pycache__"]
+        exclude = ["__pycache__", ".meta/scripts"]
 
         [tool.ruff.lint]
             ignore = [
@@ -11104,6 +11443,7 @@ build-frontend: build-patternlens build-single
                 "TD002", # don't care about author
                 "TD003", # `make todo` will give us a table where we can create issues
                 "PLR0913", # sometimes you have to have a lot of args
+                "COM812", # conflicts with ruff formatter
             ]
             select = ["ALL"]
             # select = ["ICN001"]
@@ -11142,8 +11482,22 @@ build-frontend: build-patternlens build-single
             "ignore: PEP 484 type hint*:beartype.roar._roarwarn.BeartypeDecorHintPep585DeprecationWarning",
         ]
 
+    [tool.coverage.run]
+        omit = ["_remote_module_non_scriptable"]
+
     [tool.mypy]
         check_untyped_defs = true
+        exclude = [".meta/scripts"]
+        packages = ["pattern_lens"]
+
+    [tool.ty.src]
+        exclude = [".meta/scripts"]
+
+    [tool.ty.rules]
+        unused-type-ignore-comment = "ignore"
+
+    [tool.basedpyright]
+        exclude = [".meta/scripts"]
 
     # `make lmcat` depends on the lmcat and can be configured here
     [tool.lmcat]

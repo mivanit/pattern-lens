@@ -54,18 +54,18 @@
             </div>
         </aside>
         <h2>
-            <span class="text">65 statements &nbsp;</span>
-            <button type="button" class="run button_toggle_run" value="run" data-shortcut="r" title="Toggle lines run">65<span class="text"> run</span></button>
+            <span class="text">63 statements &nbsp;</span>
+            <button type="button" class="run button_toggle_run" value="run" data-shortcut="r" title="Toggle lines run">63<span class="text"> run</span></button>
             <button type="button" class="mis show_mis button_toggle_mis" value="mis" data-shortcut="m" title="Toggle lines missing">0<span class="text"> missing</span></button>
             <button type="button" class="exc show_exc button_toggle_exc" value="exc" data-shortcut="x" title="Toggle lines excluded">0<span class="text"> excluded</span></button>
         </h2>
         <p class="text">
-            <a id="prevFileLink" class="nav" href="z_17bd492d087794b9_test_activations_py.html">&#xab; prev</a> &nbsp; &nbsp;
+            <a id="prevFileLink" class="nav" href="z_17bd492d087794b9_test_activations_batched_py.html">&#xab; prev</a> &nbsp; &nbsp;
             <a id="indexLink" class="nav" href="index.html">&Hat; index</a> &nbsp; &nbsp;
             <a id="nextFileLink" class="nav" href="z_17bd492d087794b9_test_figure_util_py.html">&#xbb; next</a>
             &nbsp; &nbsp; &nbsp;
             <a class="nav" href="https://coverage.readthedocs.io/en/7.13.4">coverage.py v7.13.4</a>,
-            created at 2026-02-22 03:30 -0700
+            created at 2026-02-22 18:15 -0700
         </p>
         <aside class="hidden">
             <button type="button" class="button_next_chunk" data-shortcut="j"></button>
@@ -227,37 +227,41 @@
     <p class="pln"><span class="n"><a id="t145" href="#t145">145</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t146" href="#t146">146</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t147" href="#t147">147</a></span><span class="t"><span class="key">def</span> <span class="nam">test_get_activations_none_return</span><span class="op">(</span><span class="op">)</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
-    <p class="pln"><span class="n"><a id="t148" href="#t148">148</a></span><span class="t">        <span class="str">"""Test get_activations with return_cache=None."""</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run"><span class="n"><a id="t149" href="#t149">149</a></span><span class="t">        <span class="nam">temp_dir</span> <span class="op">=</span> <span class="nam">TEMP_DIR</span> <span class="op">/</span> <span class="str">"test_get_activations_none_return"</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run"><span class="n"><a id="t150" href="#t150">150</a></span><span class="t">        <span class="nam">prompt</span> <span class="op">=</span> <span class="op">{</span><span class="str">"text"</span><span class="op">:</span> <span class="str">"test prompt"</span><span class="op">,</span> <span class="str">"hash"</span><span class="op">:</span> <span class="str">"testhash123"</span><span class="op">}</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run"><span class="n"><a id="t151" href="#t151">151</a></span><span class="t">        <span class="nam">model</span> <span class="op">=</span> <span class="nam">MockHookedTransformer</span><span class="op">(</span><span class="nam">model_name</span><span class="op">=</span><span class="str">"test-model"</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
-    <p class="pln"><span class="n"><a id="t152" href="#t152">152</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
-    <p class="pln"><span class="n"><a id="t153" href="#t153">153</a></span><span class="t">        <span class="com"># Create a mock for load_activations that returns a path but no cache</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run"><span class="n"><a id="t154" href="#t154">154</a></span><span class="t">        <span class="key">with</span> <span class="nam">mock</span><span class="op">.</span><span class="nam">patch</span><span class="op">(</span><span class="str">"pattern_lens.activations.load_activations"</span><span class="op">)</span> <span class="key">as</span> <span class="nam">mock_load</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run"><span class="n"><a id="t155" href="#t155">155</a></span><span class="t">                <span class="nam">mock_path</span> <span class="op">=</span> <span class="nam">Path</span><span class="op">(</span><span class="str">"mock/path"</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run"><span class="n"><a id="t156" href="#t156">156</a></span><span class="t">                <span class="nam">mock_load</span><span class="op">.</span><span class="nam">return_value</span> <span class="op">=</span> <span class="op">(</span><span class="nam">mock_path</span><span class="op">,</span> <span class="op">{</span><span class="op">}</span><span class="op">)</span>  <span class="com"># Cache will be ignored</span>&nbsp;</span><span class="r"></span></p>
-    <p class="pln"><span class="n"><a id="t157" href="#t157">157</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
-    <p class="pln"><span class="n"><a id="t158" href="#t158">158</a></span><span class="t">                <span class="com"># Call get_activations with None return format</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run"><span class="n"><a id="t159" href="#t159">159</a></span><span class="t">                <span class="nam">path</span><span class="op">,</span> <span class="nam">cache</span> <span class="op">=</span> <span class="nam">get_activations</span><span class="op">(</span>  <span class="com"># type: ignore[call-overload]</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run run2"><span class="n"><a id="t160" href="#t160">160</a></span><span class="t">                        <span class="nam">prompt</span><span class="op">=</span><span class="nam">prompt</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run run2"><span class="n"><a id="t161" href="#t161">161</a></span><span class="t">                        <span class="nam">model</span><span class="op">=</span><span class="nam">model</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run run2"><span class="n"><a id="t162" href="#t162">162</a></span><span class="t">                        <span class="nam">save_path</span><span class="op">=</span><span class="nam">temp_dir</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run run2"><span class="n"><a id="t163" href="#t163">163</a></span><span class="t">                        <span class="nam">return_cache</span><span class="op">=</span><span class="key">None</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run run2"><span class="n"><a id="t164" href="#t164">164</a></span><span class="t">                <span class="op">)</span>&nbsp;</span><span class="r"></span></p>
-    <p class="pln"><span class="n"><a id="t165" href="#t165">165</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
-    <p class="pln"><span class="n"><a id="t166" href="#t166">166</a></span><span class="t">                <span class="com"># Check that we got the path but no cache</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run"><span class="n"><a id="t167" href="#t167">167</a></span><span class="t">                <span class="key">assert</span> <span class="nam">path</span> <span class="op">==</span> <span class="nam">mock_path</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run"><span class="n"><a id="t168" href="#t168">168</a></span><span class="t">                <span class="key">assert</span> <span class="nam">cache</span> <span class="key">is</span> <span class="key">None</span>&nbsp;</span><span class="r"></span></p>
+    <p class="pln"><span class="n"><a id="t148" href="#t148">148</a></span><span class="t">        <span class="str">"""Test get_activations with return_cache=None uses the fast existence-check path.</span>&nbsp;</span><span class="r"></span></p>
+    <p class="pln"><span class="n"><a id="t149" href="#t149">149</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
+    <p class="pln"><span class="n"><a id="t150" href="#t150">150</a></span><span class="t"><span class="str">        When return_cache=None and the activations already exist on disk,</span>&nbsp;</span><span class="r"></span></p>
+    <p class="pln"><span class="n"><a id="t151" href="#t151">151</a></span><span class="t"><span class="str">        get_activations should use activations_exist (cheap file-existence check)</span>&nbsp;</span><span class="r"></span></p>
+    <p class="pln"><span class="n"><a id="t152" href="#t152">152</a></span><span class="t"><span class="str">        instead of load_activations (which would decompress the full .npz).</span>&nbsp;</span><span class="r"></span></p>
+    <p class="pln"><span class="n"><a id="t153" href="#t153">153</a></span><span class="t"><span class="str">        """</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t154" href="#t154">154</a></span><span class="t">        <span class="nam">temp_dir</span> <span class="op">=</span> <span class="nam">TEMP_DIR</span> <span class="op">/</span> <span class="str">"test_get_activations_none_return"</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t155" href="#t155">155</a></span><span class="t">        <span class="nam">prompt</span> <span class="op">=</span> <span class="op">{</span><span class="str">"text"</span><span class="op">:</span> <span class="str">"test prompt"</span><span class="op">,</span> <span class="str">"hash"</span><span class="op">:</span> <span class="str">"testhash123"</span><span class="op">}</span>&nbsp;</span><span class="r"></span></p>
+    <p class="pln"><span class="n"><a id="t156" href="#t156">156</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
+    <p class="pln"><span class="n"><a id="t157" href="#t157">157</a></span><span class="t">        <span class="com"># pass model as a string -- get_activations accepts HookedTransformer | str,</span>&nbsp;</span><span class="r"></span></p>
+    <p class="pln"><span class="n"><a id="t158" href="#t158">158</a></span><span class="t">        <span class="com"># and the fast path (return_cache=None) only needs the model name for path construction</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t159" href="#t159">159</a></span><span class="t">        <span class="key">with</span> <span class="nam">mock</span><span class="op">.</span><span class="nam">patch</span><span class="op">(</span><span class="str">"pattern_lens.activations.activations_exist"</span><span class="op">,</span> <span class="nam">return_value</span><span class="op">=</span><span class="key">True</span><span class="op">)</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t160" href="#t160">160</a></span><span class="t">                <span class="nam">path</span><span class="op">,</span> <span class="nam">cache</span> <span class="op">=</span> <span class="nam">get_activations</span><span class="op">(</span>  <span class="com"># type: ignore[call-overload]</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run run2"><span class="n"><a id="t161" href="#t161">161</a></span><span class="t">                        <span class="nam">prompt</span><span class="op">=</span><span class="nam">prompt</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run run2"><span class="n"><a id="t162" href="#t162">162</a></span><span class="t">                        <span class="nam">model</span><span class="op">=</span><span class="str">"test-model"</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run run2"><span class="n"><a id="t163" href="#t163">163</a></span><span class="t">                        <span class="nam">save_path</span><span class="op">=</span><span class="nam">temp_dir</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run run2"><span class="n"><a id="t164" href="#t164">164</a></span><span class="t">                        <span class="nam">return_cache</span><span class="op">=</span><span class="key">None</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run run2"><span class="n"><a id="t165" href="#t165">165</a></span><span class="t">                <span class="op">)</span>&nbsp;</span><span class="r"></span></p>
+    <p class="pln"><span class="n"><a id="t166" href="#t166">166</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
+    <p class="pln"><span class="n"><a id="t167" href="#t167">167</a></span><span class="t">                <span class="com"># Check that we got the reconstructed path but no cache</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t168" href="#t168">168</a></span><span class="t">                <span class="nam">expected_path</span> <span class="op">=</span> <span class="op">(</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run run2"><span class="n"><a id="t169" href="#t169">169</a></span><span class="t">                        <span class="nam">temp_dir</span> <span class="op">/</span> <span class="str">"test-model"</span> <span class="op">/</span> <span class="str">"prompts"</span> <span class="op">/</span> <span class="nam">prompt</span><span class="op">[</span><span class="str">"hash"</span><span class="op">]</span> <span class="op">/</span> <span class="str">"activations.npz"</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run run2"><span class="n"><a id="t170" href="#t170">170</a></span><span class="t">                <span class="op">)</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t171" href="#t171">171</a></span><span class="t">                <span class="key">assert</span> <span class="nam">path</span> <span class="op">==</span> <span class="nam">expected_path</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t172" href="#t172">172</a></span><span class="t">                <span class="key">assert</span> <span class="nam">cache</span> <span class="key">is</span> <span class="key">None</span>&nbsp;</span><span class="r"></span></p>
 </main>
 <footer>
     <div class="content">
         <p>
-            <a class="nav" href="z_17bd492d087794b9_test_activations_py.html">&#xab; prev</a> &nbsp; &nbsp;
+            <a class="nav" href="z_17bd492d087794b9_test_activations_batched_py.html">&#xab; prev</a> &nbsp; &nbsp;
             <a class="nav" href="index.html">&Hat; index</a> &nbsp; &nbsp;
             <a class="nav" href="z_17bd492d087794b9_test_figure_util_py.html">&#xbb; next</a>
             &nbsp; &nbsp; &nbsp;
             <a class="nav" href="https://coverage.readthedocs.io/en/7.13.4">coverage.py v7.13.4</a>,
-            created at 2026-02-22 03:30 -0700
+            created at 2026-02-22 18:15 -0700
         </p>
     </div>
 </footer>
