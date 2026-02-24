@@ -56,11 +56,8 @@ class HTConfigMock:
 		self.n_heads: int
 		self.model_name: str
 		self.__dict__.update(kwargs)
-
-	@property
-	def model_name_sanitized(self) -> str:
-		"""Sanitized form of ``model_name``, safe for use as a directory name."""
-		return sanitize_model_name(self.model_name)
+		if "model_name_sanitized" not in self.__dict__:
+			self.model_name_sanitized: str = sanitize_model_name(self.model_name)
 
 	def serialize(self) -> dict:
 		"""serialize the config to json. values which aren't serializable will be converted via `muutils.json_serialize.json_serialize`"""

@@ -122,8 +122,8 @@ def load_model(
 		HookedTransformer as HookedTransformerCls,
 	)
 
-	original_name = unsanitize_model_name(model_name)
-	model = HookedTransformerCls.from_pretrained(
+	original_name: str = unsanitize_model_name(model_name)
+	model: HookedTransformerCls = HookedTransformerCls.from_pretrained(
 		original_name,
 		fold_ln=fold_ln,
 		center_writing_weights=center_writing_weights,
