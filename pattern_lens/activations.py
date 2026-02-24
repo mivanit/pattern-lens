@@ -559,7 +559,7 @@ def get_activations(
 	# compute them
 	if isinstance(model, str):
 		model = HookedTransformer.from_pretrained(model)
-		model.cfg.model_name = model_name
+	model.cfg.model_name = model_name
 
 	return compute_activations(  # type: ignore[return-value]
 		prompt=prompt,

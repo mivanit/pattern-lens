@@ -5,18 +5,13 @@ from __future__ import annotations
 import base64
 import hashlib
 import json
-from typing import TYPE_CHECKING, Literal, overload
+from pathlib import Path  # noqa: TC003
+from typing import Literal, overload
 
 import numpy as np
+import torch
 
-from pattern_lens.consts import sanitize_model_name
-
-if TYPE_CHECKING:
-	from pathlib import Path
-
-	import torch
-
-	from pattern_lens.consts import ReturnCache
+from pattern_lens.consts import ReturnCache, sanitize_model_name
 
 
 class GetActivationsError(ValueError):
@@ -144,9 +139,6 @@ def load_activations(
 		raise ValueError(
 			msg,
 		)
-	if return_fmt == "torch":
-		import torch  # noqa: PLC0415
-
 	model_name = sanitize_model_name(model_name)
 	augment_prompt_with_hash(prompt)
 

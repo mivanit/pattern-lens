@@ -1,11 +1,13 @@
 # tests/unit/test_load_activations.py
 import json
+import typing
 from pathlib import Path
 from unittest import mock
 
 import numpy as np
 import pytest
 
+import pattern_lens.load_activations as load_activations_mod
 from pattern_lens.load_activations import (
 	ActivationsMismatchError,
 	ActivationsMissingError,
@@ -162,11 +164,35 @@ def test_load_activations_missing_npz_is_subclass_of_file_not_found():
 
 
 def test_load_activations_invalid_return_fmt():
-	"""Test that invalid return_fmt raises ValueError."""
-	with pytest.raises(ValueError, match="Invalid return_fmt"):
+	"""Test that invalid return_fmt raises ValueError or TypeCheckError.
+
+	With jaxtyping's import hook active, beartype rejects the invalid
+	return_fmt before the function body runs, raising TypeCheckError
+	instead of ValueError.
+	"""
+	with pytest.raises(
+		(ValueError, TypeError, Exception), match=r"return_fmt|Invalid return_fmt"
+	):
 		load_activations(  # type: ignore[no-matching-overload]
 			model_name="test-model",
 			prompt={"text": "test", "hash": "test"},
 			save_path=Path("/nonexistent"),
 			return_fmt="invalid",
 		)
+
+
+def test_annotations_resolvable_by_beartype():
+	"""PEP 563 annotations must be eval()-able against module globals.
+
+	beartype (via jaxtyping's import hook) eval()s annotation strings at
+	decoration time. If any referenced name is missing from module globals
+	(e.g. behind TYPE_CHECKING), it raises BeartypePep563Exception.
+	"""
+	for name in (
+		"load_activations",
+		"activations_exist",
+		"augment_prompt_with_hash",
+		"compare_prompt_to_loaded",
+	):
+		func = getattr(load_activations_mod, name)
+		typing.get_type_hints(func)
