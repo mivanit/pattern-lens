@@ -8,6 +8,7 @@ __all__ = [
 	"figures",
 	"indexes",
 	"load_activations",
+	"model_table",
 	"prompts",
 	"server",
 ]
