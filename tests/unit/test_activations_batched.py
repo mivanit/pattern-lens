@@ -77,7 +77,7 @@ class MockHookedTransformerBatched(HookedTransformer):
 		"""Actual model sequence length for a text (includes BOS)."""
 		return len(text) + 1
 
-	def to_tokens(
+	def to_tokens(  # ty: ignore[invalid-method-override]
 		self,
 		text,
 		prepend_bos=None,  # noqa: ARG002
@@ -102,7 +102,7 @@ class MockHookedTransformerBatched(HookedTransformer):
 		gen.manual_seed(hash(text) % (2**31))
 		return torch.rand(self.cfg.n_heads, seq_len, seq_len, generator=gen)
 
-	def run_with_cache(
+	def run_with_cache(  # ty: ignore[invalid-method-override]
 		self,
 		input,  # noqa: A002 -- matches TransformerLens API signature
 		names_filter=None,  # noqa: ARG002
@@ -301,7 +301,7 @@ def test_batched_vs_single_equivalence():
 	single_paths = []
 	for p in prompts_single:
 		augment_prompt_with_hash(p)
-		path, _ = compute_activations(  # ty: ignore[no-matching-overload]
+		path, _ = compute_activations(
 			prompt=p,
 			model=model,  # type: ignore[arg-type]
 			save_path=temp_dir_single,
@@ -354,7 +354,7 @@ def test_batched_single_prompt_equivalence():
 	prompt_batch = {"text": "hello world", "hash": "hash_1prompt"}
 
 	augment_prompt_with_hash(prompt_single)
-	single_path, _ = compute_activations(  # ty: ignore[no-matching-overload]
+	single_path, _ = compute_activations(
 		prompt=prompt_single,
 		model=model,  # type: ignore[arg-type]
 		save_path=temp_dir_single,

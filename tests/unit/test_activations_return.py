@@ -37,7 +37,7 @@ class MockHookedTransformer(HookedTransformer):
 		self.tokenizer = mock.MagicMock()
 		self.tokenizer.tokenize.return_value = ["test", "tokens"]
 
-	def run_with_cache(
+	def run_with_cache(  # ty: ignore[invalid-method-override]
 		self,
 		input,  # noqa: A002
 		names_filter=None,  # noqa: ARG002

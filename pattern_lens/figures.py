@@ -50,18 +50,17 @@ class HTConfigMock:
 	we do this to avoid having to import `transformer_lens`, since this would have to be done for each process in the parallelization and probably slows things down significantly
 	"""
 
-	def __init__(self, **kwargs: dict[str, str | int]) -> None:
+	def __init__(self, **kwargs: str | int) -> None:
 		"will pass all kwargs to `__dict__`"
 		self.n_layers: int
 		self.n_heads: int
 		self.model_name: str
 		self.__dict__.update(kwargs)
 
-	def __getattr__(self, name: str) -> object:
-		"""Fall back to computing ``model_name_sanitized`` from ``model_name``."""
-		if name == "model_name_sanitized":
-			return sanitize_model_name(self.model_name)
-		raise AttributeError(name)
+	@property
+	def model_name_sanitized(self) -> str:
+		"""Sanitized form of ``model_name``, safe for use as a directory name."""
+		return sanitize_model_name(self.model_name)
 
 	def serialize(self) -> dict:
 		"""serialize the config to json. values which aren't serializable will be converted via `muutils.json_serialize.json_serialize`"""
@@ -323,7 +322,6 @@ def figures_main(
 		model_path: Path = save_path_p / model_name
 		with open(model_path / "model_cfg.json", "r") as f:
 			model_cfg = HTConfigMock.load(json.load(f))
-		model_cfg.model_name_sanitized = model_name
 
 	with SpinnerContext(message="loading prompts", **SPINNER_KWARGS):
 		# load prompts

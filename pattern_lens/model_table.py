@@ -17,7 +17,7 @@ import urllib.request
 from dataclasses import dataclass
 from pathlib import Path
 
-import pandas as pd
+import pandas as pd  # type: ignore[import-untyped]
 
 MODEL_TABLE_URL: str = "https://raw.githubusercontent.com/mivanit/transformerlens-model-table/main/docs/model_table.csv"
 
