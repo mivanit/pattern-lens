@@ -1,14 +1,19 @@
 "loading activations from .npz on disk. implements some custom Exception classes"
 
+from __future__ import annotations
+
 import base64
 import hashlib
 import json
 from pathlib import Path
-from typing import Literal, overload
+from typing import TYPE_CHECKING, Literal, overload
 
 import numpy as np
 
 from pattern_lens.consts import ReturnCache
+
+if TYPE_CHECKING:
+	import torch
 
 
 class GetActivationsError(ValueError):
@@ -99,7 +104,7 @@ def load_activations(
 	prompt: dict,
 	save_path: Path,
 	return_fmt: Literal["torch"] = "torch",
-) -> "tuple[Path, dict[str, torch.Tensor]]":  # type: ignore[name-defined] # noqa: F821
+) -> tuple[Path, dict[str, torch.Tensor]]:
 	...
 @overload
 def load_activations(
@@ -107,13 +112,13 @@ def load_activations(
 	prompt: dict,
 	save_path: Path,
 	return_fmt: Literal["numpy"] = "numpy",
-) -> "tuple[Path, dict[str, np.ndarray]]": ...
+) -> tuple[Path, dict[str, np.ndarray]]: ...
 def load_activations(
 	model_name: str,
 	prompt: dict,
 	save_path: Path,
 	return_fmt: ReturnCache = "torch",
-) -> "tuple[Path, dict[str, torch.Tensor]|dict[str, np.ndarray]]":  # type: ignore[name-defined] # noqa: F821
+) -> tuple[Path, dict[str, torch.Tensor] | dict[str, np.ndarray]]:
 	"""load activations for a prompt and model, from an npz file
 
 	# Parameters:
