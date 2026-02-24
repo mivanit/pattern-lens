@@ -22,6 +22,7 @@ activations_main(
 """
 
 import argparse
+import gc
 import json
 import re
 from collections.abc import Callable
@@ -733,6 +734,12 @@ def activations_main(  # noqa: C901, PLR0912, PLR0915
 		generate_models_jsonl(save_path_p)
 		generate_prompts_jsonl(save_path_p / model_name)
 
+	# free model memory before returning
+	del model
+	gc.collect()
+	if torch.cuda.is_available():
+		torch.cuda.empty_cache()
+
 
 def main() -> None:
 	"generate attention pattern activations for a model and prompts"
@@ -879,7 +886,10 @@ def main() -> None:
 			device=args.device,
 			batch_size=args.batch_size,
 		)
-		del model
+		# defense-in-depth: collect any remaining torch objects from activations_main
+		gc.collect()
+		if torch.cuda.is_available():
+			torch.cuda.empty_cache()
 
 	print(DIVIDER_S1)
 
