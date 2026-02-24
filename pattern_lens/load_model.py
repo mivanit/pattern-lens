@@ -116,14 +116,14 @@ def resolve_model_name(name: str) -> str:
 
 	Resolution strategy:
 
-	1. Try TransformerLens ``get_official_model_name`` (case-insensitive
-	   alias lookup) and map the result back to the default alias via CSV.
+	1. Try TransformerLens ``get_official_model_name`` (case-insensitive alias
+		lookup) and map the result back to the default alias via CSV.
 	2. Look up in the resolver table built from the model table CSV.
 	3. Fallback: return *name* unchanged (unknown / custom model).
 	"""
 	# Step 1: try TL's alias resolution (covers aliases not in our CSV)
 	try:
-		from transformer_lens.loading_from_pretrained import (  # noqa: PLC0415
+		from transformer_lens.loading_from_pretrained import (  # type: ignore[import-untyped]  # noqa: PLC0415
 			get_official_model_name,
 		)
 
@@ -139,8 +139,9 @@ def resolve_model_name(name: str) -> str:
 		)
 		if cfg_name in resolver:
 			return resolver[cfg_name]
-		# Not in resolver at all; return the default alias as TL sees it
-		return cfg_name
+		else:
+			# Not in resolver at all; return the default alias as TL sees it
+			return cfg_name
 	except (ImportError, ValueError):
 		pass
 

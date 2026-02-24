@@ -72,49 +72,51 @@ def real_resolver(monkeypatch: pytest.MonkeyPatch) -> dict[str, str]:
 # ---------------------------------------------------------------------------
 
 
+@pytest.mark.usefixtures("sample_resolver")
 class TestResolveModelName:
 	"""Test that resolve_model_name maps all variants to the default alias."""
 
-	def test_default_alias_passthrough(self, sample_resolver):
+	def test_default_alias_passthrough(self):
 		assert resolve_model_name("tiny-stories-1M") == "tiny-stories-1M"
 		assert resolve_model_name("gpt2-small") == "gpt2-small"
 		assert resolve_model_name("gemma-2b") == "gemma-2b"
 
-	def test_hf_name_resolves(self, sample_resolver):
+	def test_hf_name_resolves(self):
 		assert resolve_model_name("roneneldan/TinyStories-1M") == "tiny-stories-1M"
 		assert resolve_model_name("gpt2") == "gpt2-small"
 		assert resolve_model_name("google/gemma-2b") == "gemma-2b"
 
-	def test_cfg_model_name_resolves(self, sample_resolver):
+	def test_cfg_model_name_resolves(self):
 		"""cfg.model_name = hf_name.split('/')[-1], e.g. 'TinyStories-1M'."""
 		assert resolve_model_name("TinyStories-1M") == "tiny-stories-1M"
 
-	def test_sanitized_hf_name_resolves(self, sample_resolver):
+	def test_sanitized_hf_name_resolves(self):
 		"""sanitize_name_str('roneneldan/TinyStories-1M') == 'roneneldan-TinyStories-1M'."""
 		assert resolve_model_name("roneneldan-TinyStories-1M") == "tiny-stories-1M"
 		assert resolve_model_name("google-gemma-2b") == "gemma-2b"
 
-	def test_unknown_model_passthrough(self, sample_resolver):
+	def test_unknown_model_passthrough(self):
 		assert resolve_model_name("my-custom-model") == "my-custom-model"
 
-	def test_empty_string(self, sample_resolver):
+	def test_empty_string(self):
 		assert resolve_model_name("") == ""
 
 
+@pytest.mark.usefixtures("sample_resolver")
 class TestSanitizeModelName:
 	"""Test that sanitize_model_name resolves + sanitizes."""
 
-	def test_all_variants_same_output(self, sample_resolver):
+	def test_all_variants_same_output(self):
 		expected = "tiny-stories-1M"
 		assert sanitize_model_name("tiny-stories-1M") == expected
 		assert sanitize_model_name("TinyStories-1M") == expected
 		assert sanitize_model_name("roneneldan/TinyStories-1M") == expected
 		assert sanitize_model_name("roneneldan-TinyStories-1M") == expected
 
-	def test_unknown_model_sanitized(self, sample_resolver):
+	def test_unknown_model_sanitized(self):
 		assert sanitize_model_name("org/my model") == "org-my_model"
 
-	def test_idempotent(self, sample_resolver):
+	def test_idempotent(self):
 		for name in [
 			"tiny-stories-1M",
 			"TinyStories-1M",
@@ -146,6 +148,7 @@ _MODEL_ROWS = _all_model_rows()
 _MODEL_IDS = [alias for alias, _ in _MODEL_ROWS]
 
 
+@pytest.mark.usefixtures("real_resolver")
 class TestRoundtripAllModels:
 	"""For every model in the real table, all name variants must resolve to the same canonical name."""
 
@@ -158,7 +161,6 @@ class TestRoundtripAllModels:
 		self,
 		default_alias: str,
 		hf_name: str,
-		real_resolver: dict[str, str],
 	):
 		"""default_alias, hf_name, cfg.model_name, and sanitized forms all resolve identically."""
 		expected = default_alias
@@ -194,7 +196,6 @@ class TestRoundtripAllModels:
 		self,
 		default_alias: str,
 		hf_name: str,
-		real_resolver: dict[str, str],
 	):
 		"""sanitize_model_name is idempotent for all known name variants."""
 		variants = [default_alias]
