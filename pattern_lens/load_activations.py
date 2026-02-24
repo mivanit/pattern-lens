@@ -5,15 +5,16 @@ from __future__ import annotations
 import base64
 import hashlib
 import json
-from pathlib import Path
 from typing import TYPE_CHECKING, Literal, overload
 
 import numpy as np
 
-from pattern_lens.consts import ReturnCache
-
 if TYPE_CHECKING:
+	from pathlib import Path
+
 	import torch
+
+	from pattern_lens.consts import ReturnCache
 
 
 class GetActivationsError(ValueError):
@@ -104,8 +105,7 @@ def load_activations(
 	prompt: dict,
 	save_path: Path,
 	return_fmt: Literal["torch"] = "torch",
-) -> tuple[Path, dict[str, torch.Tensor]]:
-	...
+) -> tuple[Path, dict[str, torch.Tensor]]: ...
 @overload
 def load_activations(
 	model_name: str,
