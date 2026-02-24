@@ -6,6 +6,7 @@ from pattern_lens.consts import sanitize_model_name
 
 
 class TestSanitizeModelName:
+	"test sanitize_model_name with various inputs to ensure it behaves as expected"
 
 	@pytest.mark.parametrize(
 		"name",
