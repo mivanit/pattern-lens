@@ -10,7 +10,7 @@ from pathlib import Path  # noqa: TC003
 
 import numpy as np
 
-from pattern_lens.consts import sanitize_model_name
+from pattern_lens.load_model import sanitize_model_name
 
 
 class GetActivationsError(ValueError):

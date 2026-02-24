@@ -1,12 +1,20 @@
-"""Load a HookedTransformer by name, resolving sanitized names back to originals.
+"""Load a HookedTransformer by name, resolving model name variants.
 
-``sanitize_model_name`` is lossy -- ``google/gemma-2b`` becomes
-``google-gemma-2b`` and there is no way to invert that without a lookup
-table.  This module builds that table from the TransformerLens model
-catalogue (fetched/cached by :mod:`pattern_lens.model_table`) and
-exposes :func:`load_model` as a drop-in replacement for
-``HookedTransformer.from_pretrained`` that accepts *either* the original
-HuggingFace name or the sanitized directory name.
+Different systems use different names for the same model:
+
+- User alias: ``tiny-stories-1M`` (TransformerLens default alias)
+- HuggingFace path: ``roneneldan/TinyStories-1M``
+- ``cfg.model_name``: ``TinyStories-1M`` (HF path tail, set by TransformerLens)
+
+This module provides two key functions:
+
+:func:`resolve_model_name`
+    Maps *any* variant to the TransformerLens default alias.  This is the
+    name you pass to ``HookedTransformer.from_pretrained``.
+
+:func:`sanitize_model_name`
+    Maps *any* variant to a canonical filesystem-safe directory name
+    (the default alias with disallowed characters replaced).
 """
 
 from __future__ import annotations
@@ -14,7 +22,7 @@ from __future__ import annotations
 import warnings
 from typing import TYPE_CHECKING, Any, Literal
 
-from pattern_lens.consts import sanitize_model_name
+from pattern_lens.consts import sanitize_name_str
 
 if TYPE_CHECKING:
 	import torch
@@ -25,64 +33,137 @@ if TYPE_CHECKING:
 	)
 
 # ---------------------------------------------------------------------------
-# Sanitize-inverse cache
+# Name resolver cache: {any_known_variant: default_alias}
 # ---------------------------------------------------------------------------
 
-_SANITIZE_INVERSE: dict[str, str] | None = None
+_NAME_RESOLVER: dict[str, str] | None = None
 
 
-def _build_sanitize_inverse() -> dict[str, str]:
-	"""Build ``{sanitized_name: original_name}`` from the model table.
+def _build_name_resolver() -> dict[str, str]:
+	"""Build ``{any_name_variant: default_alias}`` from the model table CSV.
 
-	Warns on collisions (two originals mapping to the same sanitized key).
+	For each model, registers these keys, all mapping to ``default_alias``:
+
+	- ``default_alias`` itself  (e.g. ``tiny-stories-1M``)
+	- ``hf_name``               (e.g. ``roneneldan/TinyStories-1M``)
+	- ``hf_name.split("/")[-1]`` (e.g. ``TinyStories-1M``, = ``cfg.model_name``)
+	- ``sanitize_name_str()`` of each of the above
+
+	Warns on collisions (two different models claiming the same key).
 	"""
-	from pattern_lens.model_table import fetch_model_table  # noqa: PLC0415
+	from pattern_lens.model_table import fetch_model_table_df  # noqa: PLC0415
 
-	table = fetch_model_table()
-	inverse: dict[str, str] = {}
-	for original in table:
-		sanitized = sanitize_model_name(original)
-		if sanitized in inverse and inverse[sanitized] != original:
-			warnings.warn(
-				f"sanitize_model_name collision: {original!r} and "
-				f"{inverse[sanitized]!r} both map to {sanitized!r}",
-				stacklevel=2,
-			)
-		inverse[sanitized] = original
-	return inverse
+	df = fetch_model_table_df()
+	df = df.dropna(subset=["name.default_alias"])
+	df = df[df["name.default_alias"] != ""]
+
+	resolver: dict[str, str] = {}
+
+	for _, row in df.iterrows():
+		default_alias: str = str(row["name.default_alias"])
+		hf_name: str = str(row.get("name.huggingface", "") or "")
+
+		cfg_model_name: str = (
+			hf_name.rsplit("/", maxsplit=1)[-1]
+			if ("/" in hf_name and hf_name)
+			else hf_name
+		)
+
+		# Collect all variants
+		variants: list[str] = [default_alias, sanitize_name_str(default_alias)]
+		if hf_name:
+			variants.extend([hf_name, sanitize_name_str(hf_name)])
+		if cfg_model_name:
+			variants.extend([cfg_model_name, sanitize_name_str(cfg_model_name)])
+
+		for variant in variants:
+			if not variant:
+				continue
+			if variant in resolver and resolver[variant] != default_alias:
+				warnings.warn(
+					f"resolve_model_name collision: {variant!r} maps to both "
+					f"{resolver[variant]!r} and {default_alias!r}; keeping first",
+					stacklevel=2,
+				)
+			else:
+				resolver[variant] = default_alias
+
+	return resolver
 
 
-def get_sanitize_inverse() -> dict[str, str]:
-	"""Return the cached sanitized→original mapping, building it on first call."""
-	global _SANITIZE_INVERSE  # noqa: PLW0603
-	if _SANITIZE_INVERSE is None:
+def get_name_resolver() -> dict[str, str]:
+	"""Return the cached variant→default-alias mapping, building on first call."""
+	global _NAME_RESOLVER  # noqa: PLW0603
+	if _NAME_RESOLVER is None:
 		try:
-			_SANITIZE_INVERSE = _build_sanitize_inverse()
+			_NAME_RESOLVER = _build_name_resolver()
 		except Exception as exc:  # noqa: BLE001
 			warnings.warn(
-				f"Failed to build sanitize-inverse table ({exc}); "
+				f"Failed to build name resolver ({exc}); "
 				"falling back to pass-through name resolution",
 				stacklevel=2,
 			)
-			_SANITIZE_INVERSE = {}
-	return _SANITIZE_INVERSE
+			_NAME_RESOLVER = {}
+	return _NAME_RESOLVER
 
 
-def unsanitize_model_name(name: str) -> str:
-	"""Resolve a potentially-sanitized model name to the original HF name.
+def resolve_model_name(name: str) -> str:
+	"""Resolve any model name variant to the TransformerLens default alias.
 
-	If *name* is already a recognised original name in the model table,
-	returns it immediately without building the inverse mapping.
-	Otherwise falls back to the ``{sanitized: original}`` inverse table.
-	If still not found, returns *name* unchanged (it may be a custom model
-	not in the TransformerLens catalogue).
+	Accepts user aliases, HuggingFace paths, ``cfg.model_name`` values,
+	or already-sanitized forms.  Returns the default alias that can be
+	passed directly to ``HookedTransformer.from_pretrained``.
+
+	Resolution strategy:
+
+	1. Try TransformerLens ``get_official_model_name`` (case-insensitive
+	   alias lookup) and map the result back to the default alias via CSV.
+	2. Look up in the resolver table built from the model table CSV.
+	3. Fallback: return *name* unchanged (unknown / custom model).
 	"""
-	from pattern_lens.model_table import fetch_model_table  # noqa: PLC0415
+	# Step 1: try TL's alias resolution (covers aliases not in our CSV)
+	try:
+		from transformer_lens.loading_from_pretrained import (  # noqa: PLC0415
+			get_official_model_name,
+		)
 
-	if name in fetch_model_table():
-		return name
+		official_hf: str = get_official_model_name(name)
+		resolver = get_name_resolver()
+		if official_hf in resolver:
+			return resolver[official_hf]
+		# HF name resolved but not in our CSV — derive cfg.model_name form
+		cfg_name: str = (
+			official_hf.rsplit("/", maxsplit=1)[-1]
+			if "/" in official_hf
+			else official_hf
+		)
+		if cfg_name in resolver:
+			return resolver[cfg_name]
+		# Not in resolver at all; return the default alias as TL sees it
+		return cfg_name
+	except (ImportError, ValueError):
+		pass
 
-	return get_sanitize_inverse().get(name, name)
+	# Step 2: look up in resolver table (works without torch)
+	resolver = get_name_resolver()
+	if name in resolver:
+		return resolver[name]
+	sanitized: str = sanitize_name_str(name)
+	if sanitized in resolver:
+		return resolver[sanitized]
+
+	# Step 3: unknown model — return unchanged
+	return name
+
+
+def sanitize_model_name(name: str) -> str:
+	"""Resolve any model name variant to the canonical filesystem-safe name.
+
+	Equivalent to ``sanitize_name_str(resolve_model_name(name))``:
+	first resolves the name to the TransformerLens default alias,
+	then applies character-level sanitization for safe use as a directory name.
+	"""
+	return sanitize_name_str(resolve_model_name(name))
 
 
 # ---------------------------------------------------------------------------
@@ -110,21 +191,22 @@ def load_model(
 	first_n_layers: int | None = None,
 	**from_pretrained_kwargs: Any,  # noqa: ANN401
 ) -> HookedTransformer:
-	"""Load a ``HookedTransformer``, accepting sanitized or original names.
+	"""Load a ``HookedTransformer``, accepting any model name variant.
 
 	Drop-in replacement for ``HookedTransformer.from_pretrained``.
 	All keyword arguments are forwarded verbatim.
 
 	The returned model's ``cfg.model_name_sanitized`` is set to the
-	**sanitized** form so that downstream path construction is consistent.
+	canonical filesystem name so that downstream path construction is
+	consistent.
 	"""
 	from transformer_lens import (  # noqa: PLC0415
 		HookedTransformer as HookedTransformerCls,
 	)
 
-	original_name: str = unsanitize_model_name(model_name)
+	resolved: str = resolve_model_name(model_name)
 	model: HookedTransformerCls = HookedTransformerCls.from_pretrained(
-		original_name,
+		resolved,
 		fold_ln=fold_ln,
 		center_writing_weights=center_writing_weights,
 		center_unembed=center_unembed,

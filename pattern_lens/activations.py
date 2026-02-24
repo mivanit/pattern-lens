@@ -55,7 +55,6 @@ from pattern_lens.consts import (
 	SPINNER_KWARGS,
 	ActivationCacheNp,
 	ReturnCache,
-	sanitize_model_name,
 )
 from pattern_lens.indexes import (
 	generate_models_jsonl,
@@ -68,7 +67,7 @@ from pattern_lens.load_activations import (
 	augment_prompt_with_hash,
 	load_activations,
 )
-from pattern_lens.load_model import load_model
+from pattern_lens.load_model import load_model, sanitize_model_name
 from pattern_lens.prompts import load_text_data
 
 

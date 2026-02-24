@@ -28,7 +28,6 @@ from pattern_lens.consts import (
 	SPINNER_KWARGS,
 	ActivationCacheNp,
 	AttentionMatrix,
-	sanitize_model_name,
 )
 from pattern_lens.figure_util import AttentionMatrixFigureFunc
 from pattern_lens.indexes import (
@@ -37,6 +36,7 @@ from pattern_lens.indexes import (
 	generate_prompts_jsonl,
 )
 from pattern_lens.load_activations import load_activations
+from pattern_lens.load_model import sanitize_model_name
 
 
 class HTConfigMock:

@@ -36,12 +36,18 @@ _SANITIZE_PATTERN: re.Pattern = re.compile(r"[^a-zA-Z0-9\-_.]")
 "regex matching characters that are NOT allowed in sanitized model names"
 
 
-def sanitize_model_name(name: str) -> str:
-	"""Map a model name to only letters, digits, and ``-_.`` for safe use as a directory name.
+def sanitize_name_str(name: str) -> str:
+	"""Map a string to only letters, digits, and ``-_.`` for safe use as a directory name.
 
 	Forward slashes (common in HuggingFace IDs like ``google/gemma-2b``) are
 	replaced with ``-``.  Any remaining disallowed character becomes ``_``.
 	The function is idempotent.
+
+	.. note::
+
+		This is a pure character-level transformation with no knowledge of
+		model identity.  For a canonical filesystem name that resolves
+		aliases, use :func:`pattern_lens.load_model.sanitize_model_name`.
 	"""
 	name = name.replace("/", "-")
 	return _SANITIZE_PATTERN.sub("_", name)
