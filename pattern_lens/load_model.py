@@ -22,6 +22,8 @@ from __future__ import annotations  # noqa: I001
 import warnings
 from typing import Any, Literal
 
+
+# TODO: had to move these out to get beartype in attention motifs to pass. idk if this is the right choice
 import torch  # noqa: TC002
 from transformer_lens import HookedTransformer  # type: ignore[import-untyped] # noqa: TC002
 from transformers import AutoModelForCausalLM  # type: ignore[import-untyped]  # noqa: TC002
