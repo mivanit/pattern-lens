@@ -568,7 +568,8 @@ def get_activations(
 	# compute them
 	if isinstance(model, str):
 		model = load_model(model)
-	model.cfg.model_name_sanitized = model_name
+	if not hasattr(model.cfg, "model_name_sanitized"):
+		model.cfg.model_name_sanitized = model_name
 
 	return compute_activations(  # type: ignore[return-value]
 		prompt=prompt,
