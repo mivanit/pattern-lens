@@ -89,6 +89,7 @@ def test_compute_and_save_figures():
 			self.n_layers = 2
 			self.n_heads = 2
 			self.model_name = "test-model"
+			self.model_name_sanitized = "test-model"
 
 	# Create a simple test attention matrices dict
 	cache_dict = {
