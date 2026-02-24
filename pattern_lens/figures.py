@@ -57,6 +57,11 @@ class HTConfigMock:
 		self.model_name: str
 		self.__dict__.update(kwargs)
 
+	def __getattr__(self, name: str):
+		if name == "model_name_sanitized":
+			return sanitize_model_name(self.model_name)
+		raise AttributeError(name)
+
 	def serialize(self) -> dict:
 		"""serialize the config to json. values which aren't serializable will be converted via `muutils.json_serialize.json_serialize`"""
 		# its fine, we know its a dict
@@ -197,7 +202,7 @@ def compute_and_save_figures(
 
 	# TODO: do something with results
 
-	generate_prompts_jsonl(save_path / model_cfg.model_name)
+	generate_prompts_jsonl(save_path / model_cfg.model_name_sanitized)
 
 
 def process_prompt(
@@ -229,7 +234,7 @@ def process_prompt(
 	activations_path: Path
 	cache: ActivationCacheNp | Float[np.ndarray, "n_layers n_heads n_ctx n_ctx"]
 	activations_path, cache = load_activations(
-		model_name=model_cfg.model_name,
+		model_name=model_cfg.model_name_sanitized,
 		prompt=prompt,
 		save_path=save_path,
 		return_fmt="numpy",
@@ -318,6 +323,7 @@ def figures_main(
 		model_path: Path = save_path_p / model_name
 		with open(model_path / "model_cfg.json", "r") as f:
 			model_cfg = HTConfigMock.load(json.load(f))
+		model_cfg.model_name_sanitized = model_name
 
 	with SpinnerContext(message="loading prompts", **SPINNER_KWARGS):
 		# load prompts

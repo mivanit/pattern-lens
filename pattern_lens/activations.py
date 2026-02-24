@@ -180,6 +180,9 @@ def compute_activations(  # noqa: PLR0915
 	"""
 	# check inputs
 	assert model is not None, "model must be passed"
+	model_name_sanitized: str = getattr(
+		model.cfg, "model_name_sanitized", sanitize_model_name(model.cfg.model_name)
+	)
 	assert "text" in prompt, "prompt must contain 'text' key"
 	prompt_str: str = prompt["text"]
 
@@ -199,7 +202,7 @@ def compute_activations(  # noqa: PLR0915
 	)
 
 	# save metadata
-	prompt_dir: Path = save_path / model.cfg.model_name / "prompts" / prompt["hash"]
+	prompt_dir: Path = save_path / model_name_sanitized / "prompts" / prompt["hash"]
 	prompt_dir.mkdir(parents=True, exist_ok=True)
 	with open(prompt_dir / "prompt.json", "w") as f:
 		json.dump(prompt, f)
@@ -391,6 +394,9 @@ def compute_activations_batched(
 	with tokenization metadata (same mutation as `compute_activations`).
 	"""
 	assert model is not None, "model must be passed"
+	model_name_sanitized: str = getattr(
+		model.cfg, "model_name_sanitized", sanitize_model_name(model.cfg.model_name)
+	)
 	assert len(prompts) > 0, "prompts must not be empty"
 	assert "text" in prompts[0], f"prompt must contain 'text' key: {prompts[0].keys()}"
 	assert "hash" in prompts[0], (
@@ -423,7 +429,7 @@ def compute_activations_batched(
 				tokens=prompt_tokenized,
 			),
 		)
-		prompt_dir: Path = save_path / model.cfg.model_name / "prompts" / p["hash"]
+		prompt_dir: Path = save_path / model_name_sanitized / "prompts" / p["hash"]
 		prompt_dir.mkdir(parents=True, exist_ok=True)
 		with open(prompt_dir / "prompt.json", "w") as f:
 			json.dump(p, f)
@@ -456,7 +462,7 @@ def compute_activations_batched(
 	#                                           discarding meaningless padding positions
 	paths: list[Path] = []
 	for i, (prompt, seq_len) in enumerate(zip(prompts, seq_lens, strict=True)):
-		prompt_dir = save_path / model.cfg.model_name / "prompts" / prompt["hash"]
+		prompt_dir = save_path / model_name_sanitized / "prompts" / prompt["hash"]
 		activations_path: Path = prompt_dir / "activations.npz"
 		cache_np: ActivationCacheNp = {}
 		for k, v in cache_torch.items():
@@ -559,7 +565,7 @@ def get_activations(
 	# compute them
 	if isinstance(model, str):
 		model = HookedTransformer.from_pretrained(model)
-	model.cfg.model_name = model_name
+	model.cfg.model_name_sanitized = model_name
 
 	return compute_activations(  # type: ignore[return-value]
 		prompt=prompt,
@@ -654,8 +660,7 @@ def activations_main(  # noqa: C901, PLR0912, PLR0915
 			model_name_original,
 			device=device_,
 		)
-		model.model_name = model_name  # type: ignore[unresolved-attribute]
-		model.cfg.model_name = model_name
+		model.cfg.model_name_sanitized = model_name
 		n_params: int = sum(p.numel() for p in model.parameters())
 	print(
 		f"loaded {model_name} with {shorten_numerical_to_str(n_params)} ({n_params}) parameters",

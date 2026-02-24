@@ -17,6 +17,7 @@ from unittest import mock
 import numpy as np
 import pytest
 import torch
+from transformer_lens import HookedTransformer, HookedTransformerConfig  # type: ignore[import-untyped]
 
 from pattern_lens.activations import (
 	_save_activations,
@@ -33,8 +34,10 @@ from pattern_lens.load_activations import (
 TEMP_DIR: Path = Path("tests/.temp")
 
 
-class MockHookedTransformerBatched:
+class MockHookedTransformerBatched(HookedTransformer):
 	"""Mock of HookedTransformer that supports both single and batched input.
+
+	Inherits from HookedTransformer so beartype/jaxtyping runtime checks pass.
 
 	Tokenization rule: each character in the text becomes one token, plus a BOS token.
 	So "hello" -> seq_len=6 (1 BOS + 5 chars).
@@ -51,27 +54,27 @@ class MockHookedTransformerBatched:
 		n_layers: int = 2,
 		n_heads: int = 2,
 	):
-		self.model_name = model_name
-		self.cfg = mock.MagicMock()
-		self.cfg.n_layers = n_layers
-		self.cfg.n_heads = n_heads
-		self.cfg.model_name = model_name
+		cfg = HookedTransformerConfig(
+			n_layers=n_layers,
+			d_model=n_heads * 8,
+			n_ctx=256,
+			d_head=8,
+			d_vocab=100,
+			attn_only=True,
+			init_weights=False,
+			model_name=model_name,
+			device="cpu",
+		)
+		super().__init__(cfg, move_to_device=False)
+		# Set up a mock tokenizer for deterministic test control
 		self.tokenizer = mock.MagicMock()
-		# tokenize returns subword strings (no BOS) — matches HuggingFace tokenizer behavior
 		self.tokenizer.tokenize = lambda text: list(text)  # noqa: PLW0108 -- split text into individual characters
 
 	def _seq_len(self, text: str) -> int:
 		"""Actual model sequence length for a text (includes BOS)."""
 		return len(text) + 1
 
-	def parameters(self):
-		"""Return a dummy parameter for activations_main's numel/device checks."""
-		return [torch.zeros(1)]
-
-	def eval(self):
-		return self
-
-	def to_tokens(self, text):
+	def to_tokens(self, text, prepend_bos=None, padding_side=None, move_to_device=None, truncate=None):  # noqa: ARG002
 		"""Return token IDs. Includes BOS, so seq_len = len(text) + 1."""
 		if isinstance(text, str):
 			return torch.zeros(1, self._seq_len(text), dtype=torch.long)
@@ -95,6 +98,7 @@ class MockHookedTransformerBatched:
 		names_filter=None,  # noqa: ARG002
 		return_type=None,  # noqa: ARG002
 		padding_side="right",  # noqa: ARG002
+		**kwargs,  # noqa: ARG002
 	):
 		"""Mock run_with_cache supporting both single string and list of strings.
 

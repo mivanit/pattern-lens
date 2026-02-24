@@ -4,30 +4,39 @@ from unittest import mock
 
 import pytest
 import torch
-from transformer_lens import HookedTransformer  # type: ignore[import-untyped]
+from jaxtyping import TypeCheckError
+from transformer_lens import HookedTransformer, HookedTransformerConfig  # type: ignore[import-untyped]
 
 from pattern_lens.activations import compute_activations, get_activations
 
 TEMP_DIR: Path = Path("tests/.temp")
 
 
-class MockHookedTransformer:
-	"""Mock of HookedTransformer for testing compute_activations and get_activations."""
+class MockHookedTransformer(HookedTransformer):
+	"""Mock of HookedTransformer for testing compute_activations and get_activations.
+
+	Inherits from HookedTransformer so beartype/jaxtyping runtime checks pass.
+	"""
 
 	def __init__(self, model_name="test-model", n_layers=2, n_heads=2):
-		self.model_name = model_name
-		self.cfg = mock.MagicMock()
-		self.cfg.n_layers = n_layers
-		self.cfg.n_heads = n_heads
+		cfg = HookedTransformerConfig(
+			n_layers=n_layers,
+			d_model=n_heads * 8,
+			n_ctx=256,
+			d_head=8,
+			d_vocab=100,
+			attn_only=True,
+			init_weights=False,
+			model_name=model_name,
+			device="cpu",
+		)
+		super().__init__(cfg, move_to_device=False)
 		self.tokenizer = mock.MagicMock()
 		self.tokenizer.tokenize.return_value = ["test", "tokens"]
 
-	def eval(self):
-		return self
-
-	def run_with_cache(self, prompt_str, names_filter=None, return_type=None):  # noqa: ARG002
+	def run_with_cache(self, input, names_filter=None, return_type=None, **kwargs):  # noqa: A002, ARG002
 		"""Mock run_with_cache to return fake attention patterns."""
-		# Create a mock activation cache with appropriately shaped attention patterns
+		prompt_str = input
 		cache = {}
 		for i in range(self.cfg.n_layers):
 			# [1, n_heads, n_ctx, n_ctx] tensor, where n_ctx is len(prompt_str)
@@ -87,14 +96,16 @@ def test_compute_activations_torch_return():
 
 
 def test_compute_activations_invalid_return():
-	"""Test compute_activations with an invalid return_cache value."""
-	# Setup
+	"""Test compute_activations with an invalid return_cache value.
+
+	With jaxtyping+beartype enabled, the invalid literal is rejected at the
+	type-checking layer before the function body runs, raising TypeCheckError.
+	"""
 	temp_dir = TEMP_DIR / "test_compute_activations_invalid_return"
-	model = HookedTransformer.from_pretrained("pythia-14m")
+	model = MockHookedTransformer(n_layers=3, n_heads=4)
 	prompt = {"text": "test prompt", "hash": "testhash123"}
 
-	# Test with an invalid return_cache value
-	with pytest.raises(ValueError, match="invalid return_cache"):
+	with pytest.raises(TypeCheckError):
 		compute_activations(  # type: ignore[call-overload]
 			prompt=prompt,
 			model=model,
