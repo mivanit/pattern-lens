@@ -628,6 +628,7 @@ def test_batched_seq_lens_length_mismatch_raises():
 # Test: activations_main cache-skip path (force=False)
 # ============================================================================
 
+
 def _make_5_prompts() -> list[dict]:
 	"""5 prompts of varying lengths for cache-skip tests."""
 	return [
