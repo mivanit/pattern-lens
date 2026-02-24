@@ -147,7 +147,7 @@
             skip-magic-trailing-comma = false
 
     [tool.pytest.ini_options]
-        adopts = "--jaxtyping-packages=pattern_lens,beartype.beartype"
+        addopts = "--jaxtyping-packages=pattern_lens,beartype.beartype"
         filterwarnings = [
             "ignore: PEP 484 type hint*:beartype.roar._roarwarn.BeartypeDecorHintPep585DeprecationWarning",
         ]
