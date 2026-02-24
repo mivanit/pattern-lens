@@ -98,7 +98,7 @@ def compute_activations(
 	names_filter: Callable[[str], bool] | re.Pattern = ATTN_PATTERN_REGEX,
 	return_cache: Literal["torch"] = "torch",
 	stack_heads: Literal[True] = True,
-) -> tuple[Path, Float[torch.Tensor, "n_layers n_heads n_ctx n_ctx"]]: ...
+) -> tuple[Path, Float[torch.Tensor, "batch n_layers n_heads n_ctx n_ctx"]]: ...
 @overload
 def compute_activations(
 	prompt: dict,
@@ -107,7 +107,7 @@ def compute_activations(
 	names_filter: Callable[[str], bool] | re.Pattern = ATTN_PATTERN_REGEX,
 	return_cache: Literal["numpy"] = "numpy",
 	stack_heads: Literal[True] = True,
-) -> tuple[Path, Float[np.ndarray, "n_layers n_heads n_ctx n_ctx"]]: ...
+) -> tuple[Path, Float[np.ndarray, "batch n_layers n_heads n_ctx n_ctx"]]: ...
 # return dicts in numpy or torch form
 @overload
 def compute_activations(
@@ -139,8 +139,8 @@ def compute_activations(  # noqa: PLR0915
 	Path,
 	ActivationCacheNp
 	| ActivationCache
-	| Float[np.ndarray, "n_layers n_heads n_ctx n_ctx"]
-	| Float[torch.Tensor, "n_layers n_heads n_ctx n_ctx"]
+	| Float[np.ndarray, "batch n_layers n_heads n_ctx n_ctx"]
+	| Float[torch.Tensor, "batch n_layers n_heads n_ctx n_ctx"]
 	| None,
 ]:
 	"""compute activations for a single prompt and save to disk
@@ -173,7 +173,7 @@ def compute_activations(  # noqa: PLR0915
 		Union[
 			None,
 			ActivationCacheNp, ActivationCache,
-			Float[np.ndarray, "n_layers n_heads n_ctx n_ctx"], Float[torch.Tensor, "n_layers n_heads n_ctx n_ctx"],
+			Float[np.ndarray, "batch n_layers n_heads n_ctx n_ctx"], Float[torch.Tensor, "batch n_layers n_heads n_ctx n_ctx"],
 		]
 	]
 	```
@@ -242,7 +242,7 @@ def compute_activations(  # noqa: PLR0915
 		)
 
 		# stack heads
-		patterns_stacked: Float[torch.Tensor, "n_layers n_heads n_ctx n_ctx"] = (
+		patterns_stacked: Float[torch.Tensor, "batch n_layers n_heads n_ctx n_ctx"] = (
 			torch.stack([cache_torch[k] for k in head_keys], dim=1)
 		)
 		# check shape
@@ -251,7 +251,7 @@ def compute_activations(  # noqa: PLR0915
 			f"unexpected shape: {patterns_stacked.shape[:3] = } ({pattern_shape_no_ctx = }), expected {(1, n_layers, model.cfg.n_heads) = }"
 		)
 
-		patterns_stacked_np: Float[np.ndarray, "n_layers n_heads n_ctx n_ctx"] = (
+		patterns_stacked_np: Float[np.ndarray, "batch n_layers n_heads n_ctx n_ctx"] = (
 			patterns_stacked.cpu().numpy()
 		)
 
@@ -559,6 +559,7 @@ def get_activations(
 	# compute them
 	if isinstance(model, str):
 		model = HookedTransformer.from_pretrained(model)
+		model.cfg.model_name = model_name
 
 	return compute_activations(  # type: ignore[return-value]
 		prompt=prompt,
