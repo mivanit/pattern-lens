@@ -5,13 +5,12 @@ from __future__ import annotations
 import base64
 import hashlib
 import json
+import warnings
 from pathlib import Path  # noqa: TC003
-from typing import Literal, overload
 
 import numpy as np
-import torch
 
-from pattern_lens.consts import ReturnCache, sanitize_model_name
+from pattern_lens.consts import sanitize_model_name
 
 
 class GetActivationsError(ValueError):
@@ -96,49 +95,48 @@ def augment_prompt_with_hash(prompt: dict) -> dict:
 	return prompt
 
 
-@overload
 def load_activations(
 	model_name: str,
 	prompt: dict,
 	save_path: Path,
-	return_fmt: Literal["torch"] = "torch",
-) -> tuple[Path, dict[str, torch.Tensor]]: ...
-@overload
-def load_activations(
-	model_name: str,
-	prompt: dict,
-	save_path: Path,
-	return_fmt: Literal["numpy"] = "numpy",
-) -> tuple[Path, dict[str, np.ndarray]]: ...
-def load_activations(
-	model_name: str,
-	prompt: dict,
-	save_path: Path,
-	return_fmt: ReturnCache = "torch",
-) -> tuple[Path, dict[str, torch.Tensor] | dict[str, np.ndarray]]:
+	return_fmt: str | None = None,
+) -> tuple[Path, dict[str, np.ndarray]]:
 	"""load activations for a prompt and model, from an npz file
+
+	Always returns numpy arrays. The ``return_fmt`` parameter is deprecated;
+	pass ``None`` (the default) for the standard path. Passing ``"numpy"``
+	still works but emits a `DeprecationWarning`. Any other value raises
+	`ValueError`.
 
 	# Parameters:
 	- `model_name : str`
 	- `prompt : dict`
 	- `save_path : Path`
-	- `return_fmt : Literal["torch", "numpy"]`
-		(defaults to `"torch"`)
+	- `return_fmt : str | None`
+		deprecated. ``None`` is the only non-deprecated value.
+		(defaults to `None`)
 
 	# Returns:
-	- `tuple[Path, dict[str, torch.Tensor]|dict[str, np.ndarray]]`
+	- `tuple[Path, dict[str, np.ndarray]]`
 		the path to the activations file and the activations as a dictionary
-		of numpy arrays or torch tensors, depending on `return_fmt`
+		of numpy arrays
 
 	# Raises:
 	- `ActivationsMissingError` : if the activations file is missing
-	- `ValueError` : if `return_fmt` is not `"torch"` or `"numpy"`
+	- `ValueError` : if `return_fmt` is not `None` or `"numpy"`
 	"""
-	if return_fmt not in ("torch", "numpy"):
-		msg = f"Invalid return_fmt: {return_fmt}, expected 'torch' or 'numpy'"
-		raise ValueError(
-			msg,
-		)
+	if return_fmt is not None:
+		if return_fmt == "numpy":
+			warnings.warn(
+				"return_fmt is deprecated, load_activations always returns numpy now. "
+				"Pass return_fmt=None (the default) instead.",
+				DeprecationWarning,
+				stacklevel=2,
+			)
+		else:
+			msg = f"Invalid return_fmt: {return_fmt!r}. load_activations always returns numpy now; pass return_fmt=None (the default)."
+			raise ValueError(msg)
+
 	model_name = sanitize_model_name(model_name)
 	augment_prompt_with_hash(prompt)
 
@@ -157,13 +155,9 @@ def load_activations(
 		msg = f"Activations file {activations_path} does not exist"
 		raise ActivationsMissingError(msg)
 
-	cache: dict
-
+	cache: dict[str, np.ndarray]
 	with np.load(activations_path) as npz_data:
-		if return_fmt == "numpy":
-			cache = dict(npz_data.items())
-		elif return_fmt == "torch":
-			cache = {k: torch.from_numpy(v) for k, v in npz_data.items()}
+		cache = dict(npz_data.items())
 
 	return activations_path, cache
 

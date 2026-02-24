@@ -37,7 +37,13 @@ class MockHookedTransformer(HookedTransformer):
 		self.tokenizer = mock.MagicMock()
 		self.tokenizer.tokenize.return_value = ["test", "tokens"]
 
-	def run_with_cache(self, input, names_filter=None, return_type=None, **kwargs):  # noqa: A002, ARG002
+	def run_with_cache(
+		self,
+		input,  # noqa: A002
+		names_filter=None,  # noqa: ARG002
+		return_type=None,  # noqa: ARG002
+		**kwargs: object,  # noqa: ARG002
+	):
 		"""Mock run_with_cache to return fake attention patterns."""
 		prompt_str = input
 		cache = {}
@@ -120,26 +126,32 @@ def test_compute_activations_invalid_return():
 
 
 def test_get_activations_torch_return():
-	"""Test get_activations with return_cache="torch" and mocked load_activations."""
+	"""Test get_activations with return_cache="torch" and mocked load_activations.
+
+	load_activations always returns numpy arrays now; get_activations
+	should convert them to torch tensors when return_cache="torch".
+	"""
+	import numpy as np  # noqa: PLC0415
+
 	temp_dir = TEMP_DIR / "test_get_activations_torch_return"
 	prompt = {"text": "test prompt", "hash": "testhash123"}
 	model = MockHookedTransformer(model_name="test-model")
 
-	# Create a mock for load_activations that returns torch tensors
+	# load_activations now always returns numpy arrays
 	with mock.patch("pattern_lens.activations.load_activations") as mock_load:
 		mock_cache = {
-			"blocks.0.attn.hook_pattern": torch.rand(
+			"blocks.0.attn.hook_pattern": np.random.rand(
 				1,
 				2,
 				len(prompt["text"]),
 				len(prompt["text"]),
-			),
-			"blocks.1.attn.hook_pattern": torch.rand(
+			).astype(np.float32),
+			"blocks.1.attn.hook_pattern": np.random.rand(
 				1,
 				2,
 				len(prompt["text"]),
 				len(prompt["text"]),
-			),
+			).astype(np.float32),
 		}
 		mock_load.return_value = (Path("mock/path"), mock_cache)
 
@@ -151,7 +163,7 @@ def test_get_activations_torch_return():
 			return_cache="torch",
 		)
 
-		# Check that we got torch tensors back
+		# Check that get_activations converted numpy to torch tensors
 		assert isinstance(cache, dict)
 		for key, value in cache.items():
 			assert isinstance(key, str)

@@ -4,7 +4,6 @@ import re
 from typing import Literal
 
 import numpy as np
-import torch
 from jaxtyping import Float
 
 AttentionMatrix = Float[np.ndarray, "n_ctx n_ctx"]
@@ -12,9 +11,6 @@ AttentionMatrix = Float[np.ndarray, "n_ctx n_ctx"]
 
 ActivationCacheNp = dict[str, np.ndarray]
 "type alias for a cache of activations, like a transformer_lens.ActivationCache"
-
-ActivationCacheTorch = dict[str, torch.Tensor]
-"type alias for a cache of activations, like a transformer_lens.ActivationCache but without the extras. useful for when loading from an npz file"
 
 DATA_DIR: str = "attn_data"
 "default directory for attention data"

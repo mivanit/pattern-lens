@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 import urllib.error
-from pathlib import Path
+from pathlib import Path  # noqa: TC003
 from unittest.mock import MagicMock, patch
 
 import pytest
@@ -39,6 +39,8 @@ SAMPLE_TABLE: dict[str, ModelInfo] = {
 
 
 class TestGetModelParams:
+	"""Tests for get_model_params lookup."""
+
 	def test_get_model_params_found(self) -> None:
 		"""Lookup known model returns correct count."""
 		assert get_model_params("gpt2-small", SAMPLE_TABLE) == 85_000_000
@@ -55,6 +57,8 @@ class TestGetModelParams:
 
 
 class TestFetchModelTable:
+	"""Tests for fetch_model_table cache and download logic."""
+
 	def test_fetch_model_table_from_cache(self, tmp_path: Path) -> None:
 		"""Reads cache file, no network call."""
 		cache_path: Path = tmp_path / "model_table.csv"
@@ -107,6 +111,8 @@ class TestFetchModelTable:
 
 
 class TestDownloadCSV:
+	"""Tests for _download_csv network handling."""
+
 	@patch("pattern_lens.model_table.urllib.request.urlopen")
 	def test_download_csv_network_failure(
 		self, mock_urlopen: MagicMock, tmp_path: Path

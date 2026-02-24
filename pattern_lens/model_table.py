@@ -31,7 +31,7 @@ def _resolve_cache_path() -> Path:
 	presence of a ``.meta/`` directory next to the package root), otherwise
 	falls back to ``~/.cache/pattern_lens/``.
 	"""
-	import pattern_lens
+	import pattern_lens  # noqa: PLC0415
 
 	pkg_root: Path = Path(str(importlib.resources.files(pattern_lens)))
 	repo_root: Path = pkg_root.parent
@@ -111,10 +111,11 @@ def get_model_params(model_name: str, table: dict[str, ModelInfo]) -> int:
 	"""
 	if model_name in table:
 		return table[model_name].n_params
-	raise KeyError(
+	msg = (
 		f"Model {model_name!r} not found in model table. "
 		f"Available models: {sorted(table.keys())}"
 	)
+	raise KeyError(msg)
 
 
 def main() -> None:

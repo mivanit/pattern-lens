@@ -80,10 +80,10 @@ class MockHookedTransformerBatched(HookedTransformer):
 	def to_tokens(
 		self,
 		text,
-		prepend_bos=None,
-		padding_side=None,
-		move_to_device=None,
-		truncate=None,
+		prepend_bos=None,  # noqa: ARG002
+		padding_side=None,  # noqa: ARG002
+		move_to_device=None,  # noqa: ARG002
+		truncate=None,  # noqa: ARG002
 	):
 		"""Return token IDs. Includes BOS, so seq_len = len(text) + 1."""
 		if isinstance(text, str):
@@ -108,7 +108,7 @@ class MockHookedTransformerBatched(HookedTransformer):
 		names_filter=None,  # noqa: ARG002
 		return_type=None,  # noqa: ARG002
 		padding_side="right",  # noqa: ARG002
-		**kwargs,  # noqa: ARG002
+		**kwargs: object,  # noqa: ARG002
 	):
 		"""Mock run_with_cache supporting both single string and list of strings.
 

@@ -47,7 +47,7 @@ class HTConfigMock:
 	- `n_heads: int`
 	- `model_name: str`
 
-	we do this to avoid having to import `torch` and `transformer_lens`, since this would have to be done for each process in the parallelization and probably slows things down significantly
+	we do this to avoid having to import `transformer_lens`, since this would have to be done for each process in the parallelization and probably slows things down significantly
 	"""
 
 	def __init__(self, **kwargs: dict[str, str | int]) -> None:
@@ -57,7 +57,8 @@ class HTConfigMock:
 		self.model_name: str
 		self.__dict__.update(kwargs)
 
-	def __getattr__(self, name: str):
+	def __getattr__(self, name: str) -> object:
+		"""Fall back to computing ``model_name_sanitized`` from ``model_name``."""
 		if name == "model_name_sanitized":
 			return sanitize_model_name(self.model_name)
 		raise AttributeError(name)
@@ -237,7 +238,6 @@ def process_prompt(
 		model_name=model_cfg.model_name_sanitized,
 		prompt=prompt,
 		save_path=save_path,
-		return_fmt="numpy",
 	)
 
 	# compute and save the figures

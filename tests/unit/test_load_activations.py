@@ -1,6 +1,7 @@
 # tests/unit/test_load_activations.py
 import json
 import typing
+import warnings
 from pathlib import Path
 from unittest import mock
 
@@ -69,7 +70,7 @@ def test_load_activations_success():
 	}
 	np.savez(prompt_dir / "activations.npz", **fake_activations)  # type: ignore[arg-type]
 
-	# Test loading with numpy format
+	# Test loading (always returns numpy)
 	with mock.patch(
 		"pattern_lens.load_activations.compare_prompt_to_loaded",
 	) as mock_compare:
@@ -77,7 +78,6 @@ def test_load_activations_success():
 			model_name=model_name,
 			prompt=prompt,
 			save_path=temp_dir,
-			return_fmt="numpy",
 		)
 
 		# Check that the path is correct
@@ -105,7 +105,6 @@ def test_load_activations_errors():
 			model_name=model_name,
 			prompt=prompt,
 			save_path=temp_dir,
-			return_fmt="numpy",
 		)
 
 	# Create the necessary directory structure
@@ -123,7 +122,6 @@ def test_load_activations_errors():
 			model_name=model_name,
 			prompt=prompt,
 			save_path=temp_dir,
-			return_fmt="numpy",
 		)
 
 	# Fix the prompt file
@@ -136,7 +134,6 @@ def test_load_activations_errors():
 			model_name=model_name,
 			prompt=prompt,
 			save_path=temp_dir,
-			return_fmt="numpy",
 		)
 
 
@@ -158,22 +155,39 @@ def test_load_activations_missing_npz_is_subclass_of_file_not_found():
 			model_name=model_name,
 			prompt=prompt,
 			save_path=temp_dir,
-			return_fmt="numpy",
 		)
 	assert isinstance(exc_info.value, FileNotFoundError)
 
 
-def test_load_activations_invalid_return_fmt():
-	"""Test that invalid return_fmt raises ValueError or TypeCheckError.
+def test_load_activations_return_fmt_deprecation():
+	"""Test that return_fmt='numpy' emits DeprecationWarning."""
+	with warnings.catch_warnings(record=True) as w:
+		warnings.simplefilter("always")
+		with pytest.raises(ActivationsMissingError):
+			load_activations(
+				model_name="test-model",
+				prompt={"text": "test", "hash": "test"},
+				save_path=Path("/nonexistent"),
+				return_fmt="numpy",
+			)
+		deprecation_warnings = [
+			x for x in w if issubclass(x.category, DeprecationWarning)
+		]
+		assert len(deprecation_warnings) == 1
+		assert "return_fmt is deprecated" in str(deprecation_warnings[0].message)
 
-	With jaxtyping's import hook active, beartype rejects the invalid
-	return_fmt before the function body runs, raising TypeCheckError
-	instead of ValueError.
-	"""
-	with pytest.raises(
-		(ValueError, TypeError, Exception), match=r"return_fmt|Invalid return_fmt"
-	):
-		load_activations(  # type: ignore[no-matching-overload]
+
+def test_load_activations_return_fmt_invalid():
+	"""Test that invalid return_fmt (including 'torch') raises ValueError."""
+	with pytest.raises(ValueError, match="Invalid return_fmt"):
+		load_activations(
+			model_name="test-model",
+			prompt={"text": "test", "hash": "test"},
+			save_path=Path("/nonexistent"),
+			return_fmt="torch",
+		)
+	with pytest.raises(ValueError, match="Invalid return_fmt"):
+		load_activations(
 			model_name="test-model",
 			prompt={"text": "test", "hash": "test"},
 			save_path=Path("/nonexistent"),

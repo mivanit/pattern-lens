@@ -553,7 +553,7 @@ def get_activations(
 				return prompt_dir / "activations.npz", None
 		else:
 			try:
-				path, cache = load_activations(
+				path, cache_np = load_activations(
 					model_name=model_name,
 					prompt=prompt,
 					save_path=save_path,
@@ -561,7 +561,9 @@ def get_activations(
 			except ActivationsMissingError:
 				pass
 			else:
-				return path, cache
+				if return_cache == "torch":
+					return path, {k: torch.from_numpy(v) for k, v in cache_np.items()}
+				return path, cache_np
 
 	# compute them
 	if isinstance(model, str):
