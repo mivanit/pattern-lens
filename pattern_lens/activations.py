@@ -62,6 +62,7 @@ from pattern_lens.indexes import (
 	generate_prompts_jsonl,
 	write_html_index,
 )
+from pattern_lens.load_model import load_model
 from pattern_lens.load_activations import (
 	ActivationsMissingError,
 	activations_exist,
@@ -516,7 +517,7 @@ def get_activations(
 	- `prompt : dict`
 		expected to contain the 'text' key
 	- `model : HookedTransformer | str`
-		either a `HookedTransformer` or a string model name, to be loaded with `HookedTransformer.from_pretrained`
+		either a `HookedTransformer` or a string model name, to be loaded with `load_model`
 	- `save_path : Path`
 		path to save the activations to (and load from)
 		(defaults to `Path(DATA_DIR)`)
@@ -564,7 +565,7 @@ def get_activations(
 
 	# compute them
 	if isinstance(model, str):
-		model = HookedTransformer.from_pretrained(model)
+		model = load_model(model)
 	model.cfg.model_name_sanitized = model_name
 
 	return compute_activations(  # type: ignore[return-value]
@@ -656,11 +657,7 @@ def activations_main(  # noqa: C901, PLR0912, PLR0915
 		print(f"  model name sanitized: {model_name_original!r} -> {model_name!r}")
 
 	with SpinnerContext(message="loading model", **SPINNER_KWARGS):
-		model: HookedTransformer = HookedTransformer.from_pretrained(
-			model_name_original,
-			device=device_,
-		)
-		model.cfg.model_name_sanitized = model_name
+		model: HookedTransformer = load_model(model_name_original, device=device_)
 		n_params: int = sum(p.numel() for p in model.parameters())
 	print(
 		f"loaded {model_name} with {shorten_numerical_to_str(n_params)} ({n_params}) parameters",

@@ -654,7 +654,7 @@ def _run_activations_main_mocked(
 	mock_model = MockHookedTransformerBatched()
 
 	with (
-		mock.patch("pattern_lens.activations.HookedTransformer") as mock_ht_cls,
+		mock.patch("pattern_lens.activations.load_model", return_value=mock_model),
 		mock.patch("pattern_lens.activations.load_text_data", return_value=prompts),
 		mock.patch("pattern_lens.activations.write_html_index"),
 		mock.patch("pattern_lens.activations.generate_models_jsonl"),
@@ -666,7 +666,6 @@ def _run_activations_main_mocked(
 			wraps=compute_activations_batched,
 		) as spy_batched,
 	):
-		mock_ht_cls.from_pretrained.return_value = mock_model
 
 		activations_main(
 			model_name="test-model",
