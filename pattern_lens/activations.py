@@ -25,6 +25,7 @@ import argparse
 import gc
 import json
 import re
+import zipfile
 from collections.abc import Callable
 from dataclasses import asdict
 from pathlib import Path
@@ -293,12 +294,47 @@ def compute_activations(  # noqa: PLR0915
 				raise ValueError(msg)
 
 
+def _save_activations(
+	activations_path: Path,
+	cache_np: ActivationCacheNp,
+	compress_level: int = 6,
+) -> Path:
+	"""Save activations as ``.npz`` with configurable compression.
+
+	Uses the same format as :func:`numpy.savez_compressed` (ZIP of ``.npy``
+	files), so the output is fully compatible with :func:`numpy.load`.
+
+	# Parameters:
+	 - `activations_path : Path`
+	   destination path (must end in ``.npz``)
+	 - `cache_np : ActivationCacheNp`
+	   mapping of activation names to numpy arrays
+	 - `compress_level : int`
+	   0 = ``ZIP_STORED`` (no compression, fastest),
+	   1-9 = ``ZIP_DEFLATED`` at given level.
+	   Default 6 matches ``np.savez_compressed``.
+	"""
+	compression = zipfile.ZIP_STORED if compress_level == 0 else zipfile.ZIP_DEFLATED
+	compresslevel = None if compress_level == 0 else compress_level
+	with zipfile.ZipFile(
+		activations_path,
+		"w",
+		compression=compression,
+		compresslevel=compresslevel,
+	) as zf:
+		for key, val in cache_np.items():
+			with zf.open(key + ".npy", "w", force_zip64=True) as fid:
+				np.lib.format.write_array(fid, np.asanyarray(val))
+	return activations_path
+
+
 def compute_activations_batched(
 	prompts: list[dict],
 	model: HookedTransformer,
 	save_path: Path = Path(DATA_DIR),
 	names_filter: Callable[[str], bool] | re.Pattern = ATTN_PATTERN_REGEX,
 	seq_lens: list[int] | None = None,
+	compress_level: int = 6,
 ) -> list[Path]:
 	"""compute and save activations for a batch of prompts in a single forward pass
 
@@ -430,10 +466,7 @@ def compute_activations_batched(
 			)
 			cache_np[k] = v[i : i + 1, :, :seq_len, :seq_len].detach().cpu().numpy()
 
-		np.savez_compressed(
-			activations_path,
-			**cache_np,  # type: ignore[arg-type]
-		)
+		_save_activations(activations_path, cache_np, compress_level)
 		paths.append(activations_path)
 
 	return paths
@@ -553,6 +586,7 @@ def activations_main(  # noqa: C901, PLR0912, PLR0915
 	stacked_heads: bool = False,
 	device: str | torch.device = DEFAULT_DEVICE,
 	batch_size: int = 32,
+	compress_level: int = 6,
 ) -> None:
 	"""main function for computing activations
 
@@ -722,6 +756,7 @@ def activations_main(  # noqa: C901, PLR0912, PLR0915
 					model=model,
 					save_path=save_path_p,
 					seq_lens=batch_seq_lens,
+					compress_level=compress_level,
 				)
 				pbar.update(len(batch))
 	else:
@@ -809,6 +844,15 @@ def main() -> None:
 			default=32,
 		)
 
+		# compression level for saved activations
+		arg_parser.add_argument(
+			"--compress-level",
+			type=int,
+			required=False,
+			help="Compression level for saved .npz files: 0 = no compression (fastest), 1-9 = zlib level. Default 6 matches np.savez_compressed",
+			default=6,
+		)
+
 		# force overwrite
 		arg_parser.add_argument(
 			"--force",
@@ -885,6 +929,7 @@ def main() -> None:
 			stacked_heads=args.stacked_heads,
 			device=args.device,
 			batch_size=args.batch_size,
+			compress_level=args.compress_level,
 		)
 		# defense-in-depth: collect any remaining torch objects from activations_main
 		gc.collect()
