@@ -5,7 +5,10 @@ from unittest import mock
 import pytest
 import torch
 from jaxtyping import TypeCheckError
-from transformer_lens import HookedTransformer, HookedTransformerConfig  # type: ignore[import-untyped]
+from transformer_lens import (  # type: ignore[import-untyped]
+	HookedTransformer,
+	HookedTransformerConfig,
+)
 
 from pattern_lens.activations import compute_activations, get_activations
 

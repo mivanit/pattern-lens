@@ -17,7 +17,10 @@ from unittest import mock
 import numpy as np
 import pytest
 import torch
-from transformer_lens import HookedTransformer, HookedTransformerConfig  # type: ignore[import-untyped]
+from transformer_lens import (  # type: ignore[import-untyped]
+	HookedTransformer,
+	HookedTransformerConfig,
+)
 
 from pattern_lens.activations import (
 	_save_activations,
@@ -74,7 +77,14 @@ class MockHookedTransformerBatched(HookedTransformer):
 		"""Actual model sequence length for a text (includes BOS)."""
 		return len(text) + 1
 
-	def to_tokens(self, text, prepend_bos=None, padding_side=None, move_to_device=None, truncate=None):  # noqa: ARG002
+	def to_tokens(
+		self,
+		text,
+		prepend_bos=None,
+		padding_side=None,
+		move_to_device=None,
+		truncate=None,
+	):
 		"""Return token IDs. Includes BOS, so seq_len = len(text) + 1."""
 		if isinstance(text, str):
 			return torch.zeros(1, self._seq_len(text), dtype=torch.long)
@@ -666,7 +676,6 @@ def _run_activations_main_mocked(
 			wraps=compute_activations_batched,
 		) as spy_batched,
 	):
-
 		activations_main(
 			model_name="test-model",
 			save_path=str(save_path),

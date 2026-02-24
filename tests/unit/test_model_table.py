@@ -15,7 +15,6 @@ from pattern_lens.model_table import (
 	get_model_params,
 )
 
-
 # ---------------------------------------------------------------------------
 # Sample data
 # ---------------------------------------------------------------------------
@@ -62,12 +61,8 @@ class TestFetchModelTable:
 		cache_path.write_text(SAMPLE_CSV)
 
 		with (
-			patch(
-				"pattern_lens.model_table.MODEL_TABLE_CACHE", cache_path
-			),
-			patch(
-				"pattern_lens.model_table._download_csv"
-			) as mock_download,
+			patch("pattern_lens.model_table.MODEL_TABLE_CACHE", cache_path),
+			patch("pattern_lens.model_table._download_csv") as mock_download,
 		):
 			table: dict[str, ModelInfo] = fetch_model_table()
 			mock_download.assert_not_called()
@@ -79,9 +74,7 @@ class TestFetchModelTable:
 		# cache doesn't exist yet, so it should download
 
 		with (
-			patch(
-				"pattern_lens.model_table.MODEL_TABLE_CACHE", cache_path
-			),
+			patch("pattern_lens.model_table.MODEL_TABLE_CACHE", cache_path),
 			patch(
 				"pattern_lens.model_table._download_csv",
 				return_value=SAMPLE_CSV,
@@ -97,9 +90,7 @@ class TestFetchModelTable:
 		cache_path.write_text(SAMPLE_CSV)
 
 		with (
-			patch(
-				"pattern_lens.model_table.MODEL_TABLE_CACHE", cache_path
-			),
+			patch("pattern_lens.model_table.MODEL_TABLE_CACHE", cache_path),
 			patch(
 				"pattern_lens.model_table._download_csv",
 				return_value=SAMPLE_CSV,

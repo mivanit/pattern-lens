@@ -62,13 +62,13 @@ from pattern_lens.indexes import (
 	generate_prompts_jsonl,
 	write_html_index,
 )
-from pattern_lens.load_model import load_model
 from pattern_lens.load_activations import (
 	ActivationsMissingError,
 	activations_exist,
 	augment_prompt_with_hash,
 	load_activations,
 )
+from pattern_lens.load_model import load_model
 from pattern_lens.prompts import load_text_data
 
 
