@@ -495,7 +495,7 @@ def get_activations(
 	save_path: Path = Path(DATA_DIR),
 	allow_disk_cache: bool = True,
 	return_cache: Literal["torch"] = "torch",
-) -> tuple[Path, ActivationCache]: ...
+) -> tuple[Path, dict[str, torch.Tensor] | ActivationCache]: ...
 @overload
 def get_activations(
 	prompt: dict,
@@ -510,7 +510,7 @@ def get_activations(
 	save_path: Path = Path(DATA_DIR),
 	allow_disk_cache: bool = True,
 	return_cache: ReturnCache = "numpy",
-) -> tuple[Path, ActivationCacheNp | ActivationCache | None]:
+) -> tuple[Path, ActivationCacheNp | dict[str, torch.Tensor] | ActivationCache | None]:
 	"""given a prompt and a model, save or load activations
 
 	# Parameters:
@@ -529,7 +529,7 @@ def get_activations(
 		(defaults to `"numpy"`)
 
 	# Returns:
-	- `tuple[Path, ActivationCacheNp | ActivationCache | None]`
+	- `tuple[Path, ActivationCacheNp | dict[str, torch.Tensor] | ActivationCache | None]`
 		the path to the activations and the cache if `return_cache is not None`
 
 	"""

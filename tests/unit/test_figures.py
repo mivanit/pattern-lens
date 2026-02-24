@@ -6,7 +6,11 @@ import numpy as np
 
 from pattern_lens.attn_figure_funcs import ATTENTION_MATRIX_FIGURE_FUNCS
 from pattern_lens.figure_util import save_matrix_wrapper
-from pattern_lens.figures import compute_and_save_figures, process_single_head
+from pattern_lens.figures import (
+	HTConfigMock,
+	compute_and_save_figures,
+	process_single_head,
+)
 
 TEMP_DIR: Path = Path("tests/.temp")
 
@@ -83,13 +87,7 @@ def test_compute_and_save_figures():
 	prompt_dir = temp_dir / "test-model" / "prompts" / "test-hash"
 	prompt_dir.mkdir(parents=True, exist_ok=True)
 
-	# Create a mock model config
-	class MockConfig:
-		def __init__(self):
-			self.n_layers = 2
-			self.n_heads = 2
-			self.model_name = "test-model"
-			self.model_name_sanitized = "test-model"
+	model_cfg = HTConfigMock(n_layers=2, n_heads=2, model_name="test-model")
 
 	# Create a simple test attention matrices dict
 	cache_dict = {
@@ -115,7 +113,7 @@ def test_compute_and_save_figures():
 
 		# Call compute_and_save_figures with dict cache
 		compute_and_save_figures(
-			model_cfg=MockConfig(),
+			model_cfg=model_cfg,
 			activations_path=prompt_dir / "activations.npz",
 			cache=cache_dict,
 			figure_funcs=ATTENTION_MATRIX_FIGURE_FUNCS,
@@ -138,7 +136,7 @@ def test_compute_and_save_figures():
 
 		# Call compute_and_save_figures with array cache
 		compute_and_save_figures(
-			model_cfg=MockConfig(),
+			model_cfg=model_cfg,
 			activations_path=prompt_dir / "activations.npy",
 			cache=cache_array,
 			figure_funcs=ATTENTION_MATRIX_FIGURE_FUNCS,
