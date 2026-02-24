@@ -305,14 +305,14 @@ def _save_activations(
 	files), so the output is fully compatible with :func:`numpy.load`.
 
 	# Parameters:
-	 - `activations_path : Path`
-	   destination path (must end in ``.npz``)
-	 - `cache_np : ActivationCacheNp`
-	   mapping of activation names to numpy arrays
-	 - `compress_level : int`
-	   0 = ``ZIP_STORED`` (no compression, fastest),
-	   1-9 = ``ZIP_DEFLATED`` at given level.
-	   Default 6 matches ``np.savez_compressed``.
+	- `activations_path : Path`
+		destination path (must end in ``.npz``)
+	- `cache_np : ActivationCacheNp`
+		mapping of activation names to numpy arrays
+	- `compress_level : int`
+		0 = ``ZIP_STORED`` (no compression, fastest),
+		1-9 = ``ZIP_DEFLATED`` at given level.
+		Default 6 matches ``np.savez_compressed``.
 	"""
 	compression = zipfile.ZIP_STORED if compress_level == 0 else zipfile.ZIP_DEFLATED
 	compresslevel = None if compress_level == 0 else compress_level

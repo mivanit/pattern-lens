@@ -974,7 +974,7 @@ def test_activations_main_multiple_batches():
 
 
 @pytest.fixture
-def _sample_cache_np() -> dict[str, np.ndarray]:
+def sample_cache_np() -> dict[str, np.ndarray]:
 	"""Small cache_np for testing save/load round-trips."""
 	rng = np.random.default_rng(42)
 	return {
@@ -988,21 +988,21 @@ def _sample_cache_np() -> dict[str, np.ndarray]:
 
 
 @pytest.mark.parametrize("compress_level", [0, 1, 6])
-def test_save_activations_roundtrip(tmp_path, _sample_cache_np, compress_level):
+def test_save_activations_roundtrip(tmp_path, sample_cache_np, compress_level):
 	"""Files saved by _save_activations are loadable by np.load with correct contents."""
 	path = tmp_path / "activations.npz"
-	_save_activations(path, _sample_cache_np, compress_level=compress_level)
+	_save_activations(path, sample_cache_np, compress_level=compress_level)
 
 	loaded = dict(np.load(path))
-	assert set(loaded.keys()) == set(_sample_cache_np.keys())
-	for key in _sample_cache_np:
-		np.testing.assert_array_equal(loaded[key], _sample_cache_np[key])
+	assert set(loaded.keys()) == set(sample_cache_np.keys())
+	for key in sample_cache_np:
+		np.testing.assert_array_equal(loaded[key], sample_cache_np[key])
 
 
-def test_save_activations_level0_larger_than_level6(tmp_path, _sample_cache_np):
+def test_save_activations_level0_larger_than_level6(tmp_path, sample_cache_np):
 	"""Level 0 (no compression) produces larger files than level 6."""
 	path_0 = tmp_path / "level0.npz"
 	path_6 = tmp_path / "level6.npz"
-	_save_activations(path_0, _sample_cache_np, compress_level=0)
-	_save_activations(path_6, _sample_cache_np, compress_level=6)
+	_save_activations(path_0, sample_cache_np, compress_level=0)
+	_save_activations(path_6, sample_cache_np, compress_level=6)
 	assert path_0.stat().st_size > path_6.stat().st_size
