@@ -2,45 +2,12 @@ from pathlib import Path
 from unittest import mock
 
 import numpy as np
-import torch
 from transformer_lens import HookedTransformer  # type: ignore[import-untyped]
 
 from pattern_lens.activations import compute_activations, get_activations
 from pattern_lens.load_activations import ActivationsMissingError
 
 TEMP_DIR: Path = Path("tests/.temp")
-
-
-class MockHookedTransformer:
-	"""Mock of HookedTransformer for testing compute_activations and get_activations."""
-
-	def __init__(self, model_name="test-model", n_layers=2, n_heads=2):
-		self.model_name = model_name
-		self.cfg = mock.MagicMock()
-		self.cfg.n_layers = n_layers
-		self.cfg.n_heads = n_heads
-		self.tokenizer = mock.MagicMock()
-		self.tokenizer.tokenize.return_value = ["test", "tokens"]
-
-	def eval(self):
-		return self
-
-	def run_with_cache(self, prompt_str, names_filter=None, return_type=None):  # noqa: ARG002
-		"""Mock run_with_cache to return fake attention patterns."""
-		# Create a mock activation cache with appropriately shaped attention patterns
-		cache: dict[str, torch.Tensor] = {}
-		for i in range(self.cfg.n_layers):
-			# [1, n_heads, n_ctx, n_ctx] tensor, where n_ctx is len(prompt_str)
-			n_ctx: int = len(prompt_str)
-			attn_pattern: torch.Tensor = torch.rand(
-				1,
-				self.cfg.n_heads,
-				n_ctx,
-				n_ctx,
-			).float()
-			cache[f"blocks.{i}.attn.hook_pattern"] = attn_pattern
-
-		return None, cache
 
 
 def test_compute_activations_stack_heads():

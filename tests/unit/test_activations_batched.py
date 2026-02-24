@@ -628,18 +628,6 @@ def test_batched_seq_lens_length_mismatch_raises():
 # Test: activations_main cache-skip path (force=False)
 # ============================================================================
 
-# Patches needed to run activations_main with a mock model
-_ACTIVATIONS_MAIN_PATCHES = [
-	"pattern_lens.activations.HookedTransformer",
-	"pattern_lens.activations.load_text_data",
-	"pattern_lens.activations.write_html_index",
-	"pattern_lens.activations.generate_models_jsonl",
-	"pattern_lens.activations.generate_prompts_jsonl",
-	"pattern_lens.activations.asdict",
-	"pattern_lens.activations.json_serialize",
-]
-
-
 def _make_5_prompts() -> list[dict]:
 	"""5 prompts of varying lengths for cache-skip tests."""
 	return [
