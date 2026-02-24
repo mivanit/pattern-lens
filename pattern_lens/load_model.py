@@ -17,20 +17,19 @@ This module provides two key functions:
     (the default alias with disallowed characters replaced).
 """
 
-from __future__ import annotations
+from __future__ import annotations  # noqa: I001
 
 import warnings
-from typing import TYPE_CHECKING, Any, Literal
+from typing import Any, Literal
+
+import torch  # noqa: TC002
+from transformer_lens import HookedTransformer  # type: ignore[import-untyped] # noqa: TC002
+from transformers import AutoModelForCausalLM  # type: ignore[import-untyped]  # noqa: TC002
+from transformers.tokenization_utils_base import (
+	PreTrainedTokenizerBase,  # type: ignore[import-untyped] # noqa: TC002
+)
 
 from pattern_lens.consts import sanitize_name_str
-
-if TYPE_CHECKING:
-	import torch
-	from transformer_lens import HookedTransformer  # type: ignore[import-untyped]
-	from transformers import AutoModelForCausalLM  # type: ignore[import-untyped]
-	from transformers.tokenization_utils_base import (
-		PreTrainedTokenizerBase,  # type: ignore[import-untyped]
-	)
 
 # ---------------------------------------------------------------------------
 # Name resolver cache: {any_known_variant: default_alias}
