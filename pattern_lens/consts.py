@@ -35,3 +35,17 @@ DIVIDER_S2: str = "-" * 50
 
 ReturnCache = Literal["numpy", "torch"] | None
 "return type for a cache of activations"
+
+_SANITIZE_PATTERN: re.Pattern = re.compile(r"[^a-zA-Z0-9\-_.]")
+"regex matching characters that are NOT allowed in sanitized model names"
+
+
+def sanitize_model_name(name: str) -> str:
+	"""Map a model name to only letters, digits, and ``-_.`` for safe use as a directory name.
+
+	Forward slashes (common in HuggingFace IDs like ``google/gemma-2b``) are
+	replaced with ``-``.  Any remaining disallowed character becomes ``_``.
+	The function is idempotent.
+	"""
+	name = name.replace("/", "-")
+	return _SANITIZE_PATTERN.sub("_", name)

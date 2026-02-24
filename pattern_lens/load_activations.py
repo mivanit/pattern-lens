@@ -9,6 +9,8 @@ from typing import TYPE_CHECKING, Literal, overload
 
 import numpy as np
 
+from pattern_lens.consts import sanitize_model_name
+
 if TYPE_CHECKING:
 	from pathlib import Path
 
@@ -145,6 +147,7 @@ def load_activations(
 	if return_fmt == "torch":
 		import torch  # noqa: PLC0415
 
+	model_name = sanitize_model_name(model_name)
 	augment_prompt_with_hash(prompt)
 
 	prompt_dir: Path = save_path / model_name / "prompts" / prompt["hash"]
@@ -194,6 +197,7 @@ def activations_exist(model_name: str, prompt: dict, save_path: Path) -> bool:
 	# Raises:
 	- `InvalidPromptError` : if the prompt does not have a 'hash' key
 	"""
+	model_name = sanitize_model_name(model_name)
 	if "hash" not in prompt:
 		msg = f"Prompt must have 'hash' key (call augment_prompt_with_hash first): {prompt}"
 		raise InvalidPromptError(msg)

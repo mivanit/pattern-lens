@@ -28,6 +28,7 @@ from pattern_lens.consts import (
 	SPINNER_KWARGS,
 	ActivationCacheNp,
 	AttentionMatrix,
+	sanitize_model_name,
 )
 from pattern_lens.figure_util import AttentionMatrixFigureFunc
 from pattern_lens.indexes import (
@@ -310,6 +311,7 @@ def figures_main(
 		whether to run in parallel. if `True`, will use all available cores. if `False`, will run in serial. if an int, will try to use that many cores
 		(defaults to `True`)
 	"""
+	model_name = sanitize_model_name(model_name)
 	with SpinnerContext(message="setting up paths", **SPINNER_KWARGS):
 		# save model info or check if it exists
 		save_path_p: Path = Path(save_path)

@@ -55,6 +55,7 @@ from pattern_lens.consts import (
 	SPINNER_KWARGS,
 	ActivationCacheNp,
 	ReturnCache,
+	sanitize_model_name,
 )
 from pattern_lens.indexes import (
 	generate_models_jsonl,
@@ -529,7 +530,7 @@ def get_activations(
 	augment_prompt_with_hash(prompt)
 
 	# get the model
-	model_name: str = (
+	model_name: str = sanitize_model_name(
 		model.cfg.model_name if isinstance(model, HookedTransformer) else model
 	)
 
@@ -557,7 +558,7 @@ def get_activations(
 
 	# compute them
 	if isinstance(model, str):
-		model = HookedTransformer.from_pretrained(model_name)
+		model = HookedTransformer.from_pretrained(model)
 
 	return compute_activations(  # type: ignore[return-value]
 		prompt=prompt,
@@ -641,9 +642,15 @@ def activations_main(  # noqa: C901, PLR0912, PLR0915
 
 	print(f"using device: {device_}")
 
+	# sanitize model name for filesystem use, keep original for HF loading
+	model_name_original: str = model_name
+	model_name = sanitize_model_name(model_name)
+	if model_name != model_name_original:
+		print(f"  model name sanitized: {model_name_original!r} -> {model_name!r}")
+
 	with SpinnerContext(message="loading model", **SPINNER_KWARGS):
 		model: HookedTransformer = HookedTransformer.from_pretrained(
-			model_name,
+			model_name_original,
 			device=device_,
 		)
 		model.model_name = model_name  # type: ignore[unresolved-attribute]
