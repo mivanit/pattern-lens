@@ -71,10 +71,17 @@ def get_sanitize_inverse() -> dict[str, str]:
 def unsanitize_model_name(name: str) -> str:
 	"""Resolve a potentially-sanitized model name to the original HF name.
 
-	If *name* is found in the inverse table, returns the original.
-	Otherwise returns *name* unchanged (it may already be an original name
-	or a custom model not in the TransformerLens catalogue).
+	If *name* is already a recognised original name in the model table,
+	returns it immediately without building the inverse mapping.
+	Otherwise falls back to the ``{sanitized: original}`` inverse table.
+	If still not found, returns *name* unchanged (it may be a custom model
+	not in the TransformerLens catalogue).
 	"""
+	from pattern_lens.model_table import fetch_model_table  # noqa: PLC0415
+
+	if name in fetch_model_table():
+		return name
+
 	return get_sanitize_inverse().get(name, name)
 
 
