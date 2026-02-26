@@ -325,7 +325,8 @@ const app = Vue.createApp({
 			const models = await fileOps.fetchJsonL(`${CONFIG.data.basePath}/${CONFIG.data.modelsFile}`);
 			this.models.configs = {};
 			for (const model of models) {
-				this.models.configs[model["model_name"]] = model;
+				if (!model.sanitized_name) model.sanitized_name = model.model_name;
+				this.models.configs[model.sanitized_name] = model;
 			}
 			this.filters.available.models = Object.keys(this.models.configs);
 			console.log('Models:', this.filters.available.models);
@@ -429,7 +430,7 @@ const app = Vue.createApp({
 				{
 					headerName: 'Selected',
 					valueGetter: (params) => {
-						return `${this.getHeadSelectionCount(params.data.model_name)} / ${this.getTotalHeads(params.data.model_name)}`;
+						return `${this.getHeadSelectionCount(params.data.sanitized_name)} / ${this.getTotalHeads(params.data.sanitized_name)}`;
 					},
 					width: 100
 				},
@@ -438,7 +439,7 @@ const app = Vue.createApp({
 					field: 'head_grid',
 					width: 150,
 					cellRenderer: (params) => {
-						const model = params.data.model_name;
+						const model = params.data.sanitized_name;
 						const div = document.createElement('div');
 						div.className = 'head-grid';
 						div.setAttribute('data-model', model); // Add data attribute for updates
@@ -475,7 +476,7 @@ const app = Vue.createApp({
 					},
 					valueSetter: params => {
 						const newValue = params.newValue;
-						const model = params.data.model_name;
+						const model = params.data.sanitized_name;
 
 						// Update the head selection in Vue's data
 						params.context.componentParent.head_selections_str[model] = newValue;
@@ -509,10 +510,10 @@ const app = Vue.createApp({
 						return true;
 					},
 					valueGetter: params => {
-						return params.context.componentParent.head_selections_str[params.data.model_name] || 'L*H*';
+						return params.context.componentParent.head_selections_str[params.data.sanitized_name] || 'L*H*';
 					},
 					cellClass: params => {
-						const isValid = params.context.componentParent.isValidHeadSelection(params.data.model_name);
+						const isValid = params.context.componentParent.isValidHeadSelection(params.data.sanitized_name);
 						return isValid ? '' : 'invalid-selection';
 					}
 				},
@@ -550,14 +551,14 @@ const app = Vue.createApp({
 				},
 				onSelectionChanged: (event) => {
 					const selectedRows = event.api.getSelectedRows();
-					this.filters.selected.models = selectedRows.map(row => row.model_name);
+					this.filters.selected.models = selectedRows.map(row => row.sanitized_name);
 				},
 				onGridReady: (params) => {
 					this.models.grid.api = params.api;
 					// Select models from URL
 					if (this.filters.selected.models.length > 0) {
 						params.api.forEachNode(node => {
-							if (this.filters.selected.models.includes(node.data.model_name)) {
+							if (this.filters.selected.models.includes(node.data.sanitized_name)) {
 								node.setSelected(true);
 							}
 						});
