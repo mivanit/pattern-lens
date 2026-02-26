@@ -41,6 +41,7 @@ def generate_models_jsonl(path: Path) -> None:
 		if model_cfg_path.exists():
 			with open(model_cfg_path, "r") as f:
 				model_cfg: dict = json.load(f)
+				model_cfg["sanitized_name"] = model_dir.name
 				models.append(model_cfg)
 
 	with open(path / "models.jsonl", "w") as f:
