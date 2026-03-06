@@ -489,8 +489,16 @@ class AttentionPatternViewer {
     async displayPattern(dataLoader, model, promptHash, layerIdx, headIdx) {
         // Load prompt metadata
         const metadata = await dataLoader.loadPromptMetadata(model, promptHash);
-        // Add boundary tokens as specified in config
-        const startTokens = CONFIG.data.tokenBoundary.start || [];
+        // Load model_cfg.json to check whether this model's tokenizer prepends
+        // a BOS token. Models like Llama set default_prepend_bos=false; without
+        // this check, a spurious "<BOS>" label is added, shifting all token-to-
+        // attention-cell alignments off by one.
+        const modelCfg = await dataLoader.loadModelConfig(model);
+
+        // If model config is unavailable, default to true (backward compat with
+        // GPT-2 style models that do prepend BOS).
+        const prependsBos = modelCfg ? (modelCfg.default_prepend_bos !== false) : true;
+        const startTokens = prependsBos ? (CONFIG.data.tokenBoundary.start || []) : [];
         const endTokens = CONFIG.data.tokenBoundary.end || [];
         const tokensWithBounds = startTokens.concat(metadata.tokens).concat(endTokens);
         this.tokens = this.normalizeTokens(tokensWithBounds);

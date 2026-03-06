@@ -22,4 +22,22 @@ class AttentionDataLoader {
         }
         return await response.json();
     }
+
+    /**
+     * Load the model-level config (model_cfg.json) for a given model.
+     * This contains model metadata such as `default_prepend_bos`, which
+     * indicates whether the model's tokenizer prepends a BOS token.
+     * Returns null if the config is missing or fails to load, so callers
+     * should fall back to safe defaults.
+     */
+    async loadModelConfig(model) {
+        const jsonPath = `${CONFIG.data.basePath}/${model}/model_cfg.json`;
+        try {
+            const response = await fetch(jsonPath);
+            if (response.ok) return await response.json();
+        } catch (e) {
+            console.warn(`Failed to load model config: ${e}`);
+        }
+        return null;
+    }
 }
