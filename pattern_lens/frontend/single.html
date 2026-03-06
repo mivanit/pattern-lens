@@ -289,7 +289,7 @@
 
 <body>
     <div class="header">
-        <a href="https://github.com/mivanit/pattern-lens/" class="source-link" title="Pattern Lens GitHub Repository"> pattern-lens v0.6.1  </a>
+        <a href="https://github.com/mivanit/pattern-lens/" class="source-link" title="Pattern Lens GitHub Repository"> pattern-lens v0.8.0  </a>
         <div id="info" class="info-center"></div>
         <div class="help-menu" title="Help & Controls">
             <span class="help-button">?</span>
@@ -953,7 +953,7 @@
             }
             return await response.json();
         }
-
+    
         /**
          * Load the model-level config (model_cfg.json) for a given model.
          * This contains model metadata such as `default_prepend_bos`, which
@@ -1472,7 +1472,7 @@
             // this check, a spurious "<BOS>" label is added, shifting all token-to-
             // attention-cell alignments off by one.
             const modelCfg = await dataLoader.loadModelConfig(model);
-
+    
             // If model config is unavailable, default to true (backward compat with
             // GPT-2 style models that do prepend BOS).
             const prependsBos = modelCfg ? (modelCfg.default_prepend_bos !== false) : true;
