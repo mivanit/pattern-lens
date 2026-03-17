@@ -66,11 +66,12 @@
             const headParam = urlParams.get('head') || CONFIG.data.defaults.head;
 
             // Parse head parameter: {model}.L{layer}.H{head}
-            const parts = headParam.split('.');
-            const model = parts[0];
-
-            const layerIdx = parseInt(parts[1].substring(1));
-            const headIdx = parseInt(parts[2].substring(1));
+            // Split from right: last two dot-segments are .L{layer} and .H{head}
+            const lastDot = headParam.lastIndexOf('.');
+            const secondLastDot = headParam.lastIndexOf('.', lastDot - 1);
+            const model = headParam.substring(0, secondLastDot);
+            const layerIdx = parseInt(headParam.substring(secondLastDot + 2, lastDot));
+            const headIdx = parseInt(headParam.substring(lastDot + 2));
 
             // Update info (will be updated with token count after pattern loads)
             const updateInfo = (tokenCount = null) => {
