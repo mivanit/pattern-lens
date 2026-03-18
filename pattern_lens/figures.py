@@ -127,7 +127,7 @@ def process_single_head(
 
 
 def compute_and_save_figures(
-	model_cfg: "HookedTransformerConfig|HTConfigMock",  # type: ignore[name-defined] # noqa: F821
+	model_cfg: HTConfigMock,
 	activations_path: Path,
 	cache: ActivationCacheNp | Float[np.ndarray, "n_layers n_heads n_ctx n_ctx"],
 	figure_funcs: list[AttentionMatrixFigureFunc],
@@ -138,7 +138,7 @@ def compute_and_save_figures(
 	"""compute and save figures for all heads in the model, using the functions in `ATTENTION_MATRIX_FIGURE_FUNCS`
 
 	# Parameters:
-	- `model_cfg : HookedTransformerConfig|HTConfigMock`
+	- `model_cfg : HTConfigMock`
 		configuration of the model, used for loading the activations
 	- `cache : ActivationCacheNp | Float[np.ndarray, &quot;n_layers n_heads n_ctx n_ctx&quot;]`
 		activation cache containing actual patterns for the prompt we are processing
@@ -204,7 +204,7 @@ def compute_and_save_figures(
 
 def process_prompt(
 	prompt: dict,
-	model_cfg: "HookedTransformerConfig|HTConfigMock",  # type: ignore[name-defined] # noqa: F821
+	model_cfg: HTConfigMock,
 	save_path: Path,
 	figure_funcs: list[AttentionMatrixFigureFunc],
 	force_overwrite: bool = False,
@@ -218,7 +218,7 @@ def process_prompt(
 		prompt to process, should be a dict with the following keys:
 		- `"text"`: the prompt string
 		- `"hash"`: the hash of the prompt
-	- `model_cfg : HookedTransformerConfig|HTConfigMock`
+	- `model_cfg : HTConfigMock`
 		configuration of the model, used for figuring out where to save
 	- `save_path : Path`
 		directory to save the figures to
